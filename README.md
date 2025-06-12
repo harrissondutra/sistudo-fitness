@@ -1,27 +1,49 @@
-# SistudoFitness
+# Sistudo Fitness
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.17.
+Sistudo Fitness é um aplicativo web desenvolvido em Angular para controle de treinamentos fitness. O objetivo do sistema é facilitar o acompanhamento de treinos, perfis de usuários e configurações personalizadas para academias, personal trainers e praticantes de atividades físicas.
 
-## Development server
+## Funcionalidades
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- Cadastro e gerenciamento de perfis de usuários
+- Visualização e edição de treinos
+- Configurações personalizadas para cada usuário
+- Interface responsiva e moderna baseada no Angular Material
 
-## Code scaffolding
+## Tecnologias Utilizadas
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- [Angular 17+](https://angular.io/)
+- [Angular Material](https://material.angular.io/)
+- RxJS
+- SCSS
 
-## Build
+## Como executar
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+1. Clone este repositório:
+   ```bash
+   git clone https://github.com/seu-usuario/sistudo-fitness.git
+   ```
+2. Instale as dependências:
+   ```bash
+   npm install
+   ```
+3. Execute o projeto:
+   ```bash
+   ng serve
+   ```
+4. Acesse [http://localhost:4200](http://localhost:4200) no seu navegador.
 
-## Running unit tests
+## Estrutura do Projeto
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+- `src/app/home`: Componente principal e layout do app
+- `src/app/shared/sidenav`: Menu lateral de navegação
+- `src/app/shared/toolbar`: Barra superior
+- `src/app/profile`: Perfil do usuário
+- `src/app/settings`: Configurações
 
-## Running end-to-end tests
+## Contribuição
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou pull requests.
 
-## Further help
+---
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+**Sistudo Fitness** — Controle total dos seus treinos, onde você estiver!
