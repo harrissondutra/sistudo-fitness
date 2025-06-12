@@ -15,6 +15,8 @@ Sistudo Fitness é um aplicativo web desenvolvido em Angular para controle de tr
 - [Angular Material](https://material.angular.io/)
 - RxJS
 - SCSS
+- **Backend em Java 21 com Spring**
+- **Banco de dados PostgreSQL**
 
 ## Como executar
 
