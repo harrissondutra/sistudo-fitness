@@ -1,31 +1,44 @@
 <mat-nav-list>
-  <a mat-list-item
-     routerLink="/"
-     routerLinkActive="active"
-     [routerLinkActiveOptions]="{ exact: true }"
-     (click)="onLinkClick()">
-    <mat-icon matListIcon>home</mat-icon>
-    <span>Início</span>
-  </a>
-  <a mat-list-item
-     routerLink="/profile"
-     routerLinkActive="active"
-     (click)="onLinkClick()">
-    <mat-icon matListIcon>person</mat-icon>
-    <span>Perfil</span>
-  </a>
-  <a mat-list-item
-     routerLink="/settings"
-     routerLinkActive="active"
-     (click)="onLinkClick()">
-    <mat-icon matListIcon>settings</mat-icon>
-    <span>Configurações</span>
-  </a>
-  <a mat-list-item
-     routerLink="/logout"
-     routerLinkActive="active"
-     (click)="onLinkClick()">
-    <mat-icon matListIcon>logout</mat-icon>
-    <span>Sair</span>
-  </a>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Exercícios
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <a mat-list-item (click)="onLinkClick()">Listar</a>
+    <a mat-list-item (click)="onLinkClick()">Criar</a>
+    <a mat-list-item (click)="onLinkClick()">Listar Categorias</a>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Categoria de Exercício
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <a mat-list-item (click)="onLinkClick()">Listar</a>
+    <a mat-list-item (click)="onLinkClick()">Criar</a>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Medidas
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <a mat-list-item (click)="onLinkClick()">Buscar Medidas</a>
+    <a mat-list-item (click)="onLinkClick()">Criar</a>
+    <a mat-list-item (click)="onLinkClick()">Alterar</a>
+    <a mat-list-item (click)="onLinkClick()">Apagar</a>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Usuários
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <a mat-list-item (click)="onLinkClick()">Listar</a>
+    <a mat-list-item (click)="onLinkClick()">Buscar</a>
+  </mat-expansion-panel>
 </mat-nav-list>

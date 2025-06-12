@@ -7,12 +7,12 @@ $sidenav-active: mat.get-color-from-palette(mat.$indigo-palette, 500);
 mat-sidenav {
   background: $sidenav-bg;
   color: $sidenav-text;
-  width: 240px;
+  width: 80px; // Reduzido
   border-right: none;
   transition: width 0.2s;
 
   @media (max-width: 600px) {
-    width: 180px;
+    width: 60px; // Ainda menor em telas pequenas
   }
 }
 
@@ -29,17 +29,16 @@ a.mat-list-item {
 
   @media (max-width: 600px) {
     font-size: 0.95rem;
-    padding-left: 12px;
-    padding-right: 12px;
+    padding-left: 8px;
+    padding-right: 8px;
   }
 
-  // Garante que o estilo será aplicado mesmo com encapsulamento
   ::ng-deep mat-icon {
     color: inherit;
-    margin-right: 50px;
+    margin-right: 24px;
 
     @media (max-width: 600px) {
-      margin-right: 24px;
+      margin-right: 12px;
     }
   }
 
