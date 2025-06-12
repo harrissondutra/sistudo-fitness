@@ -1,0 +1,18 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav
+    #sidenav
+    [mode]="(isHandset$ | async) ? 'over' : 'side'"
+    [opened]="!(isHandset$ | async)">
+    <app-sidenav (linkClicked)="onSidenavLinkClicked()"></app-sidenav>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <app-toolbar [sidenav]="sidenav"></app-toolbar>
+    <main class="main-content">
+      <ng-container *ngIf="router.url === '/'">
+        <h2>Bem-vindo ao Sistudo Fitness!</h2>
+        <p>Selecione uma opção no menu para começar.</p>
+      </ng-container>
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

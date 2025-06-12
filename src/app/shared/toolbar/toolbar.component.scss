@@ -1,0 +1,46 @@
+@use '@angular/material' as mat;
+
+// Use a palette do Angular Material corretamente
+$toolbar-bg: mat.get-color-from-palette(mat.$indigo-palette, 500);
+
+$toolbar-height: 64px;
+$icon-color: white;
+$text-color: white;
+
+mat-toolbar {
+  height: $toolbar-height;
+  background-color: $toolbar-bg;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  color: $text-color;
+
+  .toolbar-left,
+  .toolbar-right {
+    display: flex;
+    align-items: center;
+  }
+
+  .toolbar-left {
+    flex: 1;
+    gap: 8px;
+
+    mat-icon {
+      color: $icon-color;
+    }
+
+    .app-title {
+      font-size: 20px;
+      font-weight: 500;
+    }
+  }
+
+  .toolbar-right {
+    gap: 16px;
+
+    mat-icon-button {
+      color: $icon-color;
+    }
+  }
+}

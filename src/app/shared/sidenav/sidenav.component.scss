@@ -1,0 +1,52 @@
+@use '@angular/material' as mat;
+
+$sidenav-bg: mat.get-color-from-palette(mat.$indigo-palette, 700);
+$sidenav-text: mat.get-color-from-palette(mat.$grey-palette, 50);
+$sidenav-active: mat.get-color-from-palette(mat.$indigo-palette, 500);
+
+mat-sidenav {
+  background: $sidenav-bg;
+  color: $sidenav-text;
+  width: 240px;
+  border-right: none;
+  transition: width 0.2s;
+
+  @media (max-width: 600px) {
+    width: 180px;
+  }
+}
+
+mat-nav-list {
+  padding: 0;
+  margin: 50;
+}
+
+a.mat-list-item {
+  color: $sidenav-text;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: background 0.2s, color 0.2s;
+
+  @media (max-width: 600px) {
+    font-size: 0.95rem;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  // Garante que o estilo será aplicado mesmo com encapsulamento
+  ::ng-deep mat-icon {
+    color: inherit;
+    margin-right: 50px;
+
+    @media (max-width: 600px) {
+      margin-right: 24px;
+    }
+  }
+
+  &.active,
+  &:hover,
+  &:focus {
+    background: $sidenav-active;
+    color: white;
+  }
+}
