@@ -36,11 +36,17 @@ Sistudo Fitness é um aplicativo web desenvolvido em Angular para controle de tr
 
 ## Estrutura do Projeto
 
-- `src/app/home`: Componente principal e layout do app
-- `src/app/shared/sidenav`: Menu lateral de navegação
-- `src/app/shared/toolbar`: Barra superior
-- `src/app/profile`: Perfil do usuário
-- `src/app/settings`: Configurações
+GET    /exercises/list
+POST   /exercises/create
+GET    /exercises/category/{categoryId}
+GET    /categoryExercise/list
+POST   /categoryExercise/create
+GET    /measure/getByUserId?userId={userId}
+POST   /measure/save
+POST   /measure/updateByUserId
+DELETE /measure/deleteByUserId?userId={userId}
+GET    /user/listAll
+GET    /user/getById/{id}
 
 ## Contribuição
 
