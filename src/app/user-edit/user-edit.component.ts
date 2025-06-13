@@ -6,15 +6,20 @@ import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'; // Para mensagens de feedback
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // Para o spinner de carregamento
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'; // For feedback messages
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // For loading spinner
+import { MatCardModule } from '@angular/material/card'; // For Material card layout
+import { MatGridListModule } from '@angular/material/grid-list'; // For Material grid layout
+import { MatDividerModule } from '@angular/material/divider'; // For Material divider
+import { MatIconModule } from '@angular/material/icon'; // For Material icons
 
-import { UserService } from '../services/user/user.service'; // Ajuste o caminho
-import { User } from '../models/user'; // Ajuste o caminho
-import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
-import { of } from 'rxjs';
-import { NgxMaskDirective } from 'ngx-mask'; // Para máscaras
-
+import { UserService } from '../services/user/user.service'; // Adjust path
+import { MeasureService } from '../services/measure/measure.service'; // Import MeasureService
+import { User } from '../models/user'; // Adjust path
+import { Measure } from '../models/measure'; // Import Measure model
+import { catchError, filter, map, switchMap, tap, forkJoin, of, Observable } from 'rxjs'; // Corrected: Added 'of' and 'Observable'
+import { NgxMaskDirective } from 'ngx-mask'; // For masks
+import { MatFormField } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-user-edit',
@@ -28,7 +33,12 @@ import { NgxMaskDirective } from 'ngx-mask'; // Para máscaras
     MatButtonModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
-    NgxMaskDirective
+    MatCardModule, // Add MatCardModule
+    MatGridListModule, // Add MatGridListModule
+    MatDividerModule, // Add MatDividerModule
+    MatIconModule, // Add MatIconModule
+    NgxMaskDirective,
+    MatFormField // Add MatFormField for form field styling
   ],
   templateUrl: './user-edit.component.html',
   styleUrls: ['./user-edit.component.scss']
@@ -36,146 +46,237 @@ import { NgxMaskDirective } from 'ngx-mask'; // Para máscaras
 export class UserEditComponent implements OnInit {
   userId: number | null = null;
   userForm!: FormGroup;
-  isLoading: boolean = true; // Para controlar o estado de carregamento
+  measureForm!: FormGroup; // New FormGroup for measures
+  isLoading: boolean = true; // To control loading state
+  selectedFile: File | null = null; // For photo upload
 
   constructor(
     private fb: FormBuilder,
-    private route: ActivatedRoute, // Para obter parâmetros da rota
+    private route: ActivatedRoute, // To get route parameters
     private userService: UserService,
+    private measureService: MeasureService, // Inject MeasureService
     private router: Router,
-    private snackBar: MatSnackBar // Para exibir mensagens ao usuário
+    private snackBar: MatSnackBar // To display messages to the user
   ) { }
 
   ngOnInit(): void {
-    this.initializeForm(); // Inicializa a estrutura do formulário reativo
-    this.loadUserData();   // Carrega os dados do usuário para preencher o formulário
+    this.initializeForms(); // Initializes both forms
+    this.loadUserDataAndMeasures();   // Loads user data and measures
   }
 
   /**
-   * Inicializa o FormGroup com os controles e validadores.
-   * Define os validadores de acordo com as regras de negócio para cada campo.
+   * Initializes both FormGroups (userForm and measureForm).
    */
-  private initializeForm(): void {
+  private initializeForms(): void {
     this.userForm = this.fb.group({
-      id: [null], // O ID é mantido no formulário, mas geralmente não é editável pelo usuário
+      id: [null], // ID is kept in the form, but usually not editable by the user
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      // Validação de CPF: 11 dígitos numéricos
+      // CPF validation: 11 numeric digits
       cpf: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
-      // Peso em kg: entre 30 e 300
+      // Weight in kg: between 30 and 300
       weight: [null, [Validators.required, Validators.min(30), Validators.max(300)]],
-      // Altura em centímetros: entre 50 e 300 cm (para representar 0.5m a 3.0m)
+      // Height in centimeters: between 50 and 300 cm (to represent 0.5m to 3.0m)
       height: [null, [Validators.required, Validators.min(50), Validators.max(300)]]
+    });
+
+    // Initializes the measures form with all fields from the Measure interface
+    this.measureForm = this.fb.group({
+      id: [null], // Measure ID (if exists)
+      ombro: [null, [Validators.min(0), Validators.max(200)]],
+      cintura: [null, [Validators.min(0), Validators.max(200)]],
+      quadril: [null, [Validators.min(0), Validators.max(200)]],
+      panturrilhaDireita: [null, [Validators.min(0), Validators.max(100)]],
+      panturrilhaEsquerda: [null, [Validators.min(0), Validators.max(100)]],
+      bracoDireito: [null, [Validators.min(0), Validators.max(100)]],
+      bracoEsquerdo: [null, [Validators.min(0), Validators.max(100)]],
+      coxaDireita: [null, [Validators.min(0), Validators.max(150)]],
+      coxaEsquerda: [null, [Validators.min(0), Validators.max(150)]],
+      peitoral: [null, [Validators.min(0), Validators.max(200)]],
+      abdomem: [null, [Validators.min(0), Validators.max(200)]],
+      abdominal: [null, [Validators.min(0), Validators.max(200)]],
+      suprailiaca: [null, [Validators.min(0), Validators.max(100)]],
+      subescapular: [null, [Validators.min(0), Validators.max(100)]],
+      triceps: [null, [Validators.min(0), Validators.max(100)]],
+      axilar: [null, [Validators.min(0), Validators.max(100)]],
+      torax: [null, [Validators.min(0), Validators.max(200)]],
+      userId: [null] // Will be populated with the user ID
     });
   }
 
   /**
-   * Carrega os dados do usuário com base no ID extraído da URL da rota.
-   * Utiliza operadores RxJS para encadear a obtenção do ID e a chamada ao serviço.
+   * Loads user data and their measures.
    */
-  private loadUserData(): void {
-    this.isLoading = true; // Inicia o estado de carregamento
+  private loadUserDataAndMeasures(): void {
+    this.isLoading = true;
     this.route.paramMap.pipe(
-      // Filtra para garantir que o parâmetro 'id' exista na rota
       filter(params => params.has('id')),
-      // Mapeia o parâmetro 'id' para um número
       map(params => Number(params.get('id'))),
-      // Armazena o ID do usuário para uso posterior (ex: no onSubmit)
       tap(id => this.userId = id),
-      // Usa switchMap para trocar o Observable do ID pelo Observable da requisição do usuário
-      switchMap(id => this.userService.getUserById(id).pipe(
-        // Captura erros da requisição de busca do usuário
-        catchError(error => {
-          console.error('Erro ao buscar usuário:', error);
-          this.snackBar.open('Erro ao carregar os dados do usuário. Tente novamente.', 'Fechar', { duration: 5000 });
-          this.router.navigate(['/users-list']); // Redireciona para a lista em caso de erro
-          return of(null); // Retorna um Observable de null para continuar a cadeia sem erro
-        })
-      ))
-    ).subscribe(user => {
+      switchMap(id => {
+        // Makes parallel requests for user data and measures
+        const userRequest = this.userService.getUserById(id).pipe(
+          catchError(error => {
+            console.error('Error fetching user:', error);
+            this.snackBar.open('Error loading user data. Please try again.', 'Close', { duration: 5000 });
+            this.router.navigate(['/users-list']);
+            return of(null);
+          })
+        );
+        const measureRequest = this.measureService.getMeasureByUserId(id).pipe(
+          catchError(error => {
+            console.warn('Measures for this user not found or error loading:', error);
+            // Returns an empty Measure object or null if no measures
+            return of(null);
+          })
+        );
+        return forkJoin({ user: userRequest, measures: measureRequest });
+      })
+    ).subscribe(({ user, measures }) => {
       if (user) {
-        // Popula o formulário com os dados do usuário recebidos do backend.
-        // O CPF deve ser formatado APENAS com números para o patchValue para que a validação funcione
-        // e a máscara então o formatará para exibição.
         const cpfFormattedForPatch = user.cpf ? user.cpf.replace(/\D/g, '') : null;
-
-        // Log adicional para verificar o CPF antes do patchValue
-        console.log("CPF do usuário (original):", user.cpf);
-        console.log("CPF formatado para patchValue (apenas dígitos):", cpfFormattedForPatch);
-
-
         this.userForm.patchValue({
           id: user.id,
           name: user.name,
           email: user.email,
-          cpf: cpfFormattedForPatch, // Garante que o CPF seja apenas números para o FormControl
+          cpf: cpfFormattedForPatch,
           weight: user.weight,
           height: user.height != null ? user.height * 100 : null
         });
-
-        // Força a revalidação e marca os campos como tocados após carregar os dados
-        this.userForm.markAllAsTouched();
-        this.userForm.updateValueAndValidity();
-
-
-        // Adicionados logs para depuração
-        console.log("Dados do usuário recebidos do backend:", user);
-        console.log("Valores do formulário após patchValue:", this.userForm.value);
-        console.log("Status do formulário após patchValue (depois de forçar validação):", this.userForm.status);
-        console.log("Erros do formulário (se houver):", this.userForm.errors);
-
-        // Logs detalhados para cada controle
-        Object.keys(this.userForm.controls).forEach(key => {
-          const control = this.userForm.get(key);
-          if (control) {
-            console.log(`Controle '${key}': Status=${control.status}, Valor=${control.value}, Erros=${JSON.stringify(control.errors)}`);
-          }
-        });
-
       }
+
+      if (measures) {
+        this.measureForm.patchValue(measures);
+        this.measureForm.get('userId')?.setValue(this.userId); // Ensure userId is set
+      } else {
+        // If no measures, initialize userId in measureForm for a new entry
+        this.measureForm.get('userId')?.setValue(this.userId);
+      }
+
+      // Force revalidation and mark fields as touched
+      this.userForm.markAllAsTouched();
+      this.userForm.updateValueAndValidity();
+      this.measureForm.markAllAsTouched();
+      this.measureForm.updateValueAndValidity();
+
+      console.log("Dados do usuário:", user);
+      console.log("Dados das medidas:", measures);
+      console.log("Status do Formulário de Usuário:", this.userForm.status, "Erros:", this.userForm.errors);
+      console.log("Status do Formulário de Medidas:", this.measureForm.status, "Erros:", this.measureForm.errors);
+
       this.isLoading = false;
     });
   }
 
   /**
-   * Lida com a submissão do formulário para atualizar os dados do usuário.
-   * Formata os dados (CPF, peso, altura) antes de enviá-los ao backend.
+   * Handles file selection for upload.
+   * @param event The change event from the file input.
    */
-  onSubmit(): void {
-    if (this.userForm.valid) {
-      const formData = this.userForm.value;
-
-      // Prepara o objeto User para envio ao backend, aplicando formatações.
-      const updatedUser: User = {
-        id: this.userId || formData.id,
-        name: formData.name,
-        email: formData.email,
-        // Remove caracteres não-dígitos do CPF
-        cpf: formData.cpf ? String(formData.cpf).replace(/\D/g, '') : '',
-        // Substitui vírgulas por pontos no peso e converte para número
-        weight: formData.weight ? parseFloat(String(formData.weight).replace(',', '.')) : null,
-        // Converte altura de centímetros para metros e substitui vírgulas por pontos
-        height: formData.height ? parseFloat(String(formData.height).replace(',', '.')) / 100 : null,
-      };
-
-      this.userService.updateUser(updatedUser).subscribe({
-        next: (response) => {
-          this.snackBar.open('Usuário atualizado com sucesso!', 'Fechar', { duration: 3000 });
-          this.router.navigate(['/users-list']);
-        },
-        error: (error) => {
-          console.error('Erro ao atualizar usuário:', error);
-          this.snackBar.open('Erro ao atualizar usuário. Verifique o console para mais detalhes.', 'Fechar', { duration: 5000 });
-        }
-      });
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
+      this.snackBar.open(`Arquivo selecionado: ${this.selectedFile.name}`, 'Fechar', { duration: 2000 });
+      // Here you would implement the actual upload logic to the backend
     } else {
-      this.snackBar.open('Por favor, preencha todos os campos corretamente.', 'Fechar', { duration: 3000 });
-      this.userForm.markAllAsTouched();
+      this.selectedFile = null;
     }
   }
 
   /**
-   * Cancela a edição e retorna à lista de usuários sem salvar.
+   * Handles the submission of both forms (user and measures).
+   */
+  onSubmit(): void {
+    const isUserFormValid = this.userForm.valid;
+    const isMeasureFormValid = this.measureForm.valid;
+
+    if (isUserFormValid && isMeasureFormValid) {
+      const userData = this.userForm.value;
+      const measureData = this.measureForm.value;
+
+      // Prepare User object for backend
+      const updatedUser: User = {
+        id: this.userId || userData.id,
+        name: userData.name,
+        email: userData.email,
+        cpf: userData.cpf ? String(userData.cpf).replace(/\D/g, '') : '',
+        weight: userData.weight ? parseFloat(String(userData.weight).replace(',', '.')) : null,
+        height: userData.height ? parseFloat(String(userData.height).replace(',', '.')!) / 100 : null,
+      };
+
+      // Prepare Measure object for backend
+      const updatedMeasure: Measure = {
+        ...measureData,
+        userId: this.userId! // Ensure userId is in the measure
+      };
+      if (updatedMeasure.id === null) {
+        delete updatedMeasure.id; // Ensure ID is not sent if it's for creating a new measure
+      }
+
+      // Array to store update Observables
+      const updateRequests: Observable<any>[] = [];
+
+      // User update request
+      updateRequests.push(this.userService.updateUser(updatedUser).pipe(
+        tap(() => console.log('User updated successfully!')),
+        catchError(error => {
+          console.error('Error updating user:', error);
+          this.snackBar.open('Error updating user data.', 'Fechar', { duration: 5000 });
+          return of(null); // Return null so forkJoin continues
+        })
+      ));
+
+      // Measure update/creation request
+      if (measureData.id) { // If measure ID exists, update
+        updateRequests.push(this.measureService.updateMeasure(updatedMeasure).pipe(
+          tap(() => console.log('Measures updated successfully!')),
+          catchError(error => {
+            console.error('Error updating measures:', error);
+            this.snackBar.open('Error updating measure data.', 'Fechar', { duration: 5000 });
+            return of(null);
+          })
+        ));
+      } else { // If measure ID does not exist, create
+        updateRequests.push(this.measureService.createMeasure(updatedMeasure).pipe(
+          tap(() => console.log('Measures created successfully!')),
+          catchError(error => {
+            console.error('Error creating measures:', error);
+            this.snackBar.open('Error creating measure data.', 'Fechar', { duration: 5000 });
+            return of(null);
+          })
+        ));
+      }
+
+      // Execute all requests in parallel
+      forkJoin(updateRequests).subscribe({
+        next: (results) => {
+          // Check if all requests were successful (did not return null due to error)
+          const allSuccessful = results.every(result => result !== null);
+          if (allSuccessful) {
+            this.snackBar.open('Dados atualizados com sucesso!', 'Fechar', { duration: 3000 });
+            this.router.navigate(['/users-list']); // Redirect after complete success
+          } else {
+            this.snackBar.open('Algumas atualizações falharam. Verifique o console.', 'Fechar', { duration: 5000 });
+          }
+        },
+        error: (error) => {
+          // This error would only be caught if forkJoin fails completely before any internal catchError
+          console.error('General error in form submission:', error);
+          this.snackBar.open('General error saving data. Check the console.', 'Fechar', { duration: 5000 });
+        }
+      });
+
+    } else {
+      this.snackBar.open('Por favor, preencha todos os campos obrigatórios corretamente.', 'Fechar', { duration: 3000 });
+      this.userForm.markAllAsTouched();
+      this.measureForm.markAllAsTouched(); // Mark measure fields as touched
+      this.userForm.updateValueAndValidity();
+      this.measureForm.updateValueAndValidity();
+    }
+  }
+
+  /**
+   * Cancels editing and returns to the user list without saving.
    */
   cancel(): void {
     this.router.navigate(['/users-list']);

@@ -2,73 +2,176 @@
   <h2>Editar Usuário</h2>
 
   <div *ngIf="isLoading" class="loading-spinner">
-    <!-- Adicionar um spinner do Material se quiser -->
     <mat-spinner></mat-spinner>
-    <p>Carregando dados do usuário...</p>
+    <p>Carregando dados do usuário e medidas...</p>
   </div>
 
-  <form [formGroup]="userForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
-    <!-- Campo Nome -->
-    <mat-form-field appearance="outline" class="full-width-input">
-      <mat-label>Nome</mat-label>
-      <input matInput type="text" formControlName="name" />
-      <mat-error *ngIf="userForm.get('name')?.invalid && userForm.get('name')?.touched">
-        Nome é obrigatório.
-      </mat-error>
-    </mat-form-field>
+  <form (ngSubmit)="onSubmit()" *ngIf="!isLoading">
+    <!-- Novo contêiner para o layout de 1/3 e 2/3 -->
+    <div class="dashboard-main-sections">
+      <!-- Seção de Dados Pessoais (ocupará 1/3 em telas grandes) -->
+      <mat-card class="dashboard-card">
+        <mat-card-header>
+          <mat-card-title>Dados Pessoais</mat-card-title>
+        </mat-card-header>
+        <mat-card-content [formGroup]="userForm" class="form-section">
+          <!-- Campo Nome -->
+          <mat-form-field appearance="outline" class="full-width-input">
+            <mat-label>Nome</mat-label>
+            <input matInput type="text" formControlName="name" />
+            <mat-error *ngIf="userForm.get('name')?.invalid && userForm.get('name')?.touched">
+              Nome é obrigatório.
+            </mat-error>
+          </mat-form-field>
 
-    <!-- Campo Email -->
-    <mat-form-field appearance="outline" class="full-width-input">
-      <mat-label>Email</mat-label>
-      <input matInput type="email" formControlName="email" />
-      <mat-error *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">
-        <span *ngIf="userForm.get('email')?.errors?.['required']">Email é obrigatório.</span>
-        <span *ngIf="userForm.get('email')?.errors?.['email']">Email inválido.</span>
-      </mat-error>
-    </mat-form-field>
+          <!-- Campo Email -->
+          <mat-form-field appearance="outline" class="full-width-input">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" />
+            <mat-error *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">
+              <span *ngIf="userForm.get('email')?.errors?.['required']">Email é obrigatório.</span>
+              <span *ngIf="userForm.get('email')?.errors?.['email']">Email inválido.</span>
+            </mat-error>
+          </mat-form-field>
 
-    <!-- Campo CPF (normalmente CPF não é editável após o cadastro, mas mantido conforme a estrutura) -->
-    <mat-form-field appearance="outline" class="full-width-input">
-      <mat-label>CPF (apenas números)</mat-label>
-      <!-- CORREÇÃO AQUI: Altera [dropSpecialCharacters]="false" para [dropSpecialCharacters]="true" -->
-      <input matInput type="text" formControlName="cpf" mask="000.000.000-00" [dropSpecialCharacters]="true" />
-      <mat-hint>11 dígitos numéricos</mat-hint>
-      <mat-error *ngIf="userForm.get('cpf')?.invalid && userForm.get('cpf')?.touched">
-        <span *ngIf="userForm.get('cpf')?.errors?.['required']">CPF é obrigatório.</span>
-        <span *ngIf="userForm.get('cpf')?.errors?.['pattern']">CPF deve conter 11 dígitos.</span>
-      </mat-error>
-    </mat-form-field>
+          <!-- Campo CPF -->
+          <mat-form-field appearance="outline" class="full-width-input">
+            <mat-label>CPF (apenas números)</mat-label>
+            <input matInput type="text" formControlName="cpf" mask="000.000.000-00" [dropSpecialCharacters]="true" />
+            <mat-hint>11 dígitos numéricos</mat-hint>
+            <mat-error *ngIf="userForm.get('cpf')?.invalid && userForm.get('cpf')?.touched">
+              <span *ngIf="userForm.get('cpf')?.errors?.['required']">CPF é obrigatório.</span>
+              <span *ngIf="userForm.get('cpf')?.errors?.['pattern']">CPF deve conter 11 dígitos.</span>
+            </mat-error>
+          </mat-form-field>
 
-    <!-- Campo Peso -->
-    <mat-form-field appearance="outline" class="full-width-input">
-      <mat-label>Peso (kg)</mat-label>
-      <!-- Máscara para peso: 'separator.2' para 2 casas decimais, thousandSeparator vazio -->
-      <input matInput type="text" formControlName="weight" mask="separator.2" thousandSeparator="" />
-      <mat-hint>Utilize "." Pontos, para separação de peso</mat-hint>
-      <mat-error *ngIf="userForm.get('weight')?.invalid && userForm.get('weight')?.touched">
-        <span *ngIf="userForm.get('weight')?.errors?.['required']">Peso é obrigatório.</span>
-        <span *ngIf="userForm.get('weight')?.errors?.['min'] || userForm.get('weight')?.errors?.['max']">
-          Peso deve ser entre 30 e 300 kg.
-        </span>
-      </mat-error>
-    </mat-form-field>
+          <!-- Campo Peso -->
+          <mat-form-field appearance="outline" class="full-width-input">
+            <mat-label>Peso (kg)</mat-label>
+            <input matInput type="text" formControlName="weight" mask="separator.2" thousandSeparator="" />
+            <mat-hint>Utilize "." Pontos, para separação de peso</mat-hint>
+            <mat-error *ngIf="userForm.get('weight')?.invalid && userForm.get('weight')?.touched">
+              <span *ngIf="userForm.get('weight')?.errors?.['required']">Peso é obrigatório.</span>
+              <span *ngIf="userForm.get('weight')?.errors?.['min'] || userForm.get('weight')?.errors?.['max']">
+                Peso deve ser entre 30 e 300 kg.
+              </span>
+            </mat-error>
+          </mat-form-field>
 
-    <!-- Campo Altura -->
-    <mat-form-field appearance="outline" class="full-width-input">
-      <mat-label>Altura (cm)</mat-label>
-      <!-- Máscara para altura: 'separator.2' para 2 casas decimais, thousandSeparator vazio -->
-      <input matInput type="text" formControlName="height" mask="separator.2" thousandSeparator="" />
-      <mat-error *ngIf="userForm.get('height')?.invalid && userForm.get('height')?.touched">
-        <span *ngIf="userForm.get('height')?.errors?.['required']">Altura é obrigatória.</span>
-        <span *ngIf="userForm.get('height')?.errors?.['min'] || userForm.get('height')?.errors?.['max']">
-          Altura deve ser entre 50 e 300 cm.
-        </span>
-      </mat-error>
-    </mat-form-field>
+          <!-- Campo Altura -->
+          <mat-form-field appearance="outline" class="full-width-input">
+            <mat-label>Altura (cm)</mat-label>
+            <input matInput type="text" formControlName="height" mask="separator.2" thousandSeparator="" />
+            <mat-error *ngIf="userForm.get('height')?.invalid && userForm.get('height')?.touched">
+              <span *ngIf="userForm.get('height')?.errors?.['required']">Altura é obrigatória.</span>
+              <span *ngIf="userForm.get('height')?.errors?.['min'] || userForm.get('height')?.errors?.['max']">
+                Altura deve ser entre 50 e 300 cm.
+              </span>
+            </mat-error>
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
 
-    <!-- Botões de Ação -->
+      <!-- Seção de Medidas (ocupará 2/3 em telas grandes) -->
+      <mat-card class="dashboard-card">
+        <mat-card-header>
+          <mat-card-title>Medidas Corporais</mat-card-title>
+        </mat-card-header>
+        <mat-card-content [formGroup]="measureForm" class="form-section measures-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Ombro (cm)</mat-label>
+            <input matInput type="text" formControlName="ombro" mask="separator.2" thousandSeparator="" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Cintura (cm)</mat-label>
+            <input matInput type="text" formControlName="cintura" mask="separator.2" thousandSeparator="" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Quadril (cm)</mat-label>
+            <input matInput type="text" formControlName="quadril" mask="separator.2" thousandSeparator="" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Panturrilha Direita (cm)</mat-label> <!-- Corrected closing tag -->
+            <input matInput type="text" formControlName="panturrilhaDireita" mask="separator.2" thousandSeparator="" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Panturrilha Esquerda (cm)</mat-label> <!-- Corrected closing tag -->
+            <input matInput type="text" formControlName="panturrilhaEsquerda" mask="separator.2" thousandSeparator="" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Braço Direito (cm)</mat-label>
+            <input matInput type="text" formControlName="bracoDireito" mask="separator.2" thousandSeparator="" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Braço Esquerdo (cm)</mat-label>
+            <input matInput type="text" formControlName="bracoEsquerdo" mask="separator.2" thousandSeparator="" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Coxa Direita (cm)</mat-label>
+            <input matInput type="text" formControlName="coxaDireita" mask="separator.2" thousandSeparator="" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Coxa Esquerda (cm)</mat-label> <!-- Corrected closing tag -->
+            <input matInput type="text" formControlName="coxaEsquerda" mask="separator.2" thousandSeparator="" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Peitoral (cm)</mat-label>
+            <input matInput type="text" formControlName="peitoral" mask="separator.2" thousandSeparator="" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Abdômen (cm)</mat-label>
+            <input matInput type="text" formControlName="abdomem" mask="separator.2" thousandSeparator="" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Abdominal (cm)</mat-label>
+            <input matInput type="text" formControlName="abdominal" mask="separator.2" thousandSeparator="" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Supra-Ilíaca (mm)</mat-label>
+            <input matInput type="text" formControlName="suprailiaca" mask="separator.2" thousandSeparator="" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Subescapular (mm)</mat-label> <!-- Corrected closing tag -->
+            <input matInput type="text" formControlName="subescapular" mask="separator.2" thousandSeparator="" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Tríceps (mm)</mat-label>
+            <input matInput type="text" formControlName="triceps" mask="separator.2" thousandSeparator="" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Axilar Média (mm)</mat-label>
+            <input matInput type="text" formControlName="axilar" mask="separator.2" thousandSeparator="" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Tórax (cm)</mat-label>
+            <input matInput type="text" formControlName="torax" mask="separator.2" thousandSeparator="" />
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+    </div> <!-- Fim do .dashboard-main-sections -->
+
+    <mat-divider></mat-divider>
+
+    <!-- Seção de Upload de Foto -->
+    <mat-card class="dashboard-card">
+      <mat-card-header>
+        <mat-card-title>Upload de Foto</mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="form-section">
+        <input type="file" (change)="onFileSelected($event)" accept="image/*" />
+        <p *ngIf="selectedFile">Arquivo pronto para upload: {{ selectedFile.name }}</p>
+        <p *ngIf="!selectedFile">Nenhum arquivo selecionado.</p>
+        <!-- Adicione um botão de upload separado se a lógica for assíncrona ou complexa -->
+        <!-- <button mat-raised-button color="accent" [disabled]="!selectedFile">
+          <mat-icon>cloud_upload</mat-icon> Fazer Upload
+        </button> -->
+      </mat-card-content>
+    </mat-card>
+
+
+    <!-- Botões de Ação para o Formulário Principal -->
     <div class="form-actions">
-      <button mat-raised-button color="primary" type="submit" [disabled]="userForm.invalid">
+      <button mat-raised-button color="primary" type="submit" [disabled]="userForm.invalid || measureForm.invalid">
         Salvar Alterações
       </button>
       <button mat-stroked-button type="button" (click)="cancel()">

@@ -1,13 +1,14 @@
 .user-edit-container {
-  max-width: 600px;
-  margin: 32px auto;
+  width: 100%;
   padding: 32px;
+  margin: 32px auto;
   background-color: var(--mat-card-background-color, #fff);
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   gap: 20px;
+  box-sizing: border-box;
 
   h2 {
     text-align: center;
@@ -19,12 +20,68 @@
 
   form {
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Organiza as principais seções verticalmente */
+    gap: 20px; /* Espaçamento entre as seções principais (dados, medidas/upload, botões) */
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Novo contêiner para as seções de Dados Pessoais e Medidas */
+  .dashboard-main-sections {
+    display: grid;
+    grid-template-columns: 1fr; /* Padrão para telas menores: uma coluna */
+    gap: 20px; /* Espaçamento entre os cards quando empilhados */
+    width: 100%;
+    box-sizing: border-box;
+
+    /* Media query para telas maiores: 1/3 e 2/3 */
+    @media (min-width: 960px) { /* Ajuste este breakpoint conforme necessário */
+      grid-template-columns: 1fr 2fr; /* 1/3 para o primeiro card, 2/3 para o segundo */
+      gap: 24px; /* Espaçamento entre os cards quando lado a lado */
+    }
+  }
+
+  .dashboard-card {
+    margin-bottom: 0; /* Gerenciado pelo gap do grid/flex */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 24px;
+    /* A largura agora será gerenciada pelo grid-template-columns do .dashboard-main-sections */
+    box-sizing: border-box;
+
+    mat-card-header {
+      margin-bottom: 16px;
+      padding: 0;
+    }
+
+    mat-card-title {
+      font-size: 1.5em;
+      color: #555;
+      font-weight: 600;
+    }
+
+    mat-card-content {
+      padding: 0;
+    }
+  }
+
+  .form-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 16px;
+    padding-top: 16px;
   }
 
   .full-width-input {
-    width: 100%;
+    grid-column: 1 / -1;
+  }
+
+  .measures-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  mat-divider {
+    margin: 20px 0;
   }
 
   .form-actions {
@@ -37,6 +94,7 @@
       height: 48px;
       font-size: 1.1em;
       line-height: 1;
+      padding: 0 24px;
     }
   }
 
@@ -45,12 +103,23 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 200px; /* Garante que o spinner tenha espaço */
+    min-height: 300px;
     color: #555;
   }
 }
 
-@media (max-width: 600px) {
+/* ------------------------------------------------------------- */
+/* MEDIA QUERIES FOR RESPONSIVENESS                           */
+/* ------------------------------------------------------------- */
+
+@media (max-width: 1024px) {
+  .user-edit-container {
+    padding: 24px;
+    margin: 16px;
+  }
+}
+
+@media (max-width: 768px) {
   .user-edit-container {
     margin: 16px;
     padding: 24px;
@@ -62,8 +131,32 @@
     font-size: 1.8em;
   }
 
+  /* .dashboard-main-sections já lida com 1fr em telas menores */
+  .form-section {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-card {
+    padding: 16px;
+  }
+
   .form-actions {
     flex-direction: column;
     gap: 10px;
+  }
+
+  button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-edit-container {
+    margin: 8px;
+    padding: 16px;
+  }
+
+  h2 {
+    font-size: 1.5em;
   }
 }
