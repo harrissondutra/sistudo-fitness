@@ -10,6 +10,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 
+// Importar NgxMaskDirective
+import { NgxMaskDirective } from 'ngx-mask'; // Importe a diretiva
+
 
 @Component({
   selector: 'app-user-registration',
@@ -19,7 +22,8 @@ import { MatButtonModule } from '@angular/material/button';
     CommonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    NgxMaskDirective // Adicione a diretiva NgxMask aqui
   ],
   templateUrl: './user-registration.component.html',
   styleUrls: ['./user-registration.component.scss']

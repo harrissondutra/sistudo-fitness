@@ -24,7 +24,8 @@
     <!-- Campo CPF -->
     <mat-form-field appearance="outline" class="full-width-input">
       <mat-label>CPF (apenas números)</mat-label>
-      <input matInput type="text" formControlName="cpf" placeholder="Ex: 12345678900" />
+      <!-- Máscara para CPF: 000.000.000-00 -->
+      <input matInput type="text" formControlName="cpf" placeholder="Ex: 123.456.789-00" mask="000.000.000-00" />
       <mat-hint>11 dígitos numéricos</mat-hint>
       <mat-error *ngIf="userForm.get('cpf')?.invalid && userForm.get('cpf')?.touched">
         <span *ngIf="userForm.get('cpf')?.errors?.['required']">CPF é obrigatório.</span>
@@ -35,7 +36,8 @@
     <!-- Campo Peso -->
     <mat-form-field appearance="outline" class="full-width-input">
       <mat-label>Peso (kg)</mat-label>
-      <input matInput type="number" formControlName="weight" />
+      <!-- Máscara para Peso: até 3 dígitos, opcionalmente 2 decimais -->
+      <input matInput type="text" formControlName="weight" mask="000.00" [dropSpecialCharacters]="false" />
       <mat-error *ngIf="userForm.get('weight')?.invalid && userForm.get('weight')?.touched">
         <span *ngIf="userForm.get('weight')?.errors?.['required']">Peso é obrigatório.</span>
         <span *ngIf="userForm.get('weight')?.errors?.['min'] || userForm.get('weight')?.errors?.['max']">
@@ -46,12 +48,13 @@
 
     <!-- Campo Altura -->
     <mat-form-field appearance="outline" class="full-width-input">
-      <mat-label>Altura (cm)</mat-label>
-      <input matInput type="number" formControlName="height" step="0.01" />
+      <mat-label>Altura (cm)</mat-label> <!-- Rótulo correto para (cm) -->
+      <!-- Máscara para Altura: até 3 dígitos, opcionalmente 2 decimais -->
+      <input matInput type="text" formControlName="height" mask="000.00" [dropSpecialCharacters]="false" />
       <mat-error *ngIf="userForm.get('height')?.invalid && userForm.get('height')?.touched">
         <span *ngIf="userForm.get('height')?.errors?.['required']">Altura é obrigatória.</span>
         <span *ngIf="userForm.get('height')?.errors?.['min'] || userForm.get('height')?.errors?.['max']">
-          Altura deve ser entre 1 e 3 metros.
+          Altura deve ser entre 50 e 300 cm. <!-- Mensagem de erro corrigida para (cm) -->
         </span>
       </mat-error>
     </mat-form-field>
