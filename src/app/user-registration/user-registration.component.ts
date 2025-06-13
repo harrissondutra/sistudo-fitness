@@ -9,9 +9,10 @@ import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'; // Importe MatSnackBar e MatSnackBarModule
 
 // Importar NgxMaskDirective
-import { NgxMaskDirective } from 'ngx-mask'; // Importe a diretiva
+import { NgxMaskDirective } from 'ngx-mask';
 
 
 @Component({
@@ -23,7 +24,8 @@ import { NgxMaskDirective } from 'ngx-mask'; // Importe a diretiva
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    NgxMaskDirective // Adicione a diretiva NgxMask aqui
+    MatSnackBarModule, // Adicionar MatSnackBarModule
+    NgxMaskDirective
   ],
   templateUrl: './user-registration.component.html',
   styleUrls: ['./user-registration.component.scss']
@@ -34,7 +36,8 @@ export class UserRegistrationComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar // Injetar MatSnackBar
   ) { }
 
   ngOnInit(): void {
@@ -75,7 +78,7 @@ export class UserRegistrationComponent implements OnInit {
       this.userService.createUser(newUser).subscribe({
         next: (response) => {
           console.log('Usuário cadastrado com sucesso!', response);
-          alert('Usuário cadastrado com sucesso!');
+          this.snackBar.open('Usuário cadastrado com sucesso!', 'Fechar', { duration: 3000 }); // Substitui alert()
           // Em vez de apenas reset(), reinicializa o formulário para um estado limpo
           this.initializeForm();
           // Redireciona se a rota existir, senão remova esta linha ou ajuste para a rota desejada
@@ -83,11 +86,11 @@ export class UserRegistrationComponent implements OnInit {
         },
         error: (error) => {
           console.error('Erro ao cadastrar usuário:', error);
-          alert('Erro ao cadastrar usuário. Verifique o console para mais detalhes.');
+          this.snackBar.open('Erro ao cadastrar usuário. Verifique o console para mais detalhes.', 'Fechar', { duration: 5000 }); // Substitui alert()
         }
       });
     } else {
-      alert('Por favor, preencha todos os campos obrigatórios corretamente.');
+      this.snackBar.open('Por favor, preencha todos os campos obrigatórios corretamente.', 'Fechar', { duration: 3000 }); // Substitui alert()
       // Marca todos os controles como tocados para exibir mensagens de erro
       this.userForm.markAllAsTouched();
     }

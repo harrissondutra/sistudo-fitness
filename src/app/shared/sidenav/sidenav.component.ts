@@ -32,6 +32,13 @@ export class SidenavComponent {
   // Refatorado para corresponder às rotas definidas em seu app.routes.ts
   menuItems: MenuItem[] = [
     {
+      title: 'Usuários',
+      links: [
+        { label: 'Listar Usuários', route: '/users-list' },   // Nova rota para listar usuários
+        { label: 'Criar Novo Usuário', route: '/register' }, // Rota existente
+      ]
+    },
+    {
       title: 'Navegação Principal',
       links: [
         { label: 'Home', route: '/' },
@@ -40,13 +47,7 @@ export class SidenavComponent {
         { label: 'Sair', route: '/logout' }
       ]
     },
-    {
-      title: 'Usuários',
-      links: [
-        { label: 'Listar Usuários', route: '/users-list' },   // Nova rota para listar usuários
-        { label: 'Criar Novo Usuário', route: '/register' }, // Rota existente
-      ]
-    }
+
   ];
 
   onLinkClick() {

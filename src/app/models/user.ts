@@ -1,8 +1,8 @@
 export interface User {
+  id?: number; // Opcional, pois é gerado pelo backend
   name: string;
   email: string;
   cpf: string;
-  weight?: number; // Opcional, dependendo da sua lógica de negócio
-  height?: number; // Opcional
-
+  weight?: number | null; // Agora permite 'null' explicitamente
+  height?: number | null; // Agora permite 'null' explicitamente
 }

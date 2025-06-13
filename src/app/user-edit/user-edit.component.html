@@ -1,7 +1,13 @@
-<div class="registration-container">
-  <h2>Cadastro de Usuário</h2>
-  <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+<div class="user-edit-container mat-elevation-z2">
+  <h2>Editar Usuário</h2>
 
+  <div *ngIf="isLoading" class="loading-spinner">
+    <!-- Adicionar um spinner do Material se quiser -->
+    <mat-spinner></mat-spinner>
+    <p>Carregando dados do usuário...</p>
+  </div>
+
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
     <!-- Campo Nome -->
     <mat-form-field appearance="outline" class="full-width-input">
       <mat-label>Nome</mat-label>
@@ -21,10 +27,11 @@
       </mat-error>
     </mat-form-field>
 
-    <!-- Campo CPF -->
+    <!-- Campo CPF (normalmente CPF não é editável após o cadastro, mas mantido conforme a estrutura) -->
     <mat-form-field appearance="outline" class="full-width-input">
       <mat-label>CPF (apenas números)</mat-label>
-      <input matInput type="text" formControlName="cpf" placeholder="Ex: 123.456.789-00" mask="000.000.000-00" />
+      <!-- CORREÇÃO AQUI: Altera [dropSpecialCharacters]="false" para [dropSpecialCharacters]="true" -->
+      <input matInput type="text" formControlName="cpf" mask="000.000.000-00" [dropSpecialCharacters]="true" />
       <mat-hint>11 dígitos numéricos</mat-hint>
       <mat-error *ngIf="userForm.get('cpf')?.invalid && userForm.get('cpf')?.touched">
         <span *ngIf="userForm.get('cpf')?.errors?.['required']">CPF é obrigatório.</span>
@@ -35,7 +42,7 @@
     <!-- Campo Peso -->
     <mat-form-field appearance="outline" class="full-width-input">
       <mat-label>Peso (kg)</mat-label>
-      <!-- Máscara para peso: 'separator.2' para 2 casas decimais, thousandSeparator vazio para evitar vírgulas de milhar -->
+      <!-- Máscara para peso: 'separator.2' para 2 casas decimais, thousandSeparator vazio -->
       <input matInput type="text" formControlName="weight" mask="separator.2" thousandSeparator="" />
       <mat-hint>Utilize "." Pontos, para separação de peso</mat-hint>
       <mat-error *ngIf="userForm.get('weight')?.invalid && userForm.get('weight')?.touched">
@@ -59,9 +66,14 @@
       </mat-error>
     </mat-form-field>
 
-    <!-- Botão de Cadastro -->
-    <button mat-raised-button color="primary" type="submit" [disabled]="userForm.invalid">
-      Cadastrar
-    </button>
+    <!-- Botões de Ação -->
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="userForm.invalid">
+        Salvar Alterações
+      </button>
+      <button mat-stroked-button type="button" (click)="cancel()">
+        Cancelar
+      </button>
+    </div>
   </form>
 </div>

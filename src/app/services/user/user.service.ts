@@ -26,4 +26,9 @@ export class UserService {
     return this.http.get<User[]>(`${this.baseUrl}/listAll`);
   }
 
+   updateUser(user: User): Observable<User> {
+    // Note que o user.id é usado no path da URL aqui
+    return this.http.put<User>(`${this.baseUrl}/update/${user.id}`, user);
+  }
+
 }
