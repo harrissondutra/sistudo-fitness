@@ -1,0 +1,60 @@
+/* user-registration.component.scss */
+
+.registration-container {
+  max-width: 500px;
+  margin: 50px auto; /* Centraliza o card */
+  padding: 32px; /* Aumenta o padding para um visual mais espaçoso e "card-like" */
+  background-color: var(--mat-card-background-color, #fff); /* Fundo branco para o card do formulário */
+  border-radius: 8px; /* Cantos levemente arredondados */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra mais suave e proeminente */
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Espaçamento entre os elementos principais (título, formulário) */
+}
+
+h2 {
+  text-align: center; /* Centraliza o título */
+  color: var(--mat-typography-display-medium-color, #3f51b5); /* Cor primária do Material */
+  font-size: 2em; /* Tamanho de fonte maior para o título */
+  margin-bottom: 24px; /* Mais espaço abaixo do título */
+  font-weight: 500; /* Semibold, típico para títulos Material */
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Espaçamento entre os campos do formulário (mat-form-field) */
+}
+
+.full-width-input {
+  width: 100%; /* Garante que os mat-form-field ocupem toda a largura disponível */
+}
+
+/* Estilo para o botão de submit (mat-raised-button) */
+button[type="submit"] {
+  margin-top: 24px; /* Mais espaço acima do botão para separá-lo dos campos */
+  height: 48px; /* Altura padrão para botões do Material para um toque confortável */
+  font-size: 1.1em; /* Tamanho da fonte do botão para clareza */
+  line-height: 1; /* Alinha o texto do botão verticalmente */
+}
+
+/* ------------------------------------------------------------- */
+/* MEDIA QUERIES PARA RESPONSIVIDADE                           */
+/* ------------------------------------------------------------- */
+
+@media (max-width: 600px) { /* Para telas pequenas, como celulares */
+  .registration-container {
+    margin: 20px 16px; /* Reduz a margem lateral em telas menores */
+    padding: 24px; /* Reduz o padding interno */
+    box-shadow: none; /* Remove a sombra em telas muito pequenas para um visual mais limpo */
+    border-radius: 0; /* Opcional: remove borda arredondada se preferir full-width */
+  }
+
+  h2 {
+    font-size: 1.8em; /* Ajusta o tamanho do título */
+  }
+
+  button[type="submit"] {
+    font-size: 1em; /* Ajusta o tamanho da fonte do botão */
+  }
+}

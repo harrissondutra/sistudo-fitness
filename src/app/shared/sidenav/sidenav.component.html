@@ -1,44 +1,16 @@
 <mat-nav-list>
-  <mat-expansion-panel>
+  <mat-expansion-panel *ngFor="let item of menuItems">
     <mat-expansion-panel-header>
       <mat-panel-title>
-        Exercícios
+        {{ item.title }}
       </mat-panel-title>
     </mat-expansion-panel-header>
-    <a mat-list-item (click)="onLinkClick()">Listar</a>
-    <a mat-list-item (click)="onLinkClick()">Criar</a>
-    <a mat-list-item (click)="onLinkClick()">Listar Categorias</a>
-  </mat-expansion-panel>
 
-  <mat-expansion-panel>
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        Categoria de Exercício
-      </mat-panel-title>
-    </mat-expansion-panel-header>
-    <a mat-list-item (click)="onLinkClick()">Listar</a>
-    <a mat-list-item (click)="onLinkClick()">Criar</a>
-  </mat-expansion-panel>
-
-  <mat-expansion-panel>
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        Medidas
-      </mat-panel-title>
-    </mat-expansion-panel-header>
-    <a mat-list-item (click)="onLinkClick()">Buscar Medidas</a>
-    <a mat-list-item (click)="onLinkClick()">Criar</a>
-    <a mat-list-item (click)="onLinkClick()">Alterar</a>
-    <a mat-list-item (click)="onLinkClick()">Apagar</a>
-  </mat-expansion-panel>
-
-  <mat-expansion-panel>
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        Usuários
-      </mat-panel-title>
-    </mat-expansion-panel-header>
-    <a mat-list-item (click)="onLinkClick()">Listar</a>
-    <a mat-list-item (click)="onLinkClick()">Buscar</a>
+    <a mat-list-item
+       *ngFor="let link of item.links"
+       [routerLink]="link.route"
+       (click)="onLinkClick()">
+      {{ link.label }}
+    </a>
   </mat-expansion-panel>
 </mat-nav-list>

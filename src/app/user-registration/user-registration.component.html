@@ -1,0 +1,64 @@
+<div class="registration-container">
+  <h2>Cadastro de Usuário</h2>
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+
+    <!-- Campo Nome -->
+    <mat-form-field appearance="outline" class="full-width-input">
+      <mat-label>Nome</mat-label>
+      <input matInput type="text" formControlName="name" />
+      <mat-error *ngIf="userForm.get('name')?.invalid && userForm.get('name')?.touched">
+        Nome é obrigatório.
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Campo Email -->
+    <mat-form-field appearance="outline" class="full-width-input">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" formControlName="email" />
+      <mat-error *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">
+        <span *ngIf="userForm.get('email')?.errors?.['required']">Email é obrigatório.</span>
+        <span *ngIf="userForm.get('email')?.errors?.['email']">Email inválido.</span>
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Campo CPF -->
+    <mat-form-field appearance="outline" class="full-width-input">
+      <mat-label>CPF (apenas números)</mat-label>
+      <input matInput type="text" formControlName="cpf" placeholder="Ex: 12345678900" />
+      <mat-hint>11 dígitos numéricos</mat-hint>
+      <mat-error *ngIf="userForm.get('cpf')?.invalid && userForm.get('cpf')?.touched">
+        <span *ngIf="userForm.get('cpf')?.errors?.['required']">CPF é obrigatório.</span>
+        <span *ngIf="userForm.get('cpf')?.errors?.['pattern']">CPF deve conter 11 dígitos.</span>
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Campo Peso -->
+    <mat-form-field appearance="outline" class="full-width-input">
+      <mat-label>Peso (kg)</mat-label>
+      <input matInput type="number" formControlName="weight" />
+      <mat-error *ngIf="userForm.get('weight')?.invalid && userForm.get('weight')?.touched">
+        <span *ngIf="userForm.get('weight')?.errors?.['required']">Peso é obrigatório.</span>
+        <span *ngIf="userForm.get('weight')?.errors?.['min'] || userForm.get('weight')?.errors?.['max']">
+          Peso deve ser entre 30 e 300 kg.
+        </span>
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Campo Altura -->
+    <mat-form-field appearance="outline" class="full-width-input">
+      <mat-label>Altura (cm)</mat-label>
+      <input matInput type="number" formControlName="height" step="0.01" />
+      <mat-error *ngIf="userForm.get('height')?.invalid && userForm.get('height')?.touched">
+        <span *ngIf="userForm.get('height')?.errors?.['required']">Altura é obrigatória.</span>
+        <span *ngIf="userForm.get('height')?.errors?.['min'] || userForm.get('height')?.errors?.['max']">
+          Altura deve ser entre 1 e 3 metros.
+        </span>
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Botão de Cadastro -->
+    <button mat-raised-button color="primary" type="submit" [disabled]="userForm.invalid">
+      Cadastrar
+    </button>
+  </form>
+</div>

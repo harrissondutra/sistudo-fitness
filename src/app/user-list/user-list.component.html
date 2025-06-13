@@ -1,0 +1,97 @@
+<div class="user-list-container mat-elevation-z2">
+  <h2>Lista de Usuários</h2>
+
+  <!-- Barra de Ações com Campo de Busca e Botões -->
+  <!-- Aumentar flexibilidade e espaçamento entre os elementos -->
+  <div class="action-bar">
+    <!-- Campo de Busca -->
+    <!-- Garante que o campo de busca seja responsivo e ocupe o espaço disponível -->
+    <mat-form-field appearance="outline" class="search-input">
+      <mat-label>Buscar Usuário</mat-label>
+      <input matInput [formControl]="searchControl" placeholder="Digite para buscar">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <!-- Botões de Ação Global -->
+    <!-- Agrupamento e espaçamento para os botões -->
+    <div class="action-buttons">
+      <button mat-raised-button color="primary" (click)="createUser()">
+        <mat-icon>add</mat-icon> Novo Usuário
+      </button>
+      <!-- O botão de busca separado que causava o erro foi removido,
+           pois a busca agora é feita pelo campo de input acima. -->
+    </div>
+  </div>
+
+  <!-- Contêiner da Tabela (com sombra e elevação do Material) -->
+  <!-- Adiciona uma elevação sutil para um efeito de card mais moderno -->
+  <div class="mat-elevation-z1 user-table-wrapper">
+    <table mat-table [dataSource]="dataSource">
+
+      <!-- Coluna: ID -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> ID </th>
+        <td mat-cell *matCellDef="let user"> {{user.id}} </td>
+      </ng-container>
+
+      <!-- Coluna: Nome -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Nome </th>
+        <td mat-cell *matCellDef="let user"> {{user.name}} </td>
+      </ng-container>
+
+      <!-- Coluna: Email -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef> Email </th>
+        <td mat-cell *matCellDef="let user"> {{user.email}} </td>
+      </ng-container>
+
+      <!-- Coluna: CPF -->
+      <ng-container matColumnDef="cpf">
+        <th mat-header-cell *matHeaderCellDef> CPF </th>
+        <td mat-cell *matCellDef="let user"> {{user.cpf}} </td>
+      </ng-container>
+
+      <!-- Coluna: Peso -->
+      <ng-container matColumnDef="weight">
+        <th mat-header-cell *matHeaderCellDef> Peso (kg) </th>
+        <td mat-cell *matCellDef="let user"> {{user.weight | number:'1.2-2'}} </td>
+      </ng-container>
+
+      <!-- Coluna: Altura -->
+      <ng-container matColumnDef="height">
+        <th mat-header-cell *matHeaderCellDef> Altura (m) </th>
+        <td mat-cell *matCellDef="let user"> {{user.height | number:'1.2-2'}} </td>
+      </ng-container>
+
+      <!-- Coluna: Ações (Editar, Apagar) -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Ações </th>
+        <td mat-cell *matCellDef="let user">
+          <button mat-icon-button color="accent" (click)="editUser(user.id)" title="Editar Usuário">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteUser(user.id)" title="Apagar Usuário">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <!-- Definições de cabeçalho e linhas da tabela -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <!-- Mensagem quando não há dados -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">Nenhum usuário encontrado.</td>
+      </tr>
+    </table>
+
+    <!-- Componente de Paginador -->
+    <mat-paginator [length]="totalUsers"
+                   [pageSize]="pageSize"
+                   [pageSizeOptions]="[5, 10, 25, 100]"
+                   aria-label="Selecione a página de usuários">
+    </mat-paginator>
+  </div>
+</div>
