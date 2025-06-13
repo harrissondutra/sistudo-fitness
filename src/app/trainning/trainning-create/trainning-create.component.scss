@@ -1,0 +1,82 @@
+/* trainning-create.component.scss */
+
+.trainning-create-container {
+  max-width: 600px; /* Largura ligeiramente maior para o formulário */
+  margin: 50px auto;
+  padding: 32px;
+  background-color: var(--mat-card-background-color, #fff);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+h2 {
+  text-align: center;
+  color: var(--mat-typography-display-medium-color, #3f51b5);
+  font-size: 2em;
+  margin-bottom: 24px;
+  font-weight: 500;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Espaçamento entre os campos */
+}
+
+.full-width-input {
+  width: 100%;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end; /* Alinha os botões à direita */
+  gap: 16px;
+  margin-top: 24px;
+
+  button {
+    height: 48px;
+    font-size: 1.1em;
+    line-height: 1;
+    padding: 0 24px;
+  }
+}
+
+/* ------------------------------------------------------------- */
+/* MEDIA QUERIES PARA RESPONSIVIDADE                           */
+/* ------------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  .trainning-create-container {
+    margin: 20px 16px;
+    padding: 24px;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  h2 {
+    font-size: 1.8em;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch; /* Botões ocupam a largura total em telas menores */
+  }
+
+  button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .trainning-create-container {
+    margin: 8px;
+    padding: 16px;
+  }
+
+  h2 {
+    font-size: 1.5em;
+  }
+}

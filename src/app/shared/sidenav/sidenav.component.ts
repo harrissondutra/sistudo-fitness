@@ -29,25 +29,25 @@ interface MenuItem {
 export class SidenavComponent {
   @Output() linkClicked = new EventEmitter<void>();
 
-  // Refatorado para corresponder às rotas definidas em seu app.routes.ts
-  menuItems: MenuItem[] = [
+  // Novo item para o link Home direto
+  homeLink = { label: 'Home', route: '/' };
+
+  // Itens de menu que terão painéis de expansão (anteriormente 'menuItems')
+  expandableMenuItems: MenuItem[] = [
     {
       title: 'Usuários',
       links: [
-        { label: 'Listar Usuários', route: '/users-list' },   // Nova rota para listar usuários
-        { label: 'Criar Novo Usuário', route: '/register' }, // Rota existente
+        { label: 'Listar Usuários', route: '/users-list' },
+        { label: 'Criar Novo Usuário', route: '/register' },
       ]
     },
     {
-      title: 'Navegação Principal',
+      title: 'Treinos',
       links: [
-        { label: 'Home', route: '/' },
-        { label: 'Perfil', route: '/profile' },
-        { label: 'Configurações', route: '/settings' },
-        { label: 'Sair', route: '/logout' }
+        { label: 'Listar Treinos', route: '/trainings-list' },
+        { label: 'Criar Novo Treino', route: '/trainings-create' },
       ]
     },
-
   ];
 
   onLinkClick() {

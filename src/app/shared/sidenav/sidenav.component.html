@@ -1,5 +1,12 @@
 <mat-nav-list>
-  <mat-expansion-panel *ngFor="let item of menuItems">
+  <!-- Link Home direto -->
+  <a mat-list-item [routerLink]="homeLink.route" (click)="onLinkClick()">
+    <mat-icon matListItemIcon>home</mat-icon> <!-- Ícone para Home -->
+    {{ homeLink.label }}
+  </a>
+
+  <!-- Painéis de expansão para os outros itens de menu -->
+  <mat-expansion-panel *ngFor="let item of expandableMenuItems" [expanded]="true" hideToggle>
     <mat-expansion-panel-header>
       <mat-panel-title>
         {{ item.title }}
@@ -10,6 +17,13 @@
        *ngFor="let link of item.links"
        [routerLink]="link.route"
        (click)="onLinkClick()">
+      <!-- Lógica para ícones: ajustada para os links internos -->
+      <mat-icon matListItemIcon>{{
+        link.label === 'Listar Usuários' ? 'people' :
+        (link.label === 'Criar Novo Usuário' ? 'person_add' :
+        (link.label === 'Listar Treinos' ? 'fitness_center' :
+        (link.label === 'Criar Novo Treino' ? 'add_box' : '')))
+      }}</mat-icon>
       {{ link.label }}
     </a>
   </mat-expansion-panel>

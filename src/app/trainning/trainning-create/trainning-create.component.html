@@ -1,0 +1,73 @@
+<div class="trainning-create-container mat-elevation-z2">
+  <h2>Criar Novo Treino</h2>
+
+  <form [formGroup]="trainingForm" (ngSubmit)="onSubmit()">
+    <!-- Campo Nome do Treino -->
+    <mat-form-field appearance="outline" class="full-width-input">
+      <mat-label>Nome do Treino</mat-label>
+      <input matInput type="text" formControlName="name" />
+      <mat-error *ngIf="trainingForm.get('name')?.invalid && trainingForm.get('name')?.touched">
+        Nome é obrigatório.
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Campo Descrição -->
+    <mat-form-field appearance="outline" class="full-width-input">
+      <mat-label>Descrição</mat-label>
+      <textarea matInput formControlName="description" rows="3"></textarea>
+    </mat-form-field>
+
+    <!-- Campo Duração (Minutos) -->
+    <mat-form-field appearance="outline" class="full-width-input">
+      <mat-label>Duração (minutos)</mat-label>
+      <input matInput type="number" formControlName="durationMinutes" />
+      <mat-error *ngIf="trainingForm.get('durationMinutes')?.invalid && trainingForm.get('durationMinutes')?.touched">
+        Duração deve ser um número entre 1 e 1000.
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Campo Nível de Intensidade -->
+    <mat-form-field appearance="outline" class="full-width-input">
+      <mat-label>Nível de Intensidade</mat-label>
+      <mat-select formControlName="intensityLevel">
+        <mat-option *ngFor="let level of intensityLevels" [value]="level">
+          {{ level }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="trainingForm.get('intensityLevel')?.invalid && trainingForm.get('intensityLevel')?.touched">
+        Nível de intensidade é obrigatório.
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Campo Data -->
+    <mat-form-field appearance="outline" class="full-width-input">
+      <mat-label>Data do Treino</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="date" readonly>
+      <mat-hint>DD/MM/AAAA</mat-hint>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+      <mat-error *ngIf="trainingForm.get('date')?.invalid && trainingForm.get('date')?.touched">
+        Data é obrigatória.
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Campo User ID (Pode ser um campo oculto ou preenchido automaticamente em um cenário real) -->
+    <mat-form-field appearance="outline" class="full-width-input">
+      <mat-label>ID do Usuário</mat-label>
+      <input matInput type="number" formControlName="userId" />
+      <mat-error *ngIf="trainingForm.get('userId')?.invalid && trainingForm.get('userId')?.touched">
+        ID do usuário é obrigatório.
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Botões de Ação -->
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="trainingForm.invalid">
+        Criar Treino
+      </button>
+      <button mat-stroked-button type="button" (click)="cancel()">
+        Cancelar
+      </button>
+    </div>
+  </form>
+</div>

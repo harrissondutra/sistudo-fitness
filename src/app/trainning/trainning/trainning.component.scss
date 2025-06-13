@@ -1,0 +1,122 @@
+/* trainning.component.scss */
+
+.trainning-list-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 24px auto;
+  background-color: var(--mat-card-background-color, #fff);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    text-align: center;
+    color: var(--mat-typography-display-medium-color, #3f51b5);
+    font-size: 2em;
+    margin-bottom: 24px;
+    font-weight: 500;
+  }
+
+  .action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .search-input {
+    flex-grow: 1;
+    max-width: 400px;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 16px;
+  }
+
+  .trainning-table-wrapper {
+    overflow-x: auto;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th.mat-header-cell {
+    background-color: #f0f0f0;
+    font-weight: 600;
+    color: #333;
+    padding: 12px 16px;
+    text-align: left;
+  }
+
+  td.mat-cell {
+    padding: 8px 16px;
+    border-bottom: 1px solid #eee;
+  }
+
+  tr.mat-row:last-child td.mat-cell {
+    border-bottom: none;
+  }
+
+  mat-paginator {
+    background-color: var(--mat-card-background-color, #fff);
+    border-top: 1px solid #eee;
+  }
+
+  .mat-no-data-row {
+    text-align: center;
+    font-style: italic;
+    color: #888;
+    padding: 16px;
+  }
+}
+
+/* ------------------------------------------------------------- */
+/* MEDIA QUERIES PARA RESPONSIVIDADE                           */
+/* ------------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  .trainning-list-container {
+    padding: 16px;
+    margin: 16px;
+  }
+
+  .action-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .trainning-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 700px;
+  }
+
+  h2 {
+    font-size: 1.8em;
+  }
+}
+
+@media (max-width: 480px) {
+  .trainning-list-container {
+    margin: 8px;
+    padding: 12px;
+  }
+
+  h2 {
+    font-size: 1.5em;
+  }
+}
