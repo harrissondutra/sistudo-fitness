@@ -1,10 +1,10 @@
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav
-    #sidenav
-    [mode]="(isHandset$ | async) ? 'over' : 'side'"
-    [opened]="true">
-    <app-sidenav (linkClicked)="onSidenavLinkClicked()"></app-sidenav>
-  </mat-sidenav>
+  #sidenav
+  [mode]="(isHandset$ | async) ? 'over' : 'side'"
+  [opened]="!(isHandset$ | async)">
+  <app-sidenav (linkClicked)="onSidenavLinkClicked()"></app-sidenav>
+</mat-sidenav>
   <mat-sidenav-content>
     <app-toolbar [sidenav]="sidenav"></app-toolbar>
     <main class="main-content">
