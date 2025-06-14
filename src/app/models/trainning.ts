@@ -5,4 +5,5 @@ export interface Trainning {
   name: string;
   exercises: Exercise[]; // Lista de exercícios
   userId: number; // ID do usuário associado ao treino
+  active: boolean; // Indica se o treino está ativo ou não
 }

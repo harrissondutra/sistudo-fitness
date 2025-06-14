@@ -5,9 +5,11 @@ import { SettingsComponent } from './settings/settings.component';
 import { LogoutComponent } from './logout/logout.component';
 import { UserRegistrationComponent } from './user-registration/user-registration.component';
 import { UserListComponent } from './user-list/user-list.component';
-import { UserEditComponent } from './user-edit/user-edit.component'; // Importar o novo componente
+import { UserEditComponent } from './user-edit/user-edit.component';
+import { TrainningCreateComponent } from '../app/trainning/trainning-create/trainning-create.component'; // Importe o componente de criação de treino
 import { TrainningComponent } from './trainning/trainning/trainning.component';
-import { TrainningCreateComponent } from './trainning/trainning-create/trainning-create.component';
+// import { TrainningEditComponent } from './trainning-edit/trainning-edit.component'; // **Assumindo que você terá um componente de edição de treino**
+
 
 export const routes: Routes = [
   {
@@ -20,9 +22,11 @@ export const routes: Routes = [
       { path: 'register', component: UserRegistrationComponent },
       { path: 'users-list', component: UserListComponent },
       { path: 'users-edit/:id', component: UserEditComponent },
-      { path: 'trainning', component: TrainningComponent},
-      { path: 'trainning-create', component: TrainningCreateComponent }, // Rota para criar novo treino
-
+      { path: 'trainning-create', component: TrainningCreateComponent }, // **Nova rota para criar treino**
+      { path: 'trainning', component: TrainningComponent}
+      // { path: 'trainings-edit/:id', component: TrainningEditComponent }, // **Nova rota para editar treino (descomente quando tiver o componente)**
+      // { path: 'users-search', component: UserSearchComponent },
+      // { path: 'users-delete', component: UserDeleteComponent },
     ]
   },
   {

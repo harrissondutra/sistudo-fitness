@@ -44,8 +44,8 @@ export class SidenavComponent {
     {
       title: 'Treinos',
       links: [
-        { label: 'Listar Treinos', route: '/trainings-list' },
-        { label: 'Criar Novo Treino', route: '/trainings-create' },
+        { label: 'Listar Treinos', route: '/trainning' },
+        { label: 'Criar Novo Treino', route: '/trainning-create' },
       ]
     },
   ];

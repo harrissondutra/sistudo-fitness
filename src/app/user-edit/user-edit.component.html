@@ -1,16 +1,17 @@
 <div class="user-edit-container mat-elevation-z2">
-  <h2>Editar Usuário</h2>
+  <!-- Título dinâmico para exibir o nome do usuário -->
+  <h2>{{ userForm.value.name }}</h2>
 
   <div *ngIf="isLoading" class="loading-spinner">
     <mat-spinner></mat-spinner>
     <p>Carregando dados do usuário e medidas...</p>
   </div>
 
-  <form (ngSubmit)="onSubmit()" *ngIf="!isLoading">
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
     <!-- Novo contêiner para o layout de 1/3 e 2/3 -->
     <div class="dashboard-main-sections">
       <!-- Seção de Dados Pessoais (ocupará 1/3 em telas grandes) -->
-      <mat-card class="dashboard-card">
+      <mat-card class="dashboard-card user-data-card"> <!-- Adicionada classe user-data-card para estilização específica -->
         <mat-card-header>
           <mat-card-title>Dados Pessoais</mat-card-title>
         </mat-card-header>
@@ -73,7 +74,7 @@
       </mat-card>
 
       <!-- Seção de Medidas (ocupará 2/3 em telas grandes) -->
-      <mat-card class="dashboard-card">
+      <mat-card class="dashboard-card user-measures-card"> <!-- Adicionada classe user-measures-card para estilização específica -->
         <mat-card-header>
           <mat-card-title>Medidas Corporais</mat-card-title>
         </mat-card-header>
@@ -91,11 +92,11 @@
             <input matInput type="text" formControlName="quadril" mask="separator.2" thousandSeparator="" />
           </mat-form-field>
           <mat-form-field appearance="outline">
-            <mat-label>Panturrilha Direita (cm)</mat-label> <!-- Corrected closing tag -->
+            <mat-label>Panturrilha Direita (cm)</mat-label>
             <input matInput type="text" formControlName="panturrilhaDireita" mask="separator.2" thousandSeparator="" />
           </mat-form-field>
           <mat-form-field appearance="outline">
-            <mat-label>Panturrilha Esquerda (cm)</mat-label> <!-- Corrected closing tag -->
+            <mat-label>Panturrilha Esquerda (cm)</mat-label>
             <input matInput type="text" formControlName="panturrilhaEsquerda" mask="separator.2" thousandSeparator="" />
           </mat-form-field>
           <mat-form-field appearance="outline">
@@ -111,7 +112,7 @@
             <input matInput type="text" formControlName="coxaDireita" mask="separator.2" thousandSeparator="" />
           </mat-form-field>
           <mat-form-field appearance="outline">
-            <mat-label>Coxa Esquerda (cm)</mat-label> <!-- Corrected closing tag -->
+            <mat-label>Coxa Esquerda (cm)</mat-label>
             <input matInput type="text" formControlName="coxaEsquerda" mask="separator.2" thousandSeparator="" />
           </mat-form-field>
           <mat-form-field appearance="outline">
@@ -131,7 +132,7 @@
             <input matInput type="text" formControlName="suprailiaca" mask="separator.2" thousandSeparator="" />
           </mat-form-field>
           <mat-form-field appearance="outline">
-            <mat-label>Subescapular (mm)</mat-label> <!-- Corrected closing tag -->
+            <mat-label>Subescapular (mm)</mat-label>
             <input matInput type="text" formControlName="subescapular" mask="separator.2" thousandSeparator="" />
           </mat-form-field>
           <mat-form-field appearance="outline">
@@ -153,7 +154,7 @@
     <mat-divider></mat-divider>
 
     <!-- Seção de Upload de Foto -->
-    <mat-card class="dashboard-card">
+    <mat-card class="dashboard-card user-photo-upload-card"> <!-- Adicionada classe user-photo-upload-card -->
       <mat-card-header>
         <mat-card-title>Upload de Foto</mat-card-title>
       </mat-card-header>
@@ -168,6 +169,101 @@
       </mat-card-content>
     </mat-card>
 
+    <mat-divider></mat-divider>
+
+    <!-- NOVA SEÇÃO: Listagem de Treinos do Usuário -->
+    <mat-card class="dashboard-card user-trainings-card">
+      <mat-card-header>
+        <mat-card-title>Treinos do Usuário</mat-card-title>
+        <mat-card-subtitle *ngIf="userTrainings.length === 0">Nenhum treino encontrado para este usuário.</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <!-- CORREÇÃO: Adicionado botão "Adicionar Treino" -->
+        <div class="add-training-button-wrapper">
+          <button mat-raised-button color="primary" (click)="createNewTraining()">
+            <mat-icon>add</mat-icon> Adicionar Treino
+          </button>
+        </div>
+
+        <div class="mat-elevation-z1 trainings-table-wrapper" *ngIf="userTrainings.length > 0">
+          <table mat-table [dataSource]="trainingsDataSource">
+
+            <!-- Coluna: ID -->
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef> ID </th>
+              <td mat-cell *matCellDef="let training"> {{training.id}} </td>
+            </ng-container>
+
+            <!-- Coluna: Nome -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef> Nome </th>
+              <td mat-cell *matCellDef="let training"> {{training.name}} </td>
+            </ng-container>
+
+            <!-- Coluna: Descrição -->
+            <ng-container matColumnDef="description">
+              <th mat-header-cell *matHeaderCellDef> Descrição </th>
+              <td mat-cell *matCellDef="let training"> {{training.description || 'N/A'}} </td>
+            </ng-container>
+
+            <!-- Coluna: Duração (Minutos) -->
+            <ng-container matColumnDef="durationMinutes">
+              <th mat-header-cell *matHeaderCellDef> Duração (min) </th>
+              <td mat-cell *matCellDef="let training"> {{training.durationMinutes || 'N/A'}} </td>
+            </ng-container>
+
+            <!-- Coluna: Nível de Intensidade -->
+            <ng-container matColumnDef="intensityLevel">
+              <th mat-header-cell *matHeaderCellDef> Intensidade </th>
+              <td mat-cell *matCellDef="let training"> {{training.intensityLevel || 'N/A'}} </td>
+            </ng-container>
+
+            <!-- Coluna: Data -->
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef> Data </th>
+              <td mat-cell *matCellDef="let training"> {{training.date | date:'shortDate'}} </td>
+            </ng-container>
+
+            <!-- Coluna: Ativo -->
+            <ng-container matColumnDef="active">
+              <th mat-header-cell *matHeaderCellDef> Ativo </th>
+              <td mat-cell *matCellDef="let training">
+                <mat-icon [color]="training.active ? 'primary' : 'warn'">
+                  {{ training.active ? 'check_circle' : 'cancel' }}
+                </mat-icon>
+              </td>
+            </ng-container>
+
+            <!-- Coluna: Ações (Editar, Apagar) -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef> Ações </th>
+              <td mat-cell *matCellDef="let training">
+                <button mat-icon-button color="accent" (click)="editTraining(training.id)" title="Editar Treino">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="deleteTraining(training.id)" title="Apagar Treino">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedTrainingsColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedTrainingsColumns;"></tr>
+
+            <!-- Mensagem quando não há dados -->
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell" [attr.colspan]="displayedTrainingsColumns.length">Nenhum treino encontrado.</td>
+            </tr>
+          </table>
+
+          <mat-paginator #trainingsPaginator
+                         [pageSizeOptions]="[5, 10, 25]"
+                         showFirstLastButtons
+                         aria-label="Selecione a página de treinos">
+          </mat-paginator>
+        </div>
+      </mat-card-content>
+    </mat-card>
 
     <!-- Botões de Ação para o Formulário Principal -->
     <div class="form-actions">

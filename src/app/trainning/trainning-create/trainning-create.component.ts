@@ -12,7 +12,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker'; // Para o ca
 import { MatNativeDateModule } from '@angular/material/core'; // Necessário para MatDatepicker
 
 import { TrainningService } from '../../services/trainning/trainning.service';
-import { Trainning } from '../../models/trainning';
+import { Trainning } from '../../models/trainning'; // Modelo Trainning fornecido
 import { catchError, of } from 'rxjs'; // Importar 'of' para Observables vazios
 
 
@@ -51,15 +51,19 @@ export class TrainningCreateComponent implements OnInit {
 
   /**
    * Inicializa o FormGroup para o treino com validadores.
+   * Note que 'description', 'durationMinutes', 'intensityLevel', 'date'
+   * estão no formulário, mas não na interface Trainning fornecida.
+   * Se esses campos forem persistidos, o modelo Trainning precisa ser atualizado.
    */
   private initializeForm(): void {
     this.trainingForm = this.fb.group({
       name: ['', Validators.required],
-      description: [''],
-      durationMinutes: [null, [Validators.min(1), Validators.max(1000)]], // Duração entre 1 e 1000 minutos
-      intensityLevel: ['', Validators.required],
-      date: [null, Validators.required],
-      userId: [null, Validators.required] // Assumindo que o userId é necessário para criar um treino
+      description: [''], // Campo no formulário
+      durationMinutes: [null, [Validators.min(1), Validators.max(1000)]], // Campo no formulário
+      intensityLevel: ['', Validators.required], // Campo no formulário
+      date: [null, Validators.required], // Campo no formulário
+      userId: [null, Validators.required]
+      // Não há um campo 'active' no formulário aqui, então será definido com um valor padrão
     });
   }
 
@@ -70,10 +74,15 @@ export class TrainningCreateComponent implements OnInit {
     if (this.trainingForm.valid) {
       const formData = this.trainingForm.value;
 
+      // CORREÇÃO: Adicionando a propriedade 'active' ao objeto newTraining.
+      // O valor é definido como 'true' por padrão para um treino recém-criado.
+      // Propriedades como description, durationMinutes, intensityLevel e date
+      // não são incluídas aqui pois não estão na interface Trainning fornecida.
       const newTraining: Trainning = {
         name: formData.name,
         userId: formData.userId,
-        exercises: formData.exercises || [] // Garante que exercises está presente
+        exercises: formData.exercises || [], // Garante que exercises está presente
+        active: true // Definindo 'active' como true por padrão
       };
 
       this.trainningService.createTrainning(newTraining).pipe(

@@ -1,18 +1,18 @@
 <mat-toolbar>
   <div class="toolbar-left">
     <!-- Exemplo de botão toggle na toolbar -->
-<button mat-icon-button (click)="sidenav.toggle()" *ngIf="sidenav">
-  <mat-icon>menu</mat-icon>
-</button>
-<span class="app-title">Sistudo Fitness</span>
+    <button mat-icon-button (click)="sidenav.toggle()" *ngIf="sidenav">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span class="app-title">Sistudo Fitness</span>
   </div>
 
-  <div class="toolbar-right">
-    <button mat-icon-button>
-      <mat-icon>search</mat-icon>
+  <div class="toolbar-right ">
+    <button mat-icon-button (click)="goToHome()">
+      <mat-icon>home</mat-icon>
     </button>
     <button mat-icon-button>
-      <mat-icon>notifications</mat-icon>
+      <mat-icon>search</mat-icon>
     </button>
     <button mat-icon-button>
       <mat-icon>account_circle</mat-icon>

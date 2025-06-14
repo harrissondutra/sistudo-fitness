@@ -33,8 +33,6 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
   styleUrls: ['./trainning.component.scss']
 })
 export class TrainningComponent implements OnInit, AfterViewInit {
-  // A propriedade 'dataSource' é declarada e inicializada corretamente aqui.
-  // Se este erro ainda aparecer, pode ser um problema de cache do ambiente de desenvolvimento.
   dataSource: MatTableDataSource<Trainning> = new MatTableDataSource();
   displayedColumns: string[] = ['id', 'name', 'userId', 'actions'];
 
@@ -126,7 +124,7 @@ export class TrainningComponent implements OnInit, AfterViewInit {
    */
   editTraining(id: number): void {
     // Implemente a navegação para a tela de edição de treinos
-    // Exemplo: this.router.navigate(['/trainings-edit', id]);
+    this.router.navigate(['/trainings-edit', id]); // Rota de edição de treino
     this.snackBar.open(`Funcionalidade de edição para o treino ${id} não implementada.`, 'Fechar', { duration: 3000 });
     console.log('Editar treino com ID:', id);
   }
@@ -152,11 +150,11 @@ export class TrainningComponent implements OnInit, AfterViewInit {
 
   /**
    * Navega para a tela de criação de um novo treino.
+   * CORREÇÃO: Implementado para navegar para a rota de criação de treino.
    */
   createTraining(): void {
-    // Implemente a navegação para a tela de criação de treinos
-    // Exemplo: this.router.navigate(['/trainings-register']);
-    this.snackBar.open('Funcionalidade de criação de treino não implementada.', 'Fechar', { duration: 3000 });
+    this.router.navigate(['/trainning-create']); // Navega para a tela de criação de treino
+    this.snackBar.open('Navegando para a tela de criação de treino.', 'Fechar', { duration: 2000 });
     console.log('Criar novo treino');
   }
 }
