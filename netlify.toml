@@ -1,6 +1,6 @@
 [build]
   command = "npm run build"
-  publish = "dist/sistudo-fitness/browser/browser"
+  publish = "dist/sistudo-fitness/browser/browser/browser" # <-- CORREÇÃO AQUI!
 
 [build.environment]
   NODE_VERSION = "20.19.0"
@@ -35,4 +35,4 @@
 [[headers]]
   for = "/*.css"
     [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable" 
+    Cache-Control = "public, max-age=31536000, immutable"
