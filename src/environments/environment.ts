@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:8080', // URL da API local
+  apiUrl: 'https://api-sistudo-fitness.fly.dev', // URL da API
 };
