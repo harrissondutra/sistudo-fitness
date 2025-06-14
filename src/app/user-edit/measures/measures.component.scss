@@ -1,0 +1,119 @@
+.measures-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-md);
+
+  .current-measures, .measure-history {
+    .mat-card {
+      .mat-card-header {
+        margin-bottom: var(--spacing-md);
+
+        .mat-card-title {
+          display: flex;
+          align-items: center;
+          gap: var(--spacing-sm);
+          margin: 0;
+          font-size: var(--font-size-lg);
+          color: var(--text-color);
+
+          mat-icon {
+            color: var(--primary-color);
+          }
+        }
+
+        .mat-card-subtitle {
+          margin: var(--spacing-xs) 0 0;
+          color: var(--secondary-text-color);
+        }
+      }
+
+      .mat-card-content {
+        .measures-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: var(--spacing-lg);
+
+          .measure-group {
+            h3 {
+              margin: 0 0 var(--spacing-md);
+              font-size: var(--font-size-md);
+              color: var(--text-color);
+            }
+
+            .measure-fields {
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+              gap: var(--spacing-md);
+
+              .mat-form-field {
+                width: 100%;
+              }
+            }
+          }
+        }
+
+        .table-container {
+          margin-top: var(--spacing-md);
+          overflow-x: auto;
+
+          table {
+            width: 100%;
+
+            .mat-header-cell {
+              background-color: var(--background-color);
+              color: var(--text-color);
+              font-weight: 500;
+            }
+
+            .mat-cell {
+              color: var(--text-color);
+            }
+
+            .mat-row:hover {
+              background-color: var(--background-color);
+            }
+          }
+
+          .mat-paginator {
+            background-color: transparent;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .measures-container {
+    padding: var(--spacing-sm);
+
+    .current-measures, .measure-history {
+      .mat-card {
+        .mat-card-content {
+          .measures-grid {
+            grid-template-columns: 1fr;
+
+            .measure-group {
+              .measure-fields {
+                grid-template-columns: 1fr;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .measures-container {
+    mat-card {
+      .mat-card-header {
+        padding: var(--spacing-md);
+        .mat-card-title { font-size: var(--font-size-lg); }
+      }
+      .mat-card-content { padding: var(--spacing-md); }
+    }
+  }
+} 

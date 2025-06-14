@@ -1,5 +1,6 @@
 export interface Measure {
   id?: number;
+  data?: Date;
   ombro?: number;
   cintura?: number;
   quadril?: number;

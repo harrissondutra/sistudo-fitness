@@ -37,7 +37,15 @@ import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.
 })
 export class UserListComponent implements OnInit, AfterViewInit {
   dataSource: MatTableDataSource<User> = new MatTableDataSource();
-  displayedColumns: string[] = ['id', 'name', 'email', 'cpf', 'weight', 'height', 'actions'];
+  displayedColumns: string[] = [
+    'id',
+    'name',
+    'email',
+    'phone',
+    'height',
+    'weight',
+    'actions'
+  ];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -102,23 +110,17 @@ export class UserListComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Implementação placeholder para editar um usuário específico.
-   * @param id O ID do usuário a ser editado.
-   */
-  editUser(id: number): void {
-    this.router.navigate(['/users-edit', id]);
-  }
-
-  /**
    * Lida com a exclusão de um usuário após confirmação.
    * @param id O ID do usuário a ser apagado.
    */
-  deleteUser(id: number): void {
+  deleteUser(id: string): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '400px',
       data: {
         title: 'Confirmar Exclusão',
-        message: 'Tem certeza que deseja apagar este usuário? Esta ação é irreversível.'
+        message: 'Tem certeza que deseja excluir este usuário?',
+        confirmText: 'Excluir',
+        cancelText: 'Cancelar'
       }
     });
 
@@ -126,12 +128,12 @@ export class UserListComponent implements OnInit, AfterViewInit {
       if (result) {
         this.userService.deleteUser(id).subscribe({
           next: () => {
-            this.snackBar.open('Usuário apagado com sucesso!', 'Fechar', { duration: 3000 });
+            this.snackBar.open('Usuário excluído com sucesso!', 'Fechar', { duration: 3000 });
             this.loadAllUsers();
           },
           error: (error) => {
-            console.error('Erro ao apagar usuário:', error);
-            this.snackBar.open('Erro ao apagar usuário. Verifique o console para mais detalhes.', 'Fechar', { duration: 5000 });
+            console.error('Erro ao excluir usuário:', error);
+            this.snackBar.open('Erro ao excluir usuário', 'Fechar', { duration: 3000 });
           }
         });
       }
@@ -143,5 +145,21 @@ export class UserListComponent implements OnInit, AfterViewInit {
    */
   createUser(): void {
     this.router.navigate(['/register']);
+  }
+
+  /**
+   * Navega para a tela de edição do usuário.
+   * @param user O usuário a ser editado.
+   */
+  onEdit(user: User): void {
+    this.router.navigate(['/users-edit', user.id]);
+  }
+
+  /**
+   * Navega para a tela de visualização do usuário.
+   * @param user O usuário a ser visualizado.
+   */
+  onView(user: User): void {
+    this.router.navigate(['/user', user.id]);
   }
 }

@@ -8,6 +8,7 @@ import { UserListComponent } from './user-list/user-list.component';
 import { UserEditComponent } from './user-edit/user-edit.component';
 import { TrainningCreateComponent } from '../app/trainning/trainning-create/trainning-create.component'; // Importe o componente de criação de treino
 import { TrainningComponent } from './trainning/trainning/trainning.component';
+import { UserComponent } from './user/user.component';
 // import { TrainningEditComponent } from './trainning-edit/trainning-edit.component'; // **Assumindo que você terá um componente de edição de treino**
 
 
@@ -20,6 +21,7 @@ export const routes: Routes = [
       { path: 'settings', component: SettingsComponent },
       { path: 'logout', component: LogoutComponent },
       { path: 'register', component: UserRegistrationComponent },
+      { path: 'user/:id', component: UserComponent },
       { path: 'users-list', component: UserListComponent },
       { path: 'users-edit/:id', component: UserEditComponent },
       { path: 'trainning-create', component: TrainningCreateComponent }, // **Nova rota para criar treino**

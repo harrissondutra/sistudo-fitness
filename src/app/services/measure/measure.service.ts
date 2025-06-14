@@ -48,4 +48,8 @@ export class MeasureService {
   deleteMeasure(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/delete/${id}`);
   }
+
+  getMeasureHistoryByUserId(userId: number): Observable<Measure[]> {
+    return this.http.get<Measure[]>(`${this.baseUrl}/history/${userId}`);
+  }
 }

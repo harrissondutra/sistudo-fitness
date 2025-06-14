@@ -1,4 +1,375 @@
 /* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+:root {
+  --primary-color: #3f51b5;
+  --accent-color: #ff4081;
+  --warn-color: #f44336;
+  --background-color: #ffffff;
+  --text-color: rgba(0, 0, 0, 0.87);
+  --text-secondary-color: rgba(0, 0, 0, 0.6);
+  --border-color: rgba(0, 0, 0, 0.12);
+  --hover-color: rgba(0, 0, 0, 0.04);
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-xxl: 24px;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: #f5f5f5;
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  color: var(--text-color);
+}
+
+/* Container Principal */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-md);
+  box-sizing: border-box;
+}
+
+// Estilos globais para cards
+.mat-card {
+  border-radius: var(--border-radius-md);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  margin-bottom: var(--spacing-md);
+  background-color: var(--background-color);
+
+  .mat-card-header {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    border-bottom: 1px solid var(--border-color);
+
+    .mat-card-title {
+      margin: 0;
+      font-size: var(--font-size-xl);
+      font-weight: 500;
+      color: var(--text-color);
+      line-height: 1.2;
+    }
+
+    .mat-card-subtitle {
+      margin: var(--spacing-xs) 0 0;
+      color: var(--text-secondary-color);
+      font-size: var(--font-size-md);
+      line-height: 1.4;
+    }
+  }
+
+  .mat-card-content {
+    padding: var(--spacing-xl);
+  }
+}
+
+// Estilos globais para tabelas
+.mat-table {
+  width: 100%;
+  background-color: var(--background-color);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+
+  th {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 500;
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-size-sm);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-size-sm);
+  }
+
+  tr:hover {
+    background-color: var(--hover-color);
+  }
+}
+
+// Estilos globais para formulários
+.mat-form-field {
+  width: 100%;
+  margin-bottom: var(--spacing-md);
+
+  .mat-form-field-wrapper {
+    padding-bottom: 0;
+  }
+
+  .mat-form-field-label {
+    color: var(--text-secondary-color);
+    font-size: var(--font-size-md);
+  }
+
+  .mat-form-field-underline {
+    background-color: var(--border-color);
+  }
+
+  &.mat-focused {
+    .mat-form-field-label {
+      color: var(--primary-color);
+    }
+
+    .mat-form-field-ripple {
+      background-color: var(--primary-color);
+    }
+  }
+
+  .mat-error {
+    font-size: var(--font-size-xs);
+    margin-top: var(--spacing-xs);
+  }
+
+  .mat-hint {
+    font-size: var(--font-size-xs);
+    margin-top: var(--spacing-xs);
+  }
+}
+
+// Estilos globais para botões
+.mat-button, .mat-raised-button {
+  border-radius: var(--border-radius-sm);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: var(--font-size-md);
+  line-height: 1;
+  padding: var(--spacing-md) var(--spacing-lg);
+  min-width: 120px;
+  height: 48px;
+
+  mat-icon {
+    margin-right: var(--spacing-sm);
+  }
+}
+
+// Estilos globais para tabs
+.mat-tab-group {
+  .mat-tab-header {
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .mat-tab-label {
+    height: 56px;
+    padding: 0 var(--spacing-xl);
+    min-width: 180px;
+    color: var(--text-color);
+    font-weight: 500;
+    font-size: var(--font-size-md);
+  }
+
+  .mat-tab-label-active {
+    color: var(--primary-color);
+  }
+
+  .mat-tab-body-content {
+    padding: var(--spacing-lg);
+  }
+}
+
+// Estilos globais para paginação
+.mat-paginator {
+  background-color: var(--background-color);
+  border-top: 1px solid var(--border-color);
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+
+// Estilos globais para diálogos
+.mat-dialog-container {
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-xl);
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: auto;
+}
+
+// Estilos globais para snackbars
+.mat-snack-bar-container {
+  border-radius: var(--border-radius-sm);
+  background-color: var(--text-color);
+  color: white;
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-size: var(--font-size-md);
+}
+
+// Estilos globais para tooltips
+.mat-tooltip {
+  font-size: var(--font-size-xs);
+  background-color: var(--text-color);
+  padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+// Estilos globais para ícones
+.mat-icon {
+  vertical-align: middle;
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+// Estilos globais para inputs
+.mat-input-element {
+  color: var(--text-color);
+}
+
+// Estilos globais para labels
+.mat-form-field-label {
+  color: var(--text-secondary-color);
+}
+
+// Estilos globais para erros
+.mat-error {
+  color: var(--warn-color);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+// Estilos globais para hints
+.mat-hint {
+  color: var(--text-secondary-color);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+// Estilos globais para placeholders
+::placeholder {
+  color: var(--text-secondary-color);
+  opacity: 0.7;
+}
+
+// Estilos globais para scrollbars
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-secondary-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-color);
+}
+
+/* Grid System */
+.grid {
+  display: grid;
+  gap: var(--spacing-md);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+/* Responsividade */
+@media (max-width: 1200px) {
+  .container {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --spacing-xl: 24px;
+    --spacing-lg: 20px;
+    --spacing-md: 16px;
+    --spacing-sm: 8px;
+    --spacing-xs: 4px;
+  }
+
+  .mat-card {
+    .mat-card-header {
+      padding: var(--spacing-md) var(--spacing-lg);
+    }
+
+    .mat-card-content {
+      padding: var(--spacing-lg);
+    }
+  }
+
+  .mat-tab-group {
+    .mat-tab-label {
+      height: 48px;
+      min-width: auto;
+      padding: 0 var(--spacing-md);
+      font-size: var(--font-size-sm);
+    }
+
+    .mat-tab-body-content {
+      padding: var(--spacing-md);
+    }
+  }
+
+  .mat-table {
+    th, td {
+      padding: var(--spacing-sm) var(--spacing-md);
+    }
+  }
+
+  .mat-button, .mat-raised-button {
+    min-width: 100px;
+    height: 44px;
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --spacing-xl: 20px;
+    --spacing-lg: 16px;
+    --spacing-md: 12px;
+    --spacing-sm: 8px;
+    --spacing-xs: 4px;
+  }
+
+  .mat-card {
+    .mat-card-header {
+      padding: var(--spacing-md);
+
+      .mat-card-title {
+        font-size: var(--font-size-lg);
+      }
+    }
+
+    .mat-card-content {
+      padding: var(--spacing-md);
+    }
+  }
+
+  .mat-tab-group {
+    .mat-tab-label {
+      padding: 0 var(--spacing-sm);
+      font-size: var(--font-size-xs);
+    }
+  }
+
+  .mat-button, .mat-raised-button {
+    width: 100%;
+    height: 40px;
+    font-size: var(--font-size-xs);
+  }
+}

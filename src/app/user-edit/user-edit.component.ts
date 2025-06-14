@@ -1,313 +1,283 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Location } from '@angular/common';
-
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { UserService, User } from '../services/user.service';
+import { Measure } from '../models/measure';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatCardModule } from '@angular/material/card';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { EditMeasuresModule } from './measures/edit-measures.module';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { EditMeasuresComponent } from './measures/edit-measures.component';
+import { Subject } from 'rxjs';
+import { takeUntil, finalize } from 'rxjs/operators';
 
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+interface EvolutionPhoto {
+  id: string;
+  url: string;
+  date: Date;
+  description: string;
+}
 
-import { UserService } from '../services/user/user.service';
-import { MeasureService } from '../services/measure/measure.service';
-import { TrainningService } from '../services/trainning/trainning.service';
-import { User } from '../models/user';
-import { Measure } from '../models/measure';
-import { Trainning } from '../models/trainning';
-import { catchError, filter, map, switchMap, tap, forkJoin, of, Observable } from 'rxjs';
-import { NgxMaskDirective } from 'ngx-mask';
+interface Training {
+  id: string;
+  startDate: Date;
+  endDate?: Date;
+  goal: string;
+  frequency: number;
+}
 
 @Component({
   selector: 'app-user-edit',
+  templateUrl: './user-edit.component.html',
+  styleUrls: ['./user-edit.component.scss'],
   standalone: true,
   imports: [
     CommonModule,
-    RouterModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatProgressSpinnerModule,
-    MatCardModule,
-    MatGridListModule,
-    MatDividerModule,
     MatIconModule,
-    NgxMaskDirective,
+    MatSnackBarModule,
+    MatTabsModule,
     MatTableModule,
-    MatPaginatorModule
-  ],
-  templateUrl: './user-edit.component.html',
-  styleUrls: ['./user-edit.component.scss']
+    MatPaginatorModule,
+    MatSortModule,
+    EditMeasuresModule,
+    MatDialogModule
+  ]
 })
-export class UserEditComponent implements OnInit, AfterViewInit {
-  userId: number | null = null;
-  userForm!: FormGroup;
-  measureForm!: FormGroup;
-  isLoading: boolean = true;
-  selectedFile: File | null = null;
+export class UserEditComponent implements OnInit, OnDestroy {
+  userForm: FormGroup;
+  isLoading = false;
+  isNewUser = true;
+  evolutionPhotos: EvolutionPhoto[] = [];
+  currentTraining: Training | null = null;
+  trainingHistory: Training[] = [];
+  trainingColumns = ['startDate', 'endDate', 'goal', 'actions'];
+  private destroy$ = new Subject<void>();
 
-  userTrainings: Trainning[] = [];
-  trainingsDataSource: MatTableDataSource<Trainning> = new MatTableDataSource();
-  displayedTrainingsColumns: string[] = ['id', 'name', 'description', 'durationMinutes', 'intensityLevel', 'date', 'active', 'actions'];
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild('trainingsPaginator') trainingsPaginator!: MatPaginator;
+  // Medidas
+  ombro: number | null = null;
+  peitoral: number | null = null;
+  cintura: number | null = null;
+  quadril: number | null = null;
+  abdomem: number | null = null;
+  torax: number | null = null;
+  bracoDireito: number | null = null;
+  bracoEsquerdo: number | null = null;
+  coxaDireita: number | null = null;
+  coxaEsquerda: number | null = null;
+  panturrilhaDireita: number | null = null;
+  panturrilhaEsquerda: number | null = null;
+  abdominal: number | null = null;
+  suprailiaca: number | null = null;
+  subescapular: number | null = null;
+  triceps: number | null = null;
+  axilar: number | null = null;
 
   constructor(
     private fb: FormBuilder,
-    private route: ActivatedRoute,
     private userService: UserService,
-    private measureService: MeasureService,
-    private trainningService: TrainningService,
-    private router: Router,
-    private location: Location
-  ) { }
+    private route: ActivatedRoute,
+    public router: Router,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
+  ) {
+    this.userForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['', [Validators.pattern(/^\(\d{2}\) \d{5}-\d{4}$/)]],
+      birthDate: [null],
+      height: [null, [Validators.min(50), Validators.max(300)]],
+      weight: [null, [Validators.min(20), Validators.max(500)]],
+      arm: [null, [Validators.min(0), Validators.max(100)]],
+      chest: [null, [Validators.min(0), Validators.max(200)]],
+      waist: [null, [Validators.min(0), Validators.max(200)]],
+      hip: [null, [Validators.min(0), Validators.max(200)]]
+    });
+  }
 
   ngOnInit(): void {
-    this.initializeForms();
-    this.loadUserDataAndMeasures();
+    const userId = this.route.snapshot.paramMap.get('id');
+    if (userId) {
+      this.isNewUser = false;
+      this.loadUser(userId);
+      this.loadPhotos(userId);
+      this.loadTrainings(userId);
+    }
   }
 
-  ngAfterViewInit(): void {
-    this.trainingsDataSource.paginator = this.trainingsPaginator;
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  /**
-   * Initializes both FormGroups (userForm and measureForm).
-   */
-  private initializeForms(): void {
-    this.userForm = this.fb.group({
-      id: [null],
-      name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      cpf: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
-      weight: [null, [Validators.required, Validators.min(30), Validators.max(300)]],
-      height: [null, [Validators.required, Validators.min(50), Validators.max(300)]]
-    });
-
-    this.measureForm = this.fb.group({
-      id: [null],
-      ombro: [null, [Validators.min(0), Validators.max(200)]],
-      cintura: [null, [Validators.min(0), Validators.max(200)]],
-      quadril: [null, [Validators.min(0), Validators.max(200)]],
-      panturrilhaDireita: [null, [Validators.min(0), Validators.max(100)]],
-      panturrilhaEsquerda: [null, [Validators.min(0), Validators.max(100)]],
-      bracoDireito: [null, [Validators.min(0), Validators.max(100)]],
-      bracoEsquerdo: [null, [Validators.min(0), Validators.max(100)]],
-      coxaDireita: [null, [Validators.min(0), Validators.max(150)]],
-      coxaEsquerda: [null, [Validators.min(0), Validators.max(150)]],
-      peitoral: [null, [Validators.min(0), Validators.max(200)]],
-      abdomem: [null, [Validators.min(0), Validators.max(200)]],
-      abdominal: [null, [Validators.min(0), Validators.max(200)]],
-      suprailiaca: [null, [Validators.min(0), Validators.max(100)]],
-      subescapular: [null, [Validators.min(0), Validators.max(100)]],
-      triceps: [null, [Validators.min(0), Validators.max(100)]],
-      axilar: [null, [Validators.min(0), Validators.max(100)]],
-      torax: [null, [Validators.min(0), Validators.max(200)]],
-      userId: [null]
-    });
-  }
-
-  /**
-   * Loads user data and their measures, and now also user-specific trainings.
-   */
-  private loadUserDataAndMeasures(): void {
+  private loadUser(id: string): void {
     this.isLoading = true;
-    this.route.paramMap.pipe(
-      filter(params => params.has('id')),
-      map(params => Number(params.get('id'))),
-      tap(id => this.userId = id),
-      switchMap(id => {
-        const userRequest = this.userService.getUserById(id).pipe(
-          catchError(error => {
-            console.error('Error fetching user:', error);
-            this.router.navigate(['/users-list']);
-            return of(null);
-          })
-        );
-        const measureRequest = this.measureService.getMeasureByUserId(id).pipe(
-          catchError(error => {
-            console.warn('Measures for this user not found or error loading:', error);
-            return of(null);
-          })
-        );
-        const trainingsRequest = this.trainningService.listAllTrainnings().pipe(
-          map(allTrainings => allTrainings.filter(t => t.userId === id)),
-          catchError(error => {
-            console.error('Error fetching user trainings:', error);
-            return of([]);
-          })
-        );
-        return forkJoin({ user: userRequest, measures: measureRequest, trainings: trainingsRequest });
-      })
-    ).subscribe(({ user, measures, trainings }) => {
-      if (user) {
-        const cpfFormattedForPatch = user.cpf ? user.cpf.replace(/\D/g, '') : null;
-        this.userForm.patchValue({
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          cpf: cpfFormattedForPatch,
-          weight: user.weight,
-          height: user.height != null ? user.height * 100 : null
+    this.userService.getUserById(id)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => this.isLoading = false)
+      )
+      .subscribe({
+        next: (user: User) => {
+          this.userForm.patchValue(user);
+        },
+        error: (error: Error) => {
+          console.error('Erro ao carregar usuário:', error);
+          this.snackBar.open('Erro ao carregar usuário', 'Fechar', { duration: 3000 });
+        }
+      });
+  }
+
+  private loadPhotos(userId: string): void {
+    // TODO: Implementar carregamento de fotos
+    this.evolutionPhotos = [];
+  }
+
+  private loadTrainings(userId: string): void {
+    // TODO: Implementar carregamento de treinos
+    this.trainingHistory = [];
+    this.currentTraining = null;
+  }
+
+  uploadPhoto(): void {
+    // TODO: Implementar upload de foto
+    this.snackBar.open('Funcionalidade em desenvolvimento', 'Fechar', { duration: 3000 });
+  }
+
+  removePhoto(photo: EvolutionPhoto): void {
+    // TODO: Implementar remoção de foto
+    this.snackBar.open('Funcionalidade em desenvolvimento', 'Fechar', { duration: 3000 });
+  }
+
+  viewTrainingDetails(training: Training): void {
+    // TODO: Implementar visualização de detalhes do treino
+    this.snackBar.open('Funcionalidade em desenvolvimento', 'Fechar', { duration: 3000 });
+  }
+
+  editTraining(training: Training): void {
+    // TODO: Implementar edição de treino
+    this.snackBar.open('Funcionalidade em desenvolvimento', 'Fechar', { duration: 3000 });
+  }
+
+  createNewTraining(): void {
+    // TODO: Implementar criação de novo treino
+    this.snackBar.open('Funcionalidade em desenvolvimento', 'Fechar', { duration: 3000 });
+  }
+
+  onSubmit(): void {
+    if (this.userForm.valid) {
+      this.isLoading = true;
+      const userId = this.route.snapshot.paramMap.get('id');
+      const userData: User = this.userForm.value;
+
+      const request$ = userId
+        ? this.userService.updateUser(userId, userData)
+        : this.userService.createUser(userData);
+
+      request$
+        .pipe(
+          takeUntil(this.destroy$),
+          finalize(() => this.isLoading = false)
+        )
+        .subscribe({
+          next: () => {
+            this.snackBar.open(
+              `Usuário ${userId ? 'atualizado' : 'criado'} com sucesso!`,
+              'Fechar',
+              { duration: 3000 }
+            );
+            this.router.navigate(['/users']);
+          },
+          error: (error: Error) => {
+            console.error(`Erro ao ${userId ? 'atualizar' : 'criar'} usuário:`, error);
+            this.snackBar.open(
+              `Erro ao ${userId ? 'atualizar' : 'criar'} usuário`,
+              'Fechar',
+              { duration: 3000 }
+            );
+          }
+        });
+    } else {
+      this.markFormGroupTouched(this.userForm);
+    }
+  }
+
+  private markFormGroupTouched(formGroup: FormGroup): void {
+    Object.values(formGroup.controls).forEach(control => {
+      control.markAsTouched();
+      if (control instanceof FormGroup) {
+        this.markFormGroupTouched(control);
+      }
+    });
+  }
+
+  formatNumber(value: number | null): string {
+    return value !== null ? value.toString() : '';
+  }
+
+  formatMeasure(value: number | null): string {
+    return value !== null ? value.toFixed(1) : '-';
+  }
+
+  editMeasures(): void {
+    const dialogRef = this.dialog.open(EditMeasuresComponent, {
+      width: '800px',
+      data: {
+        ombro: this.ombro,
+        peitoral: this.peitoral,
+        cintura: this.cintura,
+        quadril: this.quadril,
+        abdomem: this.abdomem,
+        torax: this.torax,
+        bracoDireito: this.bracoDireito,
+        bracoEsquerdo: this.bracoEsquerdo,
+        coxaDireita: this.coxaDireita,
+        coxaEsquerda: this.coxaEsquerda,
+        panturrilhaDireita: this.panturrilhaDireita,
+        panturrilhaEsquerda: this.panturrilhaEsquerda,
+        abdominal: this.abdominal,
+        suprailiaca: this.suprailiaca,
+        subescapular: this.subescapular,
+        triceps: this.triceps,
+        axilar: this.axilar
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.ombro = result.ombro;
+        this.peitoral = result.peitoral;
+        this.cintura = result.cintura;
+        this.quadril = result.quadril;
+        this.abdomem = result.abdomem;
+        this.torax = result.torax;
+        this.bracoDireito = result.bracoDireito;
+        this.bracoEsquerdo = result.bracoEsquerdo;
+        this.coxaDireita = result.coxaDireita;
+        this.coxaEsquerda = result.coxaEsquerda;
+        this.panturrilhaDireita = result.panturrilhaDireita;
+        this.panturrilhaEsquerda = result.panturrilhaEsquerda;
+        this.abdominal = result.abdominal;
+        this.suprailiaca = result.suprailiaca;
+        this.subescapular = result.subescapular;
+        this.triceps = result.triceps;
+        this.axilar = result.axilar;
+
+        this.snackBar.open('Medidas atualizadas com sucesso!', 'Fechar', {
+          duration: 3000
         });
       }
-
-      if (measures) {
-        this.measureForm.patchValue(measures);
-        this.measureForm.get('userId')?.setValue(this.userId);
-      } else {
-        this.measureForm.get('userId')?.setValue(this.userId);
-      }
-
-      if (trainings) {
-        this.userTrainings = trainings;
-        this.trainingsDataSource.data = trainings;
-      }
-
-      this.userForm.markAllAsTouched();
-      this.userForm.updateValueAndValidity();
-      this.measureForm.markAllAsTouched();
-      this.measureForm.updateValueAndValidity();
-
-      console.log("Dados do usuário:", user);
-      console.log("Dados das medidas:", measures);
-      console.log("Treinos do usuário:", this.userTrainings);
-      console.log("Status do Formulário de Usuário:", this.userForm.status, "Erros:", this.userForm.errors);
-      console.log("Status do Formulário de Medidas:", this.measureForm.status, "Erros:", this.measureForm.errors);
-
-      this.isLoading = false;
     });
-  }
-
-  /**
-   * Handles file selection for upload.
-   * @param event The change event from the file input.
-   */
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.selectedFile = input.files[0];
-    } else {
-      this.selectedFile = null;
-    }
-  }
-
-  /**
-   * Handles the submission of both forms (user and measures).
-   */
-  onSubmit(): void {
-    const isUserFormValid = this.userForm.valid;
-    const isMeasureFormValid = this.measureForm.valid;
-
-    if (isUserFormValid && isMeasureFormValid) {
-      const userData = this.userForm.value;
-      const measureData = this.measureForm.value;
-
-      const updatedUser: User = {
-        id: this.userId || userData.id,
-        name: userData.name,
-        email: userData.email,
-        cpf: userData.cpf ? String(userData.cpf).replace(/\D/g, '') : '',
-        weight: userData.weight ? parseFloat(String(userData.weight).replace(',', '.')) : null,
-        height: userData.height ? parseFloat(String(userData.height).replace(',', '.')!) / 100 : null,
-      };
-
-      const updatedMeasure: Measure = {
-        ...measureData,
-        userId: this.userId!
-      };
-      if (updatedMeasure.id === null) {
-        delete updatedMeasure.id;
-      }
-
-      const updateRequests: Observable<any>[] = [];
-
-      updateRequests.push(this.userService.updateUser(updatedUser).pipe(
-        tap(() => console.log('User updated successfully!')),
-        catchError(error => {
-          console.error('Error updating user:', error);
-          return of(null);
-        })
-      ));
-
-      if (updatedMeasure.id) {
-        updateRequests.push(this.measureService.updateMeasure(updatedMeasure).pipe(
-          tap(() => console.log('Measure updated successfully!')),
-          catchError(error => {
-            console.error('Error updating measure:', error);
-            return of(null);
-          })
-        ));
-      } else {
-        updateRequests.push(this.measureService.createMeasure(updatedMeasure).pipe(
-          tap(() => console.log('Measure created successfully!')),
-          catchError(error => {
-            console.error('Error creating measure:', error);
-            return of(null);
-          })
-        ));
-      }
-
-      forkJoin(updateRequests).subscribe({
-        next: () => {
-          this.router.navigate(['/users-list']);
-        },
-        error: (error) => {
-          console.error('Error saving data:', error);
-        }
-      });
-    }
-  }
-
-  /**
-   * Navega para a tela de criação de um novo treino, passando o ID do usuário.
-   */
-  createNewTraining(): void {
-    this.router.navigate(['/trainning/create'], { queryParams: { userId: this.userId } });
-  }
-
-  /**
-   * Navega para a tela de edição de um treino específico.
-   * @param trainingId O ID do treino a ser editado.
-   */
-  editTraining(trainingId: number): void {
-    this.router.navigate(['/trainning/edit', trainingId]);
-  }
-
-  /**
-   * Lida com a exclusão de um treino após confirmação.
-   * @param trainingId O ID do treino a ser apagado.
-   */
-  deleteTraining(trainingId: number): void {
-    if (confirm('Tem certeza que deseja apagar este treino?')) {
-      this.trainningService.deleteTrainning(trainingId).subscribe({
-        next: () => {
-          this.loadUserDataAndMeasures();
-        },
-        error: (error) => {
-          console.error('Erro ao apagar treino:', error);
-        }
-      });
-    }
-  }
-
-  /**
-   * Cancels editing and returns to the user list without saving.
-   */
-  cancel(): void {
-    this.router.navigate(['/users-list']);
-  }
-
-  goBack(): void {
-    this.location.back();
   }
 }

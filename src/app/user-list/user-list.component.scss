@@ -84,6 +84,11 @@
       padding: 16px;
       white-space: nowrap;
 
+      &:first-child {
+        background-color: #E8EAF6;
+        border-right: 1px solid #CFD8DC;
+      }
+
       &.mat-sort-header {
         cursor: pointer;
         
@@ -97,6 +102,15 @@
       padding: 16px;
       color: #2C3E50;
       border-bottom: 1px solid #E8EAF6;
+
+      &:first-child {
+        font-family: 'Roboto Mono', monospace;
+        color: #607D8B;
+        font-size: 0.9em;
+        font-weight: 500;
+        background-color: #F5F7FA;
+        border-right: 1px solid #E8EAF6;
+      }
     }
 
     .user-row {
@@ -105,6 +119,17 @@
       &:hover {
         background: #F5F7FA;
       }
+    }
+
+    .user-id {
+      font-family: 'Roboto Mono', monospace;
+      color: #607D8B;
+      font-size: 0.9em;
+      font-weight: 500;
+      padding: 4px 8px;
+      background-color: #F5F7FA;
+      border-radius: 4px;
+      display: inline-block;
     }
 
     .user-info {

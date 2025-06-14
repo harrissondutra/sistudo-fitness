@@ -1,280 +1,295 @@
 <div class="user-edit-container">
+  <!-- Cabeçalho -->
   <div class="header">
-    <div class="title-section">
-      <h2>{{ userForm.value.name }}</h2>
-      <p class="subtitle">Edite os dados do usuário</p>
+    <mat-icon>person</mat-icon>
+    <div class="header-content">
+      <h1>{{ isNewUser ? 'Novo Usuário' : 'Editar Usuário' }}</h1>
+      <p class="subtitle" *ngIf="isNewUser">Adicione um novo usuário ao sistema</p>
+      <div class="user-name" *ngIf="!isNewUser">
+        <p class="subtitle">Editando informações de:</p>
+        <h2>{{ userForm.get('name')?.value }}</h2>
+      </div>
     </div>
   </div>
 
-  <div *ngIf="isLoading" class="loading-spinner">
-    <mat-spinner></mat-spinner>
-    <p>Carregando dados do usuário...</p>
-  </div>
-
-  <form [formGroup]="userForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
-    <div class="dashboard-main-sections">
-      <!-- Seção de Dados Pessoais -->
-      <mat-card class="dashboard-card user-data-card">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon>person</mat-icon>
-            Dados Pessoais
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content [formGroup]="userForm" class="form-section">
-          <mat-form-field appearance="outline" class="full-width-input">
+  <!-- Conteúdo Principal -->
+  <div class="content">
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="form-container">
+      <!-- Informações Pessoais -->
+      <div class="form-section">
+        <h2>
+          <mat-icon>info</mat-icon>
+          Informações Pessoais
+        </h2>
+        <div class="form-row">
+          <mat-form-field appearance="outline">
             <mat-label>Nome</mat-label>
-            <input matInput type="text" formControlName="name" />
-            <mat-icon matSuffix>person</mat-icon>
-            <mat-error *ngIf="userForm.get('name')?.invalid && userForm.get('name')?.touched">
-              Nome é obrigatório.
-            </mat-error>
+            <input matInput formControlName="name" placeholder="Nome completo">
+            <mat-error *ngIf="userForm.get('name')?.hasError('required')">Nome é obrigatório</mat-error>
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="full-width-input">
-            <mat-label>Email</mat-label>
-            <input matInput type="email" formControlName="email" />
-            <mat-icon matSuffix>email</mat-icon>
-            <mat-error *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">
-              <span *ngIf="userForm.get('email')?.errors?.['required']">Email é obrigatório.</span>
-              <span *ngIf="userForm.get('email')?.errors?.['email']">Email inválido.</span>
-            </mat-error>
+          <mat-form-field appearance="outline">
+            <mat-label>E-mail</mat-label>
+            <input matInput formControlName="email" placeholder="E-mail" type="email">
+            <mat-error *ngIf="userForm.get('email')?.hasError('required')">E-mail é obrigatório</mat-error>
+            <mat-error *ngIf="userForm.get('email')?.hasError('email')">E-mail inválido</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Telefone</mat-label>
+            <input matInput formControlName="phone" placeholder="(00) 00000-0000">
           </mat-form-field>
 
-          <mat-form-field appearance="outline" class="full-width-input">
-            <mat-label>CPF</mat-label>
-            <input matInput type="text" formControlName="cpf" mask="000.000.000-00" [dropSpecialCharacters]="true" />
-            <mat-icon matSuffix>badge</mat-icon>
-            <mat-hint>11 dígitos numéricos</mat-hint>
-            <mat-error *ngIf="userForm.get('cpf')?.invalid && userForm.get('cpf')?.touched">
-              <span *ngIf="userForm.get('cpf')?.errors?.['required']">CPF é obrigatório.</span>
-              <span *ngIf="userForm.get('cpf')?.errors?.['pattern']">CPF deve conter 11 dígitos.</span>
-            </mat-error>
+          <mat-form-field appearance="outline">
+            <mat-label>Data de Nascimento</mat-label>
+            <input matInput formControlName="birthDate" type="date">
           </mat-form-field>
+        </div>
 
-          <mat-form-field appearance="outline" class="full-width-input">
-            <mat-label>Peso (kg)</mat-label>
-            <input matInput type="text" formControlName="weight" mask="separator.2" thousandSeparator="" />
-            <mat-icon matSuffix>monitor_weight</mat-icon>
-            <mat-hint>Utilize "." para separação de peso</mat-hint>
-            <mat-error *ngIf="userForm.get('weight')?.invalid && userForm.get('weight')?.touched">
-              <span *ngIf="userForm.get('weight')?.errors?.['required']">Peso é obrigatório.</span>
-              <span *ngIf="userForm.get('weight')?.errors?.['min'] || userForm.get('weight')?.errors?.['max']">
-                Peso deve ser entre 30 e 300 kg.
-              </span>
-            </mat-error>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="full-width-input">
+        <div class="form-row">
+          <mat-form-field appearance="outline">
             <mat-label>Altura (cm)</mat-label>
-            <input matInput type="text" formControlName="height" mask="separator.2" thousandSeparator="" />
-            <mat-icon matSuffix>height</mat-icon>
-            <mat-error *ngIf="userForm.get('height')?.invalid && userForm.get('height')?.touched">
-              <span *ngIf="userForm.get('height')?.errors?.['required']">Altura é obrigatória.</span>
-              <span *ngIf="userForm.get('height')?.errors?.['min'] || userForm.get('height')?.errors?.['max']">
-                Altura deve ser entre 50 e 300 cm.
-              </span>
+            <input matInput formControlName="height" type="number" min="50" max="300">
+            <mat-error *ngIf="userForm.get('height')?.hasError('min')">
+              Altura mínima é 50 cm
+            </mat-error>
+            <mat-error *ngIf="userForm.get('height')?.hasError('max')">
+              Altura máxima é 300 cm
             </mat-error>
           </mat-form-field>
-        </mat-card-content>
-      </mat-card>
 
-      <!-- Seção de Medidas -->
-      <mat-card class="dashboard-card user-measures-card">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon>straighten</mat-icon>
-            Medidas Corporais
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content [formGroup]="measureForm" class="form-section measures-grid">
           <mat-form-field appearance="outline">
-            <mat-label>Ombro (cm)</mat-label>
-            <input matInput type="text" formControlName="ombro" mask="separator.2" thousandSeparator="" />
+            <mat-label>Peso (kg)</mat-label>
+            <input matInput formControlName="weight" type="number" min="20" max="500">
+            <mat-error *ngIf="userForm.get('weight')?.hasError('min')">
+              Peso mínimo é 20 kg
+            </mat-error>
+            <mat-error *ngIf="userForm.get('weight')?.hasError('max')">
+              Peso máximo é 500 kg
+            </mat-error>
           </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Cintura (cm)</mat-label>
-            <input matInput type="text" formControlName="cintura" mask="separator.2" thousandSeparator="" />
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Quadril (cm)</mat-label>
-            <input matInput type="text" formControlName="quadril" mask="separator.2" thousandSeparator="" />
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Panturrilha Direita (cm)</mat-label>
-            <input matInput type="text" formControlName="panturrilhaDireita" mask="separator.2" thousandSeparator="" />
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Panturrilha Esquerda (cm)</mat-label>
-            <input matInput type="text" formControlName="panturrilhaEsquerda" mask="separator.2" thousandSeparator="" />
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Braço Direito (cm)</mat-label>
-            <input matInput type="text" formControlName="bracoDireito" mask="separator.2" thousandSeparator="" />
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Braço Esquerdo (cm)</mat-label>
-            <input matInput type="text" formControlName="bracoEsquerdo" mask="separator.2" thousandSeparator="" />
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Coxa Direita (cm)</mat-label>
-            <input matInput type="text" formControlName="coxaDireita" mask="separator.2" thousandSeparator="" />
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Coxa Esquerda (cm)</mat-label>
-            <input matInput type="text" formControlName="coxaEsquerda" mask="separator.2" thousandSeparator="" />
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Peitoral (cm)</mat-label>
-            <input matInput type="text" formControlName="peitoral" mask="separator.2" thousandSeparator="" />
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Abdômen (cm)</mat-label>
-            <input matInput type="text" formControlName="abdomem" mask="separator.2" thousandSeparator="" />
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Abdominal (cm)</mat-label>
-            <input matInput type="text" formControlName="abdominal" mask="separator.2" thousandSeparator="" />
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Supra-Ilíaca (mm)</mat-label>
-            <input matInput type="text" formControlName="suprailiaca" mask="separator.2" thousandSeparator="" />
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Subescapular (mm)</mat-label>
-            <input matInput type="text" formControlName="subescapular" mask="separator.2" thousandSeparator="" />
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Tríceps (mm)</mat-label>
-            <input matInput type="text" formControlName="triceps" mask="separator.2" thousandSeparator="" />
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Axilar Média (mm)</mat-label>
-            <input matInput type="text" formControlName="axilar" mask="separator.2" thousandSeparator="" />
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Tórax (cm)</mat-label>
-            <input matInput type="text" formControlName="torax" mask="separator.2" thousandSeparator="" />
-          </mat-form-field>
-        </mat-card-content>
-      </mat-card>
-    </div>
+        </div>
+      </div>
 
-    <!-- Seção de Upload de Foto -->
-    <mat-card class="dashboard-card user-photo-upload-card">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>photo_camera</mat-icon>
-          Foto do Usuário
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content class="form-section">
-        <div class="upload-section">
-          <div class="upload-area" (click)="fileInput.click()">
-            <mat-icon>cloud_upload</mat-icon>
-            <p>Clique para selecionar uma foto</p>
-            <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*" style="display: none" />
+      <!-- Medidas Atuais -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="title">
+            <mat-icon>fitness_center</mat-icon>
+            <h2>Medidas Atuais</h2>
           </div>
-          <div class="file-info" *ngIf="selectedFile">
-            <mat-icon>image</mat-icon>
-            <span>{{ selectedFile.name }}</span>
-            <button mat-icon-button color="warn" (click)="selectedFile = null">
-              <mat-icon>close</mat-icon>
+          <button mat-raised-button color="primary" (click)="editMeasures()">
+            <mat-icon>edit</mat-icon>
+            Editar Medidas
+          </button>
+        </div>
+        <div class="measures-grid">
+          <div class="measure-row">
+            <div class="measure-item">
+              <span class="label">Ombro:</span>
+              <span class="value">{{ formatMeasure(ombro) }} cm</span>
+            </div>
+            <div class="measure-item">
+              <span class="label">Peitoral:</span>
+              <span class="value">{{ formatMeasure(peitoral) }} cm</span>
+            </div>
+          </div>
+
+          <div class="measure-row">
+            <div class="measure-item">
+              <span class="label">Cintura:</span>
+              <span class="value">{{ formatMeasure(cintura) }} cm</span>
+            </div>
+            <div class="measure-item">
+              <span class="label">Quadril:</span>
+              <span class="value">{{ formatMeasure(quadril) }} cm</span>
+            </div>
+          </div>
+
+          <div class="measure-row">
+            <div class="measure-item">
+              <span class="label">Abdomem:</span>
+              <span class="value">{{ formatMeasure(abdomem) }} cm</span>
+            </div>
+            <div class="measure-item">
+              <span class="label">Torax:</span>
+              <span class="value">{{ formatMeasure(torax) }} cm</span>
+            </div>
+          </div>
+
+          <div class="measure-row">
+            <div class="measure-item">
+              <span class="label">Braço Direito:</span>
+              <span class="value">{{ formatMeasure(bracoDireito) }} cm</span>
+            </div>
+            <div class="measure-item">
+              <span class="label">Braço Esquerdo:</span>
+              <span class="value">{{ formatMeasure(bracoEsquerdo) }} cm</span>
+            </div>
+          </div>
+
+          <div class="measure-row">
+            <div class="measure-item">
+              <span class="label">Coxa Direita:</span>
+              <span class="value">{{ formatMeasure(coxaDireita) }} cm</span>
+            </div>
+            <div class="measure-item">
+              <span class="label">Coxa Esquerda:</span>
+              <span class="value">{{ formatMeasure(coxaEsquerda) }} cm</span>
+            </div>
+          </div>
+
+          <div class="measure-row">
+            <div class="measure-item">
+              <span class="label">Panturrilha Direita:</span>
+              <span class="value">{{ formatMeasure(panturrilhaDireita) }} cm</span>
+            </div>
+            <div class="measure-item">
+              <span class="label">Panturrilha Esquerda:</span>
+              <span class="value">{{ formatMeasure(panturrilhaEsquerda) }} cm</span>
+            </div>
+          </div>
+
+          <div class="measure-row">
+            <div class="measure-item">
+              <span class="label">Abdominal:</span>
+              <span class="value">{{ formatMeasure(abdominal) }} mm</span>
+            </div>
+            <div class="measure-item">
+              <span class="label">Suprailiaca:</span>
+              <span class="value">{{ formatMeasure(suprailiaca) }} mm</span>
+            </div>
+          </div>
+
+          <div class="measure-row">
+            <div class="measure-item">
+              <span class="label">Subescapular:</span>
+              <span class="value">{{ formatMeasure(subescapular) }} mm</span>
+            </div>
+            <div class="measure-item">
+              <span class="label">Tríceps:</span>
+              <span class="value">{{ formatMeasure(triceps) }} mm</span>
+            </div>
+          </div>
+
+          <div class="measure-row">
+            <div class="measure-item">
+              <span class="label">Axilar:</span>
+              <span class="value">{{ formatMeasure(axilar) }} mm</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fotos de Evolução -->
+      <div class="form-section">
+        <h2>
+          <mat-icon>photo_camera</mat-icon>
+          Fotos de Evolução
+        </h2>
+        <div class="photos-grid">
+          <div class="photo-card" *ngFor="let photo of evolutionPhotos">
+            <img [src]="photo.url" [alt]="photo.description">
+            <div class="photo-info">
+              <span>{{ photo.date | date:'dd/MM/yyyy' }}</span>
+              <button mat-icon-button color="warn" (click)="removePhoto(photo)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+          <div class="photo-upload">
+            <button mat-raised-button color="primary" (click)="uploadPhoto()">
+              <mat-icon>add_photo_alternate</mat-icon>
+              Adicionar Foto
             </button>
           </div>
         </div>
-      </mat-card-content>
-    </mat-card>
+      </div>
 
-    <!-- Seção de Treinos -->
-    <mat-card class="dashboard-card user-trainings-card">
-      <mat-card-header>
-        <mat-card-title>
+      <!-- Treinos -->
+      <div class="form-section">
+        <h2>
           <mat-icon>fitness_center</mat-icon>
-          Treinos do Usuário
-        </mat-card-title>
-        <mat-card-subtitle *ngIf="userTrainings.length === 0">Nenhum treino encontrado para este usuário.</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="add-training-button-wrapper">
-          <button mat-raised-button color="primary" (click)="createNewTraining()">
-            <mat-icon>add</mat-icon>
-            <span>Adicionar Treino</span>
-          </button>
-        </div>
-
-        <div class="trainings-table-wrapper" *ngIf="userTrainings.length > 0">
-          <table mat-table [dataSource]="trainingsDataSource" matSort>
-            <ng-container matColumnDef="id">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
-              <td mat-cell *matCellDef="let training"> {{training.id}} </td>
-            </ng-container>
-
-            <ng-container matColumnDef="name">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Nome </th>
-              <td mat-cell *matCellDef="let training"> {{training.name}} </td>
-            </ng-container>
-
-            <ng-container matColumnDef="description">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Descrição </th>
-              <td mat-cell *matCellDef="let training"> {{training.description || 'N/A'}} </td>
-            </ng-container>
-
-            <ng-container matColumnDef="durationMinutes">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Duração (min) </th>
-              <td mat-cell *matCellDef="let training"> {{training.durationMinutes || 'N/A'}} </td>
-            </ng-container>
-
-            <ng-container matColumnDef="intensityLevel">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Intensidade </th>
-              <td mat-cell *matCellDef="let training"> {{training.intensityLevel || 'N/A'}} </td>
-            </ng-container>
-
-            <ng-container matColumnDef="date">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Data </th>
-              <td mat-cell *matCellDef="let training"> {{training.date | date:'shortDate'}} </td>
-            </ng-container>
-
-            <ng-container matColumnDef="active">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Ativo </th>
-              <td mat-cell *matCellDef="let training">
-                <mat-icon [color]="training.active ? 'primary' : 'warn'">
-                  {{ training.active ? 'check_circle' : 'cancel' }}
-                </mat-icon>
-              </td>
-            </ng-container>
-
-            <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef> Ações </th>
-              <td mat-cell *matCellDef="let training">
-                <div class="action-buttons">
-                  <button mat-icon-button color="primary" (click)="editTraining(training.id)" matTooltip="Editar Treino">
-                    <mat-icon>edit</mat-icon>
+          Treinos
+        </h2>
+        <mat-tab-group>
+          <!-- Treino Atual -->
+          <mat-tab label="Treino Atual">
+            <div class="current-training">
+              <h3>Treino em Andamento</h3>
+              <div class="training-info" *ngIf="currentTraining">
+                <p><strong>Início:</strong> {{ currentTraining.startDate | date:'dd/MM/yyyy' }}</p>
+                <p><strong>Objetivo:</strong> {{ currentTraining.goal }}</p>
+                <p><strong>Frequência:</strong> {{ currentTraining.frequency }}x por semana</p>
+                <div class="training-actions">
+                  <button mat-raised-button color="primary" (click)="viewTrainingDetails(currentTraining)">
+                    <mat-icon>visibility</mat-icon>
+                    Ver Detalhes
                   </button>
-                  <button mat-icon-button color="warn" (click)="deleteTraining(training.id)" matTooltip="Excluir Treino">
-                    <mat-icon>delete</mat-icon>
+                  <button mat-raised-button color="accent" (click)="editTraining(currentTraining)">
+                    <mat-icon>edit</mat-icon>
+                    Editar
                   </button>
                 </div>
-              </td>
-            </ng-container>
+              </div>
+              <div class="no-training" *ngIf="!currentTraining">
+                <p>Nenhum treino em andamento</p>
+                <button mat-raised-button color="primary" (click)="createNewTraining()">
+                  <mat-icon>add</mat-icon>
+                  Criar Novo Treino
+                </button>
+              </div>
+            </div>
+          </mat-tab>
 
-            <tr mat-header-row *matHeaderRowDef="displayedTrainingsColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedTrainingsColumns;" class="training-row"></tr>
-          </table>
-        </div>
-      </mat-card-content>
-    </mat-card>
+          <!-- Histórico de Treinos -->
+          <mat-tab label="Histórico">
+            <div class="training-history">
+              <table mat-table [dataSource]="trainingHistory" class="training-table">
+                <ng-container matColumnDef="startDate">
+                  <th mat-header-cell *matHeaderCellDef>Início</th>
+                  <td mat-cell *matCellDef="let training">{{ training.startDate | date:'dd/MM/yyyy' }}</td>
+                </ng-container>
 
-    <!-- Botões de Ação -->
-    <div class="form-actions">
-      <button mat-button type="button" (click)="goBack()">
-        <mat-icon>arrow_back</mat-icon>
-        <span>Voltar</span>
-      </button>
-      <button mat-raised-button color="primary" type="submit" [disabled]="userForm.invalid">
-        <mat-icon>save</mat-icon>
-        <span>Salvar Alterações</span>
-      </button>
-    </div>
-  </form>
+                <ng-container matColumnDef="endDate">
+                  <th mat-header-cell *matHeaderCellDef>Fim</th>
+                  <td mat-cell *matCellDef="let training">{{ training.endDate | date:'dd/MM/yyyy' }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="goal">
+                  <th mat-header-cell *matHeaderCellDef>Objetivo</th>
+                  <td mat-cell *matCellDef="let training">{{ training.goal }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef>Ações</th>
+                  <td mat-cell *matCellDef="let training">
+                    <button mat-icon-button color="primary" (click)="viewTrainingDetails(training)">
+                      <mat-icon>visibility</mat-icon>
+                    </button>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="trainingColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: trainingColumns;"></tr>
+              </table>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+
+      <div class="actions">
+        <button mat-button type="button" (click)="router.navigate(['/users'])">
+          <mat-icon>arrow_back</mat-icon>
+          Voltar
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="userForm.invalid">
+          <mat-icon>save</mat-icon>
+          {{ isNewUser ? 'Criar' : 'Salvar' }}
+        </button>
+      </div>
+    </form>
+  </div>
 </div>

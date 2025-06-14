@@ -1,1 +1,229 @@
-<p>user works!</p>
+<div class="user-container">
+  <!-- Cabeçalho -->
+  <div class="header">
+    <mat-icon>person</mat-icon>
+    <div class="header-content">
+      <h1>{{ user?.name }}</h1>
+      <p class="subtitle">Detalhes do usuário</p>
+    </div>
+  </div>
+
+  <!-- Conteúdo Principal -->
+  <div class="content" *ngIf="user">
+    <!-- Informações Pessoais -->
+    <div class="info-section">
+      <h2>
+        <mat-icon>info</mat-icon>
+        Informações Pessoais
+      </h2>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">E-mail:</span>
+          <span class="value">{{ user.email }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Telefone:</span>
+          <span class="value">{{ user.phone }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Data de Nascimento:</span>
+          <span class="value">{{ user.birthDate | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Altura:</span>
+          <span class="value">{{ user.height }} cm</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Peso:</span>
+          <span class="value">{{ user.weight }} kg</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Medidas Atuais -->
+    <div class="measures-section">
+      <h2>
+        <mat-icon>fitness_center</mat-icon>
+        Medidas Atuais
+      </h2>
+      <div class="measures-grid">
+        <!-- Medidas do Corpo -->
+        <div class="measure-group">
+          <h3>Medidas do Corpo</h3>
+          <div class="measure-row">
+            <div class="measure-item">
+              <span class="label">Ombro:</span>
+              <span class="value">{{ formatMeasure(user.Measures?.[0]?.ombro) }} cm</span>
+            </div>
+            <div class="measure-item">
+              <span class="label">Peitoral:</span>
+              <span class="value">{{ formatMeasure(user.Measures?.[0]?.peitoral) }} cm</span>
+            </div>
+          </div>
+          <div class="measure-row">
+            <div class="measure-item">
+              <span class="label">Cintura:</span>
+              <span class="value">{{ formatMeasure(user.Measures?.[0]?.cintura) }} cm</span>
+            </div>
+            <div class="measure-item">
+              <span class="label">Quadril:</span>
+              <span class="value">{{ formatMeasure(user.Measures?.[0]?.quadril) }} cm</span>
+            </div>
+          </div>
+          <div class="measure-row">
+            <div class="measure-item">
+              <span class="label">Abdomem:</span>
+              <span class="value">{{ formatMeasure(user.Measures?.[0]?.abdomem) }} cm</span>
+            </div>
+            <div class="measure-item">
+              <span class="label">Torax:</span>
+              <span class="value">{{ formatMeasure(user.Measures?.[0]?.torax) }} cm</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Medidas dos Membros -->
+        <div class="measure-group">
+          <h3>Medidas dos Membros</h3>
+          <div class="measure-row">
+            <div class="measure-item">
+              <span class="label">Braço Direito:</span>
+              <span class="value">{{ formatMeasure(user.Measures?.[0]?.bracoDireito) }} cm</span>
+            </div>
+            <div class="measure-item">
+              <span class="label">Braço Esquerdo:</span>
+              <span class="value">{{ formatMeasure(user.Measures?.[0]?.bracoEsquerdo) }} cm</span>
+            </div>
+          </div>
+          <div class="measure-row">
+            <div class="measure-item">
+              <span class="label">Coxa Direita:</span>
+              <span class="value">{{ formatMeasure(user.Measures?.[0]?.coxaDireita) }} cm</span>
+            </div>
+            <div class="measure-item">
+              <span class="label">Coxa Esquerda:</span>
+              <span class="value">{{ formatMeasure(user.Measures?.[0]?.coxaEsquerda) }} cm</span>
+            </div>
+          </div>
+          <div class="measure-row">
+            <div class="measure-item">
+              <span class="label">Panturrilha Direita:</span>
+              <span class="value">{{ formatMeasure(user.Measures?.[0]?.panturrilhaDireita) }} cm</span>
+            </div>
+            <div class="measure-item">
+              <span class="label">Panturrilha Esquerda:</span>
+              <span class="value">{{ formatMeasure(user.Measures?.[0]?.panturrilhaEsquerda) }} cm</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Medidas de Dobras Cutâneas -->
+        <div class="measure-group">
+          <h3>Dobras Cutâneas</h3>
+          <div class="measure-row">
+            <div class="measure-item">
+              <span class="label">Abdominal:</span>
+              <span class="value">{{ formatMeasure(user.Measures?.[0]?.abdominal) }} mm</span>
+            </div>
+            <div class="measure-item">
+              <span class="label">Suprailiaca:</span>
+              <span class="value">{{ formatMeasure(user.Measures?.[0]?.suprailiaca) }} mm</span>
+            </div>
+          </div>
+          <div class="measure-row">
+            <div class="measure-item">
+              <span class="label">Subescapular:</span>
+              <span class="value">{{ formatMeasure(user.Measures?.[0]?.subescapular) }} mm</span>
+            </div>
+            <div class="measure-item">
+              <span class="label">Tríceps:</span>
+              <span class="value">{{ formatMeasure(user.Measures?.[0]?.triceps) }} mm</span>
+            </div>
+          </div>
+          <div class="measure-row">
+            <div class="measure-item">
+              <span class="label">Axilar:</span>
+              <span class="value">{{ formatMeasure(user.Measures?.[0]?.axilar) }} mm</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fotos de Evolução -->
+    <div class="photos-section" *ngIf="user.evolutionPhotos?.length">
+      <h2>
+        <mat-icon>photo_camera</mat-icon>
+        Fotos de Evolução
+      </h2>
+      <div class="photos-grid">
+        <div class="photo-card" *ngFor="let photo of user.evolutionPhotos">
+          <img [src]="photo.url" [alt]="photo.description">
+          <div class="photo-info">
+            <span>{{ photo.date | date:'dd/MM/yyyy' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Treinos -->
+    <div class="trainings-section" *ngIf="user.trainings?.length">
+      <h2>
+        <mat-icon>fitness_center</mat-icon>
+        Treinos
+      </h2>
+      <mat-tab-group>
+        <!-- Treino Atual -->
+        <mat-tab label="Treino Atual">
+          <div class="current-training" *ngIf="currentTraining">
+            <div class="training-info">
+              <p><strong>Início:</strong> {{ currentTraining.startDate | date:'dd/MM/yyyy' }}</p>
+              <p><strong>Objetivo:</strong> {{ currentTraining.goal }}</p>
+              <p><strong>Frequência:</strong> {{ currentTraining.frequency }}x por semana</p>
+            </div>
+          </div>
+          <div class="no-training" *ngIf="!currentTraining">
+            <p>Nenhum treino em andamento</p>
+          </div>
+        </mat-tab>
+
+        <!-- Histórico de Treinos -->
+        <mat-tab label="Histórico">
+          <div class="training-history">
+            <table mat-table [dataSource]="trainingHistory" class="training-table">
+              <ng-container matColumnDef="startDate">
+                <th mat-header-cell *matHeaderCellDef>Início</th>
+                <td mat-cell *matCellDef="let training">{{ training.startDate | date:'dd/MM/yyyy' }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="endDate">
+                <th mat-header-cell *matHeaderCellDef>Fim</th>
+                <td mat-cell *matCellDef="let training">{{ training.endDate | date:'dd/MM/yyyy' }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="goal">
+                <th mat-header-cell *matHeaderCellDef>Objetivo</th>
+                <td mat-cell *matCellDef="let training">{{ training.goal }}</td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="trainingColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: trainingColumns;"></tr>
+            </table>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </div>
+
+  <!-- Ações -->
+  <div class="actions">
+    <button mat-button (click)="onBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Voltar
+    </button>
+    <button mat-raised-button color="primary" (click)="onEdit()">
+      <mat-icon>edit</mat-icon>
+      Editar Usuário
+    </button>
+  </div>
+</div>

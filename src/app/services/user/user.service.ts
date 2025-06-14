@@ -17,8 +17,7 @@ export class UserService {
     return this.http.post<User>(`${this.baseUrl}/create`, user);
   }
 
-  // Pequena correção: Usar 'number' (minúsculo) para o tipo primitivo
-  getUserById(id: number): Observable<User> {
+  getUserById(id: string): Observable<User> {
     return this.http.get<User>(`${this.baseUrl}/getById/${id}`);
   }
 
@@ -26,12 +25,11 @@ export class UserService {
     return this.http.get<User[]>(`${this.baseUrl}/listAll`);
   }
 
-   updateUser(user: User): Observable<User> {
-    // Note que o user.id é usado no path da URL aqui
+  updateUser(user: User): Observable<User> {
     return this.http.put<User>(`${this.baseUrl}/update/${user.id}`, user);
   }
 
-  deleteUser(id: number): Observable<void> {
+  deleteUser(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/delete/${id}`);
   }
 
