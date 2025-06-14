@@ -23,7 +23,10 @@ export const routes: Routes = [
       { path: 'users-list', component: UserListComponent },
       { path: 'users-edit/:id', component: UserEditComponent },
       { path: 'trainning-create', component: TrainningCreateComponent }, // **Nova rota para criar treino**
-      { path: 'trainning', component: TrainningComponent}
+      {
+        path: 'trainning',
+        loadChildren: () => import('./trainning/trainning.module').then(m => m.TrainningModule)
+      }
       // { path: 'trainings-edit/:id', component: TrainningEditComponent }, // **Nova rota para editar treino (descomente quando tiver o componente)**
       // { path: 'users-search', component: UserSearchComponent },
       // { path: 'users-delete', component: UserDeleteComponent },
