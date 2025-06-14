@@ -4,7 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build && npm run build:ssr",
+    "build:ssr": "ng run sistudo-fitness:server",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:sistudo-fitness": "node dist/sistudo-fitness/server/server.mjs"
