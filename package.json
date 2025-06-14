@@ -7,7 +7,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "npm run clean && ng build --configuration production",
+    "build": "ng build",
     "build:stats": "ng build --configuration production --stats-json",
     "analyze": "webpack-bundle-analyzer dist/sistudo-fitness/browser/stats.json",
     "watch": "ng build --watch --configuration development",
