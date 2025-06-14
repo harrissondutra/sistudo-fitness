@@ -12,7 +12,8 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-trainning',
@@ -27,16 +28,18 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSnackBarModule
+    MatSortModule,
+    MatTooltipModule
   ],
   templateUrl: './trainning.component.html',
   styleUrls: ['./trainning.component.scss']
 })
 export class TrainningComponent implements OnInit, AfterViewInit {
   dataSource: MatTableDataSource<Trainning> = new MatTableDataSource();
-  displayedColumns: string[] = ['id', 'name', 'userId', 'actions'];
+  displayedColumns: string[] = ['id', 'name', 'description', 'durationMinutes', 'intensityLevel', 'date', 'actions'];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   totalTrainings: number = 0;
   pageSize: number = 10;
@@ -44,21 +47,20 @@ export class TrainningComponent implements OnInit, AfterViewInit {
 
   searchControl = new FormControl('');
 
-  constructor(private trainingService: TrainningService, private router: Router, private snackBar: MatSnackBar) { }
+  constructor(
+    private trainingService: TrainningService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
     this.listAllTrainings();
-    this.setupFilterPredicate(); // Ensure filter predicate is set up
-
-    this.searchControl.valueChanges.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      tap(value => this.applyFilter(value || ''))
-    ).subscribe();
+    this.setupFilterPredicate();
+    this.setupSearch();
   }
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   /**
@@ -67,23 +69,26 @@ export class TrainningComponent implements OnInit, AfterViewInit {
    */
   private setupFilterPredicate(): void {
     this.dataSource.filterPredicate = (data: Trainning, filter: string): boolean => {
-      // Converte o filtro para minúsculas e remove espaços em branco extras
-      const searchString = filter.trim().toLowerCase();
-
-      // Tenta converter o filtro para um número para comparar com userId
-      const searchNumber = Number(searchString);
-      const isNumericSearch = !isNaN(searchNumber) && searchString.length > 0;
-
-      // Se for uma busca numérica, tenta comparar com userId
-      if (isNumericSearch && data.userId === searchNumber) {
-        return true;
-      }
-
-      // Comparando apenas com as propriedades que existem no modelo Trainning
-      const dataStr = (data.name || '') + (data.id || ''); // Assumindo que você pode querer buscar por ID também
-
-      return dataStr.toLowerCase().includes(searchString);
+      const searchStr = filter.toLowerCase();
+      return (
+        (data.name?.toLowerCase() || '').includes(searchStr) ||
+        (data.description?.toLowerCase() || '').includes(searchStr) ||
+        (data.intensityLevel?.toLowerCase() || '').includes(searchStr) ||
+        (data.id?.toString() || '').includes(searchStr) ||
+        (data.durationMinutes?.toString() || '').includes(searchStr)
+      );
     };
+  }
+
+  /**
+   * Configura o mecanismo de busca com base no valor de busca.
+   */
+  private setupSearch(): void {
+    this.searchControl.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      tap(value => this.applyFilter(value || ''))
+    ).subscribe();
   }
 
   /**
@@ -100,7 +105,6 @@ export class TrainningComponent implements OnInit, AfterViewInit {
       }),
       catchError(error => {
         console.error('Erro ao carregar treinos:', error);
-        this.snackBar.open('Erro ao carregar treinos. Por favor, tente novamente mais tarde.', 'Fechar', { duration: 5000 });
         return of([]);
       })
     ).subscribe();
@@ -123,10 +127,7 @@ export class TrainningComponent implements OnInit, AfterViewInit {
    * @param id O ID do treino a ser editado.
    */
   editTraining(id: number): void {
-    // Implemente a navegação para a tela de edição de treinos
-    this.router.navigate(['/trainings-edit', id]); // Rota de edição de treino
-    this.snackBar.open(`Funcionalidade de edição para o treino ${id} não implementada.`, 'Fechar', { duration: 3000 });
-    console.log('Editar treino com ID:', id);
+    this.router.navigate(['/trainning/edit', id]);
   }
 
   /**
@@ -137,12 +138,10 @@ export class TrainningComponent implements OnInit, AfterViewInit {
     if (confirm('Tem certeza que deseja apagar este treino? Esta ação é irreversível.')) {
       this.trainingService.deleteTrainning(id).subscribe({
         next: () => {
-          this.snackBar.open('Treino apagado com sucesso!', 'Fechar', { duration: 3000 });
-          this.listAllTrainings(); // Recarrega a lista após a exclusão
+          this.listAllTrainings();
         },
         error: (error) => {
           console.error('Erro ao apagar treino:', error);
-          this.snackBar.open('Erro ao apagar treino. Verifique o console para mais detalhes.', 'Fechar', { duration: 5000 });
         }
       });
     }
@@ -153,8 +152,6 @@ export class TrainningComponent implements OnInit, AfterViewInit {
    * CORREÇÃO: Implementado para navegar para a rota de criação de treino.
    */
   createTraining(): void {
-    this.router.navigate(['/trainning-create']); // Navega para a tela de criação de treino
-    this.snackBar.open('Navegando para a tela de criação de treino.', 'Fechar', { duration: 2000 });
-    console.log('Criar novo treino');
+    this.router.navigate(['/trainning/create']);
   }
 }

@@ -2,11 +2,11 @@ import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Location } from '@angular/common';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -16,7 +16,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 
-
 import { UserService } from '../services/user/user.service';
 import { MeasureService } from '../services/measure/measure.service';
 import { TrainningService } from '../services/trainning/trainning.service';
@@ -25,7 +24,6 @@ import { Measure } from '../models/measure';
 import { Trainning } from '../models/trainning';
 import { catchError, filter, map, switchMap, tap, forkJoin, of, Observable } from 'rxjs';
 import { NgxMaskDirective } from 'ngx-mask';
-
 
 @Component({
   selector: 'app-user-edit',
@@ -37,7 +35,6 @@ import { NgxMaskDirective } from 'ngx-mask';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatSnackBarModule,
     MatProgressSpinnerModule,
     MatCardModule,
     MatGridListModule,
@@ -71,7 +68,7 @@ export class UserEditComponent implements OnInit, AfterViewInit {
     private measureService: MeasureService,
     private trainningService: TrainningService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private location: Location
   ) { }
 
   ngOnInit(): void {
@@ -132,7 +129,6 @@ export class UserEditComponent implements OnInit, AfterViewInit {
         const userRequest = this.userService.getUserById(id).pipe(
           catchError(error => {
             console.error('Error fetching user:', error);
-            this.snackBar.open('Error loading user data. Please try again.', 'Close', { duration: 5000 });
             this.router.navigate(['/users-list']);
             return of(null);
           })
@@ -147,7 +143,6 @@ export class UserEditComponent implements OnInit, AfterViewInit {
           map(allTrainings => allTrainings.filter(t => t.userId === id)),
           catchError(error => {
             console.error('Error fetching user trainings:', error);
-            this.snackBar.open('Error loading user trainings. Please try again.', 'Close', { duration: 5000 });
             return of([]);
           })
         );
@@ -201,7 +196,6 @@ export class UserEditComponent implements OnInit, AfterViewInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.selectedFile = input.files[0];
-      this.snackBar.open(`Arquivo selecionado: ${this.selectedFile.name}`, 'Fechar', { duration: 2000 });
     } else {
       this.selectedFile = null;
     }
@@ -241,53 +235,36 @@ export class UserEditComponent implements OnInit, AfterViewInit {
         tap(() => console.log('User updated successfully!')),
         catchError(error => {
           console.error('Error updating user:', error);
-          this.snackBar.open('Error updating user data.', 'Fechar', { duration: 5000 });
           return of(null);
         })
       ));
 
-      if (measureData.id) {
+      if (updatedMeasure.id) {
         updateRequests.push(this.measureService.updateMeasure(updatedMeasure).pipe(
-          tap(() => console.log('Measures updated successfully!')),
+          tap(() => console.log('Measure updated successfully!')),
           catchError(error => {
-            console.error('Error updating measures:', error);
-            this.snackBar.open('Error updating measure data.', 'Fechar', { duration: 5000 });
+            console.error('Error updating measure:', error);
             return of(null);
           })
         ));
       } else {
         updateRequests.push(this.measureService.createMeasure(updatedMeasure).pipe(
-          tap(() => console.log('Measures created successfully!')),
+          tap(() => console.log('Measure created successfully!')),
           catchError(error => {
-            console.error('Error creating measures:', error);
-            this.snackBar.open('Error creating measure data.', 'Fechar', { duration: 5000 });
+            console.error('Error creating measure:', error);
             return of(null);
           })
         ));
       }
 
       forkJoin(updateRequests).subscribe({
-        next: (results) => {
-          const allSuccessful = results.every(result => result !== null);
-          if (allSuccessful) {
-            this.snackBar.open('Dados atualizados com sucesso!', 'Fechar', { duration: 3000 });
-            this.router.navigate(['/users-list']);
-          } else {
-            this.snackBar.open('Algumas atualizações falharam. Verifique o console.', 'Fechar', { duration: 5000 });
-          }
+        next: () => {
+          this.router.navigate(['/users-list']);
         },
         error: (error) => {
-          console.error('General error in form submission:', error);
-          this.snackBar.open('General error saving data. Check the console.', 'Fechar', { duration: 5000 });
+          console.error('Error saving data:', error);
         }
       });
-
-    } else {
-      this.snackBar.open('Por favor, preencha todos os campos obrigatórios corretamente.', 'Fechar', { duration: 3000 });
-      this.userForm.markAllAsTouched();
-      this.measureForm.markAllAsTouched();
-      this.userForm.updateValueAndValidity();
-      this.measureForm.updateValueAndValidity();
     }
   }
 
@@ -295,12 +272,7 @@ export class UserEditComponent implements OnInit, AfterViewInit {
    * Navega para a tela de criação de um novo treino, passando o ID do usuário.
    */
   createNewTraining(): void {
-    if (this.userId) {
-      // Navega para a rota de criação de treino, passando o userId como query parameter
-      this.router.navigate(['/trainning-create'], { queryParams: { userId: this.userId } });
-    } else {
-      this.snackBar.open('Não foi possível determinar o ID do usuário para criar o treino.', 'Fechar', { duration: 3000 });
-    }
+    this.router.navigate(['/trainning/create'], { queryParams: { userId: this.userId } });
   }
 
   /**
@@ -308,9 +280,7 @@ export class UserEditComponent implements OnInit, AfterViewInit {
    * @param trainingId O ID do treino a ser editado.
    */
   editTraining(trainingId: number): void {
-    // CORREÇÃO: Implementa a navegação real para a tela de edição de treinos
-    this.router.navigate(['/trainings-edit', trainingId]);
-    this.snackBar.open(`Navegando para edição do treino ${trainingId}.`, 'Fechar', { duration: 2000 });
+    this.router.navigate(['/trainning/edit', trainingId]);
   }
 
   /**
@@ -318,15 +288,13 @@ export class UserEditComponent implements OnInit, AfterViewInit {
    * @param trainingId O ID do treino a ser apagado.
    */
   deleteTraining(trainingId: number): void {
-    if (confirm('Tem certeza que deseja apagar este treino? Esta ação é irreversível.')) {
+    if (confirm('Tem certeza que deseja apagar este treino?')) {
       this.trainningService.deleteTrainning(trainingId).subscribe({
         next: () => {
-          this.snackBar.open('Treino apagado com sucesso!', 'Fechar', { duration: 3000 });
-          this.loadUserDataAndMeasures(); // Recarrega os dados do usuário, incluindo os treinos
+          this.loadUserDataAndMeasures();
         },
         error: (error) => {
           console.error('Erro ao apagar treino:', error);
-          this.snackBar.open('Erro ao apagar treino. Verifique o console para mais detalhes.', 'Fechar', { duration: 5000 });
         }
       });
     }
@@ -337,5 +305,9 @@ export class UserEditComponent implements OnInit, AfterViewInit {
    */
   cancel(): void {
     this.router.navigate(['/users-list']);
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 }

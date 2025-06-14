@@ -1,19 +1,33 @@
 /* home.component.scss */
 
+/* Variáveis */
+:root {
+  --primary: #2196F3;
+  --secondary: #1976D2;
+  --success: #4CAF50;
+  --warning: #FF9800;
+  --info: #00BCD4;
+  --bg: #F5F7FA;
+  --card-bg: #FFFFFF;
+  --text: #2C3E50;
+  --text-light: #607D8B;
+  --radius: 16px;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --transition: 0.3s;
+}
+
 /* Garante que o sidenav-container ocupe toda a altura da viewport */
 .sidenav-container {
-  height: 100vh; /* altura total da tela */
-  display: flex;
-  flex-direction: column;
+  height: 100vh;
+  background: #F5F7FA;
 }
 
 /* Opcional: estiliza o mat-sidenav para preencher verticalmente */
 mat-sidenav {
-  width: 280px; /* Largura padrão para desktop */
-  background-color: var(--mat-sidenav-container-background-color, #f5f5f5);
-  padding: 16px 0; /* Padding interno para o conteúdo da sidenav */
-  border-right: 1px solid rgba(0, 0, 0, 0.05);
-  box-sizing: border-box; /* Inclui padding e border na largura total */
+  width: 280px;
+  background: #FFF;
+  border-right: none;
+  box-shadow: 0 4px 20px rgba(0,0,0,.08);
 }
 
 mat-sidenav-content {
@@ -25,26 +39,9 @@ mat-sidenav-content {
 
 /* Ajusta o conteúdo principal para ocupar o espaço restante */
 .main-content {
-  flex-grow: 1;
-  padding: 24px; /* Padding para o conteúdo principal. Ajuste este valor se desejar menos espaço nas bordas e que o dashboard "preencha mais" a tela. */
-  overflow-y: auto;
-  width: 100%; /* Garante que ocupe 100% da largura disponível */
-  min-height: calc(100vh - 64px); /* subtraindo a altura da toolbar (ex: 64px) */
-  box-sizing: border-box; /* Inclui padding e border na altura total */
-  background-color: #f5f5f5; /* cor de fundo clara */
-
-  h2 {
-    font-size: 2.2em;
-    color: #3f51b5;
-    margin-bottom: 16px;
-    font-weight: 500;
-  }
-
-  p {
-    font-size: 1.1em;
-    color: #555;
-    line-height: 1.6;
-  }
+  padding: 24px;
+  background: #F5F7FA;
+  min-height: calc(100vh - 64px);
 }
 
 /* Para garantir que o toolbar fique no topo e não sobreponha */
@@ -56,182 +53,259 @@ app-toolbar {
 
 /* Estilos específicos do Dashboard */
 .dashboard {
+  max-width: 1400px;
+  margin: 0 auto;
   padding: 20px;
-  background-color: var(--mat-card-background-color, #fff);
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Sombra mais suave para o container do dashboard */
 }
 
 .dashboard h2 {
-  font-size: 2.2em;
-  color: #3f51b5;
-  margin-bottom: 30px;
+  font-size: 2.4em;
+  color: #1a237e;
+  margin-bottom: 35px;
   text-align: center;
+  font-weight: 600;
+  letter-spacing: -0.5px;
 }
 
 .dashboard-section {
   margin-bottom: 40px;
-}
+  animation: fadeIn .5s ease-out forwards;
 
-.dashboard-section h3 {
-  font-size: 1.6em;
-  color: #555;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #e0e0e0;
-  padding-bottom: 10px;
+  .section-title {
+    font-size: 1.8em;
+    color: #2C3E50;
+    margin-bottom: 24px;
+    font-weight: 500;
+    position: relative;
+    padding-bottom: 12px;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 60px;
+      height: 4px;
+      background: #2196F3;
+      border-radius: 2px;
+    }
+  }
 }
 
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Layout de grid responsivo */
-  gap: 20px; /* Espaçamento entre os cartões */
-  align-items: stretch; /* Garante que os itens da grade se estendam verticalmente para a altura da linha */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
 }
 
 .dashboard-card {
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08); /* Sombra padrão para todos os cards do dashboard */
-  padding: 20px;
-  text-align: center;
-  display: flex;
-  flex-direction: column; /* Garante que o conteúdo dentro do card se organize em coluna */
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  min-height: 150px; /* CORREÇÃO: Adiciona uma altura mínima para os cards */
-
+  border-radius: 16px;
+  background: #FFF;
+  box-shadow: 0 4px 20px rgba(0,0,0,.08);
+  transition: all .3s ease;
+  animation: fadeIn .5s ease-out forwards;
 
   mat-card-content {
+    padding: 24px;
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center; /* Mantido para centralizar visualmente */
-    gap: 10px;
-    width: 100%;
-    flex-grow: 1; /* CORREÇÃO: Permite que o conteúdo da mat-card-content ocupe o espaço restante dentro do card */
-  }
-
-  mat-icon {
-    font-size: 48px;
-    height: 48px;
-    width: 48px;
-    color: var(--card-icon-color, #616161); /* Default neutro, pode ser sobrescrito via --card-icon-color */
-  }
-
-  h4 {
-    font-size: 1.2em;
-    margin: 0;
-    color: #333;
-  }
-}
-
-.clickable-card {
-  cursor: pointer;
-  background-color: #ffffff; /* Fundo branco explícito para cards clicáveis */
-  border: 1px solid #e0e0e0; /* Borda fina explícita para cards clicáveis */
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-    border-color: #c0c0c0;
+    gap: 20px;
   }
 }
 
 .metric-card {
-  background-color: var(--metric-card-background); /* Fundo colorido usando variável do HTML */
-  border: none; /* Sem borda, como na imagem de referência */
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease-in-out;
-  color: #ffffff; /* Texto branco para alto contraste */
+  position: relative;
+  overflow: hidden;
+  background: #FFF;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.05);
+  transition: all .3s ease;
 
-  &:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: #2196F3;
   }
 
-  .mat-card-content {
-    flex-direction: row; /* Layout horizontal para ícone e texto */
-    justify-content: center;
-    gap: 15px;
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0,0,0,.1);
+  }
 
-    /* CORREÇÃO: Alvo o div que contém h4 e p dentro de mat-card-content para permitir crescimento vertical */
-    div {
-        flex-grow: 1; /* Permite que este div ocupe o espaço restante dentro da flex row */
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start; /* Alinha o texto à esquerda dentro da coluna */
-        justify-content: center;
-        text-align: left; /* Garante que o texto dentro seja alinhado à esquerda */
+  .metric-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(33,150,243,.1);
+
+    mat-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+      color: #2196F3;
     }
   }
 
-  mat-icon {
-    font-size: 48px;
-    height: 48px;
-    width: 48px;
-    color: var(--card-icon-color, #ffffff); /* Cor do ícone definida pela variável CSS, ou branco como fallback */
-  }
+  .metric-info {
+    flex: 1;
 
-  h4 {
-    font-size: 1.1em;
-    color: #ffffff; /* Título branco */
-    font-weight: 500;
-  }
-  .metric-value {
-    font-size: 1.8em;
-    font-weight: 700;
-    color: #ffffff; /* Valor branco */
-    margin-top: 5px;
+    h4 {
+      font-size: 1em;
+      color: #607D8B;
+      margin: 0 0 8px 0;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+
+    .metric-value {
+      font-size: 2em;
+      font-weight: 600;
+      color: #2C3E50;
+      margin: 0 0 4px 0;
+      line-height: 1;
+    }
+
+    .metric-label {
+      font-size: .85em;
+      color: #90A4AE;
+      font-weight: 500;
+    }
   }
 }
 
+.action-card {
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0,0,0,.12);
+
+    .action-arrow {
+      transform: translateX(5px);
+    }
+  }
+
+  .action-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(33,150,243,.1);
+
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+      color: #2196F3;
+    }
+  }
+
+  .action-info {
+    flex: 1;
+
+    h4 {
+      font-size: 1.1em;
+      color: #2C3E50;
+      margin: 0 0 4px 0;
+      font-weight: 500;
+    }
+
+    p {
+      font-size: .9em;
+      color: #607D8B;
+      margin: 0;
+    }
+  }
+
+  .action-arrow {
+    color: #2196F3;
+    transition: transform .3s ease;
+  }
+}
+
+.users-card {
+  &::before { background: #00BCD4; }
+  .metric-icon {
+    background: rgba(0,188,212,.1);
+    mat-icon { color: #00BCD4; }
+  }
+}
+
+.trainings-card {
+  &::before { background: #FF9800; }
+  .metric-icon {
+    background: rgba(255,152,0,.1);
+    mat-icon { color: #FF9800; }
+  }
+}
+
+.active-card {
+  &::before { background: #4CAF50; }
+  .metric-icon {
+    background: rgba(76,175,80,.1);
+    mat-icon { color: #4CAF50; }
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header do Dashboard */
+.dashboard-header {
+  margin-bottom: 40px;
+  text-align: center;
+
+  h1 {
+    font-size: 2.5em;
+    color: #2C3E50;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .welcome-message {
+    color: #607D8B;
+    font-size: 1.1em;
+  }
+}
 
 /* ------------------------------------------------------------- */
 /* MEDIA QUERIES PARA RESPONSIVIDADE                           */
 /* ------------------------------------------------------------- */
 
 @media screen and (max-width: 599px) {
-  mat-sidenav {
-    width: 80%;
-    padding: 10px 0;
-  }
-
-  .main-content {
-    padding: 16px;
-  }
-
-  .dashboard {
-    padding: 15px;
-  }
-
-  .dashboard h2 {
-    font-size: 1.8em;
-    margin-bottom: 20px;
-  }
-
-  .dashboard-section h3 {
-    font-size: 1.4em;
-    margin-bottom: 15px;
-  }
-
-  .cards-grid {
-    grid-template-columns: 1fr; /* Uma coluna em telas muito pequenas */
-  }
-
-  .dashboard-card {
-    padding: 15px;
-    min-height: 120px; /* Ajuste a altura mínima para telas menores */
-    mat-icon {
-      font-size: 40px;
-      height: 40px;
-      width: 40px;
-    }
-    h4 {
-      font-size: 1.1em;
+  .main-content { padding: 16px; }
+  .dashboard { padding: 10px; }
+  .dashboard-header { margin-bottom: 24px; }
+  .dashboard-header h1 { font-size: 2em; }
+  .cards-grid { grid-template-columns: 1fr; gap: 16px; }
+  .dashboard-card mat-card-content { padding: 16px; }
+  .metric-card {
+    .metric-icon {
+      width: 48px;
+      height: 48px;
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
     }
     .metric-value {
-      font-size: 1.5em;
+      font-size: 1.8em;
     }
   }
 }
@@ -242,10 +316,6 @@ app-toolbar {
   }
 
   .main-content {
-    padding: 20px;
-  }
-
-  .dashboard {
     padding: 20px;
   }
 
@@ -274,10 +344,6 @@ app-toolbar {
 
   .dashboard h2 {
     font-size: 2.4em;
-  }
-
-  .dashboard-section h3 {
-    font-size: 1.8em;
   }
 
   .cards-grid {

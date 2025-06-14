@@ -4,16 +4,18 @@ import { UserService } from '../services/user/user.service';
 import { User } from '../models/user';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Location } from '@angular/common';
 
 // Importar os módulos do Angular Material
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'; // Importe MatSnackBar e MatSnackBarModule
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
 
 // Importar NgxMaskDirective
 import { NgxMaskDirective } from 'ngx-mask';
-
 
 @Component({
   selector: 'app-user-registration',
@@ -24,7 +26,9 @@ import { NgxMaskDirective } from 'ngx-mask';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatSnackBarModule, // Adicionar MatSnackBarModule
+    MatSnackBarModule,
+    MatCardModule,
+    MatIconModule,
     NgxMaskDirective
   ],
   templateUrl: './user-registration.component.html',
@@ -37,11 +41,11 @@ export class UserRegistrationComponent implements OnInit {
     private fb: FormBuilder,
     private userService: UserService,
     private router: Router,
-    private snackBar: MatSnackBar // Injetar MatSnackBar
+    private snackBar: MatSnackBar,
+    private location: Location
   ) { }
 
   ngOnInit(): void {
-    // Inicializa o formulário com seus controles e validadores
     this.initializeForm();
   }
 
@@ -94,5 +98,9 @@ export class UserRegistrationComponent implements OnInit {
       // Marca todos os controles como tocados para exibir mensagens de erro
       this.userForm.markAllAsTouched();
     }
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 }

@@ -1,82 +1,208 @@
 /* trainning-create.component.scss */
 
+// Variáveis
+$primary-color: #3f51b5; // Indigo padrão do Angular Material
+$primary-light: #e8eaf6;
+$text-primary: #303f9f;
+$text-secondary: #5c6bc0;
+$background-light: #ffffff;
+$background-section: #f5f7fa;
+$border-color: #c5cae9;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$border-radius: 8px;
+$transition: all 0.2s ease;
+$shadow-sm: 0 2px 4px rgba(63, 81, 181, 0.05);
+$shadow-md: 0 4px 6px rgba(63, 81, 181, 0.08);
+
+// Container Principal
 .trainning-create-container {
-  max-width: 600px; /* Largura ligeiramente maior para o formulário */
-  margin: 50px auto;
-  padding: 32px;
-  background-color: var(--mat-card-background-color, #fff);
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
+  max-width: 800px;
+  margin: 0 auto;
+  padding: $spacing-lg;
+  background-color: $background-light;
+  border-radius: $border-radius;
+  box-shadow: $shadow-sm;
 
-h2 {
-  text-align: center;
-  color: var(--mat-typography-display-medium-color, #3f51b5);
-  font-size: 2em;
-  margin-bottom: 24px;
-  font-weight: 500;
-}
+  // Cabeçalho
+  .header {
+    margin-bottom: $spacing-lg;
+    padding-bottom: $spacing-md;
+    border-bottom: 1px solid $border-color;
 
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px; /* Espaçamento entre os campos */
-}
+    .title-section {
+      h2 {
+        margin: 0;
+        color: $text-primary;
+        font-size: 24px;
+        font-weight: 500;
+        letter-spacing: -0.5px;
+      }
 
-.full-width-input {
-  width: 100%;
-}
+      .subtitle {
+        margin: $spacing-sm 0 0;
+        color: $text-secondary;
+        font-size: 14px;
+        font-weight: 400;
+      }
+    }
+  }
 
-.form-actions {
-  display: flex;
-  justify-content: flex-end; /* Alinha os botões à direita */
-  gap: 16px;
-  margin-top: 24px;
+  // Seções do Formulário
+  .form-section {
+    margin-bottom: $spacing-lg;
+    padding: $spacing-lg;
+    background-color: $background-section;
+    border-radius: $border-radius;
+    transition: $transition;
+    border: 1px solid $border-color;
 
-  button {
-    height: 48px;
-    font-size: 1.1em;
-    line-height: 1;
-    padding: 0 24px;
+    &:hover {
+      box-shadow: $shadow-md;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      margin: 0 0 $spacing-md;
+      color: $text-primary;
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: -0.3px;
+
+      mat-icon {
+        margin-right: $spacing-sm;
+        color: $primary-color;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+
+  // Grid do Formulário
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-md;
+  }
+
+  // Campos do Formulário
+  .full-width-input {
+    width: 100%;
+  }
+
+  mat-form-field {
+    .mat-mdc-form-field-icon-suffix {
+      color: $primary-color;
+    }
+
+    .mat-mdc-form-field-subscript-wrapper {
+      font-size: 12px;
+    }
+
+    .mat-mdc-text-field-wrapper {
+      background-color: $background-light;
+    }
+
+    .mat-mdc-form-field-flex {
+      padding: 0 8px;
+    }
+
+    &.mat-focused {
+      .mat-mdc-form-field-flex {
+        background-color: $primary-light;
+      }
+    }
+  }
+
+  // Botões de Ação
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-md;
+    margin-top: $spacing-lg;
+    padding-top: $spacing-md;
+    border-top: 1px solid $border-color;
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+      padding: 0 $spacing-lg;
+      height: 40px;
+      font-weight: 500;
+      font-size: 14px;
+      letter-spacing: 0.3px;
+      transition: $transition;
+      border-radius: $border-radius;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+
+      &:hover {
+        transform: translateY(-1px);
+      }
+
+      &[color="primary"] {
+        background-color: $primary-color;
+        color: white;
+
+        &:hover {
+          background-color: darken($primary-color, 5%);
+        }
+      }
+
+      &[mat-stroked-button] {
+        border-color: $primary-color;
+        color: $primary-color;
+
+        &:hover {
+          background-color: $primary-light;
+        }
+      }
+    }
   }
 }
 
-/* ------------------------------------------------------------- */
-/* MEDIA QUERIES PARA RESPONSIVIDADE                           */
-/* ------------------------------------------------------------- */
-
+// Media Queries
 @media (max-width: 768px) {
   .trainning-create-container {
-    margin: 20px 16px;
-    padding: 24px;
-    box-shadow: none;
-    border-radius: 0;
-  }
+    padding: $spacing-md;
 
-  h2 {
-    font-size: 1.8em;
-  }
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
 
-  .form-actions {
-    flex-direction: column;
-    align-items: stretch; /* Botões ocupam a largura total em telas menores */
-  }
-
-  button {
-    width: 100%;
+    .form-section {
+      padding: $spacing-md;
+    }
   }
 }
 
 @media (max-width: 480px) {
   .trainning-create-container {
-    margin: 8px;
-    padding: 16px;
-  }
+    padding: $spacing-sm;
 
-  h2 {
-    font-size: 1.5em;
+    .header {
+      .title-section {
+        h2 {
+          font-size: 20px;
+        }
+      }
+    }
+
+    .form-actions {
+      flex-direction: column-reverse;
+      gap: $spacing-sm;
+
+      button {
+        width: 100%;
+      }
+    }
   }
 }

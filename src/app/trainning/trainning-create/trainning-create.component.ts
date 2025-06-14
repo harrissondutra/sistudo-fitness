@@ -1,112 +1,71 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
-
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatSelectModule } from '@angular/material/select'; // Para o campo de intensidade
-import { MatDatepickerModule } from '@angular/material/datepicker'; // Para o campo de data
-import { MatNativeDateModule } from '@angular/material/core'; // Necessário para MatDatepicker
-
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { TrainningService } from '../../services/trainning/trainning.service';
-import { Trainning } from '../../models/trainning'; // Modelo Trainning fornecido
-import { catchError, of } from 'rxjs'; // Importar 'of' para Observables vazios
-
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-trainning-create',
+  templateUrl: './trainning-create.component.html',
+  styleUrls: ['./trainning-create.component.scss'],
   standalone: true,
   imports: [
     CommonModule,
-    RouterModule,
     ReactiveFormsModule,
+    MatIconModule,
+    MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule,
-    MatSnackBarModule,
-    MatSelectModule, // Adicionado
-    MatDatepickerModule, // Adicionado
-    MatNativeDateModule // Adicionado
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
-  templateUrl: './trainning-create.component.html',
-  styleUrls: ['./trainning-create.component.scss']
+  providers: [TrainningService]
 })
 export class TrainningCreateComponent implements OnInit {
-  trainingForm!: FormGroup;
-  intensityLevels: string[] = ['LOW', 'MEDIUM', 'HIGH']; // Opções para o seletor de intensidade
+  trainingForm: FormGroup;
+  intensityLevels = ['Iniciante', 'Intermediário', 'Avançado'];
 
   constructor(
     private fb: FormBuilder,
     private trainningService: TrainningService,
-    private router: Router,
-    private snackBar: MatSnackBar
-  ) { }
-
-  ngOnInit(): void {
-    this.initializeForm();
-  }
-
-  /**
-   * Inicializa o FormGroup para o treino com validadores.
-   * Note que 'description', 'durationMinutes', 'intensityLevel', 'date'
-   * estão no formulário, mas não na interface Trainning fornecida.
-   * Se esses campos forem persistidos, o modelo Trainning precisa ser atualizado.
-   */
-  private initializeForm(): void {
+    private router: Router
+  ) {
     this.trainingForm = this.fb.group({
       name: ['', Validators.required],
-      description: [''], // Campo no formulário
-      durationMinutes: [null, [Validators.min(1), Validators.max(1000)]], // Campo no formulário
-      intensityLevel: ['', Validators.required], // Campo no formulário
-      date: [null, Validators.required], // Campo no formulário
-      userId: [null, Validators.required]
-      // Não há um campo 'active' no formulário aqui, então será definido com um valor padrão
+      description: [''],
+      durationMinutes: ['', [Validators.required, Validators.min(1), Validators.max(1000)]],
+      intensityLevel: ['', Validators.required],
+      date: ['', Validators.required],
+      userId: ['', Validators.required]
     });
   }
 
-  /**
-   * Lida com a submissão do formulário para criar um novo treino.
-   */
+  ngOnInit(): void {}
+
   onSubmit(): void {
     if (this.trainingForm.valid) {
-      const formData = this.trainingForm.value;
-
-      // CORREÇÃO: Adicionando a propriedade 'active' ao objeto newTraining.
-      // O valor é definido como 'true' por padrão para um treino recém-criado.
-      // Propriedades como description, durationMinutes, intensityLevel e date
-      // não são incluídas aqui pois não estão na interface Trainning fornecida.
-      const newTraining: Trainning = {
-        name: formData.name,
-        userId: formData.userId,
-        exercises: formData.exercises || [], // Garante que exercises está presente
-        active: true // Definindo 'active' como true por padrão
-      };
-
-      this.trainningService.createTrainning(newTraining).pipe(
-        catchError(error => {
+      this.trainningService.createTrainning(this.trainingForm.value).subscribe({
+        next: () => {
+          this.router.navigate(['/trainning']);
+        },
+        error: (error: HttpErrorResponse) => {
           console.error('Erro ao criar treino:', error);
-          this.snackBar.open('Erro ao criar treino. Verifique o console para mais detalhes.', 'Fechar', { duration: 5000 });
-          return of(null); // Retorna um Observable de null para continuar a cadeia
-        })
-      ).subscribe(response => {
-        if (response) {
-          this.snackBar.open('Treino criado com sucesso!', 'Fechar', { duration: 3000 });
-          this.router.navigate(['/trainings-list']); // Redireciona para a lista após sucesso
         }
       });
-    } else {
-      this.snackBar.open('Por favor, preencha todos os campos obrigatórios corretamente.', 'Fechar', { duration: 3000 });
-      this.trainingForm.markAllAsTouched(); // Marca todos os campos como tocados para exibir erros
     }
   }
 
-  /**
-   * Cancela a operação e retorna para a lista de treinos.
-   */
   cancel(): void {
-    this.router.navigate(['/trainings-list']);
+    this.router.navigate(['/trainning']);
   }
 }

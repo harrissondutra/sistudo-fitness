@@ -12,8 +12,9 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'; // Importe MatSnackBar e MatSnackBarModule
-
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-user-list',
@@ -28,7 +29,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'; //
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSnackBarModule // Adicionar MatSnackBarModule
+    MatSnackBarModule,
+    MatDialogModule
   ],
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss']
@@ -45,7 +47,12 @@ export class UserListComponent implements OnInit, AfterViewInit {
 
   searchControl = new FormControl('');
 
-  constructor(private userService: UserService, private router: Router, private snackBar: MatSnackBar) { } // Injetar MatSnackBar
+  constructor(
+    private userService: UserService,
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
+  ) { }
 
   ngOnInit(): void {
     this.loadAllUsers();
@@ -75,7 +82,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
       }),
       catchError(error => {
         console.error('Erro ao carregar usuários:', error);
-        this.snackBar.open('Erro ao carregar usuários. Por favor, tente novamente mais tarde.', 'Fechar', { duration: 5000 }); // Substitui alert()
+        this.snackBar.open('Erro ao carregar usuários. Por favor, tente novamente mais tarde.', 'Fechar', { duration: 5000 });
         return of([]);
       })
     ).subscribe();
@@ -107,23 +114,28 @@ export class UserListComponent implements OnInit, AfterViewInit {
    * @param id O ID do usuário a ser apagado.
    */
   deleteUser(id: number): void {
-    // Mantém o confirm() para a confirmação inicial da ação
-    if (confirm('Tem certeza que deseja apagar este usuário? Esta ação é irreversível.')) {
-      // Implementar a chamada ao serviço para apagar o usuário
-      // Exemplo:
-      // this.userService.deleteUser(id).subscribe({
-      //   next: () => {
-      //     this.snackBar.open('Usuário apagado com sucesso!', 'Fechar', { duration: 3000 }); // Substitui alert()
-      //     this.loadAllUsers(); // Recarrega a lista após a exclusão
-      //   },
-      //   error: (error) => {
-      //     console.error('Erro ao apagar usuário:', error);
-      //     this.snackBar.open('Erro ao apagar usuário. Verifique o console para mais detalhes.', 'Fechar', { duration: 5000 }); // Substitui alert()
-      //   }
-      // });
-      console.log('Funcionalidade de apagar usuário com ID:', id);
-      this.snackBar.open(`Funcionalidade de apagar para o usuário ${id} não implementada.`, 'Fechar', { duration: 3000 }); // Substitui alert()
-    }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Confirmar Exclusão',
+        message: 'Tem certeza que deseja apagar este usuário? Esta ação é irreversível.'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.userService.deleteUser(id).subscribe({
+          next: () => {
+            this.snackBar.open('Usuário apagado com sucesso!', 'Fechar', { duration: 3000 });
+            this.loadAllUsers();
+          },
+          error: (error) => {
+            console.error('Erro ao apagar usuário:', error);
+            this.snackBar.open('Erro ao apagar usuário. Verifique o console para mais detalhes.', 'Fechar', { duration: 5000 });
+          }
+        });
+      }
+    });
   }
 
   /**

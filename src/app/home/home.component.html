@@ -1,91 +1,122 @@
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav
-  #sidenav
-  [mode]="(isHandset$ | async) ? 'over' : 'side'"
-  [opened]="!(isHandset$ | async)">
-  <app-sidenav (linkClicked)="onSidenavLinkClicked()"></app-sidenav>
-</mat-sidenav>
+    #sidenav
+    [mode]="(isHandset$ | async) ? 'over' : 'side'"
+    [opened]="!(isHandset$ | async)">
+    <app-sidenav (linkClicked)="onSidenavLinkClicked()"></app-sidenav>
+  </mat-sidenav>
   <mat-sidenav-content>
     <app-toolbar [sidenav]="sidenav"></app-toolbar>
     <main class="main-content">
-      <!-- O conteúdo do dashboard será exibido somente na rota raiz -->
       <ng-container *ngIf="router.url === '/'">
         <div class="dashboard">
 
-
-          <!-- Seção de Quantidades/Métricas -->
+          <!-- Seção de Métricas -->
           <div class="dashboard-section metrics">
             <div class="cards-grid">
-              <!-- Card 1: Total de Usuários (Ciano) - AGORA EXIBINDO DADOS REAIS -->
-              <mat-card class="dashboard-card metric-card" style="--metric-card-background: #00BCD4; --card-icon-color: #ffffff;">
+              <mat-card class="dashboard-card metric-card users-card">
+                <div class="card-glow"></div>
                 <mat-card-content>
-                  <mat-icon>group</mat-icon>
-                  <div>
+                  <div class="metric-icon">
+                    <mat-icon>group</mat-icon>
+                  </div>
+                  <div class="metric-info">
                     <h4>Total de Usuários</h4>
-                    <p class="metric-value">{{ totalUsersCount }}</p> <!-- CORREÇÃO: Dados dinâmicos -->
+                    <p class="metric-value">{{ totalUsersCount }}</p>
+                    <span class="metric-label">Usuários cadastrados</span>
                   </div>
                 </mat-card-content>
               </mat-card>
 
-              <!-- Card 2: Total de Treinos (Laranja) -->
-              <mat-card class="dashboard-card metric-card" style="--metric-card-background: #FF9800; --card-icon-color: #ffffff;">
+              <mat-card class="dashboard-card metric-card trainings-card">
+                <div class="card-glow"></div>
                 <mat-card-content>
-                  <mat-icon>assignment</mat-icon>
-                  <div>
+                  <div class="metric-icon">
+                    <mat-icon>assignment</mat-icon>
+                  </div>
+                  <div class="metric-info">
                     <h4>Total de Treinos</h4>
                     <p class="metric-value">{{ totalTrainingsCount }}</p>
+                    <span class="metric-label">Treinos criados</span>
                   </div>
                 </mat-card-content>
               </mat-card>
 
-              <!-- Card 3: Treinos Ativos (Verde) -->
-              <mat-card class="dashboard-card metric-card" style="--metric-card-background: #4CAF50; --card-icon-color: #ffffff;">
+              <mat-card class="dashboard-card metric-card active-card">
+                <div class="card-glow"></div>
                 <mat-card-content>
-                  <mat-icon>fitness_center</mat-icon>
-                  <div>
+                  <div class="metric-icon">
+                    <mat-icon>fitness_center</mat-icon>
+                  </div>
+                  <div class="metric-info">
                     <h4>Treinos Ativos</h4>
-                    <p class="metric-value">{{totalTrainingsActiveCount}}</p> <!-- Dados de exemplo -->
+                    <p class="metric-value">{{totalTrainingsActiveCount}}</p>
+                    <span class="metric-label">Em andamento</span>
                   </div>
                 </mat-card-content>
               </mat-card>
-
-
             </div>
           </div>
-          <!-- Seção de Atalhos Rápidos -->
-          <div class="dashboard-section quick-links">
+
+          <!-- Seção de Ações Rápidas -->
+          <div class="dashboard-section quick-actions">
+            <h2 class="section-title">Ações Rápidas</h2>
             <div class="cards-grid">
-              <!-- Ícones dos Acessos Rápidos definidos como azuis -->
-              <mat-card class="dashboard-card clickable-card" routerLink="/users-list" style="--card-icon-color: #3f51b5;">
+              <mat-card class="dashboard-card action-card" routerLink="/users-list">
                 <mat-card-content>
-                  <mat-icon>people</mat-icon>
-                  <h4>Listar Usuários</h4>
+                  <div class="action-icon">
+                    <mat-icon>people</mat-icon>
+                  </div>
+                  <div class="action-info">
+                    <h4>Listar Usuários</h4>
+                    <p>Visualize todos os usuários cadastrados</p>
+                  </div>
+                  <mat-icon class="action-arrow">arrow_forward</mat-icon>
                 </mat-card-content>
               </mat-card>
-              <mat-card class="dashboard-card clickable-card" routerLink="/register" style="--card-icon-color: #3f51b5;">
+
+              <mat-card class="dashboard-card action-card" routerLink="/register">
                 <mat-card-content>
-                  <mat-icon>person_add</mat-icon>
-                  <h4>Criar Usuário</h4>
+                  <div class="action-icon">
+                    <mat-icon>person_add</mat-icon>
+                  </div>
+                  <div class="action-info">
+                    <h4>Criar Usuário</h4>
+                    <p>Adicione um novo usuário ao sistema</p>
+                  </div>
+                  <mat-icon class="action-arrow">arrow_forward</mat-icon>
                 </mat-card-content>
               </mat-card>
-              <mat-card class="dashboard-card clickable-card" routerLink="/trainning" style="--card-icon-color: #3f51b5;">
+
+              <mat-card class="dashboard-card action-card" routerLink="/trainning">
                 <mat-card-content>
-                  <mat-icon>fitness_center</mat-icon>
-                  <h4>Listar Treinos</h4>
+                  <div class="action-icon">
+                    <mat-icon>fitness_center</mat-icon>
+                  </div>
+                  <div class="action-info">
+                    <h4>Listar Treinos</h4>
+                    <p>Visualize todos os treinos disponíveis</p>
+                  </div>
+                  <mat-icon class="action-arrow">arrow_forward</mat-icon>
                 </mat-card-content>
               </mat-card>
-              <mat-card class="dashboard-card clickable-card" routerLink="/trainning-create" style="--card-icon-color: #3f51b5;">
+
+              <mat-card class="dashboard-card action-card" routerLink="/trainning-create">
                 <mat-card-content>
-                  <mat-icon>add_box</mat-icon>
-                  <h4>Criar Treino</h4>
+                  <div class="action-icon">
+                    <mat-icon>add_box</mat-icon>
+                  </div>
+                  <div class="action-info">
+                    <h4>Criar Treino</h4>
+                    <p>Crie um novo treino personalizado</p>
+                  </div>
+                  <mat-icon class="action-arrow">arrow_forward</mat-icon>
                 </mat-card-content>
               </mat-card>
             </div>
           </div>
-
         </div>
       </ng-container>
-      <!-- O router-outlet renderizará o componente da rota ativa (ex: lista de usuários, edição de usuário) -->
       <router-outlet></router-outlet>
     </main>
   </mat-sidenav-content>

@@ -1,100 +1,26 @@
 .user-edit-container {
-  width: 100%;
-  padding: 32px;
-  margin: 32px auto;
-  background-color: var(--mat-card-background-color, #fff);
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  box-sizing: border-box;
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: #F5F7FA;
+  min-height: 100vh;
 
-  h2 {
-    text-align: center;
-    color: var(--mat-typography-display-medium-color, #3f51b5);
-    font-size: 2.2em;
+  .header {
     margin-bottom: 24px;
-    font-weight: 500;
-  }
+    
+    .title-section {
+      h2 {
+        margin: 0;
+        color: #2C3E50;
+        font-size: 28px;
+        font-weight: 500;
+      }
 
-  form {
-    display: flex;
-    flex-direction: column; /* Organiza as principais seções verticalmente */
-    gap: 20px; /* Espaçamento entre as seções principais (dados, medidas/upload, botões) */
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  /* Novo contêiner para as seções de Dados Pessoais e Medidas */
-  .dashboard-main-sections {
-    display: grid;
-    grid-template-columns: 1fr; /* Padrão para telas menores: uma coluna */
-    gap: 20px; /* Espaçamento entre os cards quando empilhados */
-    width: 100%;
-    box-sizing: border-box;
-
-    /* Media query para telas maiores: 1/3 e 2/3 */
-    @media (min-width: 960px) { /* Ajuste este breakpoint conforme necessário */
-      grid-template-columns: 1fr 2fr; /* 1/3 para o primeiro card, 2/3 para o segundo */
-      gap: 24px; /* Espaçamento entre os cards quando lado a lado */
-    }
-  }
-
-  .dashboard-card {
-    margin-bottom: 0; /* Gerenciado pelo gap do grid/flex */
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    padding: 24px;
-    /* A largura agora será gerenciada pelo grid-template-columns do .dashboard-main-sections */
-    box-sizing: border-box;
-
-    mat-card-header {
-      margin-bottom: 16px;
-      padding: 0;
-    }
-
-    mat-card-title {
-      font-size: 1.5em;
-      color: #555;
-      font-weight: 600;
-    }
-
-    mat-card-content {
-      padding: 0;
-    }
-  }
-
-  .form-section {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 16px;
-    padding-top: 16px;
-  }
-
-  .full-width-input {
-    grid-column: 1 / -1;
-  }
-
-  .measures-grid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
-
-  mat-divider {
-    margin: 20px 0;
-  }
-
-  .form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 16px;
-    margin-top: 24px;
-
-    button {
-      height: 48px;
-      font-size: 1.1em;
-      line-height: 1;
-      padding: 0 24px;
+      .subtitle {
+        margin: 8px 0 0;
+        color: #607D8B;
+        font-size: 16px;
+      }
     }
   }
 
@@ -103,60 +29,266 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 300px;
-    color: #555;
-  }
-}
-
-/* ------------------------------------------------------------- */
-/* MEDIA QUERIES FOR RESPONSIVENESS                           */
-/* ------------------------------------------------------------- */
-
-@media (max-width: 1024px) {
-  .user-edit-container {
-    padding: 24px;
-    margin: 16px;
-  }
-}
-
-@media (max-width: 768px) {
-  .user-edit-container {
-    margin: 16px;
-    padding: 24px;
-    box-shadow: none;
-    border-radius: 0;
+    padding: 48px;
+    
+    p {
+      margin-top: 16px;
+      color: #607D8B;
+    }
   }
 
-  h2 {
-    font-size: 1.8em;
-  }
+  .dashboard-main-sections {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 24px;
+    margin-bottom: 24px;
 
-  /* .dashboard-main-sections já lida com 1fr em telas menores */
-  .form-section {
-    grid-template-columns: 1fr;
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+    }
   }
 
   .dashboard-card {
-    padding: 16px;
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,.12);
+    }
+
+    mat-card-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid rgba(0,0,0,.08);
+
+      mat-card-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+        color: #2C3E50;
+        font-size: 20px;
+        font-weight: 500;
+
+        mat-icon {
+          color: #2196F3;
+        }
+      }
+    }
+
+    mat-card-content {
+      padding: 24px;
+    }
+  }
+
+  .form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .full-width-input {
+      width: 100%;
+    }
+  }
+
+  .measures-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .upload-section {
+    .upload-area {
+      border: 2px dashed #2196F3;
+      border-radius: 8px;
+      padding: 32px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: rgba(33,150,243,.04);
+      }
+
+      mat-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+        color: #2196F3;
+        margin-bottom: 16px;
+      }
+
+      p {
+        margin: 0;
+        color: #607D8B;
+      }
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 12px;
+      background: #F5F7FA;
+      border-radius: 8px;
+
+      mat-icon {
+        color: #2196F3;
+      }
+
+      span {
+        flex: 1;
+        color: #2C3E50;
+      }
+    }
+  }
+
+  .trainings-table-wrapper {
+    margin-top: 24px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+
+    table {
+      width: 100%;
+
+      .mat-header-cell {
+        background: #F5F7FA;
+        color: #2C3E50;
+        font-weight: 500;
+      }
+
+      .mat-cell {
+        color: #607D8B;
+      }
+
+      .training-row {
+        transition: background 0.3s ease;
+
+        &:hover {
+          background: rgba(33,150,243,.04);
+        }
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 8px;
+      }
+    }
+  }
+
+  .add-training-button-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+
+    button {
+      mat-icon {
+        margin-right: 8px;
+      }
+    }
   }
 
   .form-actions {
-    flex-direction: column;
-    gap: 10px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(0,0,0,.08);
+
+    button {
+      mat-icon {
+        margin-right: 8px;
+      }
+    }
+  }
+}
+
+// Estilos para campos de formulário
+::ng-deep {
+  .mat-form-field-appearance-outline {
+    .mat-form-field-outline {
+      color: rgba(0,0,0,.12);
+    }
+
+    .mat-form-field-outline-thick {
+      color: #2196F3;
+    }
+
+    &.mat-focused {
+      .mat-form-field-outline-thick {
+        color: #2196F3;
+      }
+
+      .mat-form-field-label {
+        color: #2196F3;
+      }
+    }
   }
 
-  button {
-    width: 100%;
+  .mat-form-field-label {
+    color: #607D8B;
+  }
+
+  .mat-input-element {
+    color: #2C3E50;
+  }
+
+  .mat-form-field-suffix {
+    color: #607D8B;
+  }
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  .user-edit-container {
+    padding: 16px;
+
+    .header {
+      .title-section {
+        h2 {
+          font-size: 24px;
+        }
+      }
+    }
+
+    .dashboard-card {
+      mat-card-header {
+        padding: 12px 16px;
+      }
+
+      mat-card-content {
+        padding: 16px;
+      }
+    }
+
+    .measures-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+      flex-direction: column-reverse;
+      
+      button {
+        width: 100%;
+      }
+    }
   }
 }
 
 @media (max-width: 480px) {
   .user-edit-container {
-    margin: 8px;
-    padding: 16px;
-  }
+    padding: 12px;
 
-  h2 {
-    font-size: 1.5em;
+    .header {
+      .title-section {
+        h2 {
+          font-size: 20px;
+        }
+      }
+    }
   }
 }
