@@ -7,9 +7,14 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --configuration production --optimization=true --aot=true --build-optimizer=true",
+    "build:stats": "ng build --configuration production --stats-json",
+    "analyze": "webpack-bundle-analyzer dist/sistudo-fitness/browser/stats.json",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "lint": "ng lint",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean"
   },
   "private": true,
   "dependencies": {
@@ -43,6 +48,8 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.4.2"
+    "rimraf": "^5.0.5",
+    "typescript": "~5.4.2",
+    "webpack-bundle-analyzer": "^4.10.1"
   }
 }
