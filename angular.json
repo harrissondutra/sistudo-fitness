@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/sistudo-fitness",
+            "outputPath": "dist/sistudo-fitness/browser",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -59,6 +59,24 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/sistudo-fitness/server",
+            "main": "src/main.server.ts",
+            "tsConfig": "tsconfig.server.json"
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "media"
+            },
+            "development": {
+              "optimization": false,
               "sourceMap": true
             }
           },
