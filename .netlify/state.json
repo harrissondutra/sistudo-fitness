@@ -1,0 +1,5 @@
+{
+  "siteId": "507d2018-1805-4728-8013-4213c3f72b45",
+  "path": ".",
+  "disabledPlugins": ["@netlify/angular-runtime"]
+} 
