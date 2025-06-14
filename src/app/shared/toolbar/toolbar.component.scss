@@ -1,20 +1,23 @@
 @use '@angular/material' as mat;
 
-// Use a palette do Angular Material corretamente
-$toolbar-bg: mat.get-color-from-palette(mat.$indigo-palette, 500);
+// Define as cores da paleta Material Design
+$toolbar-bg: mat.get-color-from-palette(mat.$indigo-palette, 700); // Tom um pouco mais escuro para maior profundidade
+$icon-color: white; // Cor dos ícones
+$text-color: white; // Cor do texto principal na toolbar
+$primary-text-color: #333; // Cor para texto principal em cards, etc. (se aplicável fora da toolbar)
 
+// Altura padrão da toolbar
 $toolbar-height: 64px;
-$icon-color: white;
-$text-color: white;
 
 mat-toolbar {
   height: $toolbar-height;
   background-color: $toolbar-bg;
   display: flex;
   align-items: center;
-  padding: 0 16px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  padding: 0 16px; // Padding lateral
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); // Sombra sutil
   color: $text-color;
+  justify-content: space-between; // Espaça os lados esquerdo e direito
 
   .toolbar-left,
   .toolbar-right {
@@ -23,8 +26,7 @@ mat-toolbar {
   }
 
   .toolbar-left {
-    flex: 1;
-    gap: 8px;
+    gap: 8px; // Espaçamento entre o ícone do menu e o título do app
 
     mat-icon {
       color: $icon-color;
@@ -33,14 +35,155 @@ mat-toolbar {
     .app-title {
       font-size: 20px;
       font-weight: 500;
+      white-space: nowrap; // Evita que o título quebre linha
+      overflow: hidden;    // Esconde o excesso de texto se não houver espaço
+      text-overflow: ellipsis; // Adiciona reticências se o texto for muito longo
+      cursor: pointer; // Muda o cursor para ponteiro
+      padding: 0 4px; // Pequeno padding para facilitar o clique
     }
   }
 
   .toolbar-right {
-    gap: 16px;
+    gap: 16px; // Espaçamento entre os botões de ação e o campo de pesquisa
+    flex-wrap: nowrap; // Evita que os botões quebrem linha, para manter a pesquisa inline
+
+    // Alinha todos os itens do lado direito verticalmente ao centro para consistência
+    align-items: center;
 
     mat-icon-button {
       color: $icon-color;
+      // Estilos para botões de ícone para melhor acessibilidade ao toque
+      width: 48px;
+      height: 48px;
+      padding: 0;
+      border-radius: 50%;
+      transition: background-color 0.2s ease-in-out;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1); // Efeito hover
+      }
+    }
+
+    // Estilo para o campo de pesquisa quando visível
+    .search-field {
+      max-width: 400px; // Largura máxima para evitar que ocupe muito espaço em telas grandes
+      width: 100%; // Permite que ele encolha em telas menores
+      // Transição suave para propriedades visuais como largura e opacidade
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-sizing: border-box; // Garante que padding e borda sejam incluídos na largura/altura total
+
+      // Ajustes para o wrapper interno do mat-form-field para alinhamento vertical
+      .mat-form-field-wrapper {
+        padding-bottom: 0 !important; // Remove o padding inferior padrão que pode causar desalinhamento
+        margin: 0 !important; // Remove margens padrão do wrapper
+        height: 48px; // Define a altura explícita para corresponder aos botões de ícone
+      }
+
+      // Estilos para a área flexível que contém o input e o label/ícone
+      .mat-form-field-appearance-outline .mat-form-field-flex {
+        // Cor de fundo do campo de pesquisa para um cinza claro mais visível (25% de opacidade do branco)
+        background-color: rgba(255, 255, 255, 0.25);
+        border-radius: 4px; // Cantos levemente arredondados para o campo
+        // Padding interno horizontal, a altura é controlada pelo 'height: 100%' e 'align-items: center'
+        padding: 0 0.75em;
+        height: 100%; // Faz com que o flex ocupe toda a altura disponível no wrapper (48px)
+        align-items: center; // Centraliza verticalmente o conteúdo (label, input, ícone)
+        // A remoção de margin-top: 5px; é crucial para o alinhamento
+      }
+
+      // Estilos para as linhas do contorno do campo
+      .mat-form-field-outline-start,
+      .mat-form-field-outline-gap,
+      .mat-form-field-outline-end {
+        border-width: 1px !important; // Garante que a borda tenha largura de 1px
+        // Cor da borda em estado normal para um branco menos opaco (mais visível)
+        border-color: rgba(255, 255, 255, 0.7) !important;
+      }
+
+      // Estilos quando o campo de pesquisa está em foco
+      &.mat-focused {
+        .mat-form-field-outline-start,
+        .mat-form-field-outline-gap,
+        .mat-form-field-outline-end {
+            // Cor da borda no foco, um azul mais claro da paleta Material
+            border-color: mat.get-color-from-palette(mat.$light-blue-palette, 200) !important;
+        }
+        .mat-form-field-label {
+          // Cor do label (placeholder) no foco
+          color: mat.get-color-from-palette(mat.$light-blue-palette, 200) !important;
+        }
+      }
+
+      // Estilo para o label (placeholder) do campo
+      .mat-form-field-label {
+        color: rgba(255, 255, 255, 0.8); // Cor do label em estado normal
+      }
+
+      // Estilo para o elemento input real dentro do campo
+      input.mat-input-element {
+        color: $text-color; // Cor do texto digitado
+        caret-color: $text-color; // Cor do cursor (piscante)
+        padding: 0; // Remove padding extra, a altura é controlada pelo flex container
+        // REMOÇÃO: margin-top: 10px; - Esta linha estava causando o desalinhamento
+        height: 100%; // Ocupa a altura total do flex para alinhamento
+      }
+
+      // Estilo para o ícone sufixo (ícone de lupa à direita do input)
+      mat-icon.mat-suffix {
+        color: rgba(255, 255, 255, 0.8); // Cor do ícone de pesquisa
+        cursor: pointer; // Indica que o ícone é clicável
+        padding-left: 8px; // Espaçamento entre o texto do input e o ícone
+      }
+    }
+  }
+}
+
+/* ------------------------------------------------------------- */
+/* MEDIA QUERIES PARA RESPONSIVIDADE                           */
+/* ------------------------------------------------------------- */
+
+// Para telas menores que 768px (tablets e celulares)
+@media (max-width: 768px) {
+  mat-toolbar {
+    height: 56px; // Altura menor em telas pequenas
+    padding: 0 8px; // Padding lateral reduzido
+
+    .toolbar-left {
+      gap: 4px;
+
+      .app-title {
+        font-size: 18px; // Tamanho de fonte menor para o título
+      }
+    }
+
+    .toolbar-right {
+      gap: 8px; // Espaçamento reduzido entre os botões
+
+      .search-field {
+        max-width: 150px; // Largura menor para o campo de pesquisa em telas menores
+      }
+    }
+  }
+}
+
+// Para telas menores que 480px (celulares)
+@media (max-width: 480px) {
+  mat-toolbar {
+    height: 56px; // Mantém a altura para celulares
+    padding: 0 4px; // Padding mínimo
+
+    .toolbar-left {
+      // Ajuste para evitar quebrar o layout se o título for muito longo
+      flex-shrink: 1;
+      min-width: 0; // Permite que o flex item encolha
+    }
+
+    .toolbar-right {
+      gap: 4px; // Espaçamento mínimo
+
+      .search-field {
+        max-width: 120px; // Largura ainda menor para o campo de pesquisa
+      }
     }
   }
 }
