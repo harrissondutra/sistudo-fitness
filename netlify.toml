@@ -1,6 +1,6 @@
 [build]
   command = "npm run build"
-  publish = "dist/sistudo-fitness/browser"
+  publish = "dist/sistudo-fitness/browser/browser"
   edge_functions = "dist/sistudo-fitness/server"
 
 [[redirects]]
