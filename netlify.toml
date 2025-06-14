@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build"
+  publish = "dist/sistudo-fitness/browser"
+  edge_functions = "dist/sistudo-fitness/server"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200 
