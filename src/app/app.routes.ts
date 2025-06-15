@@ -9,7 +9,10 @@ import { UserEditComponent } from './user-edit/user-edit.component';
 import { TrainningCreateComponent } from '../app/trainning/trainning-create/trainning-create.component'; // Importe o componente de criação de treino
 import { TrainningComponent } from './trainning/trainning/trainning.component';
 import { UserComponent } from './user/user.component';
+import { ListExerciseComponent } from './Exercises/list-exercise/list-exercise.component';
 // import { TrainningEditComponent } from './trainning-edit/trainning-edit.component'; // **Assumindo que você terá um componente de edição de treino**
+import { CreateExerciseComponent } from './Exercises/create-exercise/create-exercise.component';
+import { CategoryExerciseComponent } from './Exercises/category-exercise/category-exercise.component';
 
 
 export const routes: Routes = [
@@ -24,7 +27,11 @@ export const routes: Routes = [
       { path: 'user/:id', component: UserComponent },
       { path: 'users-list', component: UserListComponent },
       { path: 'users-edit/:id', component: UserEditComponent },
-      { path: 'trainning-create', component: TrainningCreateComponent }, // **Nova rota para criar treino**
+      { path: 'trainning-create', component: TrainningCreateComponent },
+      { path: 'exercises', component: ListExerciseComponent},
+      { path: 'create-exercise', component: CreateExerciseComponent},
+      { path: 'category-exercise', component: CategoryExerciseComponent},
+
       {
         path: 'trainning',
         loadChildren: () => import('./trainning/trainning.module').then(m => m.TrainningModule)

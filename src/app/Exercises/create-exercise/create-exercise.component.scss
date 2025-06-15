@@ -1,0 +1,153 @@
+// Variáveis locais para valores não definidos globalmente como CSS Custom Properties
+$background-section: #f5f7fa; // Cor de fundo específica para seções
+$shadow-sm: 0 2px 4px rgba(63, 81, 181, 0.05); // Sombra específica
+$shadow-md: 0 4px 6px rgba(63, 81, 181, 0.08); // Sombra específica
+$transition: all 0.2s ease; // Transição específica, se não globalmente definida
+
+
+// Container Principal
+.exercise-create-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--spacing-lg); // Usando variável CSS global
+  min-height: 100vh;
+  background-color: $background-section; // Usando variável SCSS local
+  border-radius: var(--border-radius-md); // Usando variável CSS global
+  box-shadow: $shadow-sm; // Usando variável SCSS local
+
+  // Cabeçalho da tela de criação
+  .header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md); // Usando variável CSS global
+    margin-bottom: var(--spacing-lg); // Usando variável CSS global
+    padding: var(--spacing-md); // Usando variável CSS global
+    background-color: var(--background-color); // Usando variável CSS global
+    border-radius: var(--border-radius-md); // Usando variável CSS global
+    box-shadow: $shadow-sm; // Usando variável SCSS local
+
+    mat-icon {
+      font-size: 32px; // Override do global (24px)
+      width: 32px; // Override do global
+      height: 32px; // Override do global
+      margin-right: var(--spacing-sm); // Usando variável CSS global
+      color: var(--primary-color); // Usando variável CSS global
+    }
+
+    h1 {
+      margin: 0;
+      font-size: var(--font-size-xxl); // Usando variável CSS global (24px)
+      color: var(--text-color); // Usando variável CSS global
+    }
+  }
+
+  // Container do formulário
+  .form-container {
+    background-color: var(--background-color); // Usando variável CSS global
+    padding: var(--spacing-lg); // Usando variável CSS global
+    border-radius: var(--border-radius-md); // Usando variável CSS global
+    box-shadow: $shadow-sm; // Usando variável SCSS local
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md); // Usando variável CSS global
+
+    mat-form-field {
+      // `width: 100%` já é definido no SCSS global para `.mat-form-field`
+      margin-bottom: 0; // Override: remove a margem inferior padrão do mat-form-field para usar o `gap` do flexbox
+    }
+
+    // Estilo para mensagens de erro
+    mat-error {
+      // `font-size`, `color` e `margin-top` já são definidos no SCSS global para `.mat-error`
+      // Não é necessário repetir aqui, a menos que haja um override específico.
+    }
+
+    // Botões de ação do formulário
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--spacing-md); // Usando variável CSS global
+      margin-top: var(--spacing-lg); // Usando variável CSS global
+
+      button {
+        // `min-width`, `font-weight`, `text-transform`, `letter-spacing`, `font-size`,
+        // `line-height`, `padding`, `height` são definidos globalmente em `.mat-button, .mat-raised-button`.
+        // `transition` também está definido globalmente. Não é necessário repetir aqui.
+
+        mat-icon {
+          margin-right: var(--spacing-sm); // Usando variável CSS global
+        }
+      }
+    }
+  }
+}
+
+/* -----------------------------------------------------------
+ * Media Queries para Responsividade
+ * ----------------------------------------------------------- */
+
+// Telas pequenas (smartphones em modo retrato, até 768px)
+@media (max-width: 768px) {
+  .exercise-create-container {
+    // `padding` e `margin` já são ajustados automaticamente pelas variáveis CSS no `:root` global
+    padding: var(--spacing-md); // Mantido para clareza, mas já adaptado
+    margin: 0 var(--spacing-md); // Mantido para clareza, mas já adaptado
+
+    .header {
+      // `padding` já é ajustado automaticamente
+      padding: var(--spacing-md); // Mantido para clareza, mas já adaptado
+      flex-direction: column; // Layout específico, manter
+      align-items: flex-start; // Layout específico, manter
+
+      h1 {
+        font-size: var(--font-size-xl); // Usando variável CSS global (20px)
+      }
+    }
+
+    .form-container {
+      // `padding` e `gap` já são ajustados automaticamente
+      padding: var(--spacing-md); // Mantido para clareza, mas já adaptado
+      gap: var(--spacing-sm); // Mantido para clareza, mas já adaptado
+    }
+  }
+}
+
+// Telas muito pequenas (smartphones menores, até 480px)
+@media (max-width: 480px) {
+  .exercise-create-container {
+    // `padding` e `margin` já são ajustados automaticamente
+    padding: var(--spacing-sm); // Mantido para clareza, mas já adaptado
+    margin: 0 var(--spacing-sm); // Mantido para clareza, mas já adaptado
+
+    .header {
+      // `padding` já é ajustado automaticamente
+      padding: var(--spacing-sm); // Mantido para clareza, mas já adaptado
+
+      mat-icon {
+        // `font-size`, `width`, `height` já são ajustados automaticamente para 24px globalmente para ícones.
+        // Se 24px é o padrão desejado aqui, a remoção é ideal.
+        font-size: var(--mat-icon-size, 24px); // Usando variável CSS global ou fallback
+        width: var(--mat-icon-size, 24px);
+        height: var(--mat-icon-size, 24px);
+      }
+
+      h1 {
+        font-size: var(--font-size-lg); // Usando variável CSS global (18px)
+      }
+    }
+
+    .form-container {
+      // `padding` já é ajustado automaticamente
+      padding: var(--spacing-sm); // Mantido para clareza, mas já adaptado
+
+      .form-actions {
+        flex-direction: column; // Layout específico, manter
+        gap: var(--spacing-sm); // Mantido para clareza, mas já adaptado
+
+        button {
+          width: 100%; // Layout específico, manter
+        }
+      }
+    }
+  }
+}

@@ -2,102 +2,49 @@
 <div class="trainning-create-container">
   <!-- Cabeçalho -->
   <div class="header">
-    <div class="title-section">
-      <h2>Criar Novo Treino</h2>
-      <p class="subtitle">Preencha os dados para criar um novo treino</p>
-    </div>
+    <mat-icon>fitness_center</mat-icon>
+    <h1>Criar Novo Treino</h1>
   </div>
 
   <!-- Formulário -->
-  <form [formGroup]="trainingForm" (ngSubmit)="onSubmit()">
-    <!-- Seção de Informações Básicas -->
-    <div class="form-section">
-      <h3 class="section-title">
-        <mat-icon>info</mat-icon>
-        Informações Básicas
-      </h3>
+  <form [formGroup]="trainingForm" (ngSubmit)="onSubmit()" class="form-container">
+    <mat-form-field appearance="outline">
+      <mat-label>Nome do Treino</mat-label>
+      <input matInput formControlName="name" placeholder="Digite o nome do treino">
+      <mat-error *ngIf="trainingForm.get('name')?.hasError('required') && trainingForm.get('name')?.touched">Nome é obrigatório</mat-error>
+      <mat-error *ngIf="trainingForm.get('name')?.hasError('minlength') && trainingForm.get('name')?.touched">Nome deve ter no mínimo 3 caracteres</mat-error>
+    </mat-form-field>
 
-      <!-- Campo Nome do Treino -->
-      <mat-form-field appearance="outline" class="full-width-input">
-        <mat-label>Nome do Treino</mat-label>
-        <input matInput type="text" formControlName="name" placeholder="Ex: Treino de Força" />
-        <mat-icon matSuffix>fitness_center</mat-icon>
-        <mat-error *ngIf="trainingForm.get('name')?.invalid && trainingForm.get('name')?.touched">
-          Nome é obrigatório.
-        </mat-error>
-      </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Exercícios</mat-label>
+      <mat-select formControlName="exercises" multiple>
+        <mat-option>-- Selecione os exercícios --</mat-option> <!-- Opção para campo vazio/placeholder -->
+        <mat-option *ngFor="let exercise of exercises" [value]="exercise">
+          {{exercise.name}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="trainingForm.get('exercises')?.hasError('required') && trainingForm.get('exercises')?.touched">Selecione pelo menos um exercício</mat-error>
+      <mat-error *ngIf="trainingForm.get('exercises')?.hasError('minlength') && trainingForm.get('exercises')?.touched">Selecione pelo menos um exercício</mat-error>
+    </mat-form-field>
 
-      <!-- Campo Descrição -->
-      <mat-form-field appearance="outline" class="full-width-input">
-        <mat-label>Descrição</mat-label>
-        <textarea matInput formControlName="description" rows="3" placeholder="Descreva o objetivo e características do treino"></textarea>
-        <mat-icon matSuffix>description</mat-icon>
-      </mat-form-field>
-    </div>
-
-    <!-- Seção de Detalhes -->
-    <div class="form-section">
-      <h3 class="section-title">
-        <mat-icon>settings</mat-icon>
-        Detalhes do Treino
-      </h3>
-
-      <div class="form-grid">
-        <!-- Campo Duração -->
-        <mat-form-field appearance="outline" class="full-width-input">
-          <mat-label>Duração (minutos)</mat-label>
-          <input matInput type="number" formControlName="durationMinutes" placeholder="Ex: 60" />
-          <mat-icon matSuffix>timer</mat-icon>
-          <mat-error *ngIf="trainingForm.get('durationMinutes')?.invalid && trainingForm.get('durationMinutes')?.touched">
-            Duração deve ser um número entre 1 e 1000.
-          </mat-error>
-        </mat-form-field>
-
-        <!-- Campo Nível de Intensidade -->
-        <mat-form-field appearance="outline" class="full-width-input">
-          <mat-label>Nível de Intensidade</mat-label>
-          <mat-select formControlName="intensityLevel">
-            <mat-option *ngFor="let level of intensityLevels" [value]="level">
-              {{ level }}
-            </mat-option>
-          </mat-select>
-          <mat-icon matSuffix>speed</mat-icon>
-          <mat-error *ngIf="trainingForm.get('intensityLevel')?.invalid && trainingForm.get('intensityLevel')?.touched">
-            Nível de intensidade é obrigatório.
-          </mat-error>
-        </mat-form-field>
-
-        <!-- Campo Data -->
-        <mat-form-field appearance="outline" class="full-width-input">
-          <mat-label>Data do Treino</mat-label>
-          <input matInput [matDatepicker]="picker" formControlName="date" readonly>
-          <mat-hint>DD/MM/AAAA</mat-hint>
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-          <mat-error *ngIf="trainingForm.get('date')?.invalid && trainingForm.get('date')?.touched">
-            Data é obrigatória.
-          </mat-error>
-        </mat-form-field>
-
-        <!-- Campo User ID -->
-        <mat-form-field appearance="outline" class="full-width-input">
-          <mat-label>ID do Usuário</mat-label>
-          <input matInput type="number" formControlName="userId" placeholder="Ex: 1" />
-          <mat-icon matSuffix>person</mat-icon>
-          <mat-error *ngIf="trainingForm.get('userId')?.invalid && trainingForm.get('userId')?.touched">
-            ID do usuário é obrigatório.
-          </mat-error>
-        </mat-form-field>
-      </div>
-    </div>
+    <mat-form-field appearance="outline">
+      <mat-label>Usuário</mat-label>
+      <mat-select formControlName="userId">
+        <mat-option>-- Selecione um usuário --</mat-option> <!-- Opção para campo vazio/placeholder -->
+        <mat-option *ngFor="let user of users" [value]="user.id">
+          {{user.name}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="trainingForm.get('userId')?.hasError('required') && trainingForm.get('userId')?.touched">Selecione um usuário</mat-error>
+    </mat-form-field>
 
     <!-- Botões de Ação -->
     <div class="form-actions">
-      <button mat-stroked-button type="button" (click)="cancel()">
+      <button mat-button type="button" (click)="cancel()">
         <mat-icon>arrow_back</mat-icon>
-        Voltar
+        Cancelar
       </button>
-      <button mat-raised-button color="primary" type="submit" [disabled]="trainingForm.invalid">
+      <button mat-raised-button color="primary" type="submit" [disabled]="trainingForm.invalid" matTooltip="{{ trainingForm.invalid ? 'Preencha todos os campos obrigatórios' : 'Criar novo treino' }}">
         <mat-icon>save</mat-icon>
         Criar Treino
       </button>

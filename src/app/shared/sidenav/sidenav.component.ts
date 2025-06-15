@@ -48,6 +48,14 @@ export class SidenavComponent {
         { label: 'Criar Novo Treino', route: '/trainning-create' },
       ]
     },
+    {
+      title: 'Exercícios',
+      links: [
+        { label: 'Listar Exercícios', route: '/exercises' },
+        { label: 'Criar Novo Exercício', route: '/create-exercise' },
+        { label: 'Criar Categoria', route: '/category-exercise' },
+      ]
+    },
   ];
 
   onLinkClick() {

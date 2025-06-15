@@ -1,5 +1,3 @@
-/* trainning-create.component.scss */
-
 // Variáveis
 $primary-color: #3f51b5; // Indigo padrão do Angular Material
 $primary-light: #e8eaf6;
@@ -15,193 +13,137 @@ $border-radius: 8px;
 $transition: all 0.2s ease;
 $shadow-sm: 0 2px 4px rgba(63, 81, 181, 0.05);
 $shadow-md: 0 4px 6px rgba(63, 81, 181, 0.08);
+$warn-color: #f44336; // Adicionado para mensagens de erro
 
 // Container Principal
-.trainning-create-container {
+.exercise-create-container {
   max-width: 800px;
   margin: 0 auto;
-  padding: $spacing-lg;
-  background-color: $background-light;
-  border-radius: $border-radius;
-  box-shadow: $shadow-sm;
+  padding: $spacing-lg; // Usando variável de espaçamento
+  min-height: 100vh;
+  background-color: $background-section; // Fundo de seção
 
-  // Cabeçalho
+  // Cabeçalho da tela de criação
   .header {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md; // Usando variável de espaçamento
     margin-bottom: $spacing-lg;
-    padding-bottom: $spacing-md;
-    border-bottom: 1px solid $border-color;
-
-    .title-section {
-      h2 {
-        margin: 0;
-        color: $text-primary;
-        font-size: 24px;
-        font-weight: 500;
-        letter-spacing: -0.5px;
-      }
-
-      .subtitle {
-        margin: $spacing-sm 0 0;
-        color: $text-secondary;
-        font-size: 14px;
-        font-weight: 400;
-      }
-    }
-  }
-
-  // Seções do Formulário
-  .form-section {
-    margin-bottom: $spacing-lg;
-    padding: $spacing-lg;
-    background-color: $background-section;
+    padding: $spacing-md; // Usando variável de espaçamento
+    background-color: $background-light;
     border-radius: $border-radius;
-    transition: $transition;
-    border: 1px solid $border-color;
+    box-shadow: $shadow-sm; // Usando variável de sombra
 
-    &:hover {
-      box-shadow: $shadow-md;
-    }
-
-    .section-title {
-      display: flex;
-      align-items: center;
-      margin: 0 0 $spacing-md;
-      color: $text-primary;
-      font-size: 16px;
-      font-weight: 500;
-      letter-spacing: -0.3px;
-
-      mat-icon {
-        margin-right: $spacing-sm;
-        color: $primary-color;
-        font-size: 20px;
-        width: 20px;
-        height: 20px;
-      }
-    }
-  }
-
-  // Grid do Formulário
-  .form-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: $spacing-md;
-  }
-
-  // Campos do Formulário
-  .full-width-input {
-    width: 100%;
-  }
-
-  mat-form-field {
-    .mat-mdc-form-field-icon-suffix {
+    mat-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
       color: $primary-color;
     }
 
-    .mat-mdc-form-field-subscript-wrapper {
-      font-size: 12px;
-    }
-
-    .mat-mdc-text-field-wrapper {
-      background-color: $background-light;
-    }
-
-    .mat-mdc-form-field-flex {
-      padding: 0 8px;
-    }
-
-    &.mat-focused {
-      .mat-mdc-form-field-flex {
-        background-color: $primary-light;
-      }
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      color: $text-color; // Mantendo a cor do texto para títulos
     }
   }
 
-  // Botões de Ação
-  .form-actions {
+  // Container do formulário
+  .form-container {
+    background-color: $background-light;
+    padding: $spacing-lg; // Usando variável de espaçamento
+    border-radius: $border-radius;
+    box-shadow: $shadow-sm; // Usando variável de sombra
     display: flex;
-    justify-content: flex-end;
-    gap: $spacing-md;
-    margin-top: $spacing-lg;
-    padding-top: $spacing-md;
-    border-top: 1px solid $border-color;
+    flex-direction: column;
+    gap: $spacing-md; // Espaço entre os campos do formulário
 
-    button {
-      display: flex;
-      align-items: center;
-      gap: $spacing-sm;
-      padding: 0 $spacing-lg;
-      height: 40px;
-      font-weight: 500;
-      font-size: 14px;
-      letter-spacing: 0.3px;
-      transition: $transition;
-      border-radius: $border-radius;
-
-      mat-icon {
-        font-size: 18px;
-        width: 18px;
-        height: 18px;
-      }
-
-      &:hover {
-        transform: translateY(-1px);
-      }
-
-      &[color="primary"] {
-        background-color: $primary-color;
-        color: white;
-
-        &:hover {
-          background-color: darken($primary-color, 5%);
-        }
-      }
-
-      &[mat-stroked-button] {
-        border-color: $primary-color;
-        color: $primary-color;
-
-        &:hover {
-          background-color: $primary-light;
-        }
-      }
-    }
-  }
-}
-
-// Media Queries
-@media (max-width: 768px) {
-  .trainning-create-container {
-    padding: $spacing-md;
-
-    .form-grid {
-      grid-template-columns: 1fr;
+    mat-form-field {
+      width: 100%;
+      margin-bottom: 0; // Removido o margin-bottom para usar o gap do flexbox
     }
 
-    .form-section {
-      padding: $spacing-md;
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .trainning-create-container {
-    padding: $spacing-sm;
-
-    .header {
-      .title-section {
-        h2 {
-          font-size: 20px;
-        }
-      }
+    // Estilo para mensagens de erro
+    mat-error {
+      font-size: 0.75em; // 12px
+      color: $warn-color;
+      margin-top: $spacing-sm / 2; // Usando variável de espaçamento
     }
 
+    // Botões de ação do formulário
     .form-actions {
-      flex-direction: column-reverse;
-      gap: $spacing-sm;
+      display: flex;
+      justify-content: flex-end;
+      gap: $spacing-md; // Usando variável de espaçamento
+      margin-top: $spacing-lg;
 
       button {
-        width: 100%;
+        min-width: 120px;
+        transition: $transition; // Usando variável de transição
+
+        mat-icon {
+          margin-right: $spacing-sm; // Usando variável de espaçamento
+        }
+      }
+    }
+  }
+}
+
+/* -----------------------------------------------------------
+ * Media Queries para Responsividade
+ * ----------------------------------------------------------- */
+
+// Telas pequenas (smartphones em modo retrato, até 768px)
+@media (max-width: 768px) {
+  .exercise-create-container {
+    padding: $spacing-md; // Usando variável de espaçamento
+    margin: 0 $spacing-md; // Adicionado margin lateral para telas menores
+
+    .header {
+      padding: $spacing-md; // Usando variável de espaçamento
+
+      h1 {
+        font-size: 20px;
+      }
+    }
+
+    .form-container {
+      padding: $spacing-md; // Usando variável de espaçamento
+      gap: $spacing-sm; // Reduzido o espaçamento entre campos
+    }
+  }
+}
+
+// Telas muito pequenas (smartphones menores, até 480px)
+@media (max-width: 480px) {
+  .exercise-create-container {
+    padding: $spacing-sm; // Usando variável de espaçamento
+    margin: 0 $spacing-sm; // Adicionado margin lateral para telas muito pequenas
+
+    .header {
+      padding: $spacing-sm; // Usando variável de espaçamento
+
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+
+      h1 {
+        font-size: 18px;
+      }
+    }
+
+    .form-container {
+      padding: $spacing-sm; // Usando variável de espaçamento
+
+      .form-actions {
+        flex-direction: column; // Botões empilhados em telas muito pequenas
+        gap: $spacing-sm; // Espaçamento entre botões empilhados
+
+        button {
+          width: 100%; // Botões ocupam a largura total
+        }
       }
     }
   }

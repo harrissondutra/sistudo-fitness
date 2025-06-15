@@ -1,0 +1,29 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Exercise } from '../../models/exercise';
+import { environment } from '../../../environments/environment';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ExerciseService {
+  private apiUrl = `${environment.apiUrl}/exercise`;
+
+  constructor(private http: HttpClient) { }
+
+  getAllExercises(): Observable<Exercise[]> {
+    return this.http.get<Exercise[]>(`${this.apiUrl}/all`);
+  }
+
+  getExercises(): Observable<Exercise[]> {
+    return this.http.get<Exercise[]>(this.apiUrl);
+  }
+
+  deleteExercise(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+  createExercise(exercise: Exercise): Observable<Exercise> {
+    return this.http.post<Exercise>(this.apiUrl, exercise);
+  }
+}

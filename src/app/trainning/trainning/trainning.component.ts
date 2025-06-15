@@ -72,10 +72,8 @@ export class TrainningComponent implements OnInit, AfterViewInit {
       const searchStr = filter.toLowerCase();
       return (
         (data.name?.toLowerCase() || '').includes(searchStr) ||
-        (data.description?.toLowerCase() || '').includes(searchStr) ||
-        (data.intensityLevel?.toLowerCase() || '').includes(searchStr) ||
         (data.id?.toString() || '').includes(searchStr) ||
-        (data.durationMinutes?.toString() || '').includes(searchStr)
+        (data.active?.toString() || '').includes(searchStr)
       );
     };
   }

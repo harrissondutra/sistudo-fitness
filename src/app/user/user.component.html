@@ -175,14 +175,13 @@
       <mat-tab-group>
         <!-- Treino Atual -->
         <mat-tab label="Treino Atual">
-          <div class="current-training" *ngIf="currentTraining">
+          <div class="current-training" *ngIf="currentTrainning">
             <div class="training-info">
-              <p><strong>Início:</strong> {{ currentTraining.startDate | date:'dd/MM/yyyy' }}</p>
-              <p><strong>Objetivo:</strong> {{ currentTraining.goal }}</p>
-              <p><strong>Frequência:</strong> {{ currentTraining.frequency }}x por semana</p>
+              <p><strong>Nome:</strong> {{ currentTrainning.name }}</p>
+              <p><strong>Status:</strong> {{ currentTrainning.active ? 'Ativo' : 'Inativo' }}</p>
             </div>
           </div>
-          <div class="no-training" *ngIf="!currentTraining">
+          <div class="no-training" *ngIf="!currentTrainning">
             <p>Nenhum treino em andamento</p>
           </div>
         </mat-tab>
@@ -190,7 +189,7 @@
         <!-- Histórico de Treinos -->
         <mat-tab label="Histórico">
           <div class="training-history">
-            <table mat-table [dataSource]="trainingHistory" class="training-table">
+            <table mat-table [dataSource]="TrainningHistory" class="training-table">
               <ng-container matColumnDef="startDate">
                 <th mat-header-cell *matHeaderCellDef>Início</th>
                 <td mat-cell *matCellDef="let training">{{ training.startDate | date:'dd/MM/yyyy' }}</td>
@@ -206,8 +205,8 @@
                 <td mat-cell *matCellDef="let training">{{ training.goal }}</td>
               </ng-container>
 
-              <tr mat-header-row *matHeaderRowDef="trainingColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: trainingColumns;"></tr>
+              <tr mat-header-row *matHeaderRowDef="TrainningColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: TrainningColumns;"></tr>
             </table>
           </div>
         </mat-tab>

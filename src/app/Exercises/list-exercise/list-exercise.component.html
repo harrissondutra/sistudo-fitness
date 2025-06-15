@@ -1,0 +1,109 @@
+<!-- Container Principal -->
+<div class="exercise-list-container">
+  <!-- Cabeçalho -->
+  <div class="header">
+    <div class="title-section">
+      <h2>Lista de Exercícios</h2>
+      <p class="subtitle">Gerencie os exercícios disponíveis no sistema</p>
+    </div>
+    <button mat-raised-button color="primary" class="new-exercise-btn" (click)="createExercise()">
+      <mat-icon>add</mat-icon>
+      <span>Novo Exercício</span>
+    </button>
+  </div>
+
+  <!-- Seção de Busca -->
+  <div class="search-section">
+    <mat-form-field appearance="outline" class="search-input">
+      <mat-label>Buscar Exercício</mat-label>
+      <input matInput [formControl]="searchControl" placeholder="Digite nome ou descrição">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <!-- Tabela de Exercícios -->
+  <div class="table-container mat-elevation-z2">
+    <table mat-table [dataSource]="dataSource" matSort>
+      <!-- Coluna: ID -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+        <td mat-cell *matCellDef="let exercise">
+          <div class="exercise-id">{{exercise.id}}</div>
+        </td>
+      </ng-container>
+
+      <!-- Coluna: Nome -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Nome </th>
+        <td mat-cell *matCellDef="let exercise">
+          <div class="exercise-info">
+            <span class="exercise-name">{{exercise.name}}</span>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Coluna: Descrição -->
+      <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Descrição </th>
+        <td mat-cell *matCellDef="let exercise">
+          <div class="exercise-description">{{exercise.description}}</div>
+        </td>
+      </ng-container>
+
+      <!-- Coluna: Séries -->
+      <ng-container matColumnDef="series">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Séries </th>
+        <td mat-cell *matCellDef="let exercise">
+          <div class="metric-value">{{exercise.series}}</div>
+        </td>
+      </ng-container>
+
+      <!-- Coluna: Repetições -->
+      <ng-container matColumnDef="repetitions">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Repetições </th>
+        <td mat-cell *matCellDef="let exercise">
+          <div class="metric-value">{{exercise.repetitions}}</div>
+        </td>
+      </ng-container>
+
+      <!-- Coluna: Ações -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Ações </th>
+        <td mat-cell *matCellDef="let exercise">
+          <div class="action-buttons">
+            <button mat-icon-button color="primary" (click)="onView(exercise)" matTooltip="Visualizar">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button mat-icon-button color="accent" (click)="onEdit(exercise)" matTooltip="Editar">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteExercise(exercise.id)" matTooltip="Excluir">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Definição das linhas da tabela -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="exercise-row"></tr>
+
+      <!-- Mensagem quando não há dados -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">
+          <div class="no-data-content">
+            <mat-icon>search_off</mat-icon>
+            <p>Nenhum exercício encontrado</p>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Paginador -->
+    <mat-paginator [length]="totalExercises"
+                   [pageSize]="pageSize"
+                   [pageSizeOptions]="[5, 10, 25, 100]"
+                   aria-label="Selecione a página de exercícios">
+    </mat-paginator>
+  </div>
+</div>

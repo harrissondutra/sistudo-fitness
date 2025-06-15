@@ -1,0 +1,259 @@
+// Variáveis de Cores (ajuste conforme o tema do seu Material Design)
+$primary-color: #3f51b5; // Exemplo: Indigo 500
+$accent-color: #ff4081;  // Exemplo: Pink A200
+$warn-color: #f44336;    // Exemplo: Red 500
+$text-color: #333;
+$light-text-color: #666;
+$border-color: #e0e0e0;
+$background-light: #f5f5f5;
+$white: #fff;
+
+// Variáveis de Espaçamento
+$spacing-unit: 8px;
+$padding-small: $spacing-unit * 2;   // 16px
+$padding-medium: $spacing-unit * 3;  // 24px
+$margin-medium: $spacing-unit * 3;   // 24px
+
+// Mixins para reutilização de estilos
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin card-shadow {
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
+              0 2px 2px 0 rgba(0, 0, 0, 0.14),
+              0 1px 5px 0 rgba(0, 0, 0, 0.12);
+}
+
+.exercise-list-container {
+  padding: $padding-medium;
+  max-width: 1200px;
+  margin: $margin-medium auto;
+  background-color: $white;
+  border-radius: $spacing-unit; // Cantos arredondados
+  @include card-shadow; // Aplica a sombra
+
+  // Estilo do cabeçalho da tela (título e botão "Novo Exercício")
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $padding-medium;
+    padding-bottom: $padding-small;
+    border-bottom: 1px solid $border-color;
+
+    .title-section {
+      h2 {
+        margin: 0;
+        font-size: 2em;
+        color: $text-color;
+      }
+      .subtitle {
+        margin: $spacing-unit / 2 0 0; // 4px
+        font-size: 0.9em;
+        color: $light-text-color;
+      }
+    }
+
+    .new-exercise-btn {
+      padding: $spacing-unit $padding-small; // 8px 16px
+      font-weight: 500;
+      .mat-icon {
+        margin-right: $spacing-unit; // 8px
+      }
+    }
+  }
+
+  // Seção de busca
+  .search-section {
+    margin-bottom: $padding-medium;
+
+    .search-input {
+      width: 100%;
+      // Ajuste para remover padding extra do MatFormField (pode variar entre versões)
+      .mat-form-field-wrapper {
+        padding-bottom: 0;
+      }
+    }
+  }
+
+  // Container da tabela
+  .table-container {
+    overflow-x: auto; // Essencial para rolagem horizontal em telas menores
+    border-radius: $spacing-unit;
+    background-color: $white;
+
+    .mat-table {
+      width: 100%;
+      min-width: 700px; // Garante uma largura mínima para a tabela, evitando quebra em colunas
+
+      .mat-header-cell {
+        background-color: $primary-color;
+        color: $white;
+        font-weight: 600;
+        font-size: 0.9em;
+        padding: $spacing-unit * 1.5 $padding-small; // 12px 16px
+      }
+
+      .mat-cell {
+        color: $text-color;
+        padding: $spacing-unit * 1.25 $padding-small; // 10px 16px
+        border-bottom: 1px solid $border-color;
+        font-size: 0.875em; // 14px
+      }
+
+      .exercise-row:hover {
+        background-color: $background-light; // Efeito hover nas linhas da tabela
+        cursor: pointer;
+      }
+
+      // Estilos específicos para colunas de texto/valor para legibilidade
+      .exercise-id {
+        font-weight: 500;
+        color: $primary-color;
+      }
+
+      .exercise-name {
+        font-weight: 500;
+      }
+
+      .exercise-description {
+        white-space: nowrap; // Evita quebra de linha do texto
+        overflow: hidden; // Esconde o texto que excede
+        text-overflow: ellipsis; // Adiciona reticências ao final do texto cortado
+        max-width: 180px; // Limita a largura para a elipse funcionar
+      }
+
+      .metric-value {
+        font-weight: 500;
+      }
+
+      // Botões de ação dentro da tabela (visualizar, editar, excluir)
+      .action-buttons {
+        display: flex;
+        gap: $spacing-unit / 2; // 4px de espaço entre os botões
+        .mat-icon-button {
+          width: $spacing-unit * 4;   // 32px
+          height: $spacing-unit * 4;  // 32px
+          line-height: $spacing-unit * 4;
+          .mat-icon {
+            font-size: $spacing-unit * 2.5; // 20px
+            width: $spacing-unit * 2.5;
+            height: $spacing-unit * 2.5;
+          }
+        }
+      }
+    }
+
+    // Mensagem exibida quando não há dados na tabela (pesquisa vazia ou sem itens)
+    .mat-no-data-row {
+      text-align: center;
+      .no-data {
+        padding: $padding-medium;
+        .no-data-content {
+          @include flex-center; // Centraliza conteúdo
+          flex-direction: column;
+          color: $light-text-color;
+          .mat-icon {
+            font-size: $spacing-unit * 6; // 48px
+            width: $spacing-unit * 6;
+            height: $spacing-unit * 6;
+            margin-bottom: $spacing-unit; // 8px
+            color: $border-color;
+          }
+          p {
+            margin: 0;
+            font-size: 1.1em;
+          }
+        }
+      }
+    }
+  }
+
+  // Estilo do paginador
+  mat-paginator {
+    background-color: $white;
+    border-top: 1px solid $border-color;
+    border-bottom-left-radius: $spacing-unit;
+    border-bottom-right-radius: $spacing-unit;
+  }
+}
+
+/* -----------------------------------------------------------
+ * Media Queries para Responsividade
+ * ----------------------------------------------------------- */
+
+// Telas pequenas (smartphones em modo retrato, até 768px)
+@media (max-width: 768px) {
+  .exercise-list-container {
+    padding: $padding-small; // 16px
+    margin: $padding-small; // 16px
+  }
+
+  .header {
+    flex-direction: column; // Empilha o título e o botão
+    align-items: flex-start; // Alinha itens à esquerda
+
+    .title-section {
+      margin-bottom: $padding-small; // 16px
+    }
+
+    .new-exercise-btn {
+      width: 100%; // Botão "Novo Exercício" ocupa toda a largura
+      @include flex-center; // Centraliza ícone e texto dentro do botão
+    }
+  }
+
+  .search-section {
+    .search-input {
+      .mat-form-field-wrapper {
+        font-size: 0.9em; // Ajusta o tamanho da fonte do campo de busca
+      }
+    }
+  }
+
+  // A tabela já tem `overflow-x: auto` no `.table-container`,
+  // o que permite rolagem horizontal em telas menores.
+  // Ajustes de coluna podem ser feitos aqui se a rolagem não for suficiente.
+  .table-container {
+    .mat-table {
+      .mat-header-cell, .mat-cell {
+        padding: $spacing-unit $spacing-unit; // Reduz padding nas células
+        font-size: 0.8em; // Diminui um pouco a fonte nas células
+      }
+      .action-buttons {
+        gap: $spacing-unit / 4; // 2px
+      }
+    }
+  }
+}
+
+// Telas muito pequenas (smartphones menores, até 480px)
+@media (max-width: 480px) {
+  .exercise-list-container {
+    margin: $spacing-unit; // 8px
+    padding: $spacing-unit * 1.5; // 12px
+  }
+
+  .header {
+    .title-section {
+      h2 {
+        font-size: 1.6em; // Título menor
+      }
+      .subtitle {
+        font-size: 0.8em; // Subtítulo menor
+      }
+    }
+  }
+
+  .table-container {
+    .mat-table {
+      min-width: 500px; // Pode ajustar ainda mais para garantir rolagem em telas muito pequenas
+      .exercise-description {
+        max-width: 100px; // Limita ainda mais a descrição para elipse
+      }
+    }
+  }
+}

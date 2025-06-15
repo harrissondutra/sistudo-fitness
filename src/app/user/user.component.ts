@@ -7,7 +7,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { UserService } from '../services/user/user.service';
 import { User } from '../models/user';
-import { Training } from '../models/training';
+import { Trainning } from '../models/trainning';
 
 @Component({
   selector: 'app-user',
@@ -24,9 +24,9 @@ import { Training } from '../models/training';
 })
 export class UserComponent implements OnInit {
   user: User | null = null;
-  currentTraining: Training | null = null;
-  trainingHistory: Training[] = [];
-  trainingColumns: string[] = ['startDate', 'endDate', 'goal'];
+  currentTrainning: Trainning | null = null;
+  TrainningHistory: Trainning[] = [];
+  TrainningColumns: string[] = ['startDate', 'endDate', 'goal'];
 
   constructor(
     private userService: UserService,
@@ -45,7 +45,7 @@ export class UserComponent implements OnInit {
     this.userService.getUserById(userId).subscribe({
       next: (user) => {
         this.user = user;
-        this.loadTrainings();
+        this.loadTrainnings();
       },
       error: (error) => {
         console.error('Erro ao carregar dados do usuário:', error);
@@ -53,10 +53,10 @@ export class UserComponent implements OnInit {
     });
   }
 
-  private loadTrainings(): void {
+  private loadTrainnings(): void {
     if (this.user?.trainings) {
-      this.trainingHistory = this.user.trainings;
-      this.currentTraining = this.user.trainings.find(t => !t.endDate) || null;
+      this.TrainningHistory = this.user.trainings;
+      this.currentTrainning = this.user.trainings.find(t => t.active) || null;
     }
   }
 

@@ -12,9 +12,7 @@ const routes: Routes = [
 @NgModule({
   imports: [
     SharedModule,
-    RouterModule.forChild(routes),
-    TrainningComponent,
-    TrainningCreateComponent
+    RouterModule.forChild(routes)
   ]
 })
 export class TrainningModule { } 

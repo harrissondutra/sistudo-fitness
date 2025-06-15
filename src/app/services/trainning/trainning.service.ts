@@ -28,6 +28,9 @@ private baseUrl = `${environment.apiUrl}/trainning`; // Exemplo: assumindo que o
   createTrainning(trainning: Trainning): Observable<Trainning> {
     return this.http.post<Trainning>(`${this.baseUrl}/create`, trainning);
   }
+  createTrainningByUserId(userId: number, trainning: Trainning): Observable<Trainning> {
+    return this.http.post<Trainning>(`${this.baseUrl}/create/${userId}`, trainning);
+  }
 
   listAllTrainnings(): Observable<Trainning[]> {
     return this.http.get<Trainning[]>(`${this.baseUrl}/listAll`);

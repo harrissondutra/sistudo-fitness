@@ -1,0 +1,56 @@
+<!-- Container Principal -->
+<div class="exercise-create-container">
+  <!-- Cabeçalho -->
+  <div class="header">
+    <mat-icon>add_box</mat-icon>
+    <h1>Criar Novo Exercício</h1>
+  </div>
+
+  <!-- Formulário -->
+  <form [formGroup]="exerciseForm" (ngSubmit)="onSubmit()" class="form-container">
+    <!-- Campo: Nome do Exercício -->
+    <mat-form-field appearance="outline">
+      <mat-label>Nome do Exercício</mat-label>
+      <input matInput formControlName="name" placeholder="Ex: Flexão de Braço">
+      <mat-error *ngIf="exerciseForm.get('name')?.hasError('required') && exerciseForm.get('name')?.touched">Nome é obrigatório</mat-error>
+      <mat-error *ngIf="exerciseForm.get('name')?.hasError('minlength') && exerciseForm.get('name')?.touched">Nome deve ter no mínimo 3 caracteres</mat-error>
+    </mat-form-field>
+
+    <!-- Campo: Descrição -->
+    <mat-form-field appearance="outline">
+      <mat-label>Descrição</mat-label>
+      <textarea matInput formControlName="description" placeholder="Ex: Exercício para peito e tríceps..." rows="3"></textarea>
+    </mat-form-field>
+
+    <!-- Campo: Categoria -->
+    <mat-form-field appearance="outline">
+      <mat-label>Categoria</mat-label>
+      <mat-select formControlName="categoryId"> <!-- Assumimos que você enviará o ID da categoria -->
+        <mat-option>-- Selecione uma categoria --</mat-option>
+        <mat-option *ngFor="let category of categories" [value]="category.id">
+          {{category.name}}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="exerciseForm.get('categoryId')?.hasError('required') && exerciseForm.get('categoryId')?.touched">Categoria é obrigatória</mat-error>
+    </mat-form-field>
+
+    <!-- Campo: URL do Vídeo (Opcional) -->
+    <mat-form-field appearance="outline">
+      <mat-label>URL do Vídeo</mat-label>
+      <input matInput formControlName="videoUrl" placeholder="Ex: https://youtube.com/watch?v=...">
+      <mat-error *ngIf="exerciseForm.get('videoUrl')?.hasError('pattern') && exerciseForm.get('videoUrl')?.touched">URL do vídeo inválida</mat-error>
+    </mat-form-field>
+
+    <!-- Botões de Ação -->
+    <div class="form-actions">
+      <button mat-button type="button" (click)="cancel()">
+        <mat-icon>arrow_back</mat-icon>
+        Cancelar
+      </button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="exerciseForm.invalid" matTooltip="{{ exerciseForm.invalid ? 'Preencha todos os campos obrigatórios' : 'Criar novo exercício' }}">
+        <mat-icon>save</mat-icon>
+        Salvar Exercício
+      </button>
+    </div>
+  </form>
+</div>

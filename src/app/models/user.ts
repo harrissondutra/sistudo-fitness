@@ -1,5 +1,5 @@
 import { Measure } from './measure';
-import { Training } from './training';
+import { Trainning } from './trainning';
 
 export interface User {
   id?: string; // Opcional, pois é gerado pelo backend
@@ -12,7 +12,7 @@ export interface User {
   phone?: string;
   birthDate?: Date;
   goal?: string;
-  trainings?: Training[];
+  trainings?: Trainning[];
   evolutionPhotos?: EvolutionPhoto[];
 }
 

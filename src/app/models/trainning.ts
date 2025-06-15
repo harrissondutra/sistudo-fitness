@@ -1,13 +1,10 @@
 import { Exercise } from './exercise';
+import { User } from './user';
 
 export interface Trainning {
-  id?: number; // Opcional, pois é gerado pelo backend
+  id?: number;
   name: string;
-  description?: string;
-  durationMinutes?: number;
-  intensityLevel?: string;
-  date?: Date;
-  exercises: Exercise[]; // Lista de exercícios
-  userId: number; // ID do usuário associado ao treino
-  active: boolean; // Indica se o treino está ativo ou não
+  exercises: Exercise[];
+  user: User;
+  active: boolean;
 }
