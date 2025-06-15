@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { UserService, User } from '../services/user.service';
+import { UserService } from '../services/user/user.service';
+import { User } from '../models/user';
 import { Measure } from '../models/measure';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -181,8 +182,12 @@ export class UserEditComponent implements OnInit, OnDestroy {
       const userId = this.route.snapshot.paramMap.get('id');
       const userData: User = this.userForm.value;
 
+      if (userId) {
+        userData.id = userId;
+      }
+
       const request$ = userId
-        ? this.userService.updateUser(userId, userData)
+        ? this.userService.updateUser(userData)
         : this.userService.createUser(userData);
 
       request$
