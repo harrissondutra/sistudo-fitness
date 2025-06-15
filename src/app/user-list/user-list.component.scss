@@ -1,52 +1,75 @@
 /* user-list.component.scss */
 
+// Importa o módulo math do Sass para funções matemáticas
+@use 'sass:math';
+
+// Variáveis (baseadas no modelo user-registration.component.scss)
+$primary-color: #2196F3;
+$text-primary: #2C3E50;
+$text-secondary: #607D8B;
+$background-light: #F5F7FA;
+$background-white: #FFFFFF;
+$border-color: rgba(0, 0, 0, 0.08);
+$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+$border-radius: 12px;
+$spacing-xs: 8px;
+$spacing-sm: 12px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$transition: all 0.3s ease;
+$warn-color: #f44336; // Adicionado para consistência de erros
+
+// Container principal
 .user-list-container {
-  padding: 24px;
+  padding: $spacing-lg;
   max-width: 1400px;
-  margin: 24px auto;
-  background: #FFF;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,.08);
+  margin: $spacing-lg auto; // Ajustado para usar $spacing-lg
+  background: $background-white;
+  border-radius: $border-radius;
+  box-shadow: $shadow-md; // Usando sombra média para o container principal
+  box-sizing: border-box; // Garante que padding não aumente a largura total
 
   .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 32px;
+    margin-bottom: math.div($spacing-lg, 1.5); // Espaçamento maior no cabeçalho
 
     .title-section {
       h2 {
-        font-size: 2em;
-        color: #2C3E50;
-        margin: 0 0 8px 0;
+        font-size: 2em; // ~32px
+        color: $text-primary;
+        margin: 0 0 $spacing-xs 0; // Usando variável de espaçamento
         font-weight: 600;
       }
 
       .subtitle {
-        color: #607D8B;
-        font-size: 1.1em;
+        color: $text-secondary;
+        font-size: 1.1em; // ~17.6px
         margin: 0;
       }
     }
 
     .new-user-btn {
-      padding: 8px 24px;
-      border-radius: 8px;
+      padding: $spacing-xs $spacing-lg; // 8px 24px
+      border-radius: $spacing-xs; // Raio da borda do botão
       font-weight: 500;
-      
+
       mat-icon {
-        margin-right: 8px;
+        margin-right: $spacing-xs;
       }
     }
   }
 
   .search-section {
-    margin-bottom: 24px;
+    margin-bottom: $spacing-lg;
 
     .search-input {
       width: 100%;
       max-width: 500px;
 
+      // Overrides para o Angular Material (mantido ::ng-deep)
       ::ng-deep {
         .mat-form-field-wrapper {
           margin: 0;
@@ -54,9 +77,9 @@
         }
 
         .mat-form-field-flex {
-          background: #F5F7FA;
-          border-radius: 8px;
-          padding: 0 16px;
+          background: $background-light;
+          border-radius: $spacing-xs;
+          padding: 0 $spacing-md;
         }
 
         .mat-form-field-outline {
@@ -67,48 +90,50 @@
   }
 
   .table-container {
-    background: #FFF;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,0,0,.08);
+    background: $background-white;
+    border-radius: $border-radius;
+    overflow: hidden; // Garante que bordas arredondadas funcionem
+    box-shadow: $shadow-sm; // Sombra para o container da tabela
+    overflow-x: auto; // Essencial para responsividade da tabela
 
     table {
       width: 100%;
+      min-width: 800px; // Garante que a tabela não quebre em telas pequenas, permitindo rolagem horizontal
     }
 
     th.mat-header-cell {
-      background: #F5F7FA;
-      color: #2C3E50;
+      background: $background-light; // Cor de fundo do cabeçalho da tabela
+      color: $text-primary;
       font-weight: 600;
-      font-size: .9em;
-      padding: 16px;
-      white-space: nowrap;
+      font-size: .9em; // ~14.4px
+      padding: $spacing-md;
+      white-space: nowrap; // Evita quebra de linha em cabeçalhos
 
       &:first-child {
-        background-color: #E8EAF6;
-        border-right: 1px solid #CFD8DC;
+        background-color: #E8EAF6; // Cor mais clara para a primeira coluna
+        border-right: 1px solid #CFD8DC; // Bordas entre colunas
       }
 
       &.mat-sort-header {
         cursor: pointer;
-        
+
         &:hover {
-          background: #E8EAF6;
+          background: #E8EAF6; // Efeito hover no sort header
         }
       }
     }
 
     td.mat-cell {
-      padding: 16px;
-      color: #2C3E50;
-      border-bottom: 1px solid #E8EAF6;
+      padding: $spacing-md;
+      color: $text-primary;
+      border-bottom: 1px solid #E8EAF6; // Cor da borda da célula
 
       &:first-child {
-        font-family: 'Roboto Mono', monospace;
-        color: #607D8B;
-        font-size: 0.9em;
+        font-family: 'Roboto Mono', monospace; // Fonte para o ID
+        color: $text-secondary;
+        font-size: 0.9em; // ~14.4px
         font-weight: 500;
-        background-color: #F5F7FA;
+        background-color: $background-light;
         border-right: 1px solid #E8EAF6;
       }
     }
@@ -117,17 +142,17 @@
       transition: background-color .2s ease;
 
       &:hover {
-        background: #F5F7FA;
+        background: $background-light; // Efeito hover nas linhas
       }
     }
 
     .user-id {
       font-family: 'Roboto Mono', monospace;
-      color: #607D8B;
+      color: $text-secondary;
       font-size: 0.9em;
       font-weight: 500;
-      padding: 4px 8px;
-      background-color: #F5F7FA;
+      padding: math.div($spacing-xs, 2) $spacing-xs; // Corrigido para math.div()
+      background-color: $background-light;
       border-radius: 4px;
       display: inline-block;
     }
@@ -135,27 +160,27 @@
     .user-info {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: $spacing-sm; // 12px
 
       .user-name {
         font-weight: 500;
-        color: #2C3E50;
+        color: $text-primary;
       }
     }
 
     .user-email {
-      color: #607D8B;
+      color: $text-secondary;
       font-size: .9em;
     }
 
     .metric-value {
       font-weight: 500;
-      color: #2196F3;
+      color: $primary-color;
     }
 
     .action-buttons {
       display: flex;
-      gap: 8px;
+      gap: $spacing-xs; // 8px
       justify-content: flex-end;
 
       button {
@@ -168,14 +193,14 @@
     }
 
     .no-data {
-      padding: 48px 0;
+      padding: math.div($spacing-lg, 2) * 2 0; // 48px
 
       .no-data-content {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 16px;
-        color: #90A4AE;
+        gap: $spacing-md; // 16px
+        color: #90A4AE; // Cinza específico para 'no data'
 
         mat-icon {
           font-size: 48px;
@@ -193,70 +218,111 @@
 
   mat-paginator {
     border-top: 1px solid #E8EAF6;
-    background: #FFF;
+    background: $background-white;
   }
 }
 
+/* -----------------------------------------------------------
+ * Media Queries para Responsividade (ajustadas)
+ * ----------------------------------------------------------- */
+
+// Para tablets e smartphones maiores (até 768px)
 @media screen and (max-width: 768px) {
   .user-list-container {
-    padding: 16px;
-    margin: 16px;
-    border-radius: 12px;
+    padding: $spacing-md; // 16px
+    margin: $spacing-md; // 16px
+    border-radius: $spacing-sm; // 12px
+    box-shadow: $shadow-sm; // Sombra menor em mobile
+  }
 
-    .header {
-      flex-direction: column;
-      gap: 16px;
-      align-items: flex-start;
-      margin-bottom: 24px;
+  .header {
+    flex-direction: column; // Empilha título e botão
+    gap: $spacing-md; // 16px
+    align-items: flex-start; // Alinha à esquerda
+    margin-bottom: $spacing-lg; // 24px
 
-      .title-section {
-        h2 {
-          font-size: 1.8em;
+    .title-section {
+      h2 {
+        font-size: 1.8em; // ~28.8px
+      }
+      .subtitle {
+        font-size: 1em; // ~16px
+      }
+    }
+  }
+
+  .search-section {
+    .search-input {
+      max-width: 100%; // Campo de busca ocupa largura total
+    }
+  }
+
+  .table-container {
+    border-radius: $spacing-xs; // 8px
+    // `overflow-x: auto` e `min-width` já garantem a rolagem
+
+    table {
+      min-width: 700px; // Pode ser um pouco menor que 800px para telas médias
+    }
+
+    th.mat-header-cell,
+    td.mat-cell {
+      padding: $spacing-sm; // Reduz padding nas células
+      font-size: 0.85em; // Reduz um pouco a fonte
+    }
+
+    .action-buttons {
+      gap: math.div($spacing-xs, 2); // Corrigido para math.div()
+
+      button {
+        width: 36px; // Pode ajustar o tamanho dos botões ícone
+        height: 36px;
+        line-height: 36px;
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
         }
-      }
-
-      .new-user-btn {
-        width: 100%;
-      }
-    }
-
-    .search-section {
-      .search-input {
-        max-width: 100%;
-      }
-    }
-
-    .table-container {
-      border-radius: 8px;
-      overflow-x: auto;
-
-      table {
-        min-width: 800px;
-      }
-
-      th.mat-header-cell,
-      td.mat-cell {
-        padding: 12px;
       }
     }
   }
 }
 
+// Para smartphones menores (até 480px)
 @media screen and (max-width: 480px) {
   .user-list-container {
-    padding: 12px;
-    margin: 8px;
+    padding: $spacing-sm; // 12px
+    margin: $spacing-xs; // 8px
+  }
 
-    .header {
-      .title-section {
-        h2 {
-          font-size: 1.5em;
-        }
-
-        .subtitle {
-          font-size: 1em;
-        }
+  .header {
+    .title-section {
+      h2 {
+        font-size: 1.5em; // ~24px
       }
+
+      .subtitle {
+        font-size: 0.9em; // ~14.4px
+      }
+    }
+  }
+
+  .table-container {
+    table {
+      min-width: 600px; // Pode precisar de mais ajuste dependendo do conteúdo
+    }
+    th.mat-header-cell,
+    td.mat-cell {
+      padding: $spacing-xs; // 8px
+      font-size: 0.8em; // Fontes ainda menores
+    }
+  }
+
+  mat-paginator {
+    .mat-paginator-container {
+      flex-wrap: wrap; // Permite que os elementos do paginador quebrem linha
+      justify-content: center; // Centraliza elementos
+      padding: $spacing-sm; // Aumenta um pouco o padding
     }
   }
 }
