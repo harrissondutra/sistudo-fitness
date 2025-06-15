@@ -1,7 +1,12 @@
-// Variáveis de Cores (ajuste conforme o tema do seu Material Design)
-$primary-color: #3f51b5; // Exemplo: Indigo 500
-$accent-color: #ff4081;  // Exemplo: Pink A200
-$warn-color: #f44336;    // Exemplo: Red 500
+/* src/app/Exercises/list-exercise/list-exercise.component.scss */
+
+// Importa o módulo math do Sass para funções matemáticas
+@use 'sass:math';
+
+// Variáveis básicas (ajuste conforme o tema do seu Material Design)
+$primary-color: #3f51b5; // Exemplo de cor primária (deep purple)
+$accent-color: #ff4081;  // Exemplo de cor de acento (pink)
+$warn-color: #f44336;    // Exemplo de cor de aviso (red)
 $text-color: #333;
 $light-text-color: #666;
 $border-color: #e0e0e0;
@@ -51,7 +56,7 @@ $margin-medium: $spacing-unit * 3;   // 24px
         color: $text-color;
       }
       .subtitle {
-        margin: $spacing-unit / 2 0 0; // 4px
+        margin: math.div($spacing-unit, 2) 0 0; // Corrigido: math.div()
         font-size: 0.9em;
         color: $light-text-color;
       }
@@ -133,7 +138,7 @@ $margin-medium: $spacing-unit * 3;   // 24px
       // Botões de ação dentro da tabela (visualizar, editar, excluir)
       .action-buttons {
         display: flex;
-        gap: $spacing-unit / 2; // 4px de espaço entre os botões
+        gap: math.div($spacing-unit, 2); // Corrigido: math.div()
         .mat-icon-button {
           width: $spacing-unit * 4;   // 32px
           height: $spacing-unit * 4;  // 32px
@@ -224,7 +229,7 @@ $margin-medium: $spacing-unit * 3;   // 24px
         font-size: 0.8em; // Diminui um pouco a fonte nas células
       }
       .action-buttons {
-        gap: $spacing-unit / 4; // 2px
+        gap: math.div($spacing-unit, 4); // Corrigido: math.div()
       }
     }
   }

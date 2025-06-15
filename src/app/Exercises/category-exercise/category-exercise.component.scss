@@ -1,0 +1,196 @@
+/* category-exercise.component.scss */
+
+// Variáveis SCSS locais para valores não definidos globalmente como CSS Custom Properties
+$background-section: #f5f7fa; // Cor de fundo específica para seções
+$shadow-sm: 0 2px 4px rgba(63, 81, 181, 0.05); // Sombra específica
+$shadow-md: 0 4px 6px rgba(63, 81, 181, 0.08); // Sombra específica
+$transition: all 0.2s ease; // Transição específica, se não globalmente definida
+$warn-color: #f44336; // Cor para mensagens de erro
+
+// Mixins
+@mixin flex-between-center {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin flex-center-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+// Container principal do formulário de categoria
+.category-form-container {
+  padding: var(--spacing-lg); // Usando variável CSS global
+  max-width: 800px;
+  margin: var(--spacing-lg) auto; // Usando variável CSS global
+  background-color: $background-section; // Usando variável SCSS local
+  min-height: 100vh;
+  box-sizing: border-box;
+  border-radius: var(--border-radius-md); // Usando variável CSS global
+  box-shadow: $shadow-sm; // Usando variável SCSS local
+}
+
+// Cabeçalho da tela
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md); // Usando variável CSS global
+  margin-bottom: var(--spacing-lg); // Usando variável CSS global
+  padding: var(--spacing-md); // Usando variável CSS global
+  background-color: var(--background-color); // Usando variável CSS global
+  border-radius: var(--border-radius-md); // Usando variável CSS global
+  box-shadow: $shadow-sm; // Usando variável SCSS local
+
+  mat-icon {
+    font-size: 32px; // Override do global (24px)
+    width: 32px; // Override do global
+    height: 32px; // Override do global
+    color: var(--primary-color); // Usando variável CSS global
+  }
+
+  h1 {
+    margin: 0;
+    font-size: var(--font-size-xxl); // Usando variável CSS global (24px)
+    color: var(--text-color); // Usando variável CSS global
+    font-weight: 500;
+  }
+}
+
+// Conteúdo do formulário (cartão)
+.form-content {
+  background-color: var(--background-color); // Usando variável CSS global
+  padding: var(--spacing-lg); // Usando variável CSS global
+  border-radius: var(--border-radius-md); // Usando variável CSS global
+  box-shadow: $shadow-sm; // Usando variável SCSS local
+  transition: $transition; // Usando variável SCSS local
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md); // Usando variável CSS global
+
+  &:hover {
+    box-shadow: $shadow-md; // Usando variável SCSS local
+  }
+
+  // Estilos para os campos do Angular Material
+  ::ng-deep {
+    .mat-form-field-appearance-outline {
+      .mat-form-field-outline {
+        color: var(--border-color); // Usando variável CSS global
+      }
+
+      .mat-form-field-outline-thick {
+        color: var(--primary-color); // Usando variável CSS global
+      }
+
+      &.mat-focused {
+        .mat-form-field-outline-thick {
+          color: var(--primary-color); // Usando variável CSS global
+        }
+
+        .mat-form-field-label {
+          color: var(--primary-color); // Usando variável CSS global
+        }
+      }
+    }
+
+    .mat-form-field-label {
+      color: var(--text-secondary-color); // Usando variável CSS global
+    }
+
+    .mat-input-element {
+      color: var(--text-color); // Usando variável CSS global
+    }
+
+    .mat-form-field-suffix {
+      color: var(--text-secondary-color); // Usando variável CSS global
+    }
+  }
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  // Estilo para mensagens de validação/erro
+  mat-error {
+    font-size: var(--font-size-xs); // Usando variável CSS global
+    color: $warn-color; // Usando variável SCSS local
+    margin-top: calc(var(--spacing-xs) / 2); // Usando variável CSS global com calc()
+  }
+
+  // Botões de ação do formulário
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-md); // Usando variável CSS global
+    margin-top: var(--spacing-lg); // Usando variável CSS global
+    padding-top: var(--spacing-lg); // Usando variável CSS global
+    border-top: 1px solid var(--border-color); // Usando variável CSS global
+
+    button {
+      min-width: 120px;
+      mat-icon {
+        margin-right: var(--spacing-sm); // Usando variável CSS global
+      }
+    }
+  }
+}
+
+/* -----------------------------------------------------------
+ * Media Queries para Responsividade
+ * ----------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  .category-form-container {
+    padding: var(--spacing-md); // Usando variável CSS global
+    margin: 0 var(--spacing-md); // Usando variável CSS global
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--spacing-md); // Usando variável CSS global
+    h1 {
+      font-size: var(--font-size-xl); // Usando variável CSS global
+    }
+  }
+
+  .form-content {
+    padding: var(--spacing-md); // Usando variável CSS global
+    gap: var(--spacing-sm); // Usando variável CSS global
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: var(--spacing-sm); // Usando variável CSS global
+
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .category-form-container {
+    padding: var(--spacing-sm); // Usando variável CSS global
+    margin: 0 var(--spacing-xs); // Usando variável CSS global
+  }
+
+  .header {
+    padding: var(--spacing-sm); // Usando variável CSS global
+    mat-icon {
+      font-size: var(--font-size-xxl); // Usando variável CSS global (24px)
+      width: var(--font-size-xxl);
+      height: var(--font-size-xxl);
+    }
+    h1 {
+      font-size: var(--font-size-lg); // Usando variável CSS global
+    }
+  }
+
+  .form-content {
+    padding: var(--spacing-sm); // Usando variável CSS global
+  }
+}

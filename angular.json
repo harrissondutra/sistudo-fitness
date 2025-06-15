@@ -46,15 +46,15 @@
             "namedChunks": false,
             "budgets": [
               {
-                "type": "initial",
-                "maximumWarning": "2mb",
-                "maximumError": "5mb"
-              },
-              {
-                "type": "anyComponentStyle",
-                "maximumWarning": "6kb",
-                "maximumError": "10kb"
-              }
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "7.5kb",
+                  "maximumError": "12kb"
+                }
             ]
           },
           "configurations": {

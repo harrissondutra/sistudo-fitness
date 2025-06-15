@@ -1,372 +1,169 @@
 /* user-list.component.scss */
 
-// Importa o módulo math do Sass para funções matemáticas
 @use 'sass:math';
 
-// Variáveis (baseadas no modelo user-registration.component.scss)
-$primary-color: #2196F3;
-$text-primary: #2C3E50;
-$text-secondary: #607D8B;
-$background-light: #F5F7FA;
-$background-white: #FFFFFF;
-$border-color: rgba(0, 0, 0, 0.08);
 $shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
 $shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
-$border-radius: 12px;
-$spacing-xs: 8px;
-$spacing-sm: 12px;
-$spacing-md: 16px;
-$spacing-lg: 24px;
 $transition: all 0.3s ease;
-$warn-color: #f44336; // Adicionado para consistência de erros
 
-// Container principal
+@mixin flex-between-center { display: flex; justify-content: space-between; align-items: center; }
+@mixin flex-center-col { display: flex; flex-direction: column; align-items: center; }
+@mixin flex-end-gap($gap) { display: flex; justify-content: flex-end; gap: $gap; }
+
 .user-list-container {
-  padding: $spacing-lg;
-  max-width: 1400px;
-  margin: $spacing-lg auto; // Ajustado para usar $spacing-lg
-  background: $background-white;
-  border-radius: $border-radius;
-  box-shadow: $shadow-md; // Usando sombra média para o container principal
-  box-sizing: border-box; // Garante que padding não aumente a largura total
+  padding: var(--spacing-lg); max-width: 1400px; margin: var(--spacing-lg) auto;
+  background: var(--background-color); border-radius: var(--border-radius-md);
+  box-shadow: $shadow-md; box-sizing: border-box;
 
   .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: math.div($spacing-lg, 1.5); // Espaçamento maior no cabeçalho
-
+    @include flex-between-center; margin-bottom: calc(var(--spacing-lg) / 1.5);
     .title-section {
-      h2 {
-        font-size: 2em; // ~32px
-        color: $text-primary;
-        margin: 0 0 $spacing-xs 0; // Usando variável de espaçamento
-        font-weight: 600;
-      }
-
-      .subtitle {
-        color: $text-secondary;
-        font-size: 1.1em; // ~17.6px
-        margin: 0;
-      }
+      h2 { font-size: var(--font-size-xxl); color: var(--text-color); margin: 0 0 var(--spacing-xs) 0; font-weight: 600; }
+      .subtitle { color: var(--text-secondary-color); font-size: var(--font-size-md); margin: 0; }
     }
-
     .new-user-btn {
-      padding: $spacing-xs $spacing-lg; // 8px 24px
-      border-radius: $spacing-xs; // Raio da borda do botão
-      font-weight: 500;
-
-      mat-icon {
-        margin-right: $spacing-xs;
-      }
+      padding: var(--spacing-xs) var(--spacing-lg); border-radius: var(--border-radius-sm); font-weight: 500;
+      mat-icon { margin-right: var(--spacing-xs); }
     }
   }
 
   .search-section {
-    margin-bottom: $spacing-lg;
-
+    margin-bottom: var(--spacing-lg);
     .search-input {
-      width: 100%;
-      max-width: 500px;
-
-      // Overrides para o Angular Material (mantido ::ng-deep)
+      width: 100%; max-width: 500px;
       ::ng-deep {
-        .mat-form-field-wrapper {
-          margin: 0;
-          padding: 0;
-        }
-
+        .mat-form-field-wrapper { margin: 0; padding: 0; }
         .mat-form-field-flex {
-          background: $background-light;
-          border-radius: $spacing-xs;
-          padding: 0 $spacing-md;
+          background: var(--background-light); border-radius: var(--spacing-xs);
+          padding: 0 var(--spacing-md);
         }
-
-        .mat-form-field-outline {
-          display: none;
-        }
+        .mat-form-field-outline { display: none; }
       }
     }
   }
 
   .table-container {
-    background: $background-white;
-    border-radius: $border-radius;
-    overflow: hidden; // Garante que bordas arredondadas funcionem
-    box-shadow: $shadow-sm; // Sombra para o container da tabela
-    overflow-x: auto; // Essencial para responsividade da tabela
+    background: var(--background-color); border-radius: var(--border-radius-md);
+    overflow: hidden; box-shadow: $shadow-sm; overflow-x: auto;
 
-    table {
-      width: 100%;
-      min-width: 800px; // Garante que a tabela não quebre em telas pequenas, permitindo rolagem horizontal
-    }
+    table { width: 100%; min-width: 800px; }
 
     th.mat-header-cell {
-      background: $background-light; // Cor de fundo do cabeçalho da tabela
-      color: $text-primary;
-      font-weight: 600;
-      font-size: .9em; // ~14.4px
-      padding: $spacing-md;
-      white-space: nowrap; // Evita quebra de linha em cabeçalhos
-
-      &:first-child {
-        background-color: #E8EAF6; // Cor mais clara para a primeira coluna
-        border-right: 1px solid #CFD8DC; // Bordas entre colunas
-      }
-
-      &.mat-sort-header {
-        cursor: pointer;
-
-        &:hover {
-          background: #E8EAF6; // Efeito hover no sort header
-        }
-      }
+      background: var(--background-light); color: var(--text-color); font-weight: 600;
+      padding: var(--spacing-md); white-space: nowrap; font-size: var(--font-size-sm);
+      &:first-child { background-color: #E8EAF6; border-right: 1px solid #CFD8DC; }
+      &.mat-sort-header:hover { background: #E8EAF6; }
     }
 
     td.mat-cell {
-      padding: $spacing-md;
-      color: $text-primary;
-      border-bottom: 1px solid #E8EAF6; // Cor da borda da célula
-
+      padding: var(--spacing-md); color: var(--text-color);
+      border-bottom: 1px solid #E8EAF6; font-size: var(--font-size-sm);
       &:first-child {
-        font-family: 'Roboto Mono', monospace; // Fonte para o ID
-        color: $text-secondary;
-        font-size: 0.9em; // ~14.4px
-        font-weight: 500;
-        background-color: $background-light;
+        font-family: 'Roboto Mono', monospace; color: var(--text-secondary-color);
+        font-weight: 500; background-color: var(--background-light);
         border-right: 1px solid #E8EAF6;
       }
     }
 
-    .user-row {
-      transition: background-color .2s ease;
-
-      &:hover {
-        background: $background-light; // Efeito hover nas linhas
-      }
-    }
+    .user-row:hover { background: var(--background-light); }
 
     .user-id {
-      font-family: 'Roboto Mono', monospace;
-      color: $text-secondary;
-      font-size: 0.9em;
-      font-weight: 500;
-      padding: math.div($spacing-xs, 2) $spacing-xs; // Corrigido para math.div()
-      background-color: $background-light;
-      border-radius: 4px;
+      font-family: 'Roboto Mono', monospace; color: var(--text-secondary-color); font-weight: 500;
+      padding: calc(var(--spacing-xs) / 2) var(--spacing-xs);
+      background-color: var(--background-light); border-radius: var(--border-radius-sm);
       display: inline-block;
     }
 
     .user-info {
-      display: flex;
-      align-items: center;
-      gap: $spacing-sm; // 12px
-
-      .user-name {
-        font-weight: 500;
-        color: $text-primary;
-      }
+      display: flex; align-items: center; gap: var(--spacing-sm);
+      .user-name { font-weight: 500; color: var(--text-primary); }
     }
 
-    .user-email {
-      color: $text-secondary;
-      font-size: .9em;
-    }
-
-    .metric-value {
-      font-weight: 500;
-      color: $primary-color;
-    }
+    .user-email { color: var(--text-secondary-color); font-size: var(--font-size-sm); }
+    .metric-value { font-weight: 500; color: var(--primary-color); }
 
     .action-buttons {
-      display: flex;
-      gap: $spacing-xs; // 8px
-      justify-content: flex-end;
-
-      button {
-        transition: transform .2s ease;
-
-        &:hover {
-          transform: scale(1.1);
-        }
-      }
+      @include flex-end-gap(var(--spacing-xs));
+      button { transition: transform .2s ease; &:hover { transform: scale(1.1); } }
     }
 
     .no-data {
-      padding: math.div($spacing-lg, 2) * 2 0; // 48px
-
+      padding: calc(var(--spacing-lg) * 2) 0;
       .no-data-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: $spacing-md; // 16px
-        color: #90A4AE; // Cinza específico para 'no data'
-
-        mat-icon {
-          font-size: 48px;
-          width: 48px;
-          height: 48px;
-        }
-
-        p {
-          font-size: 1.1em;
-          margin: 0;
-        }
+        @include flex-center-col; gap: var(--spacing-md); color: #90A4AE;
+        mat-icon { font-size: 48px; width: 48px; height: 48px; }
+        p { font-size: 1.1em; margin: 0; }
       }
     }
   }
 
-  mat-paginator {
-    border-top: 1px solid #E8EAF6;
-    background: $background-white;
-  }
+  mat-paginator { border-top: 1px solid #E8EAF6; background: var(--background-color); }
 }
 
-/* -----------------------------------------------------------
- * Media Queries para Responsividade (ajustadas para mobile)
- * ----------------------------------------------------------- */
+/* --- Media Queries --- */
 
-// Para tablets e smartphones maiores (até 768px)
 @media screen and (max-width: 768px) {
   .user-list-container {
-    padding: $spacing-md; // 16px
-    margin: $spacing-md; // 16px
-    border-radius: $spacing-sm; // 12px
-    box-shadow: $shadow-sm; // Sombra menor em mobile
+    padding: var(--spacing-md); margin: var(--spacing-md);
+    border-radius: var(--border-radius-sm); box-shadow: $shadow-sm;
   }
-
   .header {
-    flex-direction: column; // Empilha título e botão
-    gap: $spacing-md; // 16px
-    align-items: flex-start; // Alinha à esquerda
-    margin-bottom: $spacing-lg; // 24px
-
+    flex-direction: column; gap: var(--spacing-md); align-items: flex-start;
+    margin-bottom: var(--spacing-lg);
     .title-section {
-      h2 {
-        font-size: 1.8em; // ~28.8px
-      }
-      .subtitle {
-        font-size: 1em; // ~16px
-      }
+      h2 { font-size: var(--font-size-xl); }
+      .subtitle { font-size: var(--font-size-md); }
     }
-
     .new-user-btn {
-      width: 100%; // Botão ocupa largura total
-      justify-content: center; // Centraliza conteúdo do botão
-      // Ajuste de altura e padding para o botão em mobile
-      height: 44px;
-      line-height: 44px;
-      padding: 0 $spacing-md;
+      width: 100%; justify-content: center;
+      height: 44px; line-height: 44px; padding: 0 var(--spacing-md);
     }
   }
-
-  .search-section {
-    .search-input {
-      max-width: 100%; // Campo de busca ocupa largura total
-    }
-  }
-
+  .search-section .search-input { max-width: 100%; }
   .table-container {
-    border-radius: $spacing-xs; // 8px
-    // `overflow-x: auto` e `min-width` já garantem a rolagem
-
-    table {
-      min-width: 600px; // Reduz o min-width da tabela para se adaptar melhor
+    border-radius: var(--spacing-xs);
+    table { min-width: 550px; }
+    th.mat-header-cell, td.mat-cell {
+      padding: var(--spacing-sm); font-size: var(--font-size-sm); white-space: normal;
     }
-
-    th.mat-header-cell,
-    td.mat-cell {
-      padding: $spacing-sm; // Reduz padding nas células
-      font-size: 0.85em; // Reduz um pouco a fonte
-      white-space: normal; // Permite que o texto das células quebre linha, se necessário
-    }
-
     .action-buttons {
-      gap: math.div($spacing-xs, 2); // Reduz o espaço entre botões de ação
-
+      gap: calc(var(--spacing-xs) / 2);
       button {
-        width: 32px; // Reduz o tamanho dos botões ícone para serem mais compactos
-        height: 32px;
-        line-height: 32px;
-        .mat-icon {
-          font-size: 18px; // Reduz o tamanho do ícone
-          width: 18px;
-          height: 18px;
-        }
+        width: 32px; height: 32px; line-height: 32px;
+        .mat-icon { font-size: var(--font-size-lg); width: var(--font-size-lg); height: var(--font-size-lg); }
       }
     }
   }
-
-  mat-paginator {
-    .mat-paginator-container {
-      flex-wrap: wrap; // Permite que os elementos do paginador quebrem linha
-      justify-content: center; // Centraliza elementos
-      padding: $spacing-sm; // Aumenta um pouco o padding
-    }
-  }
+  mat-paginator .mat-paginator-container { flex-wrap: wrap; justify-content: center; padding: var(--spacing-sm); }
 }
 
-// Para smartphones menores (até 480px)
 @media screen and (max-width: 480px) {
   .user-list-container {
-    padding: $spacing-sm; // 12px
-    margin: $spacing-xs; // 8px
+    padding: calc(var(--spacing-sm) / 1.2); margin: var(--spacing-xs);
   }
-
   .header {
     .title-section {
-      h2 {
-        font-size: 1.5em; // ~24px
-      }
-
-      .subtitle {
-        font-size: 0.9em; // ~14.4px
-      }
+      h2 { font-size: var(--font-size-xl); }
+      .subtitle { font-size: var(--font-size-sm); }
     }
     .new-user-btn {
-      height: 40px; // Altura ainda menor para botões
-      font-size: 0.9em;
-      .mat-icon {
-        font-size: 16px; // Ícone menor
-        width: 16px;
-        height: 16px;
-      }
+      height: 38px; font-size: var(--font-size-sm);
+      .mat-icon { font-size: var(--font-size-md); width: var(--font-size-md); height: var(--font-size-md); }
     }
   }
-
-  .search-section {
-    mat-form-field {
-      .mat-form-field-wrapper {
-        font-size: 0.9em; // Fonte menor no campo de busca
-      }
-    }
-  }
-
+  .search-section mat-form-field .mat-form-field-wrapper { font-size: var(--font-size-sm); }
   .table-container {
-    table {
-      min-width: 500px; // Reduz o min-width ainda mais
-    }
-    th.mat-header-cell,
-    td.mat-cell {
-      padding: $spacing-xs; // 8px
-      font-size: 0.75em; // Fontes ainda menores
+    table { min-width: 450px; }
+    th.mat-header-cell, td.mat-cell {
+      padding: calc(var(--spacing-xs) / 1.5);
+      font-size: var(--font-size-xs);
     }
     .action-buttons {
       button {
-        width: 28px; // Botões ainda menores
-        height: 28px;
-        line-height: 28px;
-        .mat-icon {
-          font-size: 16px; // Ícone menor
-          width: 16px;
-          height: 16px;
-        }
+        width: 26px; height: 26px; line-height: 26px;
+        .mat-icon { font-size: var(--font-size-sm); width: var(--font-size-sm); height: var(--font-size-sm); }
       }
     }
   }
-
-  mat-paginator {
-    padding: $spacing-xs; // Padding menor para o paginador
-    font-size: 0.8em; // Fonte menor para o paginador
-  }
+  mat-paginator { padding: var(--spacing-xs); font-size: var(--font-size-xs); }
 }
