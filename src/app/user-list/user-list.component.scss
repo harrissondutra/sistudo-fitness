@@ -223,7 +223,7 @@ $warn-color: #f44336; // Adicionado para consistência de erros
 }
 
 /* -----------------------------------------------------------
- * Media Queries para Responsividade (ajustadas)
+ * Media Queries para Responsividade (ajustadas para mobile)
  * ----------------------------------------------------------- */
 
 // Para tablets e smartphones maiores (até 768px)
@@ -249,6 +249,15 @@ $warn-color: #f44336; // Adicionado para consistência de erros
         font-size: 1em; // ~16px
       }
     }
+
+    .new-user-btn {
+      width: 100%; // Botão ocupa largura total
+      justify-content: center; // Centraliza conteúdo do botão
+      // Ajuste de altura e padding para o botão em mobile
+      height: 44px;
+      line-height: 44px;
+      padding: 0 $spacing-md;
+    }
   }
 
   .search-section {
@@ -262,28 +271,37 @@ $warn-color: #f44336; // Adicionado para consistência de erros
     // `overflow-x: auto` e `min-width` já garantem a rolagem
 
     table {
-      min-width: 700px; // Pode ser um pouco menor que 800px para telas médias
+      min-width: 600px; // Reduz o min-width da tabela para se adaptar melhor
     }
 
     th.mat-header-cell,
     td.mat-cell {
       padding: $spacing-sm; // Reduz padding nas células
       font-size: 0.85em; // Reduz um pouco a fonte
+      white-space: normal; // Permite que o texto das células quebre linha, se necessário
     }
 
     .action-buttons {
-      gap: math.div($spacing-xs, 2); // Corrigido para math.div()
+      gap: math.div($spacing-xs, 2); // Reduz o espaço entre botões de ação
 
       button {
-        width: 36px; // Pode ajustar o tamanho dos botões ícone
-        height: 36px;
-        line-height: 36px;
-        mat-icon {
-          font-size: 20px;
-          width: 20px;
-          height: 20px;
+        width: 32px; // Reduz o tamanho dos botões ícone para serem mais compactos
+        height: 32px;
+        line-height: 32px;
+        .mat-icon {
+          font-size: 18px; // Reduz o tamanho do ícone
+          width: 18px;
+          height: 18px;
         }
       }
+    }
+  }
+
+  mat-paginator {
+    .mat-paginator-container {
+      flex-wrap: wrap; // Permite que os elementos do paginador quebrem linha
+      justify-content: center; // Centraliza elementos
+      padding: $spacing-sm; // Aumenta um pouco o padding
     }
   }
 }
@@ -305,24 +323,50 @@ $warn-color: #f44336; // Adicionado para consistência de erros
         font-size: 0.9em; // ~14.4px
       }
     }
+    .new-user-btn {
+      height: 40px; // Altura ainda menor para botões
+      font-size: 0.9em;
+      .mat-icon {
+        font-size: 16px; // Ícone menor
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+
+  .search-section {
+    mat-form-field {
+      .mat-form-field-wrapper {
+        font-size: 0.9em; // Fonte menor no campo de busca
+      }
+    }
   }
 
   .table-container {
     table {
-      min-width: 600px; // Pode precisar de mais ajuste dependendo do conteúdo
+      min-width: 500px; // Reduz o min-width ainda mais
     }
     th.mat-header-cell,
     td.mat-cell {
       padding: $spacing-xs; // 8px
-      font-size: 0.8em; // Fontes ainda menores
+      font-size: 0.75em; // Fontes ainda menores
+    }
+    .action-buttons {
+      button {
+        width: 28px; // Botões ainda menores
+        height: 28px;
+        line-height: 28px;
+        .mat-icon {
+          font-size: 16px; // Ícone menor
+          width: 16px;
+          height: 16px;
+        }
+      }
     }
   }
 
   mat-paginator {
-    .mat-paginator-container {
-      flex-wrap: wrap; // Permite que os elementos do paginador quebrem linha
-      justify-content: center; // Centraliza elementos
-      padding: $spacing-sm; // Aumenta um pouco o padding
-    }
+    padding: $spacing-xs; // Padding menor para o paginador
+    font-size: 0.8em; // Fonte menor para o paginador
   }
 }
