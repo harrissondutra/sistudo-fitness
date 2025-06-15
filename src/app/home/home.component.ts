@@ -22,6 +22,8 @@ import { User } from '../models/user';
 // CORREÇÃO: Importe o TrainningService e o modelo Trainning
 import { TrainningService } from '../services/trainning/trainning.service';
 import { Trainning } from '../models/trainning';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 
 
 @Component({
@@ -38,9 +40,12 @@ import { Trainning } from '../models/trainning';
     MatIconModule,
     MatCardModule,
     SidenavComponent,
-    ToolbarComponent
+    ToolbarComponent,
+    MatProgressSpinnerModule // Certifique-se de que MatProgressSpinnerModule está importado
   ]
 })
+// ...existing imports...
+
 export class HomeComponent implements OnInit {
   @ViewChild('sidenav') sidenav!: MatSidenav;
 
@@ -51,57 +56,76 @@ export class HomeComponent implements OnInit {
     );
 
   totalUsersCount: number = 0;
-  totalTrainingsCount: number = 0; // CORREÇÃO: Nova propriedade para armazenar a contagem total de treinos
-  totalTrainingsActiveCount: number = 0; // CORREÇÃO: Nova propriedade para armazenar a contagem de treinos ativos
+  totalTrainingsCount: number = 0;
+  totalTrainingsInactiveCount: number = 0;
 
+  loading: boolean = false; // Propriedade para controle de loading
 
   constructor(
     private breakpointObserver: BreakpointObserver,
     public router: Router,
-    private userService: UserService, // Injeta UserService
-    private trainningService: TrainningService // CORREÇÃO: Injeta TrainningService
+    private userService: UserService,
+    private trainningService: TrainningService
   ) { }
 
   ngOnInit(): void {
-    // Lógica de inicialização do HomeComponent
-    this.loadTotalUsersCount(); // Carrega a contagem total de usuários
-    this.loadTotalTrainingsCount(); // CORREÇÃO: Carrega a contagem total de treinos e treinos ativos
+    this.loadTotalUsersCount();
+    this.loadTotalTrainingsCount();
+    this.loadTotalTrainingsInactiveCount()
   }
 
-  /**
-   * Carrega a contagem total de usuários do serviço e atualiza a propriedade.
-   */
   loadTotalUsersCount(): void {
+    this.loading = true;
     this.userService.getAllUsers().pipe(
       tap(users => {
-        this.totalUsersCount = users.length; // Atualiza a contagem com o número de usuários
+        this.totalUsersCount = users.length;
+        this.loading = false;
       }),
       catchError(error => {
         console.error('Erro ao carregar a contagem total de usuários:', error);
-        this.totalUsersCount = 0; // Define como 0 em caso de erro
-        return of([]); // Retorna um Observable vazio para que a subscription continue
-      })
-    ).subscribe();
-  }
-
-  /**
-   * CORREÇÃO: Carrega a contagem total de treinos e treinos ativos do serviço.
-   */
-  loadTotalTrainingsCount(): void {
-    this.trainningService.listAllTrainnings().pipe( // Assumindo que getAllTrainings existe no TrainningService
-      tap(trainings => {
-        this.totalTrainingsCount = trainings.length; // Contagem total de treinos
-        // Assumindo que o modelo Trainning tem uma propriedade 'active' (boolean)
-        this.totalTrainingsActiveCount = trainings.filter(t => t.active).length;
-      }),
-      catchError(error => {
-        console.error('Erro ao carregar a contagem total de treinos:', error);
-        this.totalTrainingsCount = 0;
-        this.totalTrainingsActiveCount = 0;
+        this.totalUsersCount = 0;
+        this.loading = false;
         return of([]);
       })
     ).subscribe();
   }
+
+  loadTotalTrainingsCount(): void {
+    this.loading = true;
+    this.trainningService.listAllTrainningsActive().pipe(
+      tap(trainings => {
+        this.totalTrainingsCount = trainings.length;
+        this.totalTrainingsInactiveCount = trainings.filter(t => t.active).length;
+        this.loading = false;
+      }),
+      catchError(error => {
+        console.error('Erro ao carregar a contagem total de treinos:', error);
+        this.totalTrainingsCount = 0;
+        this.totalTrainingsInactiveCount = 0;
+        this.loading = false;
+        return of([]);
+      })
+    ).subscribe();
+  }
+
+  loadTotalTrainingsInactiveCount(): void {
+  this.loading = true;
+  this.trainningService.listAllTrainnings().pipe(
+    tap(trainings => {
+      // Considera inativos os que têm active === false
+      const inactiveTrainings = trainings.filter(t => !t.active);
+      this.totalTrainingsInactiveCount = inactiveTrainings.length;
+      this.loading = false;
+    }),
+    catchError(error => {
+      console.error('Erro ao carregar a contagem de treinos inativos:', error);
+      this.totalTrainingsInactiveCount = 0;
+      this.loading = false;
+      return of([]);
+    })
+  ).subscribe();
+}
+
 
   onSidenavLinkClicked(): void {
     this.isHandset$.pipe(

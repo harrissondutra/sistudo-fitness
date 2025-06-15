@@ -43,5 +43,12 @@ export class TrainningService {
   deleteTrainning(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/delete/${id}`);
   }
+  listAllTrainningsActive(): Observable<Trainning[]> {
+    return this.http.get<Trainning[]>(`${this.baseUrl}/listAllActive`);
+  }
+
+  listAllTrainningsInactive(): Observable<Trainning[]> {
+    return this.http.get<Trainning[]>(`${this.baseUrl}/listAllTrainningsInactive`);
+  }
 
 }

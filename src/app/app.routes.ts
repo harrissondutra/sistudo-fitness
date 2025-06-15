@@ -13,6 +13,7 @@ import { ListExerciseComponent } from './Exercises/list-exercise/list-exercise.c
 // import { TrainningEditComponent } from './trainning-edit/trainning-edit.component'; // **Assumindo que você terá um componente de edição de treino**
 import { CreateExerciseComponent } from './Exercises/create-exercise/create-exercise.component';
 import { CategoryExerciseComponent } from './Exercises/category-exercise/category-exercise.component';
+import { InactiveTrainningComponent } from './trainning/inactive-trainning/inactive-trainning.component';
 
 
 export const routes: Routes = [
@@ -31,6 +32,7 @@ export const routes: Routes = [
       { path: 'exercises', component: ListExerciseComponent},
       { path: 'create-exercise', component: CreateExerciseComponent},
       { path: 'category-exercise', component: CategoryExerciseComponent},
+      { path: 'inactive-trainning', component: InactiveTrainningComponent }, // **Assumindo que você terá um componente para treinos inativos**
 
       {
         path: 'trainning',

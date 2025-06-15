@@ -46,11 +46,10 @@ import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dial
     IonicModule, // Adicionado IonicModule
     DatePipe // Adicionado DatePipe para o pipe de data no HTML
   ],
-  templateUrl: './trainning.component.html', // Alterado para o HTML da lista de treinos
-  styleUrls: ['./trainning.component.scss'], // Alterado para o SCSS da lista de treinos
-  providers: [DatePipe] // Fornecer DatePipe se for usado em serviços ou pipes personalizados
+  templateUrl: './inactive-trainning.component.html',
+  styleUrl: './inactive-trainning.component.scss'
 })
-export class TrainningComponent implements OnInit { // Mantido o nome `TrainningComponent` conforme o componente original
+export class InactiveTrainningComponent implements OnInit { // Mantido o nome `TrainningComponent` conforme o componente original
 
   // Lista original de todos os treinos
   allTrainnings: Trainning[] = [];
@@ -91,7 +90,7 @@ export class TrainningComponent implements OnInit { // Mantido o nome `Trainning
    */
   private loadTrainnings(): void {
     this.isLoading = true;
-    this.TrainningService.listAllTrainningsActive() // Assumindo que seu TrainningService tem um método getTrainnings()
+    this.TrainningService.listAllTrainningsInactive() // Assumindo que seu TrainningService tem um método getTrainnings()
       .pipe(finalize(() => this.isLoading = false))
       .subscribe({
         next: (Trainnings: Trainning[]) => {

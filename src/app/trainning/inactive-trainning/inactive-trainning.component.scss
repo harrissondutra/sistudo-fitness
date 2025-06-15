@@ -1,0 +1,355 @@
+/* trainning-list.component.scss */
+
+@use 'sass:math';
+
+// Variáveis de Cores (ajuste conforme o tema do seu Material Design)
+$primary-color: #3f51b5; // Exemplo: Indigo 500
+$accent-color: #ff4081;  // Exemplo: Pink A200
+$warn-color: #f44336;    // Exemplo: Red 500
+$text-color: #333;
+$light-text-color: #666;
+$border-color: #e0e0e0;
+$background-light: #f5f5f5;
+$white: #fff;
+
+// Variáveis de Espaçamento
+$spacing-unit: 8px;
+$padding-small: $spacing-unit * 2;   // 16px
+$padding-medium: $spacing-unit * 3;  // 24px
+$margin-medium: $spacing-unit * 3;   // 24px
+
+// Mixins para reutilização de estilos
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between-center {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin flex-end-gap($gap) {
+  display: flex;
+  justify-content: flex-end;
+  gap: $gap;
+}
+
+@mixin card-shadow-sm {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+@mixin card-shadow-md {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.trainning-list-container {
+  @include card-shadow-sm;
+  @include card-shadow-md;
+  padding: var(--spacing-lg, 24px); // Usando var() para flexibilidade
+  max-width: 1400px;
+  margin: var(--spacing-lg, 24px) auto;
+  background: var(--background-color, #FFFFFF);
+  border-radius: var(--border-radius-md, 12px);
+  box-sizing: border-box;
+
+  .header {
+    @include flex-between-center;
+    margin-bottom: var(--spacing-lg, 24px);
+    padding-bottom: var(--spacing-small, 16px);
+    border-bottom: 1px solid var(--border-color, #e0e0e0);
+
+    .title-section {
+      h2 {
+        margin: 0;
+        font-size: var(--font-size-xxl, 2em);
+        color: var(--text-color, #333);
+        font-weight: 600;
+      }
+      .subtitle {
+        margin: var(--spacing-xs, 8px) 0 0;
+        font-size: var(--font-size-md, 0.9em);
+        color: var(--text-secondary-color, #666);
+      }
+    }
+  }
+
+  .action-bar {
+    @include flex-between-center;
+    margin-bottom: var(--spacing-lg, 24px);
+    gap: var(--spacing-md, 16px); // Espaçamento entre search e botões
+
+    .search-input {
+      flex-grow: 1; // Permite que o campo de busca ocupe o espaço restante
+      max-width: 500px; // Limita a largura máxima no desktop
+
+      ::ng-deep {
+        .mat-form-field-wrapper {
+          padding-bottom: 0;
+        }
+      }
+    }
+
+    .action-buttons-top { // Nova classe para os botões da action bar
+      display: flex;
+      button {
+        padding: var(--spacing-xs, 8px) var(--spacing-lg, 24px);
+        font-weight: 500;
+        .mat-icon {
+          margin-right: var(--spacing-xs, 8px);
+        }
+      }
+    }
+  }
+
+  /* --- Ionic List Styles (with Material Icons) --- */
+  .trainning-ionic-list {
+    background: transparent;
+    border-radius: var(--border-radius-md, 12px);
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+
+    ion-item {
+      --background: var(--background-color, #FFFFFF);
+      --border-color: transparent;
+      --border-width: 0;
+
+      // Padding interno dos itens (card)
+      // Ajuste conforme o espaçamento visual desejado para o conteúdo dentro do card
+      --padding-start: var(--spacing-lg, 24px);
+      --padding-end: var(--spacing-lg, 24px);
+      --padding-top: var(--spacing-md, 16px);
+      --padding-bottom: var(--spacing-md, 16px);
+
+      // Adicionando padding direto para garantir, caso as variáveis não funcionem totalmente
+      padding: var(--spacing-md, 16px) var(--spacing-lg, 24px) !important;
+
+      margin-bottom: var(--spacing-md, 16px); /* Espaçamento entre os cards */
+      border-radius: var(--border-radius-md, 12px);
+      @include card-shadow-md;
+      transition: background-color 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+      flex-wrap: wrap;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      &:hover {
+        --background: var(--background-light, #f5f5f5);
+        @include card-shadow-md;
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      ion-label {
+        flex-grow: 1;
+        h3 {
+          font-size: var(--font-size-lg, 1.1em);
+          color: var(--text-color, #333);
+          margin: 0 0 var(--spacing-xs, 8px) 0;
+          font-weight: 500;
+        }
+        p {
+          font-size: var(--font-size-sm, 0.9em);
+          color: var(--text-secondary-color, #666);
+          margin: 0 0 var(--spacing-xs, 8px) 0; // Espaçamento entre parágrafos
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: calc(var(--spacing-xs, 8px) / 2); // 4px
+        flex-shrink: 0;
+        padding-left: var(--spacing-md, 16px);
+        justify-content: flex-end; /* Alinha os botões de ação à direita */
+
+        .mat-icon-button {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          transition: background-color 0.2s ease, transform 0.2s ease;
+
+          .mat-icon {
+            font-size: 28px;
+            width: 28px;
+            height: 28px;
+          }
+
+          // Cores para os ícones Material (exemplo, use suas próprias variáveis de tema)
+          &[color="primary"] .mat-icon { color: var(--primary-color, #3f51b5); }
+          &[color="accent"] .mat-icon { color: var(--accent-color, #ff4081); }
+          &[color="warn"] .mat-icon { color: var(--warn-color, #f44336); }
+
+          &:hover {
+            transform: scale(1.1);
+            background-color: rgba(var(--primary-color-rgb, 63, 81, 181), 0.1);
+          }
+          &:active {
+            background-color: rgba(var(--primary-color-rgb, 63, 81, 181), 0.2);
+          }
+        }
+      }
+    }
+  }
+
+  /* Mensagem quando não há dados */
+  .no-data-content {
+    @include flex-center; // Usa o mixin flex-center
+    flex-direction: column;
+    gap: var(--spacing-md, 16px);
+    color: var(--text-secondary-color, #90A4AE);
+    padding: calc(var(--spacing-lg, 24px) * 2) 0; // Padding maior
+
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      color: var(--border-color, #e0e0e0);
+    }
+    p {
+      font-size: 1.1em;
+      margin: 0;
+    }
+  }
+
+  .loading-indicator {
+    @include flex-center;
+    flex-direction: column;
+    padding: var(--spacing-lg, 24px);
+    gap: var(--spacing-md, 16px);
+    color: var(--text-secondary-color, #666);
+  }
+}
+
+/* --- Media Queries --- */
+
+@media screen and (max-width: 768px) {
+  .trainning-list-container
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-lg, 24px);
+  }
+
+  .action-bar {
+    flex-direction: column; // Empilha search e botões
+    align-items: flex-start; // Alinha à esquerda
+    .search-input {
+      max-width: 100%; // Ocupa toda a largura
+    }
+    .action-buttons-top {
+      width: 100%; // Botão "Novo Treino" ocupa toda a largura
+      button {
+        width: 100%; // Botão "Novo Treino" ocupa toda a largura
+        justify-content: center;
+      }
+    }
+  }
+
+  .trainning-ionic-list {
+    ion-item {
+      flex-direction: column; // Empilha label e botões
+      align-items: flex-start;
+
+      --padding-start: var(--spacing-md, 16px);
+      --padding-end: var(--spacing-md, 16px);
+      --padding-top: var(--spacing-sm, 12px);
+      --padding-bottom: var(--spacing-sm, 12px);
+      padding: var(--spacing-md, 16px) !important;
+
+      ion-label {
+        width: 100%;
+        h3 {
+          font-size: var(--font-size-md, 1em);
+        }
+        p {
+          font-size: var(--font-size-sm, 0.8em);
+        }
+      }
+      .action-buttons {
+        width: 100%;
+        justify-content: flex-end; // Mantém alinhamento à direita dentro do item
+        margin-top: var(--spacing-sm, 12px);
+        padding-left: 0;
+
+        .mat-icon-button {
+          width: 36px;
+          height: 36px;
+          .mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .trainning-list-container {
+    padding: calc(var(--spacing-sm, 12px) / 1.2); // 10px
+    margin: var(--spacing-xs, 8px);
+  }
+
+  .header {
+    .title-section {
+      h2 {
+        font-size: var(--font-size-xl, 1.6em);
+      }
+      .subtitle {
+        font-size: var(--font-size-sm, 0.8em);
+      }
+    }
+  }
+
+  .search-input {
+    .mat-form-field-wrapper {
+      font-size: var(--font-size-sm, 0.9em);
+    }
+  }
+
+  .trainning-ionic-list {
+    ion-item {
+      // Padding interno dos itens (card) em mobile muito pequeno
+      --padding-start: var(--spacing-md, 16px);
+      --padding-end: var(--spacing-md, 16px);
+      --padding-top: var(--spacing-sm, 12px);
+      --padding-bottom: var(--spacing-sm, 12px);
+      padding: var(--spacing-md, 16px) !important;
+
+      ion-label {
+        h3 {
+          font-size: var(--font-size-sm, 0.9em);
+        }
+        p {
+          font-size: var(--font-size-xs, 0.75em);
+        }
+      }
+      .action-buttons {
+        .mat-icon-button {
+          width: 32px;
+          height: 32px;
+          .mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+          }
+        }
+      }
+    }
+  }
+}

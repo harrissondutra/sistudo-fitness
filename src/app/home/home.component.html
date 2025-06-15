@@ -14,91 +14,59 @@
           <!-- Seção de Métricas -->
           <div class="dashboard-section metrics">
             <div class="cards-grid">
-              <mat-card class="dashboard-card metric-card users-card">
+              <mat-card class="dashboard-card metric-card users-card" [routerLink]="'/users-list'" style="cursor: pointer;">
                 <div class="card-glow"></div>
-                <mat-card-content>
-                  <div class="metric-icon">
-                    <mat-icon>group</mat-icon>
-                  </div>
+                <mat-card-content style="display: flex; justify-content: space-between; align-items: center;">
                   <div class="metric-info">
+                    <div class="metric-icon">
+                      <mat-icon>group</mat-icon>
+                    </div>
                     <h4>Total de Usuários</h4>
                     <p class="metric-value">{{ totalUsersCount }}</p>
                     <span class="metric-label">Usuários cadastrados</span>
                   </div>
+                  <!-- Adicionado ícone de seta para indicar clicabilidade -->
+                  <mat-icon class="action-arrow">arrow_forward</mat-icon>
                 </mat-card-content>
               </mat-card>
 
-              <mat-card class="dashboard-card metric-card trainings-card">
+              <mat-card class="dashboard-card metric-card trainings-card" [routerLink]="'/trainning'" style="cursor: pointer;">
                 <div class="card-glow"></div>
-                <mat-card-content>
-                  <div class="metric-icon">
-                    <mat-icon>assignment</mat-icon>
-                  </div>
+                <mat-card-content style="display: flex; justify-content: space-between; align-items: center;">
                   <div class="metric-info">
+                    <div class="metric-icon">
+                      <mat-icon>assignment</mat-icon>
+                    </div>
                     <h4>Total de Treinos</h4>
                     <p class="metric-value">{{ totalTrainingsCount }}</p>
                     <span class="metric-label">Treinos criados</span>
                   </div>
+                  <!-- Adicionado ícone de seta para indicar clicabilidade -->
+                  <mat-icon class="action-arrow">arrow_forward</mat-icon>
                 </mat-card-content>
               </mat-card>
 
-              <mat-card class="dashboard-card metric-card active-card">
+              <mat-card class="dashboard-card metric-card active-card" [routerLink]="'/inactive-trainning'" style="cursor: pointer;">
                 <div class="card-glow"></div>
-                <mat-card-content>
-                  <div class="metric-icon">
-                    <mat-icon>fitness_center</mat-icon>
-                  </div>
+                <mat-card-content style="display: flex; justify-content: space-between; align-items: center;">
                   <div class="metric-info">
-                    <h4>Treinos Ativos</h4>
-                    <p class="metric-value">{{totalTrainingsActiveCount}}</p>
+                    <div class="metric-icon">
+                      <mat-icon>fitness_center</mat-icon>
+                    </div>
+                    <h4>Treinos Inativos</h4>
+                    <p class="metric-value">{{totalTrainingsInactiveCount}}</p>
                     <span class="metric-label">Em andamento</span>
                   </div>
+                  <!-- Adicionado ícone de seta para indicar clicabilidade -->
+                  <mat-icon class="action-arrow">arrow_forward</mat-icon>
                 </mat-card-content>
               </mat-card>
             </div>
           </div>
-
-
-
-          <!-- NOVA SEÇÃO: Listagens -->
-          <div class="dashboard-section listings">
-            <h2 class="section-title">Visualizar</h2>
-            <div class="cards-grid">
-              <mat-card class="dashboard-card action-card" routerLink="/users-list">
-                <mat-card-content>
-                  <div class="action-icon">
-                    <mat-icon>people</mat-icon>
-                  </div>
-                  <div class="action-info">
-                    <h4>Listar Usuários</h4>
-                    <p>Visualize todos os usuários cadastrados</p>
-                  </div>
-                  <mat-icon class="action-arrow">arrow_forward</mat-icon>
-                </mat-card-content>
-              </mat-card>
-
-              <mat-card class="dashboard-card action-card" routerLink="/trainning">
-                <mat-card-content>
-                  <div class="action-icon">
-                    <mat-icon>fitness_center</mat-icon>
-                  </div>
-                  <div class="action-info">
-                    <h4>Listar Treinos</h4>
-                    <p>Visualize todos os treinos disponíveis</p>
-                  </div>
-                  <mat-icon class="action-arrow">arrow_forward</mat-icon>
-                </mat-card-content>
-              </mat-card>
-
-              <!-- Adicione aqui outras listagens, se houver -->
-            </div>
-          </div>
-
-
 
           <!-- NOVA SEÇÃO: Criações -->
           <div class="dashboard-section creations">
-            <h2 class="section-title">Inserir dados</h2>
+            <h2 class="section-title">Inserir Dados</h2>
             <div class="cards-grid">
               <mat-card class="dashboard-card action-card" routerLink="/register">
                 <mat-card-content>
@@ -147,3 +115,5 @@
     </main>
   </mat-sidenav-content>
 </mat-sidenav-container>
+<div class="loading-spinner" *ngIf="loading">
+  <mat-spinner diameter="50"></mat-spinner>

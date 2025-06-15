@@ -1,0 +1,55 @@
+<!-- Container Principal -->
+<div class="trainning-list-container">
+  <!-- Cabeçalho -->
+  <div class="header">
+    <div class="title-section">
+      <h2>Treinos Inativos</h2>
+      <p class="subtitle">Gerencie todos os treinos inativos cadastrados no sistema</p>
+    </div>
+  </div>
+
+  <!-- Barra de Ações (com campo de busca e botão de criação) -->
+  <div class="action-bar">
+    <mat-form-field appearance="outline" class="search-input">
+      <mat-label>Buscar Treino</mat-label>
+      <input matInput [formControl]="searchControl" placeholder="Digite para buscar">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <div class="action-buttons-top">
+      <button mat-raised-button color="primary" (click)="createTrainning()">
+        <mat-icon>add</mat-icon>
+        Novo Treino
+      </button>
+    </div>
+  </div>
+
+  <!-- Lista de Treinos responsiva usando Ionic com ícones Material -->
+  <ion-list *ngIf="filteredTrainnings && filteredTrainnings.length > 0" class="trainning-ionic-list mat-elevation-z2">
+    <ion-item *ngFor="let training of filteredTrainnings">
+      <ion-label>
+        <h3>{{ training.name }}</h3>
+      </ion-label>
+      <div class="action-buttons" slot="end">
+        <button mat-icon-button color="primary" (click)="editTrainning(training.id?.toString())" matTooltip="Editar Treino">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteTrainning(training.id?.toString())" matTooltip="Excluir Treino">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </ion-item>
+  </ion-list>
+
+  <!-- Mensagem quando não há dados -->
+  <div *ngIf="filteredTrainnings && filteredTrainnings.length === 0 && !isLoading" class="no-data-content">
+    <mat-icon>fitness_center</mat-icon>
+    <p>Nenhum treino encontrado.</p>
+  </div>
+
+  <!-- Indicador de carregamento (opcional) -->
+  <div *ngIf="isLoading" class="loading-indicator">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Carregando treinos...</p>
+  </div>
+</div>
