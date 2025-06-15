@@ -13,7 +13,7 @@ export class ExerciseService {
   constructor(private http: HttpClient) { }
 
   getAllExercises(): Observable<Exercise[]> {
-    return this.http.get<Exercise[]>(`${this.apiUrl}/all`);
+    return this.http.get<Exercise[]>(`${this.apiUrl}/list`);
   }
 
   getExercises(): Observable<Exercise[]> {
@@ -24,6 +24,6 @@ export class ExerciseService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
   createExercise(exercise: Exercise): Observable<Exercise> {
-    return this.http.post<Exercise>(this.apiUrl, exercise);
+    return this.http.post<Exercise>(`${this.apiUrl}/create`, exercise);
   }
 }
