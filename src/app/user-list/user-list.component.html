@@ -1,4 +1,6 @@
+<!-- Container Principal -->
 <div class="user-list-container">
+  <!-- Cabeçalho -->
   <div class="header">
     <div class="title-section">
       <h2>Lista de Usuários</h2>
@@ -18,98 +20,40 @@
     </mat-form-field>
   </div>
 
-  <div class="table-container mat-elevation-z2">
-    <table mat-table [dataSource]="dataSource" matSort>
-      <!-- Coluna: ID -->
-      <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
-        <td mat-cell *matCellDef="let user">
-          <div class="user-id">{{user.id}}</div>
-        </td>
-      </ng-container>
+  <!-- Lista responsiva usando Ionic com ícones Material -->
+  <ion-list *ngIf="filteredUsers && filteredUsers.length > 0" class="user-ionic-list mat-elevation-z2">
+    <ion-item *ngFor="let user of filteredUsers">
+      <ion-label>
+        <h3>{{ user.name }}</h3>
+        <p>Email: {{ user.email }}</p>
+        <p *ngIf="user.cpf">CPF: {{ user.cpf }}</p>
+        <p *ngIf="user.weight">Peso: {{ user.weight }} kg</p>
+        <p *ngIf="user.height">Altura: {{ user.height }} cm</p>
+        <p *ngIf="user.phone">Telefone: {{ user.phone }}</p>
+      </ion-label>
+      <div class="action-buttons" slot="end">
+        <button mat-icon-button color="primary" (click)="onView(user)" matTooltip="Visualizar">
+          <mat-icon>visibility</mat-icon>
+        </button>
+        <button mat-icon-button color="accent" (click)="onEdit(user)" matTooltip="Editar">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteUser(user.id)" matTooltip="Excluir">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </ion-item>
+  </ion-list>
 
-      <!-- Coluna: Nome -->
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Nome </th>
-        <td mat-cell *matCellDef="let user">
-          <div class="user-info">
-            <span class="user-name">{{user.name}}</span>
-          </div>
-        </td>
-      </ng-container>
+  <!-- Mensagem quando não há dados -->
+  <div *ngIf="filteredUsers && filteredUsers.length === 0 && !isLoading" class="no-data-content">
+    <mat-icon>search_off</mat-icon>
+    <p>Nenhum usuário encontrado</p>
+  </div>
 
-      <!-- Coluna: Email -->
-      <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
-        <td mat-cell *matCellDef="let user">
-          <div class="user-email">{{user.email}}</div>
-        </td>
-      </ng-container>
-
-      <!-- Coluna: CPF -->
-      <ng-container matColumnDef="cpf">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> CPF </th>
-        <td mat-cell *matCellDef="let user"> {{user.cpf}} </td>
-      </ng-container>
-
-      <!-- Coluna: Peso -->
-      <ng-container matColumnDef="weight">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Peso </th>
-        <td mat-cell *matCellDef="let user">
-          <div class="metric-value">{{user.weight}} kg</div>
-        </td>
-      </ng-container>
-
-      <!-- Coluna: Altura -->
-      <ng-container matColumnDef="height">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Altura </th>
-        <td mat-cell *matCellDef="let user">
-          <div class="metric-value">{{user.height}} cm</div>
-        </td>
-      </ng-container>
-
-      <!-- Coluna: Telefone -->
-      <ng-container matColumnDef="phone">
-        <th mat-header-cell *matHeaderCellDef> Telefone </th>
-        <td mat-cell *matCellDef="let user"> {{user.phone}} </td>
-      </ng-container>
-
-      <!-- Coluna: Ações -->
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef> Ações </th>
-        <td mat-cell *matCellDef="let user">
-          <div class="action-buttons">
-            <button mat-icon-button color="primary" (click)="onView(user)" matTooltip="Visualizar">
-              <mat-icon>visibility</mat-icon>
-            </button>
-            <button mat-icon-button color="accent" (click)="onEdit(user)" matTooltip="Editar">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button color="warn" (click)="deleteUser(user.id)" matTooltip="Excluir">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </div>
-        </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="user-row"></tr>
-
-      <!-- Mensagem quando não há dados -->
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">
-          <div class="no-data-content">
-            <mat-icon>search_off</mat-icon>
-            <p>Nenhum usuário encontrado</p>
-          </div>
-        </td>
-      </tr>
-    </table>
-
-    <mat-paginator [length]="totalUsers"
-                   [pageSize]="pageSize"
-                   [pageSizeOptions]="[5, 10, 25, 100]"
-                   aria-label="Selecione a página de usuários">
-    </mat-paginator>
+  <!-- Indicador de carregamento -->
+  <div *ngIf="isLoading" class="loading-indicator">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Carregando usuários...</p>
   </div>
 </div>

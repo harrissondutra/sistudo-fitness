@@ -1,13 +1,11 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSort, MatSortModule } from '@angular/material/sort';
+import { Component, OnInit } from '@angular/core'; // Removido ViewChild, AfterViewInit
+import { CommonModule } from '@angular/common';
+// Removido: MatTableDataSource, MatTableModule, MatPaginator, MatPaginatorModule, MatSort, MatSortModule
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { ExerciseService } from '../../services/exercise/exercise.service'; // Ajuste o caminho conforme sua estrutura
@@ -16,49 +14,56 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { finalize, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { HttpClientModule } from '@angular/common/http'; // Necessário para usar o HttpClient
+import { MatDialog, MatDialogModule } from '@angular/material/dialog'; // Para diálogos de confirmação
+// TODO: Ajuste o caminho conforme a localização real do ConfirmDialogComponent
+import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
+// Certifique-se de que o caminho acima está correto para o seu projeto.
+
+// Módulo Ionic (necessário para ion-list, ion-item, ion-button)
+import { IonicModule } from '@ionic/angular';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 
 @Component({
-  selector: 'app-list-exercise',
+  selector: 'app-exercise-list', // Mantido 'app-exercise-list' conforme o HTML
   templateUrl: './list-exercise.component.html',
-  styleUrls: ['./list-exercise.component.scss'],
+  styleUrls: ['./list-exercise.component.scss'], // Apontando para o SCSS da lista de exercícios
   standalone: true,
   imports: [
     CommonModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatSortModule,
+    // Removido MatTableModule, MatPaginatorModule, MatSortModule
     MatIconModule,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
     MatTooltipModule,
-    MatSnackBarModule, // Para usar o MatSnackBar
-    HttpClientModule // Para permitir injeção do HttpClient no serviço
+    MatSnackBarModule,
+    HttpClientModule,
+    MatProgressSpinnerModule, // Adicionado para MatSpinner
+    ConfirmDialogComponent, // Importando o componente de diálogo de confirmação
+    MatDialogModule, // Adicionado para MatDialog
+    IonicModule // Adicionado IonicModule
   ]
 })
-export class ListExerciseComponent implements OnInit, AfterViewInit {
-  // Colunas a serem exibidas na tabela
-  displayedColumns: string[] = ['id', 'name', 'description', 'series', 'repetitions', 'actions'];
+export class ListExerciseComponent implements OnInit { // Removido AfterViewInit
 
-  // DataSource para a tabela do Material Angular
-  dataSource = new MatTableDataSource<Exercise>([]);
+  // Lista original de todos os exercícios
+  allExercises: Exercise[] = [];
+  // Lista de exercícios filtrados (exibida no HTML)
+  filteredExercises: Exercise[] = [];
 
   // Controle para o campo de busca
   searchControl = new FormControl('');
 
-  // Referências para o paginador e o sort (ordenador) da tabela
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-
   isLoading = false;
-  totalExercises = 0; // Será atualizado após carregar os dados
-  pageSize = 10; // Tamanho padrão da página
+  // totalExercises não é mais necessário com ion-list sem paginador do Material
 
   constructor(
     private exerciseService: ExerciseService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog // Injetado MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -76,23 +81,19 @@ export class ListExerciseComponent implements OnInit, AfterViewInit {
       });
   }
 
-  ngAfterViewInit(): void {
-    // Conecta o DataSource ao paginador e ao sort após a view ser inicializada
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
+  // Removido ngAfterViewInit pois MatPaginator e MatSort não são mais usados.
 
   /**
-   * Carrega a lista de exercícios do serviço.
+   * Carrega a lista de exercícios do serviço e popula a lista filtrada.
    */
   private loadExercises(): void {
     this.isLoading = true;
-    this.exerciseService.getAllExercises() // Assumindo que seu ExerciseService tem um método getExercises()
+    this.exerciseService.getAllExercises() // Assumindo que seu ExerciseService tem um método getAllExercises()
       .pipe(finalize(() => this.isLoading = false))
       .subscribe({
         next: (exercises: Exercise[]) => {
-          this.dataSource.data = exercises; // Atribui os dados ao dataSource
-          this.totalExercises = exercises.length; // Atualiza o total de exercícios
+          this.allExercises = exercises; // Atribui os dados à lista completa
+          this.applyFilter(this.searchControl.value || ''); // Aplica o filtro inicial
         },
         error: (error: HttpErrorResponse) => {
           this.handleError('Erro ao carregar exercícios.', error);
@@ -101,16 +102,27 @@ export class ListExerciseComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Aplica o filtro de busca ao DataSource.
+   * Aplica o filtro de busca na lista de exercícios.
+   * Filtra `allExercises` e atualiza `filteredExercises`.
    * @param filterValue O valor a ser filtrado.
    */
   applyFilter(filterValue: string): void {
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    const lowerCaseFilter = filterValue.trim().toLowerCase();
 
-    // Se o filtro resultar em dados vazios, volta para a primeira página
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+    if (!lowerCaseFilter) {
+      this.filteredExercises = [...this.allExercises]; // Se não houver filtro, mostra todos
+      return;
     }
+
+    this.filteredExercises = this.allExercises.filter(exercise => {
+      // Adapte os campos conforme seu modelo Exercise
+      return (
+        (exercise.name?.toLowerCase() || '').includes(lowerCaseFilter) ||
+        (exercise.description?.toLowerCase() || '').includes(lowerCaseFilter)
+        // Adicione outros campos de busca se necessário, como:
+        // (exercise.id?.toString() || '').includes(lowerCaseFilter)
+      );
+    });
   }
 
   /**
@@ -137,7 +149,7 @@ export class ListExerciseComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Exclui um exercício.
+   * Exclui um exercício após confirmação usando o ConfirmDialogComponent.
    * @param id O ID do exercício a ser excluído.
    */
   deleteExercise(id: string | undefined): void {
@@ -146,20 +158,32 @@ export class ListExerciseComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    if (confirm('Tem certeza que deseja excluir este exercício?')) {
-      this.isLoading = true;
-      this.exerciseService.deleteExercise(id)
-        .pipe(finalize(() => this.isLoading = false))
-        .subscribe({
-          next: () => {
-            this.showMessage('Exercício excluído com sucesso!', 'success');
-            this.loadExercises(); // Recarrega a lista após a exclusão
-          },
-          error: (error: HttpErrorResponse) => {
-            this.handleError('Erro ao excluir exercício.', error);
-          }
-        });
-    }
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Confirmar Exclusão',
+        message: 'Tem certeza que deseja excluir este exercício?',
+        confirmText: 'Excluir',
+        cancelText: 'Cancelar'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.isLoading = true;
+        this.exerciseService.deleteExercise(id)
+          .pipe(finalize(() => this.isLoading = false))
+          .subscribe({
+            next: () => {
+              this.showMessage('Exercício excluído com sucesso!', 'success');
+              this.loadExercises(); // Recarrega a lista após a exclusão
+            },
+            error: (error: HttpErrorResponse) => {
+              this.handleError('Erro ao excluir exercício.', error);
+            }
+          });
+      }
+    });
   }
 
   /**

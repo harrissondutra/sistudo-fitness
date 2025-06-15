@@ -6,164 +6,348 @@ $shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
 $shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
 $transition: all 0.3s ease;
 
-@mixin flex-between-center { display: flex; justify-content: space-between; align-items: center; }
-@mixin flex-center-col { display: flex; flex-direction: column; align-items: center; }
-@mixin flex-end-gap($gap) { display: flex; justify-content: flex-end; gap: $gap; }
+@mixin flex-between-center {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+@mixin flex-center-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+@mixin flex-end-gap($gap) {
+  display: flex;
+  justify-content: flex-end;
+  gap: $gap;
+}
 
 .user-list-container {
-  padding: var(--spacing-lg); max-width: 1400px; margin: var(--spacing-lg) auto;
-  background: var(--background-color); border-radius: var(--border-radius-md);
-  box-shadow: $shadow-md; box-sizing: border-box;
+  padding: var(--spacing-lg);
+  max-width: 1400px;
+  margin: var(--spacing-lg) auto;
+  background: var(--background-color);
+  border-radius: var(--border-radius-md);
+  box-shadow: $shadow-md;
+  box-sizing: border-box;
 
   .header {
-    @include flex-between-center; margin-bottom: calc(var(--spacing-lg) / 1.5);
+    @include flex-between-center;
+    margin-bottom: calc(var(--spacing-lg) / 1.5);
     .title-section {
-      h2 { font-size: var(--font-size-xxl); color: var(--text-color); margin: 0 0 var(--spacing-xs) 0; font-weight: 600; }
-      .subtitle { color: var(--text-secondary-color); font-size: var(--font-size-md); margin: 0; }
+      h2 {
+        font-size: var(--font-size-xxl);
+        color: var(--text-color);
+        margin: 0 0 var(--spacing-xs) 0;
+        font-weight: 600;
+      }
+      .subtitle {
+        color: var(--text-secondary-color);
+        font-size: var(--font-size-md);
+        margin: 0;
+      }
     }
     .new-user-btn {
-      padding: var(--spacing-xs) var(--spacing-lg); border-radius: var(--border-radius-sm); font-weight: 500;
-      mat-icon { margin-right: var(--spacing-xs); }
+      padding: var(--spacing-xs) var(--spacing-lg);
+      border-radius: var(--border-radius-sm);
+      font-weight: 500;
+      mat-icon {
+        margin-right: var(--spacing-xs);
+      }
     }
   }
 
   .search-section {
     margin-bottom: var(--spacing-lg);
     .search-input {
-      width: 100%; max-width: 500px;
+      width: 100%;
+      max-width: 500px;
       ::ng-deep {
-        .mat-form-field-wrapper { margin: 0; padding: 0; }
-        .mat-form-field-flex {
-          background: var(--background-light); border-radius: var(--spacing-xs);
-          padding: 0 var(--spacing-md);
+        .mat-form-field-wrapper {
+          margin: 0;
+          padding: 0;
         }
-        .mat-form-field-outline { display: none; }
+        .mat-form-field-flex {
+          background: var(--background-light);
+          border-radius: var(--spacing-xs);
+          padding: 0 var(--spacing-md);
+          align-items: center;
+          height: 56px; /* Altura padrão para inputs outline */
+        }
+        .mat-form-field-outline {
+          color: var(--border-color);
+        }
+        .mat-form-field-infix {
+          padding: var(--spacing-md) 0;
+        }
+        .mat-form-field-suffix {
+          padding: 0 var(--spacing-xs);
+          align-self: center;
+        }
+        .mat-form-field-label-wrapper {
+          padding-top: 8px;
+        }
       }
     }
   }
 
-  .table-container {
-    background: var(--background-color); border-radius: var(--border-radius-md);
-    overflow: hidden; box-shadow: $shadow-sm; overflow-x: auto;
+  /* --- Ionic List Styles (with Material Icons) --- */
+  .user-ionic-list { /* Usando a classe adicionada no HTML */
+    background: transparent; /* Fundo transparente, pois os itens serão cards */
+    border-radius: var(--border-radius-md); /* Mantém o raio da borda no container geral */
+    box-shadow: none; /* Removido o box-shadow do container, agora nos itens */
+    padding: 0;
+    margin: 0;
 
-    table { width: 100%; min-width: 800px; }
+    ion-item {
+      --background: var(--background-color); /* Fundo do item */
+      --border-color: transparent; /* Remove a borda padrão do Ionic Item */
+      --border-width: 0; /* Remove a borda padrão do Ionic Item */
 
-    th.mat-header-cell {
-      background: var(--background-light); color: var(--text-color); font-weight: 600;
-      padding: var(--spacing-md); white-space: nowrap; font-size: var(--font-size-sm);
-      &:first-child { background-color: #E8EAF6; border-right: 1px solid #CFD8DC; }
-      &.mat-sort-header:hover { background: #E8EAF6; }
-    }
+      // Padding interno dos itens (card)
+      --padding-start: var(--spacing-md); // 16px
+      --padding-end: var(--spacing-md);   // 16px
+      --padding-top: var(--spacing-sm);   // 12px
+      --padding-bottom: var(--spacing-sm); // 12px
 
-    td.mat-cell {
-      padding: var(--spacing-md); color: var(--text-color);
-      border-bottom: 1px solid #E8EAF6; font-size: var(--font-size-sm);
-      &:first-child {
-        font-family: 'Roboto Mono', monospace; color: var(--text-secondary-color);
-        font-weight: 500; background-color: var(--background-light);
-        border-right: 1px solid #E8EAF6;
+      // Adicionando padding direto para garantir, caso as variáveis não funcionem totalmente
+      padding: var(--spacing-md) var(--spacing-lg) !important; // 16px top/bottom, 24px left/right
+      // O !important é usado como último recurso, tente ajustar as variáveis Ionic primeiro.
+
+
+      // Estilos para transformar o ion-item em um card
+      margin-bottom: var(--spacing-md); /* Espaçamento entre os cards */
+      border-radius: var(--border-radius-md); /* Cantos arredondados para o card */
+      box-shadow: $shadow-sm; /* Sombra para o card */
+      transition: background-color 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+      flex-wrap: wrap;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      &:hover {
+        --background: var(--background-light);
+        box-shadow: $shadow-md; /* Sombra mais intensa no hover */
       }
-    }
 
-    .user-row:hover { background: var(--background-light); }
+      &:last-child {
+        margin-bottom: 0; /* Remove a margem do último item */
+      }
 
-    .user-id {
-      font-family: 'Roboto Mono', monospace; color: var(--text-secondary-color); font-weight: 500;
-      padding: calc(var(--spacing-xs) / 2) var(--spacing-xs);
-      background-color: var(--background-light); border-radius: var(--border-radius-sm);
-      display: inline-block;
-    }
+      ion-label {
+        flex-grow: 1;
+        h3 {
+          font-size: var(--font-size-lg);
+          color: var(--text-color);
+          margin: 0 0 var(--spacing-xs) 0; // Espaçamento abaixo do nome
+          font-weight: 500;
+        }
+        p {
+          font-size: var(--font-size-sm);
+          color: var(--text-secondary-color);
+          margin: 0 0 var(--spacing-xs) 0; // CORREÇÃO: Mais espaçamento entre parágrafos
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
 
-    .user-info {
-      display: flex; align-items: center; gap: var(--spacing-sm);
-      .user-name { font-weight: 500; color: var(--text-primary); }
-    }
+      .action-buttons {
+        display: flex;
+        gap: calc(var(--spacing-xs) / 2); // 4px
+        flex-shrink: 0;
+        padding-left: var(--spacing-md); // 16px
+        justify-content: flex-end; /* Alinha os botões de ação à direita */
 
-    .user-email { color: var(--text-secondary-color); font-size: var(--font-size-sm); }
-    .metric-value { font-weight: 500; color: var(--primary-color); }
+        .mat-icon-button {
+          display: flex;
+          align-items: center;
+          justify-content: center;
 
-    .action-buttons {
-      @include flex-end-gap(var(--spacing-xs));
-      button { transition: transform .2s ease; &:hover { transform: scale(1.1); } }
-    }
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          transition: background-color 0.2s ease, transform 0.2s ease;
 
-    .no-data {
-      padding: calc(var(--spacing-lg) * 2) 0;
-      .no-data-content {
-        @include flex-center-col; gap: var(--spacing-md); color: #90A4AE;
-        mat-icon { font-size: 48px; width: 48px; height: 48px; }
-        p { font-size: 1.1em; margin: 0; }
+          .mat-icon {
+            font-size: 28px;
+            width: 28px;
+            height: 28px;
+          }
+
+          // Cores para os ícones Material
+          &[color="primary"] .mat-icon { color: var(--primary-color, #3f51b5); }
+          &[color="accent"] .mat-icon { color: var(--accent-color, #ff4081); }
+          &[color="warn"] .mat-icon { color: var(--warn-color, #f44336); }
+
+          &:hover {
+            transform: scale(1.1);
+            background-color: rgba(var(--primary-color-rgb, 63, 81, 181), 0.1);
+          }
+          &:active {
+            background-color: rgba(var(--primary-color-rgb, 63, 81, 181), 0.2);
+          }
+        }
       }
     }
   }
 
-  mat-paginator { border-top: 1px solid #E8EAF6; background: var(--background-color); }
+  /* Mensagem quando não há dados */
+  .no-data-content {
+    @include flex-center-col;
+    gap: var(--spacing-md);
+    color: #90A4AE;
+    padding: calc(var(--spacing-lg) * 2) 0;
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+    }
+    p {
+      font-size: 1.1em;
+      margin: 0;
+    }
+  }
+
+  .loading-indicator {
+    @include flex-center-col;
+    padding: var(--spacing-lg);
+    gap: var(--spacing-md);
+    color: var(--text-secondary-color);
+  }
 }
 
 /* --- Media Queries --- */
 
 @media screen and (max-width: 768px) {
   .user-list-container {
-    padding: var(--spacing-md); margin: var(--spacing-md);
-    border-radius: var(--border-radius-sm); box-shadow: $shadow-sm;
+    padding: var(--spacing-md);
+    margin: var(--spacing-md);
+    border-radius: var(--border-radius-sm);
+    box-shadow: $shadow-sm;
   }
   .header {
-    flex-direction: column; gap: var(--spacing-md); align-items: flex-start;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    align-items: flex-start;
     margin-bottom: var(--spacing-lg);
     .title-section {
-      h2 { font-size: var(--font-size-xl); }
-      .subtitle { font-size: var(--font-size-md); }
+      h2 {
+        font-size: var(--font-size-xl);
+      }
+      .subtitle {
+        font-size: var(--font-size-md);
+      }
     }
     .new-user-btn {
-      width: 100%; justify-content: center;
-      height: 44px; line-height: 44px; padding: 0 var(--spacing-md);
+      width: 100%;
+      justify-content: center;
+      height: 44px;
+      line-height: 44px;
+      padding: 0 var(--spacing-md);
     }
   }
-  .search-section .search-input { max-width: 100%; }
-  .table-container {
-    border-radius: var(--spacing-xs);
-    table { min-width: 550px; }
-    th.mat-header-cell, td.mat-cell {
-      padding: var(--spacing-sm); font-size: var(--font-size-sm); white-space: normal;
-    }
-    .action-buttons {
-      gap: calc(var(--spacing-xs) / 2);
-      button {
-        width: 32px; height: 32px; line-height: 32px;
-        .mat-icon { font-size: var(--font-size-lg); width: var(--font-size-lg); height: var(--font-size-lg); }
+  .search-section .search-input {
+    max-width: 100%;
+  }
+  .user-ionic-list {
+    ion-item {
+      flex-direction: column; /* Empilha label e botões em telas menores */
+      align-items: flex-start; /* Alinha o conteúdo à esquerda (horizontalmente) */
+
+      // Padding interno dos itens (card) em mobile
+      --padding-start: var(--spacing-md); // 16px
+      --padding-end: var(--spacing-md);   // 16px
+      --padding-top: var(--spacing-sm);   // 12px
+      --padding-bottom: var(--spacing-sm); // 12px
+      padding: var(--spacing-md) !important; // 16px para todos os lados em mobile
+
+      ion-label {
+        width: 100%;
+        h3 {
+          font-size: var(--font-size-md);
+        }
+        p {
+          font-size: var(--font-size-sm);
+        }
+      }
+      .action-buttons {
+        width: 100%;
+        justify-content: flex-end; /* Continua alinhando os botões à direita dentro do seu container */
+        margin-top: var(--spacing-sm);
+        padding-left: 0;
+
+        .mat-icon-button {
+          width: 36px;
+          height: 36px;
+          .mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+          }
+        }
       }
     }
   }
-  mat-paginator .mat-paginator-container { flex-wrap: wrap; justify-content: center; padding: var(--spacing-sm); }
 }
 
 @media screen and (max-width: 480px) {
   .user-list-container {
-    padding: calc(var(--spacing-sm) / 1.2); margin: var(--spacing-xs);
+    padding: calc(var(--spacing-sm) / 1.2);
+    margin: var(--spacing-xs);
   }
   .header {
     .title-section {
-      h2 { font-size: var(--font-size-xl); }
-      .subtitle { font-size: var(--font-size-sm); }
+      h2 {
+        font-size: var(--font-size-xl);
+      }
+      .subtitle {
+        font-size: var(--font-size-sm);
+      }
     }
     .new-user-btn {
-      height: 38px; font-size: var(--font-size-sm);
-      .mat-icon { font-size: var(--font-size-md); width: var(--font-size-md); height: var(--font-size-md); }
-    }
-  }
-  .search-section mat-form-field .mat-form-field-wrapper { font-size: var(--font-size-sm); }
-  .table-container {
-    table { min-width: 450px; }
-    th.mat-header-cell, td.mat-cell {
-      padding: calc(var(--spacing-xs) / 1.5);
-      font-size: var(--font-size-xs);
-    }
-    .action-buttons {
-      button {
-        width: 26px; height: 26px; line-height: 26px;
-        .mat-icon { font-size: var(--font-size-sm); width: var(--font-size-sm); height: var(--font-size-sm); }
+      height: 38px;
+      font-size: var(--font-size-sm);
+      mat-icon {
+        font-size: var(--font-size-md);
+        width: var(--font-size-md);
+        height: var(--font-size-md);
       }
     }
   }
-  mat-paginator { padding: var(--spacing-xs); font-size: var(--font-size-xs); }
+  .search-section mat-form-field .mat-form-field-wrapper {
+    font-size: var(--font-size-sm);
+  }
+  .user-ionic-list {
+    ion-item {
+      // Padding interno dos itens (card) em mobile muito pequeno
+      --padding-start: var(--spacing-md); // 16px
+      --padding-end: var(--spacing-md);   // 16px
+      --padding-top: var(--spacing-sm);   // 12px
+      --padding-bottom: var(--spacing-sm); // 12px
+      padding: var(--spacing-md) !important; // 16px para todos os lados em mobile
+
+      ion-label {
+        h3 {
+          font-size: var(--font-size-sm);
+        }
+        p {
+          font-size: var(--font-size-xs);
+        }
+      }
+      .action-buttons {
+        .mat-icon-button {
+          width: 32px;
+          height: 32px;
+          .mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+          }
+        }
+      }
+    }
+  }
 }

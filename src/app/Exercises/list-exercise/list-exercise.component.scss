@@ -1,12 +1,11 @@
-/* src/app/Exercises/list-exercise/list-exercise.component.scss */
+/* exercise-list.component.scss */
 
-// Importa o módulo math do Sass para funções matemáticas
 @use 'sass:math';
 
-// Variáveis básicas (ajuste conforme o tema do seu Material Design)
+// Variáveis de Cores (ajuste conforme o tema do seu Material Design)
 $primary-color: #3f51b5; // Exemplo de cor primária (deep purple)
-$accent-color: #ff4081;  // Exemplo de cor de acento (pink)
-$warn-color: #f44336;    // Exemplo de cor de aviso (red)
+$accent-color: #ff4081; // Exemplo de cor de acento (pink)
+$warn-color: #f44336; // Exemplo de cor de aviso (red)
 $text-color: #333;
 $light-text-color: #666;
 $border-color: #e0e0e0;
@@ -15,9 +14,9 @@ $white: #fff;
 
 // Variáveis de Espaçamento
 $spacing-unit: 8px;
-$padding-small: $spacing-unit * 2;   // 16px
-$padding-medium: $spacing-unit * 3;  // 24px
-$margin-medium: $spacing-unit * 3;   // 24px
+$padding-small: $spacing-unit * 2; // 16px
+$padding-medium: $spacing-unit * 3; // 24px
+$margin-medium: $spacing-unit * 3; // 24px
 
 // Mixins para reutilização de estilos
 @mixin flex-center {
@@ -26,10 +25,18 @@ $margin-medium: $spacing-unit * 3;   // 24px
   justify-content: center;
 }
 
-@mixin card-shadow {
-  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
-              0 2px 2px 0 rgba(0, 0, 0, 0.14),
-              0 1px 5px 0 rgba(0, 0, 0, 0.12);
+@mixin flex-between-center {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin card-shadow-sm {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+@mixin card-shadow-md {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .exercise-list-container {
@@ -38,13 +45,13 @@ $margin-medium: $spacing-unit * 3;   // 24px
   margin: $margin-medium auto;
   background-color: $white;
   border-radius: $spacing-unit; // Cantos arredondados
-  @include card-shadow; // Aplica a sombra
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), // Removido mixin para evitar erro de variável
+    0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12);
 
   // Estilo do cabeçalho da tela (título e botão "Novo Exercício")
   .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    @include flex-between-center; // Reutilizando mixin
     margin-bottom: $padding-medium;
     padding-bottom: $padding-small;
     border-bottom: 1px solid $border-color;
@@ -55,6 +62,7 @@ $margin-medium: $spacing-unit * 3;   // 24px
         font-size: 2em;
         color: $text-color;
       }
+
       .subtitle {
         margin: math.div($spacing-unit, 2) 0 0; // Corrigido: math.div()
         font-size: 0.9em;
@@ -65,6 +73,7 @@ $margin-medium: $spacing-unit * 3;   // 24px
     .new-exercise-btn {
       padding: $spacing-unit $padding-small; // 8px 16px
       font-weight: 500;
+
       .mat-icon {
         margin-right: $spacing-unit; // 8px
       }
@@ -77,112 +86,165 @@ $margin-medium: $spacing-unit * 3;   // 24px
 
     .search-input {
       width: 100%;
+
       // Ajuste para remover padding extra do MatFormField (pode variar entre versões)
-      .mat-form-field-wrapper {
-        padding-bottom: 0;
+      ::ng-deep {
+        .mat-form-field-wrapper {
+          padding-bottom: 0;
+        }
       }
     }
   }
 
-  // Container da tabela
-  .table-container {
-    overflow-x: auto; // Essencial para rolagem horizontal em telas menores
-    border-radius: $spacing-unit;
-    background-color: $white;
+  /* --- Ionic List Styles (with Material Icons) --- */
+  .exercise-ionic-list {
+    background: transparent; // Fundo transparente, pois os itens serão cards
+    border-radius: $spacing-unit; // Mantém o raio da borda no container geral
+    box-shadow: none; // Removido o box-shadow do container, agora nos itens
+    padding: 0;
+    margin: 0;
 
-    .mat-table {
-      width: 100%;
-      min-width: 700px; // Garante uma largura mínima para a tabela, evitando quebra em colunas
+    ion-item {
+      --background: $white;
+      /* Fundo do item */
+      --border-color: transparent;
+      /* Remove a borda padrão do Ionic Item */
+      --border-width: 0;
+      /* Remove a borda padrão do Ionic Item */
 
-      .mat-header-cell {
-        background-color: $primary-color;
-        color: $white;
-        font-weight: 600;
-        font-size: 0.9em;
-        padding: $spacing-unit * 1.5 $padding-small; // 12px 16px
+      // Padding interno dos itens (card) para dar "respiro"
+      --padding-start: $padding-medium; // 24px
+      --padding-end: $padding-medium; // 24px
+      --padding-top: $padding-small; // 16px
+      --padding-bottom: $padding-small; // 16px
+
+      // Adicionando padding direto para garantir, caso as variáveis não funcionem totalmente
+      padding: $padding-small $padding-medium !important;
+
+      margin-bottom: $padding-small;
+      /* Espaçamento entre os cards */
+      border-radius: $spacing-unit;
+      /* Cantos arredondados para o card */
+      @include card-shadow-md;
+      transition: background-color 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+      flex-wrap: wrap; // Permite que o conteúdo quebre linha em telas menores
+
+      display: flex;
+      align-items: center; // Centraliza verticalmente o label e os botões
+      justify-content: space-between; // Empurra o slot="end" para a direita
+
+      &:hover {
+        --background: $background-light;
+        @include card-shadow-md;
+        /* Sombra mais intensa no hover */
       }
 
-      .mat-cell {
-        color: $text-color;
-        padding: $spacing-unit * 1.25 $padding-small; // 10px 16px
-        border-bottom: 1px solid $border-color;
-        font-size: 0.875em; // 14px
+      &:last-child {
+        margin-bottom: 0;
+        /* Remove a margem do último item */
       }
 
-      .exercise-row:hover {
-        background-color: $background-light; // Efeito hover nas linhas da tabela
-        cursor: pointer;
+      ion-label {
+        flex-grow: 1; // Permite que a label ocupe o espaço restante
+
+        h3.exercise-name {
+          font-size: 1.1em;
+          color: $text-color;
+          margin: 0 0 $spacing-unit / 2 0; // Espaçamento abaixo do nome
+          font-weight: 500;
+        }
+
+        p {
+          font-size: 0.9em;
+          color: $light-text-color;
+          margin: 0 0 $spacing-unit / 2 0; // Espaçamento entre parágrafos
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
       }
 
-      // Estilos específicos para colunas de texto/valor para legibilidade
-      .exercise-id {
-        font-weight: 500;
-        color: $primary-color;
-      }
-
-      .exercise-name {
-        font-weight: 500;
-      }
-
-      .exercise-description {
-        white-space: nowrap; // Evita quebra de linha do texto
-        overflow: hidden; // Esconde o texto que excede
-        text-overflow: ellipsis; // Adiciona reticências ao final do texto cortado
-        max-width: 180px; // Limita a largura para a elipse funcionar
-      }
-
-      .metric-value {
-        font-weight: 500;
-      }
-
-      // Botões de ação dentro da tabela (visualizar, editar, excluir)
       .action-buttons {
         display: flex;
-        gap: math.div($spacing-unit, 2); // Corrigido: math.div()
-        .mat-icon-button {
-          width: $spacing-unit * 4;   // 32px
-          height: $spacing-unit * 4;  // 32px
-          line-height: $spacing-unit * 4;
-          .mat-icon {
-            font-size: $spacing-unit * 2.5; // 20px
-            width: $spacing-unit * 2.5;
-            height: $spacing-unit * 2.5;
-          }
-        }
-      }
-    }
+        gap: math.div($spacing-unit, 2); // 4px de espaço entre os botões
+        flex-shrink: 0; // Evita que os botões encolham
+        padding-left: $padding-small; // Espaçamento à esquerda para separar do label
+        justify-content: flex-end;
+        /* Alinha os botões de ação à direita */
 
-    // Mensagem exibida quando não há dados na tabela (pesquisa vazia ou sem itens)
-    .mat-no-data-row {
-      text-align: center;
-      .no-data {
-        padding: $padding-medium;
-        .no-data-content {
-          @include flex-center; // Centraliza conteúdo
-          flex-direction: column;
-          color: $light-text-color;
+        .mat-icon-button {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          width: 44px; // Aumentado para acomodar ícones maiores e clique
+          height: 44px;
+          border-radius: 50%;
+          transition: background-color 0.2s ease, transform 0.2s ease;
+
           .mat-icon {
-            font-size: $spacing-unit * 6; // 48px
-            width: $spacing-unit * 6;
-            height: $spacing-unit * 6;
-            margin-bottom: $spacing-unit; // 8px
-            color: $border-color;
+            font-size: 28px; // Tamanho maior para todos os dispositivos
+            width: 28px;
+            height: 28px;
           }
-          p {
-            margin: 0;
-            font-size: 1.1em;
+
+          // Cores para os ícones Material
+          &[color="primary"] .mat-icon {
+            color: $primary-color;
+          }
+
+          &[color="accent"] .mat-icon {
+            color: $accent-color;
+          }
+
+          &[color="warn"] .mat-icon {
+            color: $warn-color;
+          }
+
+          &:hover {
+            transform: scale(1.1);
+            background-color: rgba($primary-color, 0.1);
+          }
+
+          &:active {
+            background-color: rgba($primary-color, 0.2);
           }
         }
       }
     }
   }
 
-  // Estilo do paginador
-  mat-paginator {
-    background-color: $white;
-    border-top: 1px solid $border-color;
-    border-bottom-left-radius: $spacing-unit;
-    border-bottom-right-radius: $spacing-unit;
+  /* Mensagem quando não há dados */
+  .no-data-content {
+    @include flex-center;
+    flex-direction: column;
+    gap: $padding-small; // Espaçamento
+    color: $light-text-color;
+    padding: $padding-medium * 2 0; // Padding maior
+
+    mat-icon {
+      font-size: $spacing-unit * 6; // 48px
+      width: $spacing-unit * 6;
+      height: $spacing-unit * 6;
+      margin-bottom: $spacing-unit; // 8px
+      color: $border-color;
+    }
+
+    p {
+      margin: 0;
+      font-size: 1.1em;
+    }
+  }
+
+  // Indicador de carregamento
+  .loading-indicator {
+    @include flex-center;
+    flex-direction: column;
+    padding: $padding-medium;
+    gap: $padding-small;
+    color: $light-text-color;
   }
 }
 
@@ -193,43 +255,84 @@ $margin-medium: $spacing-unit * 3;   // 24px
 // Telas pequenas (smartphones em modo retrato, até 768px)
 @media (max-width: 768px) {
   .exercise-list-container {
-    padding: $padding-small; // 16px
-    margin: $padding-small; // 16px
+    padding: $padding-small;
+    margin: $padding-small;
   }
 
   .header {
-    flex-direction: column; // Empilha o título e o botão
-    align-items: flex-start; // Alinha itens à esquerda
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: $padding-medium;
 
     .title-section {
-      margin-bottom: $padding-small; // 16px
+      margin-bottom: $padding-small;
+
+      h2 {
+        font-size: 1.6em;
+      }
+
+      .subtitle {
+        font-size: 0.8em;
+      }
     }
 
     .new-exercise-btn {
-      width: 100%; // Botão "Novo Exercício" ocupa toda a largura
-      @include flex-center; // Centraliza ícone e texto dentro do botão
+      width: 100%;
+      @include flex-center;
     }
   }
 
   .search-section {
     .search-input {
-      .mat-form-field-wrapper {
-        font-size: 0.9em; // Ajusta o tamanho da fonte do campo de busca
+      ::ng-deep {
+        .mat-form-field-wrapper {
+          font-size: 0.9em;
+        }
       }
     }
   }
 
-  // A tabela já tem `overflow-x: auto` no `.table-container`,
-  // o que permite rolagem horizontal em telas menores.
-  // Ajustes de coluna podem ser feitos aqui se a rolagem não for suficiente.
-  .table-container {
-    .mat-table {
-      .mat-header-cell, .mat-cell {
-        padding: $spacing-unit $spacing-unit; // Reduz padding nas células
-        font-size: 0.8em; // Diminui um pouco a fonte nas células
+  .exercise-ionic-list {
+    ion-item {
+      flex-direction: column; // Empilha label e botões em telas menores
+      align-items: flex-start; // Alinha o conteúdo à esquerda (horizontalmente)
+
+      // Ajustando padding em mobile
+      --padding-start: $padding-small; // 16px
+      --padding-end: $padding-small; // 16px
+      --padding-top: $spacing-unit; // 8px
+      --padding-bottom: $spacing-unit; // 8px
+      padding: $spacing-unit $padding-small !important; // 8px top/bottom, 16px left/right
+
+      ion-label {
+        width: 100%;
+
+        h3.exercise-name {
+          font-size: 1em;
+        }
+
+        p {
+          font-size: 0.8em;
+          margin: 0 0 $spacing-unit / 2 0; // Mantém espaçamento entre linhas
+        }
       }
+
       .action-buttons {
-        gap: math.div($spacing-unit, 4); // Corrigido: math.div()
+        width: 100%;
+        justify-content: flex-end; // Mantém alinhamento à direita dentro do item
+        margin-top: $spacing-unit; // Espaçamento entre o texto e os botões
+        padding-left: 0;
+
+        .mat-icon-button {
+          width: 36px;
+          height: 36px;
+
+          .mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+          }
+        }
       }
     }
   }
@@ -238,26 +341,52 @@ $margin-medium: $spacing-unit * 3;   // 24px
 // Telas muito pequenas (smartphones menores, até 480px)
 @media (max-width: 480px) {
   .exercise-list-container {
-    margin: $spacing-unit; // 8px
-    padding: $spacing-unit * 1.5; // 12px
+    margin: $spacing-unit;
+    padding: $spacing-unit; // Padding ainda menor para telas muito pequenas
   }
 
   .header {
     .title-section {
       h2 {
-        font-size: 1.6em; // Título menor
+        font-size: 1.4em;
       }
+
       .subtitle {
-        font-size: 0.8em; // Subtítulo menor
+        font-size: 0.7em;
       }
     }
   }
 
-  .table-container {
-    .mat-table {
-      min-width: 500px; // Pode ajustar ainda mais para garantir rolagem em telas muito pequenas
-      .exercise-description {
-        max-width: 100px; // Limita ainda mais a descrição para elipse
+  .exercise-ionic-list {
+    ion-item {
+      // Padding interno dos itens (card) em mobile muito pequeno
+      --padding-start: $spacing-unit; // 8px
+      --padding-end: $spacing-unit; // 8px
+      --padding-top: $spacing-unit / 2; // 4px
+      --padding-bottom: $spacing-unit / 2; // 4px
+      padding: $spacing-unit / 2 $spacing-unit !important; // 4px top/bottom, 8px left/right
+
+      ion-label {
+        h3.exercise-name {
+          font-size: 0.9em;
+        }
+
+        p {
+          font-size: 0.7em;
+        }
+      }
+
+      .action-buttons {
+        .mat-icon-button {
+          width: 32px;
+          height: 32px;
+
+          .mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+          }
+        }
       }
     }
   }
