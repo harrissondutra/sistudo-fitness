@@ -4,7 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { UserService, User } from '../services/user.service';
+import { UserService } from '../services/user/user.service';
+import { User } from '../models/user';
 
 @Component({
   selector: 'app-user-view',
@@ -65,4 +66,4 @@ export class UserViewComponent implements OnInit {
       this.router.navigate(['/users', this.user.id, 'edit']);
     }
   }
-} 
+}
