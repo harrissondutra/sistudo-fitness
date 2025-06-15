@@ -10,18 +10,18 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { HttpErrorResponse, HttpClientModule } from '@angular/common/http'; // Necessário para HttpErrorResponse e injeção do HttpClient
+import { HttpErrorResponse, HttpClientModule } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
 
 // Importe as interfaces de modelo e serviços necessários
-import { Exercise, ExerciseCategory } from '../../models/exercise'; // Ajuste o caminho conforme sua estrutura de pastas
+import { Exercise, ExerciseCategory } from '../../models/exercise'; // Certifique-se de que o caminho está correto e a interface 'Exercise' foi ajustada
 import { ExerciseService } from '../../services/exercise/exercise.service'; // Ajuste o caminho e crie este serviço
-import { ExerciseCategoryService } from '../../services/exercise/exercise-category.service';
+import { ExerciseCategoryService } from '../../services/exercise/exercise-category.service'; // Importação do serviço de categoria
 
 @Component({
-  selector: 'app-create-exercise', // Mantém o seletor original do seu esboço
-  templateUrl: './create-exercise.component.html', // Usa o HTML que você forneceu
-  styleUrls: ['./create-exercise.component.scss'], // Você precisará criar este arquivo SCSS
+  selector: 'app-create-exercise',
+  templateUrl: './create-exercise.component.html',
+  styleUrls: ['./create-exercise.component.scss'],
   standalone: true,
   imports: [
     CommonModule,
@@ -33,7 +33,7 @@ import { ExerciseCategoryService } from '../../services/exercise/exercise-catego
     MatSelectModule,
     MatSnackBarModule,
     MatTooltipModule,
-    HttpClientModule // Importe se este componente ou seus serviços injetarem diretamente o HttpClient
+    HttpClientModule
   ]
 })
 export class CreateExerciseComponent implements OnInit {
@@ -44,15 +44,15 @@ export class CreateExerciseComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private exerciseService: ExerciseService,
-    private exerciseCategory: ExerciseCategoryService, // Serviço para buscar as categorias
+    private exerciseCategory: ExerciseCategoryService, // Injeção do serviço de categoria
     private router: Router,
     private snackBar: MatSnackBar
   ) {
-    this.initForm(); // Inicializa o formulário no construtor
+    this.initForm();
   }
 
   ngOnInit(): void {
-    this.loadCategories(); // Carrega as categorias quando o componente é inicializado
+    this.loadCategories(); // Chama o método para carregar as categorias
   }
 
   /**
@@ -61,9 +61,8 @@ export class CreateExerciseComponent implements OnInit {
   private initForm(): void {
     this.exerciseForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
-      description: [''], // Campo de descrição é opcional
-      categoryId: [null, [Validators.required]], // O ID da categoria é obrigatório
-      // Validação de URL de vídeo: permite URLs do YouTube e similares, sendo opcional
+      description: [''],
+      categoryId: [null, [Validators.required]], // categoryId para o select
       videoUrl: ['', [Validators.pattern(/^(http(s)?:\/\/)?((w){3}.)?youtu(be|.be)?(\.com)?\/.+/)]]
     });
   }
@@ -73,7 +72,7 @@ export class CreateExerciseComponent implements OnInit {
    */
   private loadCategories(): void {
     this.isLoading = true;
-    this.exerciseCategory.getAllCategories() // Assumindo que CategoryService.getCategories() retorna Observable<ExerciseCategory[]>
+    this.exerciseCategory.getAllCategories() // Chamada ao método do serviço
       .pipe(finalize(() => this.isLoading = false))
       .subscribe({
         next: (categories: ExerciseCategory[]) => {
@@ -89,34 +88,29 @@ export class CreateExerciseComponent implements OnInit {
    * Lida com o envio do formulário, validando os campos e enviando os dados para o serviço.
    */
   onSubmit(): void {
-    // Marca todos os campos como 'touched' para que as mensagens de erro de validação apareçam
     if (this.exerciseForm.invalid) {
       this.markFormGroupTouched(this.exerciseForm);
-      this.showMessage('Por favor, preença todos os campos obrigatórios e válidos.', 'error');
+      this.showMessage('Por favor, preencha todos os campos obrigatórios e válidos.', 'error');
       return;
     }
 
     this.isLoading = true;
     const formValue = this.exerciseForm.value;
 
-    // Busca o objeto completo da categoria selecionada com base no ID
-    const selectedCategory = this.categories.find(cat => cat.id === formValue.categoryId);
-
-    // Constrói o objeto Exercise a ser enviado ao backend
+    // A correção está aqui: enviando 'categoryId' diretamente, conforme a provável expectativa do backend ExerciseDto
     const exerciseToCreate: Exercise = {
       name: formValue.name,
       description: formValue.description,
-      category: selectedCategory, // Envia o objeto de categoria completo
+      categoryId: formValue.categoryId, // Envia o ID da categoria diretamente
       videoUrl: formValue.videoUrl
     };
 
-    // Chama o serviço de exercício para criar o novo exercício
     this.exerciseService.createExercise(exerciseToCreate)
       .pipe(finalize(() => this.isLoading = false))
       .subscribe({
         next: (response: Exercise) => {
           this.showMessage('Exercício criado com sucesso!', 'success');
-          this.router.navigate(['/exercises']); // Redireciona para a lista de exercícios após o sucesso
+          this.router.navigate(['/exercises']);
         },
         error: (error: HttpErrorResponse) => {
           this.handleError('Erro ao criar exercício.', error);
@@ -130,8 +124,8 @@ export class CreateExerciseComponent implements OnInit {
    * @param error O objeto HttpErrorResponse contendo detalhes do erro.
    */
   private handleError(message: string, error: HttpErrorResponse): void {
-    console.error(`${message}:`, error); // Loga o erro completo para depuração
-    const errorMessage = error.error?.message || error.message; // Tenta obter uma mensagem de erro mais detalhada do backend
+    console.error(`${message}:`, error);
+    const errorMessage = error.error?.message || error.message;
     this.showMessage(`${message} Detalhes: ${errorMessage}`, 'error');
   }
 

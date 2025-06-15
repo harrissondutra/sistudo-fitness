@@ -87,7 +87,7 @@ export class ListExerciseComponent implements OnInit, AfterViewInit {
    */
   private loadExercises(): void {
     this.isLoading = true;
-    this.exerciseService.getExercises() // Assumindo que seu ExerciseService tem um método getExercises()
+    this.exerciseService.getAllExercises() // Assumindo que seu ExerciseService tem um método getExercises()
       .pipe(finalize(() => this.isLoading = false))
       .subscribe({
         next: (exercises: Exercise[]) => {

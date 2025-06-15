@@ -9,7 +9,7 @@ import { environment } from '../../../environments/environment'; // Ajuste o cam
   providedIn: 'root'
 })
 export class TrainningService {
-private baseUrl = `${environment.apiUrl}/trainning`; // Exemplo: assumindo que o endpoint base para medidas é /measure
+private baseUrl = `${environment.apiUrl}/tranning`;
 
   constructor(private http: HttpClient) { }
 

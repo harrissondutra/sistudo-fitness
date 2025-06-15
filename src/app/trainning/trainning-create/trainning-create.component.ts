@@ -14,9 +14,9 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ExerciseService } from '../../services/exercise/exercise.service';
 import { Exercise } from '../../models/exercise';
-import { UserService } from '../../services/user/user.service'; // Certifique-se de que o caminho está correto
-import { User } from '../../models/user'; // Certifique-se de que o caminho está correto
-import { Trainning } from '../../models/trainning'; // Certifique-se de que o caminho está correto
+import { UserService } from '../../services/user/user.service';
+import { User } from '../../models/user';
+import { Trainning } from '../../models/trainning';
 import { finalize } from 'rxjs/operators';
 
 @Component({
@@ -111,7 +111,6 @@ export class TrainningCreateComponent implements OnInit {
       return;
     }
 
-    // Garante que o ID do usuário é um número, conforme a necessidade do backend
     const userId = Number(selectedUser.id);
     if (isNaN(userId)) {
       this.showMessage('ID do usuário inválido', 'error');
@@ -120,7 +119,7 @@ export class TrainningCreateComponent implements OnInit {
 
     const trainingData: Trainning = {
       name: formValue.name,
-      exercises: formValue.exercises, // Certifique-se de que o backend espera objetos Exercise aqui
+      exercises: formValue.exercises,
       user: selectedUser,
       active: true
     };
@@ -141,7 +140,8 @@ export class TrainningCreateComponent implements OnInit {
 
   private handleError(message: string, error: HttpErrorResponse): void {
     console.error(`${message}:`, error);
-    this.showMessage(message, 'error');
+    const backendMsg = error.error?.message || error.error || error.message || 'Erro desconhecido';
+    this.showMessage(`${message}: ${backendMsg}`, 'error');
   }
 
   private showMessage(message: string, type: 'success' | 'error'): void {

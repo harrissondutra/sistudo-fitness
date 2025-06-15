@@ -1,106 +1,87 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Importa CommonModule para diretivas como ngIf, ngFor
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms'; // Módulos para formulários reativos
-import { Router } from '@angular/router'; // Para navegação
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'; // Para exibir mensagens
-import { MatFormFieldModule } from '@angular/material/form-field'; // Campo de formulário Material
-import { MatInputModule } from '@angular/material/input'; // Input Material
-import { MatButtonModule } from '@angular/material/button'; // Botões Material
-import { MatIconModule } from '@angular/material/icon'; // Ícones Material
-import { MatTooltipModule } from '@angular/material/tooltip'; // Tooltip Material
-
-// Interface para a categoria de exercício, conforme fornecido anteriormente
-export interface ExerciseCategory {
-  id?: number;
-  name: string;
-  description?: string;
-}
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { CategoryExerciseService } from '../../services/category-exercise/category-exercise.service'; // ajuste o caminho conforme seu projeto
+import { ExerciseCategory } from '../../models/exercise-category'; // ajuste o caminho conforme seu projeto
 
 @Component({
   selector: 'app-category-exercise',
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule, // Necessário para usar FormGroup
+    ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    MatSnackBarModule, // Adicionado para o snackbar
-    MatTooltipModule // Adicionado para tooltips nos botões
+    MatSnackBarModule,
+    MatTooltipModule
   ],
   templateUrl: './category-exercise.component.html',
-  styleUrl: './category-exercise.component.scss' // Usando styleUrl para o arquivo SCSS
+  styleUrl: './category-exercise.component.scss'
 })
 export class CategoryExerciseComponent implements OnInit {
-  categoryForm!: FormGroup; // Declaração do FormGroup para o formulário
-  isLoading = false; // Flag para controlar o estado de carregamento
+  categoryForm!: FormGroup;
+  isLoading = false;
 
   constructor(
-    private fb: FormBuilder, // Injeta FormBuilder para construir o formulário
-    private router: Router, // Injeta Router para navegação
-    private snackBar: MatSnackBar // Injeta MatSnackBar para exibir mensagens
+    private fb: FormBuilder,
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private categoryService: CategoryExerciseService // INJETADO O SERVICE
   ) {}
 
   ngOnInit(): void {
-    this.initForm(); // Inicializa o formulário quando o componente é criado
+    this.initForm();
   }
 
-  /**
-   * Inicializa o FormGroup com os controles e suas validações.
-   */
   private initForm(): void {
     this.categoryForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3)]], // Campo 'name' obrigatório com minLength
-      description: [''] // Campo 'description' opcional
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      description: ['']
     });
   }
 
-  /**
-   * Manipula a submissão do formulário.
-   */
   onSubmit(): void {
-    // Verifica se o formulário é válido
     if (this.categoryForm.invalid) {
-      this.markFormGroupTouched(this.categoryForm); // Marca os campos como 'touched' para exibir erros de validação
+      this.markFormGroupTouched(this.categoryForm);
       this.snackBar.open('Por favor, preencha todos os campos obrigatórios corretamente.', 'Fechar', {
         duration: 3000,
-        panelClass: ['error-snackbar'] // Classe CSS para estilo de erro no snackbar
+        panelClass: ['error-snackbar']
       });
-      return; // Interrompe a função se o formulário for inválido
+      return;
     }
 
-    this.isLoading = true; // Ativa o estado de carregamento
+    this.isLoading = true;
+    const newCategory: ExerciseCategory = this.categoryForm.value;
 
-    const newCategory: ExerciseCategory = this.categoryForm.value; // Pega os valores do formulário
-
-    // TODO: Implementar a lógica de envio para o serviço (API) aqui.
-    // Exemplo simulado de sucesso/erro:
-    console.log('Dados da nova categoria:', newCategory);
-
-    // Simulação de chamada de API
-    setTimeout(() => {
-      this.isLoading = false; // Desativa o estado de carregamento
-
-      // Simular sucesso
-      this.snackBar.open('Categoria salva com sucesso!', 'Fechar', {
-        duration: 3000,
-        panelClass: ['success-snackbar'] // Classe CSS para estilo de sucesso no snackbar
-      });
-      this.router.navigate(['/exercises/categories']); // Redireciona para a lista de categorias (ou outra rota)
-      // Simular erro
-      // this.snackBar.open('Erro ao salvar categoria. Tente novamente.', 'Fechar', {
-      //   duration: 5000,
-      //   panelClass: ['error-snackbar']
-      // });
-    }, 1500); // Simula um atraso de 1.5 segundos para a chamada de API
+    // CHAMADA REAL AO SERVICE
+    this.categoryService.createCategory(newCategory).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.snackBar.open('Categoria salva com sucesso!', 'Fechar', {
+          duration: 3000,
+          panelClass: ['success-snackbar']
+        });
+        this.router.navigate(['/exercises/categories']);
+      },
+      error: () => {
+        this.isLoading = false;
+        this.snackBar.open('Erro ao salvar categoria. Tente novamente.', 'Fechar', {
+          duration: 5000,
+          panelClass: ['error-snackbar']
+        });
+      }
+    });
   }
 
-  /**
-   * Marca todos os controles de um FormGroup como 'touched' recursivamente.
-   * Útil para exibir mensagens de validação antes da submissão.
-   * @param formGroup O FormGroup a ser marcado.
-   */
   private markFormGroupTouched(formGroup: FormGroup): void {
     Object.values(formGroup.controls).forEach(control => {
       control.markAsTouched();
@@ -110,10 +91,7 @@ export class CategoryExerciseComponent implements OnInit {
     });
   }
 
-  /**
-   * Cancela a operação e navega de volta para a lista de categorias.
-   */
   cancel(): void {
-    this.router.navigate(['/exercises/categories']); // Redireciona para a lista de categorias
+    this.router.navigate(['/exercises/categories']);
   }
 }

@@ -1,14 +1,16 @@
+// No arquivo: ../../models/exercise.ts
 export interface Exercise {
   id?: number;
   name: string;
   description?: string;
-  category?: ExerciseCategory; // Defina a interface ExerciseCategory conforme seu backend
+  // Mude de 'category: { id?: number; name?: string; };' para:
+  categoryId: number; // O backend espera um ID de categoria diretamente
   videoUrl?: string;
 }
 
-// Exemplo de interface para ExerciseCategory (ajuste conforme seu backend)
+// Suas outras interfaces (ExerciseCategory) permanecem as mesmas
 export interface ExerciseCategory {
   id?: number;
   name: string;
-  // outros campos se necessário
+  description?: string;
 }
