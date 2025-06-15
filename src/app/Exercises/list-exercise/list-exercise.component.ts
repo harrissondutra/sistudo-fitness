@@ -93,7 +93,6 @@ export class ListExerciseComponent implements OnInit, AfterViewInit {
         next: (exercises: Exercise[]) => {
           this.dataSource.data = exercises; // Atribui os dados ao dataSource
           this.totalExercises = exercises.length; // Atualiza o total de exercícios
-          this.showMessage('Exercícios carregados com sucesso!', 'success');
         },
         error: (error: HttpErrorResponse) => {
           this.handleError('Erro ao carregar exercícios.', error);
