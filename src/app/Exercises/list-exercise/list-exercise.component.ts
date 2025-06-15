@@ -129,7 +129,7 @@ export class ListExerciseComponent implements OnInit { // Removido AfterViewInit
    * Navega para a tela de criação de exercício.
    */
   createExercise(): void {
-    this.router.navigate(['/exercises/create']); // Rota para a tela de criação
+    this.router.navigate(['/create-exercise']); // Rota para a tela de criação
   }
 
   /**
