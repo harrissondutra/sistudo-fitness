@@ -9,27 +9,31 @@ import { environment } from '../../../environments/environment'; // Ajuste o cam
   providedIn: 'root'
 })
 export class TrainningService {
-private baseUrl = `${environment.apiUrl}/tranning`;
+  private baseUrl = `${environment.apiUrl}/tranning`; // Corrigido para 'tranning' (um 'n') conforme o backend
 
   constructor(private http: HttpClient) { }
 
-
-  getTrainningByUserId(userId: number): Observable<Trainning> {
-    return this.http.get<Trainning>(`${this.baseUrl}/trainningByUserId/${userId}`);
+  // CORRIGIDO: Agora espera Observable<Trainning[]>
+  getTrainningByUserId(userId: number): Observable<Trainning[]> {
+    return this.http.get<Trainning[]>(`${this.baseUrl}/trainningByUserId/${userId}`);
   }
 
   getTrainningById(id: number): Observable<Trainning> {
     return this.http.get<Trainning>(`${this.baseUrl}/getById/${id}`);
   }
 
-  getTrainningByName(name: string): Observable<Trainning[]> {
-    return this.http.get<Trainning[]>(`${this.baseUrl}/getByTrainningName/${name}`);
+  // CORRIGIDO: Agora espera Observable<Trainning> (um único objeto)
+  getTrainningByName(name: string): Observable<Trainning> {
+    return this.http.get<Trainning>(`${this.baseUrl}/getByTrainningName/${name}`);
   }
+
   createTrainning(trainning: Trainning): Observable<Trainning> {
     return this.http.post<Trainning>(`${this.baseUrl}/create`, trainning);
   }
+
+  // CORRIGIDO: Endpoint ajustado para "/createByUserId/{userId}"
   createTrainningByUserId(userId: number, trainning: Trainning): Observable<Trainning> {
-    return this.http.post<Trainning>(`${this.baseUrl}/create/${userId}`, trainning);
+    return this.http.post<Trainning>(`${this.baseUrl}/createByUserId/${userId}`, trainning);
   }
 
   listAllTrainnings(): Observable<Trainning[]> {

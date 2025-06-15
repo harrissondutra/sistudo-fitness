@@ -13,10 +13,10 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ExerciseService } from '../../services/exercise/exercise.service';
-import { Exercise } from '../../models/exercise';
+import { Exercise } from '../../models/exercise'; // Certifique-se de que Exercise tem 'repetitions' e 'series' (ou 'sets')
 import { UserService } from '../../services/user/user.service';
 import { User } from '../../models/user';
-import { Trainning } from '../../models/trainning';
+import { Trainning } from '../../models/trainning'; // Certifique-se de que o modelo Trainning foi ajustado
 import { finalize } from 'rxjs/operators';
 
 @Component({
@@ -60,6 +60,8 @@ export class TrainningCreateComponent implements OnInit {
   private initForm(): void {
     this.trainingForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
+      // Se o backend precisar de 'description' no TrainningDto, adicione aqui um controle para ele:
+      // description: [''],
       exercises: [[], [Validators.required, Validators.minLength(1)]],
       userId: [null, [Validators.required]]
     });
@@ -117,10 +119,21 @@ export class TrainningCreateComponent implements OnInit {
       return;
     }
 
-    const trainingData: Trainning = {
+    // CORREÇÃO: Mapeia os exercícios para o formato EXATO esperado pelo backend
+    const exercisesToSend = formValue.exercises.map((exercise: Exercise) => ({
+      id: exercise.id,
+      name: exercise.name,
+      description: exercise.description || '', // Se o backend exigir, mas pode ser opcional
+      categoryId: exercise.categoryId, // Mapeia diretamente o ID da categoria
+      videoUrl: exercise.videoUrl || '', // Se o backend exigir, mas pode ser opcional
+
+    }));
+
+    // CORREÇÃO: Constrói o corpo da requisição conforme o modelo JSON EXATO desejado
+    const trainingData = {
       name: formValue.name,
       exercises: formValue.exercises,
-      user: selectedUser,
+      userId: formValue.userId,
       active: true
     };
 
@@ -141,7 +154,7 @@ export class TrainningCreateComponent implements OnInit {
   private handleError(message: string, error: HttpErrorResponse): void {
     console.error(`${message}:`, error);
     const backendMsg = error.error?.message || error.error || error.message || 'Erro desconhecido';
-    this.showMessage(`${message}: ${backendMsg}`, 'error');
+    this.showMessage(`${message}. Detalhes: ${backendMsg}`, 'error');
   }
 
   private showMessage(message: string, type: 'success' | 'error'): void {
