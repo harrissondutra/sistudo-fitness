@@ -1,149 +1,183 @@
-// Variáveis
-$primary-color: #3f51b5; // Indigo padrão do Angular Material
-$primary-light: #e8eaf6;
-$text-primary: #303f9f;
-$text-secondary: #5c6bc0;
-$background-light: #ffffff;
-$background-section: #f5f7fa;
-$border-color: #c5cae9;
-$spacing-sm: 8px;
-$spacing-md: 16px;
-$spacing-lg: 24px;
-$border-radius: 8px;
-$transition: all 0.2s ease;
-$shadow-sm: 0 2px 4px rgba(63, 81, 181, 0.05);
-$shadow-md: 0 4px 6px rgba(63, 81, 181, 0.08);
-$warn-color: #f44336; // Adicionado para mensagens de erro
+// Variáveis baseadas no modelo user-registration.component.scss
+$primary-color: #2196F3;     // Cor primária do modelo
+$text-primary: #2C3E50;      // Cor principal de texto do modelo
+$text-secondary: #607D8B;    // Cor secundária de texto do modelo
+$background-light: #F5F7FA;  // Cor de fundo do container no modelo
+$background-white: #FFFFFF;  // Cor de fundo para elementos "card" no modelo
+$border-color: rgba(0, 0, 0, 0.08); // Cor da borda do modelo
+$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);  // Sombra pequena do modelo
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12); // Sombra média do modelo
+$border-radius: 12px;       // Raio da borda do modelo
+$spacing-xs: 8px;           // Espaçamento extra pequeno do modelo
+$spacing-sm: 12px;          // Espaçamento pequeno do modelo
+$spacing-md: 16px;          // Espaçamento médio do modelo
+$spacing-lg: 24px;          // Espaçamento grande do modelo
+$transition: all 0.3s ease; // Transição do modelo
+$warn-color: #f44336;       // Mantido para mensagens de erro, não presente no modelo mas importante
 
 // Container Principal
 .exercise-create-container {
+  padding: $spacing-lg;     // Usando variável de espaçamento do modelo
   max-width: 800px;
   margin: 0 auto;
-  padding: $spacing-lg; // Usando variável de espaçamento
+  background: $background-light; // Usando a cor de fundo do modelo
   min-height: 100vh;
-  background-color: $background-section; // Fundo de seção
+  box-sizing: border-box; // Garante que padding e border não aumentem a largura total
+}
 
-  // Cabeçalho da tela de criação
-  .header {
-    display: flex;
-    align-items: center;
-    gap: $spacing-md; // Usando variável de espaçamento
-    margin-bottom: $spacing-lg;
-    padding: $spacing-md; // Usando variável de espaçamento
-    background-color: $background-light;
-    border-radius: $border-radius;
-    box-shadow: $shadow-sm; // Usando variável de sombra
+// Cabeçalho
+.header {
+  margin-bottom: $spacing-lg; // Espaçamento do modelo
+  display: flex;             // Necessário para alinhar ícone e título
+  align-items: center;       // Alinha verticalmente
+  gap: $spacing-md;          // Espaçamento entre ícone e título
 
-    mat-icon {
-      font-size: 32px;
-      width: 32px;
-      height: 32px;
-      color: $primary-color;
+  .title-section {
+    // No modelo, o header tem um .title-section. Adaptando para o seu HTML.
+    h1 { // Corresponde ao h2 no modelo, adaptando ao h1 do seu HTML
+      margin: 0;
+      color: $text-primary;   // Cor do texto primário do modelo
+      font-size: 28px;        // Tamanho de fonte do modelo
+      font-weight: 500;
     }
 
-    h1 {
-      margin: 0;
-      font-size: 24px;
-      color: $text-color; // Mantendo a cor do texto para títulos
+    // Adaptando o subtitle do modelo se houvesse no seu HTML, mas não há explicitamente aqui.
+    // .subtitle {
+    //   margin: $spacing-xs 0 0;
+    //   color: $text-secondary;
+    //   font-size: 16px;
+    // }
+  }
+
+  mat-icon { // Estilos para o ícone no cabeçalho
+    font-size: 32px; // Tamanho do ícone, pode ser ajustado para usar variáveis globais se houver.
+    width: 32px;
+    height: 32px;
+    color: $primary-color; // Cor primária do modelo
+  }
+}
+
+// Card do formulário (aplicando estilos de .form-card do modelo ao .form-container)
+.form-container {
+  background: $background-white; // Fundo branco do modelo
+  border-radius: $border-radius; // Raio da borda do modelo
+  box-shadow: $shadow-sm;      // Sombra pequena do modelo
+  transition: $transition;       // Transição do modelo
+  padding: $spacing-lg;          // Padding do card content do modelo
+  display: flex;                 // Para organizar os campos em coluna
+  flex-direction: column;
+  gap: $spacing-md;              // Espaçamento entre campos
+
+  &:hover {
+    box-shadow: $shadow-md;    // Sombra média no hover do modelo
+  }
+
+  // Estilos globais para campos de formulário (MatForm-Field)
+  // Reutilizando as variáveis do modelo para as cores de contorno, labels, etc.
+  ::ng-deep {
+    .mat-form-field-appearance-outline {
+      .mat-form-field-outline {
+        color: $border-color; // Cor da borda padrão
+      }
+
+      .mat-form-field-outline-thick {
+        color: $primary-color; // Cor da borda focada
+      }
+
+      &.mat-focused {
+        .mat-form-field-outline-thick {
+          color: $primary-color;
+        }
+
+        .mat-form-field-label {
+          color: $primary-color;
+        }
+      }
+    }
+
+    .mat-form-field-label {
+      color: $text-secondary; // Cor da label padrão
+    }
+
+    .mat-input-element {
+      color: $text-primary; // Cor do texto digitado
+    }
+
+    .mat-form-field-suffix {
+      color: $text-secondary; // Cor de ícones no sufixo
     }
   }
 
-  // Container do formulário
-  .form-container {
-    background-color: $background-light;
-    padding: $spacing-lg; // Usando variável de espaçamento
-    border-radius: $border-radius;
-    box-shadow: $shadow-sm; // Usando variável de sombra
+  mat-form-field {
+    width: 100%; // Campo ocupa 100% da largura
+    // margin-bottom: 0; // Removido pois o `gap` do flexbox já controla
+  }
+
+  // Estilo para mensagens de erro
+  mat-error {
+    font-size: 12px; // Tamanho da fonte fixo, ou usar --font-size-xs se globalmente
+    color: $warn-color; // Cor de aviso
+    margin-top: $spacing-xs / 2; // Metade do espaçamento XS para margem superior
+  }
+
+  // Botões de ação
+  .form-actions {
     display: flex;
-    flex-direction: column;
-    gap: $spacing-md; // Espaço entre os campos do formulário
+    justify-content: flex-end; // Alinha os botões à direita
+    gap: $spacing-md;          // Espaçamento entre os botões
+    margin-top: $spacing-lg;    // Margem superior
+    padding-top: $spacing-lg;   // Padding superior com borda
+    border-top: 1px solid $border-color; // Borda superior
 
-    mat-form-field {
-      width: 100%;
-      margin-bottom: 0; // Removido o margin-bottom para usar o gap do flexbox
-    }
-
-    // Estilo para mensagens de erro
-    mat-error {
-      font-size: 0.75em; // 12px
-      color: $warn-color;
-      margin-top: $spacing-sm / 2; // Usando variável de espaçamento
-    }
-
-    // Botões de ação do formulário
-    .form-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: $spacing-md; // Usando variável de espaçamento
-      margin-top: $spacing-lg;
-
-      button {
-        min-width: 120px;
-        transition: $transition; // Usando variável de transição
-
-        mat-icon {
-          margin-right: $spacing-sm; // Usando variável de espaçamento
-        }
+    button {
+      // Estilos de botão globais já devem ser aplicados.
+      // Apenas ajustando o que for específico aqui.
+      mat-icon {
+        margin-right: $spacing-xs; // Margem para o ícone dentro do botão
       }
     }
   }
 }
 
 /* -----------------------------------------------------------
- * Media Queries para Responsividade
+ * Media Queries (Adaptadas ao novo modelo)
  * ----------------------------------------------------------- */
 
-// Telas pequenas (smartphones em modo retrato, até 768px)
 @media (max-width: 768px) {
   .exercise-create-container {
-    padding: $spacing-md; // Usando variável de espaçamento
-    margin: 0 $spacing-md; // Adicionado margin lateral para telas menores
+    padding: $spacing-md; // Padding do container em telas menores
+  }
 
-    .header {
-      padding: $spacing-md; // Usando variável de espaçamento
-
-      h1 {
-        font-size: 20px;
+  .header {
+    .title-section {
+      h1 { // Ajustando o tamanho da fonte do título em telas menores
+        font-size: 24px;
       }
     }
+  }
 
-    .form-container {
-      padding: $spacing-md; // Usando variável de espaçamento
-      gap: $spacing-sm; // Reduzido o espaçamento entre campos
+  .form-container {
+    padding: $spacing-md; // Padding do card em telas menores
+  }
+
+  .form-actions {
+    flex-direction: column-reverse; // Inverte a ordem e empilha os botões
+
+    button {
+      width: 100%; // Botões ocupam 100% da largura
     }
   }
 }
 
-// Telas muito pequenas (smartphones menores, até 480px)
 @media (max-width: 480px) {
   .exercise-create-container {
-    padding: $spacing-sm; // Usando variável de espaçamento
-    margin: 0 $spacing-sm; // Adicionado margin lateral para telas muito pequenas
+    padding: $spacing-sm; // Padding do container em telas muito pequenas
+  }
 
-    .header {
-      padding: $spacing-sm; // Usando variável de espaçamento
-
-      mat-icon {
-        font-size: 24px;
-        width: 24px;
-        height: 24px;
-      }
-
-      h1 {
-        font-size: 18px;
-      }
-    }
-
-    .form-container {
-      padding: $spacing-sm; // Usando variável de espaçamento
-
-      .form-actions {
-        flex-direction: column; // Botões empilhados em telas muito pequenas
-        gap: $spacing-sm; // Espaçamento entre botões empilhados
-
-        button {
-          width: 100%; // Botões ocupam a largura total
-        }
+  .header {
+    .title-section {
+      h1 { // Ajustando o tamanho da fonte do título em telas muito pequenas
+        font-size: 20px;
       }
     }
   }
