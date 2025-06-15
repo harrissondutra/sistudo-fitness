@@ -58,9 +58,11 @@
             </div>
           </div>
 
-          <!-- Seção de Ações Rápidas -->
-          <div class="dashboard-section quick-actions">
-            <h2 class="section-title">Ações Rápidas</h2>
+
+
+          <!-- NOVA SEÇÃO: Listagens -->
+          <div class="dashboard-section listings">
+            <h2 class="section-title">Visualizar</h2>
             <div class="cards-grid">
               <mat-card class="dashboard-card action-card" routerLink="/users-list">
                 <mat-card-content>
@@ -70,19 +72,6 @@
                   <div class="action-info">
                     <h4>Listar Usuários</h4>
                     <p>Visualize todos os usuários cadastrados</p>
-                  </div>
-                  <mat-icon class="action-arrow">arrow_forward</mat-icon>
-                </mat-card-content>
-              </mat-card>
-
-              <mat-card class="dashboard-card action-card" routerLink="/register">
-                <mat-card-content>
-                  <div class="action-icon">
-                    <mat-icon>person_add</mat-icon>
-                  </div>
-                  <div class="action-info">
-                    <h4>Criar Usuário</h4>
-                    <p>Adicione um novo usuário ao sistema</p>
                   </div>
                   <mat-icon class="action-arrow">arrow_forward</mat-icon>
                 </mat-card-content>
@@ -101,6 +90,29 @@
                 </mat-card-content>
               </mat-card>
 
+              <!-- Adicione aqui outras listagens, se houver -->
+            </div>
+          </div>
+
+
+
+          <!-- NOVA SEÇÃO: Criações -->
+          <div class="dashboard-section creations">
+            <h2 class="section-title">Inserir dados</h2>
+            <div class="cards-grid">
+              <mat-card class="dashboard-card action-card" routerLink="/register">
+                <mat-card-content>
+                  <div class="action-icon">
+                    <mat-icon>person_add</mat-icon>
+                  </div>
+                  <div class="action-info">
+                    <h4>Criar Usuário</h4>
+                    <p>Adicione um novo usuário ao sistema</p>
+                  </div>
+                  <mat-icon class="action-arrow">arrow_forward</mat-icon>
+                </mat-card-content>
+              </mat-card>
+
               <mat-card class="dashboard-card action-card" routerLink="/trainning-create">
                 <mat-card-content>
                   <div class="action-icon">
@@ -113,8 +125,22 @@
                   <mat-icon class="action-arrow">arrow_forward</mat-icon>
                 </mat-card-content>
               </mat-card>
+
+              <mat-card class="dashboard-card action-card" routerLink="/create-exercise">
+                <mat-card-content>
+                  <div class="action-icon">
+                    <mat-icon>add_circle_outline</mat-icon>
+                  </div>
+                  <div class="action-info">
+                    <h4>Criar Exercício</h4>
+                    <p>Adicione um novo exercício ao sistema</p>
+                  </div>
+                  <mat-icon class="action-arrow">arrow_forward</mat-icon>
+                </mat-card-content>
+              </mat-card>
             </div>
           </div>
+
         </div>
       </ng-container>
       <router-outlet></router-outlet>

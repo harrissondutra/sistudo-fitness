@@ -53,7 +53,7 @@ export class SidenavComponent {
       links: [
         { label: 'Listar Exercícios', route: '/exercises' },
         { label: 'Criar Novo Exercício', route: '/create-exercise' },
-        { label: 'Criar Categoria', route: '/category-exercise' },
+        { label: 'Criar Categoria', route: 'category-exercise' },
       ]
     },
   ];
