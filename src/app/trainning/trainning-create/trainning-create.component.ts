@@ -93,7 +93,7 @@ export class TrainningCreateComponent implements OnInit {
           this.users = users;
         },
         error: (error: HttpErrorResponse) => {
-          this.handleError('Erro ao carregar usuários', error);
+          this.handleError('Erro ao carregar clientes', error);
         }
       });
   }
@@ -109,13 +109,13 @@ export class TrainningCreateComponent implements OnInit {
     const selectedUser = this.users.find(u => u.id === formValue.userId);
 
     if (!selectedUser) {
-      this.showMessage('Usuário não encontrado', 'error');
+      this.showMessage('Cliente não encontrado', 'error');
       return;
     }
 
     const userId = Number(selectedUser.id);
     if (isNaN(userId)) {
-      this.showMessage('ID do usuário inválido', 'error');
+      this.showMessage('ID do Cliente inválido', 'error');
       return;
     }
 

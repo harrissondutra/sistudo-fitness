@@ -3,8 +3,8 @@
   <div class="header">
     <mat-icon>person</mat-icon>
     <div class="header-content">
-      <h1>{{ isNewUser ? 'Novo Usuário' : 'Editar Usuário' }}</h1>
-      <p class="subtitle" *ngIf="isNewUser">Adicione um novo usuário ao sistema</p>
+      <h1>{{ isNewUser ? 'Novo Cliente' : 'Editar Cliente' }}</h1>
+      <p class="subtitle" *ngIf="isNewUser">Adicione um novo Cliente ao sistema</p>
       <div class="user-name" *ngIf="!isNewUser">
         <p class="subtitle">Editando informações de:</p>
         <h2>{{ userForm.get('name')?.value }}</h2>

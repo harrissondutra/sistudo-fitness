@@ -3,18 +3,18 @@
   <!-- Cabeçalho -->
   <div class="header">
     <div class="title-section">
-      <h2>Lista de Usuários</h2>
-      <p class="subtitle">Gerencie os usuários do sistema</p>
+      <h2>Lista de Clientes</h2>
+      <p class="subtitle">Gerencie os Clientes do sistema</p>
     </div>
     <button mat-raised-button color="primary" class="new-user-btn" (click)="createUser()">
       <mat-icon>add</mat-icon>
-      <span>Novo Usuário</span>
+      <span>Novo Cliente</span>
     </button>
   </div>
 
   <div class="search-section">
     <mat-form-field appearance="outline" class="search-input">
-      <mat-label>Buscar Usuário</mat-label>
+      <mat-label>Buscar Cliente</mat-label>
       <input matInput [formControl]="searchControl" placeholder="Digite nome, email ou CPF">
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
@@ -48,12 +48,12 @@
   <!-- Mensagem quando não há dados -->
   <div *ngIf="filteredUsers && filteredUsers.length === 0 && !isLoading" class="no-data-content">
     <mat-icon>search_off</mat-icon>
-    <p>Nenhum usuário encontrado</p>
+    <p>Nenhum Cliente encontrado</p>
   </div>
 
   <!-- Indicador de carregamento -->
   <div *ngIf="isLoading" class="loading-indicator">
     <mat-spinner diameter="50"></mat-spinner>
-    <p>Carregando usuários...</p>
+    <p>Carregando Clientes...</p>
   </div>
 </div>

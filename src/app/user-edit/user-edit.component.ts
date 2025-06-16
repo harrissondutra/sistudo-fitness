@@ -134,8 +134,8 @@ export class UserEditComponent implements OnInit, OnDestroy {
           this.userForm.patchValue(user);
         },
         error: (error: Error) => {
-          console.error('Erro ao carregar usuário:', error);
-          this.snackBar.open('Erro ao carregar usuário', 'Fechar', { duration: 3000 });
+          console.error('Erro ao carregar Cliente:', error);
+          this.snackBar.open('Erro ao carregar Cliente', 'Fechar', { duration: 3000 });
         }
       });
   }
@@ -198,16 +198,16 @@ export class UserEditComponent implements OnInit, OnDestroy {
         .subscribe({
           next: () => {
             this.snackBar.open(
-              `Usuário ${userId ? 'atualizado' : 'criado'} com sucesso!`,
+              `Cliente ${userId ? 'atualizado' : 'criado'} com sucesso!`,
               'Fechar',
               { duration: 3000 }
             );
             this.router.navigate(['/users']);
           },
           error: (error: Error) => {
-            console.error(`Erro ao ${userId ? 'atualizar' : 'criar'} usuário:`, error);
+            console.error(`Erro ao ${userId ? 'atualizar' : 'criar'} Cliente:`, error);
             this.snackBar.open(
-              `Erro ao ${userId ? 'atualizar' : 'criar'} usuário`,
+              `Erro ao ${userId ? 'atualizar' : 'criar'} Cliente`,
               'Fechar',
               { duration: 3000 }
             );

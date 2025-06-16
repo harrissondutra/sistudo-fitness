@@ -45,8 +45,8 @@ export class UserViewComponent implements OnInit {
         this.isLoading = false;
       },
       error: (error) => {
-        console.error('Erro ao carregar usuário:', error);
-        this.snackBar.open('Erro ao carregar usuário', 'Fechar', { duration: 3000 });
+        console.error('Erro ao carregar Cliente:', error);
+        this.snackBar.open('Erro ao carregar Cliente', 'Fechar', { duration: 3000 });
         this.router.navigate(['/users']);
       }
     });

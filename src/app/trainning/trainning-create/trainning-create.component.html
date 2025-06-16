@@ -28,14 +28,14 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Usuário</mat-label>
+      <mat-label>Cliente</mat-label>
       <mat-select formControlName="userId">
-        <mat-option>-- Selecione um usuário --</mat-option> <!-- Opção para campo vazio/placeholder -->
+        <mat-option>-- Selecione um Cliente --</mat-option> <!-- Opção para campo vazio/placeholder -->
         <mat-option *ngFor="let user of users" [value]="user.id">
           {{user.name}}
         </mat-option>
       </mat-select>
-      <mat-error *ngIf="trainingForm.get('userId')?.hasError('required') && trainingForm.get('userId')?.touched">Selecione um usuário</mat-error>
+      <mat-error *ngIf="trainingForm.get('userId')?.hasError('required') && trainingForm.get('userId')?.touched">Selecione um Cliente</mat-error>
     </mat-form-field>
 
     <!-- Botões de Ação -->

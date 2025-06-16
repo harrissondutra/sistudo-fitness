@@ -35,10 +35,10 @@ export class SidenavComponent {
   // Itens de menu que terão painéis de expansão (anteriormente 'menuItems')
   expandableMenuItems: MenuItem[] = [
     {
-      title: 'Usuários',
+      title: 'Clientes',
       links: [
-        { label: 'Listar Usuários', route: '/users-list' },
-        { label: 'Criar Novo Usuário', route: '/register' },
+        { label: 'Listar Clientes', route: '/users-list' },
+        { label: 'Criar Novo Cliente', route: '/register' },
       ]
     },
     {

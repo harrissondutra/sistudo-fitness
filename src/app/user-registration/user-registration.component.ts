@@ -81,16 +81,16 @@ export class UserRegistrationComponent implements OnInit {
 
       this.userService.createUser(newUser).subscribe({
         next: (response) => {
-          console.log('Usuário cadastrado com sucesso!', response);
-          this.snackBar.open('Usuário cadastrado com sucesso!', 'Fechar', { duration: 3000 }); // Substitui alert()
+          console.log('Cliente cadastrado com sucesso!', response);
+          this.snackBar.open('Cliente cadastrado com sucesso!', 'Fechar', { duration: 3000 }); // Substitui alert()
           // Em vez de apenas reset(), reinicializa o formulário para um estado limpo
           this.initializeForm();
           // Redireciona se a rota existir, senão remova esta linha ou ajuste para a rota desejada
           // this.router.navigate(['/users']);
         },
         error: (error) => {
-          console.error('Erro ao cadastrar usuário:', error);
-          this.snackBar.open('Erro ao cadastrar usuário. Verifique o console para mais detalhes.', 'Fechar', { duration: 5000 }); // Substitui alert()
+          console.error('Erro ao cadastrar Cliente:', error);
+          this.snackBar.open('Erro ao cadastrar Cliente. Verifique o console para mais detalhes.', 'Fechar', { duration: 5000 }); // Substitui alert()
         }
       });
     } else {

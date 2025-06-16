@@ -120,7 +120,7 @@ export class CreateExerciseComponent implements OnInit {
 
   /**
    * Função auxiliar para lidar com erros de requisição HTTP e exibir mensagens no snackbar.
-   * @param message Mensagem amigável para o usuário.
+   * @param message Mensagem amigável para o Cliente.
    * @param error O objeto HttpErrorResponse contendo detalhes do erro.
    */
   private handleError(message: string, error: HttpErrorResponse): void {

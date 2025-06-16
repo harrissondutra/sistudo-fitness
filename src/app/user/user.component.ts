@@ -48,7 +48,7 @@ export class UserComponent implements OnInit {
         this.loadTrainnings();
       },
       error: (error) => {
-        console.error('Erro ao carregar dados do usuário:', error);
+        console.error('Erro ao carregar dados do Cliente:', error);
       }
     });
   }

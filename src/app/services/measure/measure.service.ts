@@ -13,8 +13,8 @@ export class MeasureService {
   constructor(private http: HttpClient) { }
 
   /**
-   * Busca as medidas de um usuário específico.
-   * @param userId O ID do usuário.
+   * Busca as medidas de um Cliente específico.
+   * @param userId O ID do Cliente.
    * @returns Um Observable com o objeto Measure.
    */
   getMeasureByUserId(userId: number): Observable<Measure> {

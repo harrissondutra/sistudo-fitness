@@ -1,12 +1,12 @@
 # Sistudo Fitness
 
-Sistudo Fitness é um aplicativo web desenvolvido em Angular para controle de treinamentos fitness. O objetivo do sistema é facilitar o acompanhamento de treinos, perfis de usuários e configurações personalizadas para academias, personal trainers e praticantes de atividades físicas.
+Sistudo Fitness é um aplicativo web desenvolvido em Angular para controle de treinamentos fitness. O objetivo do sistema é facilitar o acompanhamento de treinos, perfis de clientes e configurações personalizadas para academias, personal trainers e praticantes de atividades físicas.
 
 ## Funcionalidades
 
-- Cadastro e gerenciamento de perfis de usuários
+- Cadastro e gerenciamento de perfis de clientes
 - Visualização e edição de treinos
-- Configurações personalizadas para cada usuário
+- Configurações personalizadas para cada Cliente
 - Interface responsiva e moderna baseada no Angular Material
 
 ## Tecnologias Utilizadas
@@ -39,7 +39,7 @@ Sistudo Fitness é um aplicativo web desenvolvido em Angular para controle de tr
 - `src/app/home`: Componente principal e layout do app
 - `src/app/shared/sidenav`: Menu lateral de navegação
 - `src/app/shared/toolbar`: Barra superior
-- `src/app/profile`: Perfil do usuário
+- `src/app/profile`: Perfil do Cliente
 - `src/app/settings`: Configurações
 
 ## Principais Rotas da API

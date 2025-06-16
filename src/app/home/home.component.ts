@@ -82,7 +82,7 @@ export class HomeComponent implements OnInit {
         this.loading = false;
       }),
       catchError(error => {
-        console.error('Erro ao carregar a contagem total de usuários:', error);
+        console.error('Erro ao carregar a contagem total de clientes:', error);
         this.totalUsersCount = 0;
         this.loading = false;
         return of([]);

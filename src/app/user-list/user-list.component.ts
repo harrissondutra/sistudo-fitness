@@ -39,9 +39,9 @@ import { IonicModule } from '@ionic/angular';
   styleUrls: ['./user-list.component.scss']
 })
 export class UserListComponent implements OnInit {
-  // Lista original de todos os usuários
+  // Lista original de todos os clientes
   allUsers: User[] = [];
-  // Lista de usuários filtrados para exibição no HTML
+  // Lista de clientes filtrados para exibição no HTML
   filteredUsers: User[] = [];
 
   isLoading = false; // Para controlar o indicador de carregamento
@@ -68,8 +68,8 @@ export class UserListComponent implements OnInit {
   // ngAfterViewInit não é mais necessário para MatPaginator/MatSort
 
   /**
-   * Carrega todos os usuários da API usando o UserService.
-   * Os usuários são armazenados em 'allUsers' e, em seguida, filtrados para 'filteredUsers'.
+   * Carrega todos os clientes da API usando o UserService.
+   * Os clientes são armazenados em 'allUsers' e, em seguida, filtrados para 'filteredUsers'.
    */
   loadAllUsers(): void {
     this.isLoading = true; // Ativa o indicador de carregamento
@@ -79,8 +79,8 @@ export class UserListComponent implements OnInit {
         this.applyFilter(this.searchControl.value || ''); // Aplica o filtro inicial ou o filtro atual
       }),
       catchError(error => {
-        console.error('Erro ao carregar usuários:', error);
-        this.snackBar.open('Erro ao carregar usuários. Por favor, tente novamente mais tarde.', 'Fechar', { duration: 5000 });
+        console.error('Erro ao carregar clientes:', error);
+        this.snackBar.open('Erro ao carregar clientes. Por favor, tente novamente mais tarde.', 'Fechar', { duration: 5000 });
         this.allUsers = []; // Garante que a lista esteja vazia em caso de erro
         this.filteredUsers = []; // Garante que a lista filtrada esteja vazia em caso de erro
         return of([]); // Retorna um Observable vazio para que a cadeia não seja quebrada
@@ -90,7 +90,7 @@ export class UserListComponent implements OnInit {
   }
 
   /**
-   * Aplica o filtro manual aos dados dos usuários.
+   * Aplica o filtro manual aos dados dos clientes.
    * Filtra 'allUsers' e atualiza 'filteredUsers'.
    * @param filterValue O valor a ser usado como filtro.
    */
@@ -98,7 +98,7 @@ export class UserListComponent implements OnInit {
     const lowerCaseFilter = filterValue.trim().toLowerCase();
 
     if (!lowerCaseFilter) {
-      this.filteredUsers = [...this.allUsers]; // Se não houver filtro, mostra todos os usuários
+      this.filteredUsers = [...this.allUsers]; // Se não houver filtro, mostra todos os clientes
       return;
     }
 
@@ -111,12 +111,12 @@ export class UserListComponent implements OnInit {
   }
 
   /**
-   * Lida com a exclusão de um usuário após confirmação.
-   * @param id O ID do usuário a ser apagado.
+   * Lida com a exclusão de um Cliente após confirmação.
+   * @param id O ID do Cliente a ser apagado.
    */
   deleteUser(id: string | undefined): void {
     if (!id) {
-      this.snackBar.open('ID do usuário inválido para exclusão.', 'Fechar', { duration: 3000 });
+      this.snackBar.open('ID do Cliente inválido para exclusão.', 'Fechar', { duration: 3000 });
       return;
     }
 
@@ -124,7 +124,7 @@ export class UserListComponent implements OnInit {
       width: '400px',
       data: {
         title: 'Confirmar Exclusão',
-        message: 'Tem certeza que deseja excluir este usuário?',
+        message: 'Tem certeza que deseja excluir este Cliente?',
         confirmText: 'Excluir',
         cancelText: 'Cancelar'
       }
@@ -137,12 +137,12 @@ export class UserListComponent implements OnInit {
           finalize(() => this.isLoading = false) // Desativa o indicador
         ).subscribe({
           next: () => {
-            this.snackBar.open('Usuário excluído com sucesso!', 'Fechar', { duration: 3000 });
+            this.snackBar.open('Cliente excluído com sucesso!', 'Fechar', { duration: 3000 });
             this.loadAllUsers(); // Recarrega a lista após a exclusão
           },
           error: (error) => {
-            console.error('Erro ao excluir usuário:', error);
-            this.snackBar.open('Erro ao excluir usuário. Detalhes: ' + (error.error?.message || error.message), 'Fechar', { duration: 5000 });
+            console.error('Erro ao excluir Cliente:', error);
+            this.snackBar.open('Erro ao excluir Cliente. Detalhes: ' + (error.error?.message || error.message), 'Fechar', { duration: 5000 });
           }
         });
       }
@@ -150,23 +150,23 @@ export class UserListComponent implements OnInit {
   }
 
   /**
-   * Navega para a tela de criação de um novo usuário.
+   * Navega para a tela de criação de um novo Cliente.
    */
   createUser(): void {
-    this.router.navigate(['/register']); // Rota para a tela de criação de usuário
+    this.router.navigate(['/register']); // Rota para a tela de criação de Cliente
   }
 
   /**
-   * Navega para a tela de edição do usuário.
-   * @param user O usuário a ser editado.
+   * Navega para a tela de edição do Cliente.
+   * @param user O Cliente a ser editado.
    */
   onEdit(user: User): void {
     this.router.navigate(['/users-edit', user.id]);
   }
 
   /**
-   * Navega para a tela de visualização do usuário.
-   * @param user O usuário a ser visualizado.
+   * Navega para a tela de visualização do Cliente.
+   * @param user O Cliente a ser visualizado.
    */
   onView(user: User): void {
     this.router.navigate(['/user', user.id]);

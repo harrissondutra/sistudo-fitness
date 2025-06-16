@@ -4,6 +4,6 @@ export interface Trainning {
   id?: number;
   name: string;
   exercises: Exercise[];
-  userId: number;   // Agora é apenas o ID do usuário
+  userId: number;   // Agora é apenas o ID do Cliente
   active: boolean;
 }
