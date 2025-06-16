@@ -10,7 +10,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { HttpErrorResponse, HttpClientModule } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
 
 // Importe as interfaces de modelo e serviços necessários
@@ -33,7 +33,11 @@ import { ExerciseCategoryService } from '../../services/exercise/exercise-catego
     MatSelectModule,
     MatSnackBarModule,
     MatTooltipModule,
-    HttpClientModule
+    
+// TODO: `HttpClientModule` should not be imported into a component directly.
+// Please refactor the code to add `provideHttpClient()` call to the provider list in the
+// application bootstrap logic and remove the `HttpClientModule` import from this component.
+HttpClientModule
   ]
 })
 export class CreateExerciseComponent implements OnInit {

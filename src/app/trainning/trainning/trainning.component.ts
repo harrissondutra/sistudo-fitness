@@ -19,7 +19,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog'; // Para d
 // Exemplo:
 // import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // Para o spinner de carregamento
-import { HttpClientModule } from '@angular/common/http'; // Para permitir injeção do HttpClient no serviço
+import {} from '@angular/common/http'; // Para permitir injeção do HttpClient no serviço
 
 // Módulo Ionic (necessário para ion-list, ion-item, ion-button)
 import { IonicModule } from '@ionic/angular';
@@ -42,7 +42,11 @@ import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dial
     MatSnackBarModule,
     MatDialogModule,
     MatProgressSpinnerModule,
-    HttpClientModule, // Necessário para a injeção do HttpClient
+    
+// TODO: `HttpClientModule` should not be imported into a component directly.
+// Please refactor the code to add `provideHttpClient()` call to the provider list in the
+// application bootstrap logic and remove the `HttpClientModule` import from this component.
+HttpClientModule, // Necessário para a injeção do HttpClient
     IonicModule, // Adicionado IonicModule
     DatePipe // Adicionado DatePipe para o pipe de data no HTML
   ],
