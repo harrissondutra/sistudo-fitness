@@ -1,9 +1,9 @@
 @use '@angular/material' as mat;
 
 $toolbar-height: 64px;
-$sidenav-bg: mat.get-color-from-palette(mat.$indigo-palette, 700);
-$sidenav-text: mat.get-color-from-palette(mat.$grey-palette, 50);
-$sidenav-active: mat.get-color-from-palette(mat.$indigo-palette, 500);
+$sidenav-bg: mat.m2-get-color-from-palette(mat.$m2-indigo-palette, 700);
+$sidenav-text: mat.m2-get-color-from-palette(mat.$m2-grey-palette, 50);
+$sidenav-active: mat.m2-get-color-from-palette(mat.$m2-indigo-palette, 500);
 .logo {
   height: $toolbar-height;
   display: flex;

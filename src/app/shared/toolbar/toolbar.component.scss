@@ -1,7 +1,7 @@
 @use '@angular/material' as mat;
 
 // Define as cores da paleta Material Design
-$toolbar-bg: mat.get-color-from-palette(mat.$indigo-palette, 700); // Tom um pouco mais escuro para maior profundidade
+$toolbar-bg: mat.m2-get-color-from-palette(mat.$m2-indigo-palette, 700); // Tom um pouco mais escuro para maior profundidade
 $icon-color: white; // Cor dos ícones
 $text-color: white; // Cor do texto principal na toolbar
 $primary-text-color: #333; // Cor para texto principal em cards, etc. (se aplicável fora da toolbar)
@@ -106,11 +106,11 @@ mat-toolbar {
         .mat-form-field-outline-gap,
         .mat-form-field-outline-end {
             // Cor da borda no foco, um azul mais claro da paleta Material
-            border-color: mat.get-color-from-palette(mat.$light-blue-palette, 200) !important;
+            border-color: mat.m2-get-color-from-palette(mat.$m2-light-blue-palette, 200) !important;
         }
         .mat-form-field-label {
           // Cor do label (placeholder) no foco
-          color: mat.get-color-from-palette(mat.$light-blue-palette, 200) !important;
+          color: mat.m2-get-color-from-palette(mat.$m2-light-blue-palette, 200) !important;
         }
       }
 
