@@ -13,6 +13,7 @@ import { ExerciseCategory } from '../../models/exercise-category'; // ajuste o c
 
 @Component({
     selector: 'app-category-exercise',
+    standalone: true,
     imports: [
     ReactiveFormsModule,
     MatFormFieldModule,

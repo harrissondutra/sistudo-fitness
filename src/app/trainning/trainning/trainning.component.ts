@@ -29,6 +29,7 @@ import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dial
 
 @Component({
     selector: 'app-trainning-list',
+    standalone: true,
     imports: [
     MatButtonModule,
     MatIconModule,
@@ -39,13 +40,12 @@ import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dial
     MatSnackBarModule,
     MatDialogModule,
     MatProgressSpinnerModule,
-    HttpClientModule,
     IonicModule,
     DatePipe
 ],
-    templateUrl: './trainning.component.html', // Alterado para o HTML da lista de treinos
-    styleUrls: ['./trainning.component.scss'], // Alterado para o SCSS da lista de treinos
-    providers: [DatePipe] // Fornecer DatePipe se for usado em serviços ou pipes personalizados
+    templateUrl: './trainning.component.html',
+    styleUrls: ['./trainning.component.scss'],
+    providers: [DatePipe]
 })
 export class TrainningComponent implements OnInit { // Mantido o nome `TrainningComponent` conforme o componente original
 

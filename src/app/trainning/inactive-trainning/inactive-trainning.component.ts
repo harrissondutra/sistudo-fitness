@@ -29,6 +29,7 @@ import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dial
 
 @Component({
     selector: 'app-trainning-list',
+    standalone: true,
     imports: [
     MatButtonModule,
     MatIconModule,
@@ -39,7 +40,6 @@ import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dial
     MatSnackBarModule,
     MatDialogModule,
     MatProgressSpinnerModule,
-    HttpClientModule,
     IonicModule,
     DatePipe
 ],

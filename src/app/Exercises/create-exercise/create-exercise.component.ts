@@ -22,6 +22,7 @@ import { ExerciseCategoryService } from '../../services/exercise/exercise-catego
     selector: 'app-create-exercise',
     templateUrl: './create-exercise.component.html',
     styleUrls: ['./create-exercise.component.scss'],
+    standalone: true,
     imports: [
     ReactiveFormsModule,
     MatIconModule,
@@ -30,8 +31,7 @@ import { ExerciseCategoryService } from '../../services/exercise/exercise-catego
     MatInputModule,
     MatSelectModule,
     MatSnackBarModule,
-    MatTooltipModule,
-    HttpClientModule
+    MatTooltipModule
 ]
 })
 export class CreateExerciseComponent implements OnInit {
