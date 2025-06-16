@@ -1,18 +1,23 @@
-<mat-nav-list>
+<mat-nav-list [class.collapsed]="collapsed">
   <!-- Link Home direto -->
   <div class="logo">
     <a mat-list-item >
-      <img src="../../../assets/images/Logo.png" alt="Logo Sistudo" width="200">
+      <img src="../../../assets/images/Logo.png" alt="Logo Sistudo" [class.hidden]="collapsed" width="200">
       <!-- <mat-icon matListItemIcon>Sistudo</mat-icon> -->
     </a>
   </div>
 
+  <button *ngIf="collapsed" mat-icon-button (click)="expandSidenav()" style="margin: 8px;">
+    <mat-icon>chevron_right</mat-icon>
+  </button>
+
   <mat-accordion>
     @for (item of expandableMenuItems; track item) {
-      <mat-expansion-panel #panel>
+      <mat-expansion-panel #panel [class.collapsed]="collapsed">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            {{ item.title }}
+            <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+            <span [class.hidden]="collapsed">{{ item.title }}</span>
           </mat-panel-title>
         </mat-expansion-panel-header>
         <mat-nav-list>
@@ -22,7 +27,7 @@
               [routerLink]="link.route"
               (click)="onLinkClick()"
               >
-              <span>{{ link.label }}</span>
+              <span [class.hidden]="collapsed">{{ link.label }}</span>
             </a>
           }
         </mat-nav-list>

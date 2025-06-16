@@ -4,6 +4,7 @@ $toolbar-height: 64px;
 $sidenav-bg: mat.m2-get-color-from-palette(mat.$m2-indigo-palette, 700);
 $sidenav-text: mat.m2-get-color-from-palette(mat.$m2-grey-palette, 50);
 $sidenav-active: mat.m2-get-color-from-palette(mat.$m2-indigo-palette, 500);
+
 .logo {
   height: $toolbar-height;
   display: flex;
@@ -13,6 +14,7 @@ $sidenav-active: mat.m2-get-color-from-palette(mat.$m2-indigo-palette, 500);
   color: $sidenav-text;
   text-align: center; // Garante centralização de texto, se houver
 }
+
 mat-sidenav {
   background: $sidenav-bg;
   color: $sidenav-text;
@@ -57,4 +59,30 @@ a.mat-list-item {
     background: $sidenav-active;
     color: white;
   }
+}
+
+::ng-deep .mat-mdc-list-item-icon {
+  margin-right: 16px !important;
+}
+
+::ng-deep .mat-expansion-panel-body {
+  padding: 0 16px 16px !important;
+}
+
+.hidden {
+  display: none !important;
+}
+
+mat-nav-list.collapsed {
+  width: 64px;
+}
+
+mat-expansion-panel.collapsed {
+  ::ng-deep .mat-expansion-panel-header {
+    padding: 0 16px;
+  }
+}
+
+::ng-deep .mat-expansion-panel-header {
+  padding: 0 16px;
 }
