@@ -14,12 +14,16 @@
       <mat-label>Nome da Categoria</mat-label>
       <input matInput formControlName="name" placeholder="Ex: Treino de Força">
       <!-- Validation messages for the 'name' field -->
-      <mat-error *ngIf="categoryForm.get('name')?.hasError('required') && categoryForm.get('name')?.touched">
-        O nome da categoria é obrigatório.
-      </mat-error>
-      <mat-error *ngIf="categoryForm.get('name')?.hasError('minlength') && categoryForm.get('name')?.touched">
-        O nome deve ter no mínimo 3 caracteres.
-      </mat-error>
+      @if (categoryForm.get('name')?.hasError('required') && categoryForm.get('name')?.touched) {
+        <mat-error>
+          O nome da categoria é obrigatório.
+        </mat-error>
+      }
+      @if (categoryForm.get('name')?.hasError('minlength') && categoryForm.get('name')?.touched) {
+        <mat-error>
+          O nome deve ter no mínimo 3 caracteres.
+        </mat-error>
+      }
     </mat-form-field>
 
     <!-- Form Field for Category Description (Optional) -->
@@ -43,7 +47,7 @@
         type="submit"
         [disabled]="categoryForm.invalid"
         matTooltip="{{ categoryForm.invalid ? 'Preencha todos os campos obrigatórios e válidos' : 'Salvar categoria' }}"
-      >
+        >
         <mat-icon>save</mat-icon>
         Salvar Categoria
       </button>

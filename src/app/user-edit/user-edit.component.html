@@ -4,11 +4,15 @@
     <mat-icon>person</mat-icon>
     <div class="header-content">
       <h1>{{ isNewUser ? 'Novo Cliente' : 'Editar Cliente' }}</h1>
-      <p class="subtitle" *ngIf="isNewUser">Adicione um novo Cliente ao sistema</p>
-      <div class="user-name" *ngIf="!isNewUser">
-        <p class="subtitle">Editando informações de:</p>
-        <h2>{{ userForm.get('name')?.value }}</h2>
-      </div>
+      @if (isNewUser) {
+        <p class="subtitle">Adicione um novo Cliente ao sistema</p>
+      }
+      @if (!isNewUser) {
+        <div class="user-name">
+          <p class="subtitle">Editando informações de:</p>
+          <h2>{{ userForm.get('name')?.value }}</h2>
+        </div>
+      }
     </div>
   </div>
 
@@ -25,14 +29,20 @@
           <mat-form-field appearance="outline">
             <mat-label>Nome</mat-label>
             <input matInput formControlName="name" placeholder="Nome completo">
-            <mat-error *ngIf="userForm.get('name')?.hasError('required')">Nome é obrigatório</mat-error>
+            @if (userForm.get('name')?.hasError('required')) {
+              <mat-error>Nome é obrigatório</mat-error>
+            }
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>E-mail</mat-label>
             <input matInput formControlName="email" placeholder="E-mail" type="email">
-            <mat-error *ngIf="userForm.get('email')?.hasError('required')">E-mail é obrigatório</mat-error>
-            <mat-error *ngIf="userForm.get('email')?.hasError('email')">E-mail inválido</mat-error>
+            @if (userForm.get('email')?.hasError('required')) {
+              <mat-error>E-mail é obrigatório</mat-error>
+            }
+            @if (userForm.get('email')?.hasError('email')) {
+              <mat-error>E-mail inválido</mat-error>
+            }
           </mat-form-field>
         </div>
 
@@ -52,23 +62,31 @@
           <mat-form-field appearance="outline">
             <mat-label>Altura (cm)</mat-label>
             <input matInput formControlName="height" type="number" min="50" max="300">
-            <mat-error *ngIf="userForm.get('height')?.hasError('min')">
-              Altura mínima é 50 cm
-            </mat-error>
-            <mat-error *ngIf="userForm.get('height')?.hasError('max')">
-              Altura máxima é 300 cm
-            </mat-error>
+            @if (userForm.get('height')?.hasError('min')) {
+              <mat-error>
+                Altura mínima é 50 cm
+              </mat-error>
+            }
+            @if (userForm.get('height')?.hasError('max')) {
+              <mat-error>
+                Altura máxima é 300 cm
+              </mat-error>
+            }
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Peso (kg)</mat-label>
             <input matInput formControlName="weight" type="number" min="20" max="500">
-            <mat-error *ngIf="userForm.get('weight')?.hasError('min')">
-              Peso mínimo é 20 kg
-            </mat-error>
-            <mat-error *ngIf="userForm.get('weight')?.hasError('max')">
-              Peso máximo é 500 kg
-            </mat-error>
+            @if (userForm.get('weight')?.hasError('min')) {
+              <mat-error>
+                Peso mínimo é 20 kg
+              </mat-error>
+            }
+            @if (userForm.get('weight')?.hasError('max')) {
+              <mat-error>
+                Peso máximo é 500 kg
+              </mat-error>
+            }
           </mat-form-field>
         </div>
       </div>
@@ -190,15 +208,17 @@
           Fotos de Evolução
         </h2>
         <div class="photos-grid">
-          <div class="photo-card" *ngFor="let photo of evolutionPhotos">
-            <img [src]="photo.url" [alt]="photo.description">
-            <div class="photo-info">
-              <span>{{ photo.date | date:'dd/MM/yyyy' }}</span>
-              <button mat-icon-button color="warn" (click)="removePhoto(photo)">
-                <mat-icon>delete</mat-icon>
-              </button>
+          @for (photo of evolutionPhotos; track photo) {
+            <div class="photo-card">
+              <img [src]="photo.url" [alt]="photo.description">
+              <div class="photo-info">
+                <span>{{ photo.date | date:'dd/MM/yyyy' }}</span>
+                <button mat-icon-button color="warn" (click)="removePhoto(photo)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
             </div>
-          </div>
+          }
           <div class="photo-upload">
             <button mat-raised-button color="primary" (click)="uploadPhoto()">
               <mat-icon>add_photo_alternate</mat-icon>
@@ -219,28 +239,32 @@
           <mat-tab label="Treino Atual">
             <div class="current-training">
               <h3>Treino em Andamento</h3>
-              <div class="training-info" *ngIf="currentTraining">
-                <p><strong>Início:</strong> {{ currentTraining.startDate | date:'dd/MM/yyyy' }}</p>
-                <p><strong>Objetivo:</strong> {{ currentTraining.goal }}</p>
-                <p><strong>Frequência:</strong> {{ currentTraining.frequency }}x por semana</p>
-                <div class="training-actions">
-                  <button mat-raised-button color="primary" (click)="viewTrainingDetails(currentTraining)">
-                    <mat-icon>visibility</mat-icon>
-                    Ver Detalhes
-                  </button>
-                  <button mat-raised-button color="accent" (click)="editTraining(currentTraining)">
-                    <mat-icon>edit</mat-icon>
-                    Editar
+              @if (currentTraining) {
+                <div class="training-info">
+                  <p><strong>Início:</strong> {{ currentTraining.startDate | date:'dd/MM/yyyy' }}</p>
+                  <p><strong>Objetivo:</strong> {{ currentTraining.goal }}</p>
+                  <p><strong>Frequência:</strong> {{ currentTraining.frequency }}x por semana</p>
+                  <div class="training-actions">
+                    <button mat-raised-button color="primary" (click)="viewTrainingDetails(currentTraining)">
+                      <mat-icon>visibility</mat-icon>
+                      Ver Detalhes
+                    </button>
+                    <button mat-raised-button color="accent" (click)="editTraining(currentTraining)">
+                      <mat-icon>edit</mat-icon>
+                      Editar
+                    </button>
+                  </div>
+                </div>
+              }
+              @if (!currentTraining) {
+                <div class="no-training">
+                  <p>Nenhum treino em andamento</p>
+                  <button mat-raised-button color="primary" (click)="createNewTraining()">
+                    <mat-icon>add</mat-icon>
+                    Criar Novo Treino
                   </button>
                 </div>
-              </div>
-              <div class="no-training" *ngIf="!currentTraining">
-                <p>Nenhum treino em andamento</p>
-                <button mat-raised-button color="primary" (click)="createNewTraining()">
-                  <mat-icon>add</mat-icon>
-                  Criar Novo Treino
-                </button>
-              </div>
+              }
             </div>
           </mat-tab>
 

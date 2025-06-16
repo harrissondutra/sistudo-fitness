@@ -20,19 +20,27 @@
             <mat-label>Nome</mat-label>
             <input matInput type="text" formControlName="name" />
             <mat-icon matSuffix>person</mat-icon>
-            <mat-error *ngIf="userForm.get('name')?.invalid && userForm.get('name')?.touched">
-              Nome é obrigatório.
-            </mat-error>
+            @if (userForm.get('name')?.invalid && userForm.get('name')?.touched) {
+              <mat-error>
+                Nome é obrigatório.
+              </mat-error>
+            }
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="full-width-input">
             <mat-label>Email</mat-label>
             <input matInput type="email" formControlName="email" />
             <mat-icon matSuffix>email</mat-icon>
-            <mat-error *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched">
-              <span *ngIf="userForm.get('email')?.errors?.['required']">Email é obrigatório.</span>
-              <span *ngIf="userForm.get('email')?.errors?.['email']">Email inválido.</span>
-            </mat-error>
+            @if (userForm.get('email')?.invalid && userForm.get('email')?.touched) {
+              <mat-error>
+                @if (userForm.get('email')?.errors?.['required']) {
+                  <span>Email é obrigatório.</span>
+                }
+                @if (userForm.get('email')?.errors?.['email']) {
+                  <span>Email inválido.</span>
+                }
+              </mat-error>
+            }
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="full-width-input">
@@ -40,10 +48,16 @@
             <input matInput type="text" formControlName="cpf" mask="000.000.000-00" [dropSpecialCharacters]="true" />
             <mat-icon matSuffix>badge</mat-icon>
             <mat-hint>11 dígitos numéricos</mat-hint>
-            <mat-error *ngIf="userForm.get('cpf')?.invalid && userForm.get('cpf')?.touched">
-              <span *ngIf="userForm.get('cpf')?.errors?.['required']">CPF é obrigatório.</span>
-              <span *ngIf="userForm.get('cpf')?.errors?.['pattern']">CPF deve conter 11 dígitos.</span>
-            </mat-error>
+            @if (userForm.get('cpf')?.invalid && userForm.get('cpf')?.touched) {
+              <mat-error>
+                @if (userForm.get('cpf')?.errors?.['required']) {
+                  <span>CPF é obrigatório.</span>
+                }
+                @if (userForm.get('cpf')?.errors?.['pattern']) {
+                  <span>CPF deve conter 11 dígitos.</span>
+                }
+              </mat-error>
+            }
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="full-width-input">
@@ -51,24 +65,36 @@
             <input matInput type="text" formControlName="weight" mask="separator.2" thousandSeparator="" />
             <mat-icon matSuffix>monitor_weight</mat-icon>
             <mat-hint>Utilize "." para separação de peso</mat-hint>
-            <mat-error *ngIf="userForm.get('weight')?.invalid && userForm.get('weight')?.touched">
-              <span *ngIf="userForm.get('weight')?.errors?.['required']">Peso é obrigatório.</span>
-              <span *ngIf="userForm.get('weight')?.errors?.['min'] || userForm.get('weight')?.errors?.['max']">
-                Peso deve ser entre 30 e 300 kg.
-              </span>
-            </mat-error>
+            @if (userForm.get('weight')?.invalid && userForm.get('weight')?.touched) {
+              <mat-error>
+                @if (userForm.get('weight')?.errors?.['required']) {
+                  <span>Peso é obrigatório.</span>
+                }
+                @if (userForm.get('weight')?.errors?.['min'] || userForm.get('weight')?.errors?.['max']) {
+                  <span>
+                    Peso deve ser entre 30 e 300 kg.
+                  </span>
+                }
+              </mat-error>
+            }
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="full-width-input">
             <mat-label>Altura (cm)</mat-label>
             <input matInput type="text" formControlName="height" mask="separator.2" thousandSeparator="" />
             <mat-icon matSuffix>height</mat-icon>
-            <mat-error *ngIf="userForm.get('height')?.invalid && userForm.get('height')?.touched">
-              <span *ngIf="userForm.get('height')?.errors?.['required']">Altura é obrigatória.</span>
-              <span *ngIf="userForm.get('height')?.errors?.['min'] || userForm.get('height')?.errors?.['max']">
-                Altura deve ser entre 50 e 300 cm.
-              </span>
-            </mat-error>
+            @if (userForm.get('height')?.invalid && userForm.get('height')?.touched) {
+              <mat-error>
+                @if (userForm.get('height')?.errors?.['required']) {
+                  <span>Altura é obrigatória.</span>
+                }
+                @if (userForm.get('height')?.errors?.['min'] || userForm.get('height')?.errors?.['max']) {
+                  <span>
+                    Altura deve ser entre 50 e 300 cm.
+                  </span>
+                }
+              </mat-error>
+            }
           </mat-form-field>
         </div>
       </mat-card-content>

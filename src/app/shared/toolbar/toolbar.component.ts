@@ -3,7 +3,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenav } from '@angular/material/sidenav';
-import { CommonModule } from '@angular/common';
+
 import { Router, RouterModule } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -13,16 +13,15 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 @Component({
     selector: 'app-toolbar',
     imports: [
-        MatToolbarModule,
-        MatIconModule,
-        MatButtonModule,
-        CommonModule,
-        RouterModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatSnackBarModule
-    ],
+    MatToolbarModule,
+    MatIconModule,
+    MatButtonModule,
+    RouterModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSnackBarModule
+],
     templateUrl: './toolbar.component.html',
     styleUrls: ['./toolbar.component.scss']
 })

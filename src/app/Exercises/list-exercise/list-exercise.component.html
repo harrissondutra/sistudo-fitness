@@ -22,37 +22,45 @@
   </div>
 
   <!-- Lista de Exercícios responsiva usando Ionic com ícones Material -->
-  <ion-list *ngIf="filteredExercises && filteredExercises.length > 0" class="exercise-ionic-list mat-elevation-z2">
-    <ion-item *ngFor="let exercise of filteredExercises">
-      <ion-label>
-        <h3 class="exercise-name">{{ exercise.name }}</h3>
-        <p class="exercise-description">Descrição: {{ exercise.description || 'N/A' }}</p>
-        <!-- Adicione mais campos aqui se necessário, por exemplo, categoria -->
-        <!-- <p *ngIf="exercise.category">Categoria: {{ exercise.category.name }}</p> -->
-      </ion-label>
-      <div class="action-buttons" slot="end">
-        <button mat-icon-button color="primary" (click)="onView(exercise)" matTooltip="Visualizar">
-          <mat-icon>visibility</mat-icon>
-        </button>
-        <button mat-icon-button color="accent" (click)="onEdit(exercise)" matTooltip="Editar">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-icon-button color="warn" (click)="deleteExercise(exercise.id?.toString())" matTooltip="Excluir">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </div>
-    </ion-item>
-  </ion-list>
+  @if (filteredExercises && filteredExercises.length > 0) {
+    <ion-list class="exercise-ionic-list mat-elevation-z2">
+      @for (exercise of filteredExercises; track exercise) {
+        <ion-item>
+          <ion-label>
+            <h3 class="exercise-name">{{ exercise.name }}</h3>
+            <p class="exercise-description">Descrição: {{ exercise.description || 'N/A' }}</p>
+            <!-- Adicione mais campos aqui se necessário, por exemplo, categoria -->
+            <!-- <p *ngIf="exercise.category">Categoria: {{ exercise.category.name }}</p> -->
+          </ion-label>
+          <div class="action-buttons" slot="end">
+            <button mat-icon-button color="primary" (click)="onView(exercise)" matTooltip="Visualizar">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button mat-icon-button color="accent" (click)="onEdit(exercise)" matTooltip="Editar">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteExercise(exercise.id?.toString())" matTooltip="Excluir">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </ion-item>
+      }
+    </ion-list>
+  }
 
   <!-- Mensagem quando não há dados -->
-  <div *ngIf="filteredExercises && filteredExercises.length === 0 && !isLoading" class="no-data-content">
-    <mat-icon>search_off</mat-icon>
-    <p>Nenhum exercício encontrado</p>
-  </div>
+  @if (filteredExercises && filteredExercises.length === 0 && !isLoading) {
+    <div class="no-data-content">
+      <mat-icon>search_off</mat-icon>
+      <p>Nenhum exercício encontrado</p>
+    </div>
+  }
 
   <!-- Indicador de carregamento (opcional, adicione isLoading no TS) -->
-  <div *ngIf="isLoading" class="loading-indicator">
-    <mat-spinner diameter="50"></mat-spinner>
-    <p>Carregando exercícios...</p>
-  </div>
+  @if (isLoading) {
+    <div class="loading-indicator">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Carregando exercícios...</p>
+    </div>
+  }
 </div>

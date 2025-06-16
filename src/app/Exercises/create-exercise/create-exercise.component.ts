@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -23,20 +23,16 @@ import { ExerciseCategoryService } from '../../services/exercise/exercise-catego
     templateUrl: './create-exercise.component.html',
     styleUrls: ['./create-exercise.component.scss'],
     imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        MatIconModule,
-        MatButtonModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatSelectModule,
-        MatSnackBarModule,
-        MatTooltipModule,
-        // TODO: `HttpClientModule` should not be imported into a component directly.
-        // Please refactor the code to add `provideHttpClient()` call to the provider list in the
-        // application bootstrap logic and remove the `HttpClientModule` import from this component.
-        HttpClientModule
-    ]
+    ReactiveFormsModule,
+    MatIconModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatSnackBarModule,
+    MatTooltipModule,
+    HttpClientModule
+]
 })
 export class CreateExerciseComponent implements OnInit {
   exerciseForm!: FormGroup;

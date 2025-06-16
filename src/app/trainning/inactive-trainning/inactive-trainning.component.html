@@ -25,31 +25,39 @@
   </div>
 
   <!-- Lista de Treinos responsiva usando Ionic com ícones Material -->
-  <ion-list *ngIf="filteredTrainnings && filteredTrainnings.length > 0" class="trainning-ionic-list mat-elevation-z2">
-    <ion-item *ngFor="let training of filteredTrainnings">
-      <ion-label>
-        <h3>{{ training.name }}</h3>
-      </ion-label>
-      <div class="action-buttons" slot="end">
-        <button mat-icon-button color="primary" (click)="editTrainning(training.id?.toString())" matTooltip="Editar Treino">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-icon-button color="warn" (click)="deleteTrainning(training.id?.toString())" matTooltip="Excluir Treino">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </div>
-    </ion-item>
-  </ion-list>
+  @if (filteredTrainnings && filteredTrainnings.length > 0) {
+    <ion-list class="trainning-ionic-list mat-elevation-z2">
+      @for (training of filteredTrainnings; track training) {
+        <ion-item>
+          <ion-label>
+            <h3>{{ training.name }}</h3>
+          </ion-label>
+          <div class="action-buttons" slot="end">
+            <button mat-icon-button color="primary" (click)="editTrainning(training.id?.toString())" matTooltip="Editar Treino">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteTrainning(training.id?.toString())" matTooltip="Excluir Treino">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </ion-item>
+      }
+    </ion-list>
+  }
 
   <!-- Mensagem quando não há dados -->
-  <div *ngIf="filteredTrainnings && filteredTrainnings.length === 0 && !isLoading" class="no-data-content">
-    <mat-icon>fitness_center</mat-icon>
-    <p>Nenhum treino encontrado.</p>
-  </div>
+  @if (filteredTrainnings && filteredTrainnings.length === 0 && !isLoading) {
+    <div class="no-data-content">
+      <mat-icon>fitness_center</mat-icon>
+      <p>Nenhum treino encontrado.</p>
+    </div>
+  }
 
   <!-- Indicador de carregamento (opcional) -->
-  <div *ngIf="isLoading" class="loading-indicator">
-    <mat-spinner diameter="50"></mat-spinner>
-    <p>Carregando treinos...</p>
-  </div>
+  @if (isLoading) {
+    <div class="loading-indicator">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Carregando treinos...</p>
+    </div>
+  }
 </div>

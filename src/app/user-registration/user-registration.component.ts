@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angula
 import { UserService } from '../services/user/user.service';
 import { User } from '../models/user';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { Location } from '@angular/common';
 
 // Importar os módulos do Angular Material
@@ -20,16 +20,15 @@ import { NgxMaskDirective } from 'ngx-mask';
 @Component({
     selector: 'app-user-registration',
     imports: [
-        ReactiveFormsModule,
-        CommonModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonModule,
-        MatSnackBarModule,
-        MatCardModule,
-        MatIconModule,
-        NgxMaskDirective
-    ],
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSnackBarModule,
+    MatCardModule,
+    MatIconModule,
+    NgxMaskDirective
+],
     templateUrl: './user-registration.component.html',
     styleUrls: ['./user-registration.component.scss']
 })

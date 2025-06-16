@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule, Router } from '@angular/router';
@@ -21,19 +21,17 @@ import { IonicModule } from '@ionic/angular';
 @Component({
     selector: 'app-user-list',
     imports: [
-        CommonModule,
-        // Removido MatTableModule, MatPaginatorModule, MatSortModule
-        MatButtonModule,
-        MatIconModule,
-        RouterModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatSnackBarModule,
-        MatDialogModule,
-        MatProgressSpinnerModule, // Adicionado para MatSpinner
-        IonicModule // Adicionado para componentes Ionic
-    ],
+    MatButtonModule,
+    MatIconModule,
+    RouterModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    MatProgressSpinnerModule,
+    IonicModule
+],
     templateUrl: './user-list.component.html',
     styleUrls: ['./user-list.component.scss']
 })

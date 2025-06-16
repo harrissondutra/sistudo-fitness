@@ -21,39 +21,55 @@
   </div>
 
   <!-- Lista responsiva usando Ionic com ícones Material -->
-  <ion-list *ngIf="filteredUsers && filteredUsers.length > 0" class="user-ionic-list mat-elevation-z2">
-    <ion-item *ngFor="let user of filteredUsers">
-      <ion-label>
-        <h3>{{ user.name }}</h3>
-        <p>Email: {{ user.email }}</p>
-        <p *ngIf="user.cpf">CPF: {{ user.cpf }}</p>
-        <p *ngIf="user.weight">Peso: {{ user.weight }} kg</p>
-        <p *ngIf="user.height">Altura: {{ user.height }} cm</p>
-        <p *ngIf="user.phone">Telefone: {{ user.phone }}</p>
-      </ion-label>
-      <div class="action-buttons" slot="end">
-        <button mat-icon-button color="primary" (click)="onView(user)" matTooltip="Visualizar">
-          <mat-icon>visibility</mat-icon>
-        </button>
-        <button mat-icon-button color="accent" (click)="onEdit(user)" matTooltip="Editar">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-icon-button color="warn" (click)="deleteUser(user.id)" matTooltip="Excluir">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </div>
-    </ion-item>
-  </ion-list>
+  @if (filteredUsers && filteredUsers.length > 0) {
+    <ion-list class="user-ionic-list mat-elevation-z2">
+      @for (user of filteredUsers; track user) {
+        <ion-item>
+          <ion-label>
+            <h3>{{ user.name }}</h3>
+            <p>Email: {{ user.email }}</p>
+            @if (user.cpf) {
+              <p>CPF: {{ user.cpf }}</p>
+            }
+            @if (user.weight) {
+              <p>Peso: {{ user.weight }} kg</p>
+            }
+            @if (user.height) {
+              <p>Altura: {{ user.height }} cm</p>
+            }
+            @if (user.phone) {
+              <p>Telefone: {{ user.phone }}</p>
+            }
+          </ion-label>
+          <div class="action-buttons" slot="end">
+            <button mat-icon-button color="primary" (click)="onView(user)" matTooltip="Visualizar">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button mat-icon-button color="accent" (click)="onEdit(user)" matTooltip="Editar">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteUser(user.id)" matTooltip="Excluir">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </ion-item>
+      }
+    </ion-list>
+  }
 
   <!-- Mensagem quando não há dados -->
-  <div *ngIf="filteredUsers && filteredUsers.length === 0 && !isLoading" class="no-data-content">
-    <mat-icon>search_off</mat-icon>
-    <p>Nenhum Cliente encontrado</p>
-  </div>
+  @if (filteredUsers && filteredUsers.length === 0 && !isLoading) {
+    <div class="no-data-content">
+      <mat-icon>search_off</mat-icon>
+      <p>Nenhum Cliente encontrado</p>
+    </div>
+  }
 
   <!-- Indicador de carregamento -->
-  <div *ngIf="isLoading" class="loading-indicator">
-    <mat-spinner diameter="50"></mat-spinner>
-    <p>Carregando Clientes...</p>
-  </div>
+  @if (isLoading) {
+    <div class="loading-indicator">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Carregando Clientes...</p>
+    </div>
+  }
 </div>

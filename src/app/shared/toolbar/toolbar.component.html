@@ -1,9 +1,11 @@
 <mat-toolbar color="primary">
   <div class="toolbar-left">
     <!-- Exemplo de botão toggle na toolbar -->
-    <button mat-icon-button (click)="sidenav.toggle()" *ngIf="sidenav">
-      <mat-icon>menu</mat-icon>
-    </button>
+    @if (sidenav) {
+      <button mat-icon-button (click)="sidenav.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+    }
     <!-- Adicionada a classe 'app-title' para estilização do cursor -->
     <span class="app-title" (click)="goToHome()">Gerenciador Fitness</span>
   </div>

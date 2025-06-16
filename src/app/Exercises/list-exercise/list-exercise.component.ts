@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core'; // Removido ViewChild, AfterViewInit
-import { CommonModule } from '@angular/common';
+
 // Removido: MatTableDataSource, MatTableModule, MatPaginator, MatPaginatorModule, MatSort, MatSortModule
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,27 +29,19 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     templateUrl: './list-exercise.component.html',
     styleUrls: ['./list-exercise.component.scss'],
     imports: [
-        CommonModule,
-        // Removido MatTableModule, MatPaginatorModule, MatSortModule
-        MatIconModule,
-        MatButtonModule,
-        MatFormFieldModule,
-        MatInputModule,
-        ReactiveFormsModule,
-        MatTooltipModule,
-        MatSnackBarModule,
-        // TODO: `HttpClientModule` should not be imported into a component directly.
-        // Please refactor the code to add `provideHttpClient()` call to the provider list in the
-        // application bootstrap logic and remove the `HttpClientModule` import from this component.
-        // TODO: `HttpClientModule` should not be imported into a component directly.
-        // Please refactor the code to add `provideHttpClient()` call to the provider list in the
-        // application bootstrap logic and remove the `HttpClientModule` import from this component.
-        HttpClientModule,
-        MatProgressSpinnerModule, // Adicionado para MatSpinner
-        ConfirmDialogComponent, // Importando o componente de diálogo de confirmação
-        MatDialogModule, // Adicionado para MatDialog
-        IonicModule // Adicionado IonicModule
-    ]
+    MatIconModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    MatTooltipModule,
+    MatSnackBarModule,
+    HttpClientModule,
+    MatProgressSpinnerModule,
+    ConfirmDialogComponent,
+    MatDialogModule,
+    IonicModule
+]
 })
 export class ListExerciseComponent implements OnInit { // Removido AfterViewInit
 

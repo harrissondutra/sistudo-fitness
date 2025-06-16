@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { TrainningService } from '../../services/trainning/trainning.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -24,16 +24,15 @@ import { finalize } from 'rxjs/operators';
     templateUrl: './trainning-create.component.html',
     styleUrls: ['./trainning-create.component.scss'],
     imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        MatIconModule,
-        MatButtonModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatSelectModule,
-        MatSnackBarModule,
-        MatTooltipModule
-    ]
+    ReactiveFormsModule,
+    MatIconModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatSnackBarModule,
+    MatTooltipModule
+]
 })
 export class TrainningCreateComponent implements OnInit {
   trainingForm!: FormGroup;

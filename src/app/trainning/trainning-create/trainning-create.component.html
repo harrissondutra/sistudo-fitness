@@ -11,31 +11,45 @@
     <mat-form-field appearance="outline">
       <mat-label>Nome do Treino</mat-label>
       <input matInput formControlName="name" placeholder="Digite o nome do treino">
-      <mat-error *ngIf="trainingForm.get('name')?.hasError('required') && trainingForm.get('name')?.touched">Nome é obrigatório</mat-error>
-      <mat-error *ngIf="trainingForm.get('name')?.hasError('minlength') && trainingForm.get('name')?.touched">Nome deve ter no mínimo 3 caracteres</mat-error>
+      @if (trainingForm.get('name')?.hasError('required') && trainingForm.get('name')?.touched) {
+        <mat-error>Nome é obrigatório</mat-error>
+      }
+      @if (trainingForm.get('name')?.hasError('minlength') && trainingForm.get('name')?.touched) {
+        <mat-error>Nome deve ter no mínimo 3 caracteres</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Exercícios</mat-label>
       <mat-select formControlName="exercises" multiple>
         <mat-option>-- Selecione os exercícios --</mat-option> <!-- Opção para campo vazio/placeholder -->
-        <mat-option *ngFor="let exercise of exercises" [value]="exercise">
-          {{exercise.name}}
-        </mat-option>
+        @for (exercise of exercises; track exercise) {
+          <mat-option [value]="exercise">
+            {{exercise.name}}
+          </mat-option>
+        }
       </mat-select>
-      <mat-error *ngIf="trainingForm.get('exercises')?.hasError('required') && trainingForm.get('exercises')?.touched">Selecione pelo menos um exercício</mat-error>
-      <mat-error *ngIf="trainingForm.get('exercises')?.hasError('minlength') && trainingForm.get('exercises')?.touched">Selecione pelo menos um exercício</mat-error>
+      @if (trainingForm.get('exercises')?.hasError('required') && trainingForm.get('exercises')?.touched) {
+        <mat-error>Selecione pelo menos um exercício</mat-error>
+      }
+      @if (trainingForm.get('exercises')?.hasError('minlength') && trainingForm.get('exercises')?.touched) {
+        <mat-error>Selecione pelo menos um exercício</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Cliente</mat-label>
       <mat-select formControlName="userId">
         <mat-option>-- Selecione um Cliente --</mat-option> <!-- Opção para campo vazio/placeholder -->
-        <mat-option *ngFor="let user of users" [value]="user.id">
-          {{user.name}}
-        </mat-option>
+        @for (user of users; track user) {
+          <mat-option [value]="user.id">
+            {{user.name}}
+          </mat-option>
+        }
       </mat-select>
-      <mat-error *ngIf="trainingForm.get('userId')?.hasError('required') && trainingForm.get('userId')?.touched">Selecione um Cliente</mat-error>
+      @if (trainingForm.get('userId')?.hasError('required') && trainingForm.get('userId')?.touched) {
+        <mat-error>Selecione um Cliente</mat-error>
+      }
     </mat-form-field>
 
     <!-- Botões de Ação -->

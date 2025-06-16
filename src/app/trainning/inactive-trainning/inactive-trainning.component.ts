@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common'; // Adicionado DatePipe
+import { DatePipe } from '@angular/common'; // Adicionado DatePipe
 // Removido: MatTableDataSource, MatTableModule, MatPaginator, MatPaginatorModule, MatSort, MatSortModule
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -30,24 +30,19 @@ import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dial
 @Component({
     selector: 'app-trainning-list',
     imports: [
-        CommonModule,
-        // Removido MatTableModule, MatPaginatorModule, MatSortModule
-        MatButtonModule,
-        MatIconModule,
-        RouterModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatSnackBarModule,
-        MatDialogModule,
-        MatProgressSpinnerModule,
-        // TODO: `HttpClientModule` should not be imported into a component directly.
-        // Please refactor the code to add `provideHttpClient()` call to the provider list in the
-        // application bootstrap logic and remove the `HttpClientModule` import from this component.
-        HttpClientModule, // Necessário para a injeção do HttpClient
-        IonicModule, // Adicionado IonicModule
-        DatePipe // Adicionado DatePipe para o pipe de data no HTML
-    ],
+    MatButtonModule,
+    MatIconModule,
+    RouterModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    MatProgressSpinnerModule,
+    HttpClientModule,
+    IonicModule,
+    DatePipe
+],
     templateUrl: './inactive-trainning.component.html',
     styleUrl: './inactive-trainning.component.scss'
 })

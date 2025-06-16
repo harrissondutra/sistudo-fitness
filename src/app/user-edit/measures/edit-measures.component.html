@@ -15,18 +15,22 @@
               <mat-label>Ombro (cm)</mat-label>
               <input matInput formControlName="ombro" type="number" min="0" max="200">
               <span matSuffix>cm</span>
-              <mat-error *ngIf="measuresForm.get('ombro')?.hasError('min') || measuresForm.get('ombro')?.hasError('max')">
-                Valor deve estar entre 0 e 200
-              </mat-error>
+              @if (measuresForm.get('ombro')?.hasError('min') || measuresForm.get('ombro')?.hasError('max')) {
+                <mat-error>
+                  Valor deve estar entre 0 e 200
+                </mat-error>
+              }
             </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>Peitoral (cm)</mat-label>
               <input matInput formControlName="peitoral" type="number" min="0" max="200">
               <span matSuffix>cm</span>
-              <mat-error *ngIf="measuresForm.get('peitoral')?.hasError('min') || measuresForm.get('peitoral')?.hasError('max')">
-                Valor deve estar entre 0 e 200
-              </mat-error>
+              @if (measuresForm.get('peitoral')?.hasError('min') || measuresForm.get('peitoral')?.hasError('max')) {
+                <mat-error>
+                  Valor deve estar entre 0 e 200
+                </mat-error>
+              }
             </mat-form-field>
           </div>
 
@@ -35,18 +39,22 @@
               <mat-label>Cintura (cm)</mat-label>
               <input matInput formControlName="cintura" type="number" min="0" max="200">
               <span matSuffix>cm</span>
-              <mat-error *ngIf="measuresForm.get('cintura')?.hasError('min') || measuresForm.get('cintura')?.hasError('max')">
-                Valor deve estar entre 0 e 200
-              </mat-error>
+              @if (measuresForm.get('cintura')?.hasError('min') || measuresForm.get('cintura')?.hasError('max')) {
+                <mat-error>
+                  Valor deve estar entre 0 e 200
+                </mat-error>
+              }
             </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>Quadril (cm)</mat-label>
               <input matInput formControlName="quadril" type="number" min="0" max="200">
               <span matSuffix>cm</span>
-              <mat-error *ngIf="measuresForm.get('quadril')?.hasError('min') || measuresForm.get('quadril')?.hasError('max')">
-                Valor deve estar entre 0 e 200
-              </mat-error>
+              @if (measuresForm.get('quadril')?.hasError('min') || measuresForm.get('quadril')?.hasError('max')) {
+                <mat-error>
+                  Valor deve estar entre 0 e 200
+                </mat-error>
+              }
             </mat-form-field>
           </div>
 
@@ -55,18 +63,22 @@
               <mat-label>Abdomem (cm)</mat-label>
               <input matInput formControlName="abdomem" type="number" min="0" max="200">
               <span matSuffix>cm</span>
-              <mat-error *ngIf="measuresForm.get('abdomem')?.hasError('min') || measuresForm.get('abdomem')?.hasError('max')">
-                Valor deve estar entre 0 e 200
-              </mat-error>
+              @if (measuresForm.get('abdomem')?.hasError('min') || measuresForm.get('abdomem')?.hasError('max')) {
+                <mat-error>
+                  Valor deve estar entre 0 e 200
+                </mat-error>
+              }
             </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>Torax (cm)</mat-label>
               <input matInput formControlName="torax" type="number" min="0" max="200">
               <span matSuffix>cm</span>
-              <mat-error *ngIf="measuresForm.get('torax')?.hasError('min') || measuresForm.get('torax')?.hasError('max')">
-                Valor deve estar entre 0 e 200
-              </mat-error>
+              @if (measuresForm.get('torax')?.hasError('min') || measuresForm.get('torax')?.hasError('max')) {
+                <mat-error>
+                  Valor deve estar entre 0 e 200
+                </mat-error>
+              }
             </mat-form-field>
           </div>
         </div>
@@ -79,18 +91,22 @@
               <mat-label>Braço Direito (cm)</mat-label>
               <input matInput formControlName="bracoDireito" type="number" min="0" max="100">
               <span matSuffix>cm</span>
-              <mat-error *ngIf="measuresForm.get('bracoDireito')?.hasError('min') || measuresForm.get('bracoDireito')?.hasError('max')">
-                Valor deve estar entre 0 e 100
-              </mat-error>
+              @if (measuresForm.get('bracoDireito')?.hasError('min') || measuresForm.get('bracoDireito')?.hasError('max')) {
+                <mat-error>
+                  Valor deve estar entre 0 e 100
+                </mat-error>
+              }
             </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>Braço Esquerdo (cm)</mat-label>
               <input matInput formControlName="bracoEsquerdo" type="number" min="0" max="100">
               <span matSuffix>cm</span>
-              <mat-error *ngIf="measuresForm.get('bracoEsquerdo')?.hasError('min') || measuresForm.get('bracoEsquerdo')?.hasError('max')">
-                Valor deve estar entre 0 e 100
-              </mat-error>
+              @if (measuresForm.get('bracoEsquerdo')?.hasError('min') || measuresForm.get('bracoEsquerdo')?.hasError('max')) {
+                <mat-error>
+                  Valor deve estar entre 0 e 100
+                </mat-error>
+              }
             </mat-form-field>
           </div>
         </div>
@@ -103,18 +119,22 @@
               <mat-label>Coxa Direita (cm)</mat-label>
               <input matInput formControlName="coxaDireita" type="number" min="0" max="100">
               <span matSuffix>cm</span>
-              <mat-error *ngIf="measuresForm.get('coxaDireita')?.hasError('min') || measuresForm.get('coxaDireita')?.hasError('max')">
-                Valor deve estar entre 0 e 100
-              </mat-error>
+              @if (measuresForm.get('coxaDireita')?.hasError('min') || measuresForm.get('coxaDireita')?.hasError('max')) {
+                <mat-error>
+                  Valor deve estar entre 0 e 100
+                </mat-error>
+              }
             </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>Coxa Esquerda (cm)</mat-label>
               <input matInput formControlName="coxaEsquerda" type="number" min="0" max="100">
               <span matSuffix>cm</span>
-              <mat-error *ngIf="measuresForm.get('coxaEsquerda')?.hasError('min') || measuresForm.get('coxaEsquerda')?.hasError('max')">
-                Valor deve estar entre 0 e 100
-              </mat-error>
+              @if (measuresForm.get('coxaEsquerda')?.hasError('min') || measuresForm.get('coxaEsquerda')?.hasError('max')) {
+                <mat-error>
+                  Valor deve estar entre 0 e 100
+                </mat-error>
+              }
             </mat-form-field>
           </div>
 
@@ -123,18 +143,22 @@
               <mat-label>Panturrilha Direita (cm)</mat-label>
               <input matInput formControlName="panturrilhaDireita" type="number" min="0" max="100">
               <span matSuffix>cm</span>
-              <mat-error *ngIf="measuresForm.get('panturrilhaDireita')?.hasError('min') || measuresForm.get('panturrilhaDireita')?.hasError('max')">
-                Valor deve estar entre 0 e 100
-              </mat-error>
+              @if (measuresForm.get('panturrilhaDireita')?.hasError('min') || measuresForm.get('panturrilhaDireita')?.hasError('max')) {
+                <mat-error>
+                  Valor deve estar entre 0 e 100
+                </mat-error>
+              }
             </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>Panturrilha Esquerda (cm)</mat-label>
               <input matInput formControlName="panturrilhaEsquerda" type="number" min="0" max="100">
               <span matSuffix>cm</span>
-              <mat-error *ngIf="measuresForm.get('panturrilhaEsquerda')?.hasError('min') || measuresForm.get('panturrilhaEsquerda')?.hasError('max')">
-                Valor deve estar entre 0 e 100
-              </mat-error>
+              @if (measuresForm.get('panturrilhaEsquerda')?.hasError('min') || measuresForm.get('panturrilhaEsquerda')?.hasError('max')) {
+                <mat-error>
+                  Valor deve estar entre 0 e 100
+                </mat-error>
+              }
             </mat-form-field>
           </div>
         </div>
@@ -147,18 +171,22 @@
               <mat-label>Abdominal (mm)</mat-label>
               <input matInput formControlName="abdominal" type="number" min="0" max="100">
               <span matSuffix>mm</span>
-              <mat-error *ngIf="measuresForm.get('abdominal')?.hasError('min') || measuresForm.get('abdominal')?.hasError('max')">
-                Valor deve estar entre 0 e 100
-              </mat-error>
+              @if (measuresForm.get('abdominal')?.hasError('min') || measuresForm.get('abdominal')?.hasError('max')) {
+                <mat-error>
+                  Valor deve estar entre 0 e 100
+                </mat-error>
+              }
             </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>Suprailiaca (mm)</mat-label>
               <input matInput formControlName="suprailiaca" type="number" min="0" max="100">
               <span matSuffix>mm</span>
-              <mat-error *ngIf="measuresForm.get('suprailiaca')?.hasError('min') || measuresForm.get('suprailiaca')?.hasError('max')">
-                Valor deve estar entre 0 e 100
-              </mat-error>
+              @if (measuresForm.get('suprailiaca')?.hasError('min') || measuresForm.get('suprailiaca')?.hasError('max')) {
+                <mat-error>
+                  Valor deve estar entre 0 e 100
+                </mat-error>
+              }
             </mat-form-field>
           </div>
 
@@ -167,18 +195,22 @@
               <mat-label>Subescapular (mm)</mat-label>
               <input matInput formControlName="subescapular" type="number" min="0" max="100">
               <span matSuffix>mm</span>
-              <mat-error *ngIf="measuresForm.get('subescapular')?.hasError('min') || measuresForm.get('subescapular')?.hasError('max')">
-                Valor deve estar entre 0 e 100
-              </mat-error>
+              @if (measuresForm.get('subescapular')?.hasError('min') || measuresForm.get('subescapular')?.hasError('max')) {
+                <mat-error>
+                  Valor deve estar entre 0 e 100
+                </mat-error>
+              }
             </mat-form-field>
 
             <mat-form-field appearance="outline">
               <mat-label>Tríceps (mm)</mat-label>
               <input matInput formControlName="triceps" type="number" min="0" max="100">
               <span matSuffix>mm</span>
-              <mat-error *ngIf="measuresForm.get('triceps')?.hasError('min') || measuresForm.get('triceps')?.hasError('max')">
-                Valor deve estar entre 0 e 100
-              </mat-error>
+              @if (measuresForm.get('triceps')?.hasError('min') || measuresForm.get('triceps')?.hasError('max')) {
+                <mat-error>
+                  Valor deve estar entre 0 e 100
+                </mat-error>
+              }
             </mat-form-field>
           </div>
 
@@ -187,9 +219,11 @@
               <mat-label>Axilar (mm)</mat-label>
               <input matInput formControlName="axilar" type="number" min="0" max="100">
               <span matSuffix>mm</span>
-              <mat-error *ngIf="measuresForm.get('axilar')?.hasError('min') || measuresForm.get('axilar')?.hasError('max')">
-                Valor deve estar entre 0 e 100
-              </mat-error>
+              @if (measuresForm.get('axilar')?.hasError('min') || measuresForm.get('axilar')?.hasError('max')) {
+                <mat-error>
+                  Valor deve estar entre 0 e 100
+                </mat-error>
+              }
             </mat-form-field>
           </div>
         </div>
@@ -204,4 +238,4 @@
       </button>
     </mat-dialog-actions>
   </form>
-</div> 
+</div>

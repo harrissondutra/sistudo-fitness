@@ -4,7 +4,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout'; // Para i
 import { Observable } from 'rxjs';
 import { map, shareReplay, take } from 'rxjs/operators'; // Adiciona 'take' para subscrições pontuais
 import { RouterModule, Router } from '@angular/router'; // Para router-outlet e navegação
-import { CommonModule } from '@angular/common'; // Para *ngIf e async pipe
+ // Para *ngIf e async pipe
 
 // Importa os módulos do Angular Material e seus componentes filhos (se for standalone)
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -20,15 +20,14 @@ import { ToolbarComponent } from './shared/toolbar/toolbar.component'; // Seu co
     templateUrl: './app.component.html', // O HTML que você forneceu
     styleUrls: ['./app.component.scss'], // Indica que é um componente standalone
     imports: [
-        CommonModule,
-        RouterModule, // Necessário para routerLink e router-outlet
-        MatSidenavModule,
-        MatToolbarModule,
-        MatButtonModule,
-        MatIconModule,
-        SidenavComponent, // Seu componente app-sidenav
-        ToolbarComponent // Seu componente app-toolbar
-    ]
+    RouterModule,
+    MatSidenavModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    SidenavComponent,
+    ToolbarComponent
+]
 })
 export class AppComponent implements OnInit {
   // Obtém uma referência à mat-sidenav usando o #sidenav do seu HTML

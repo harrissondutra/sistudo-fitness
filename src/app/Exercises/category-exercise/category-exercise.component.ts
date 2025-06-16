@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -14,15 +14,14 @@ import { ExerciseCategory } from '../../models/exercise-category'; // ajuste o c
 @Component({
     selector: 'app-category-exercise',
     imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonModule,
-        MatIconModule,
-        MatSnackBarModule,
-        MatTooltipModule
-    ],
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSnackBarModule,
+    MatTooltipModule
+],
     templateUrl: './category-exercise.component.html',
     styleUrl: './category-exercise.component.scss'
 })
