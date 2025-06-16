@@ -1,31 +1,29 @@
 <mat-nav-list>
   <!-- Link Home direto -->
-  <a mat-list-item [routerLink]="homeLink.route" (click)="onLinkClick()">
-    <mat-icon matListItemIcon>home</mat-icon>
-    {{ homeLink.label }}
+   <div class="logo">
+   <a mat-list-item >
+    <img src="../../../assets/images/Logo.png" alt="Logo Sistudo" width="200">
+    <!-- <mat-icon matListItemIcon>Sistudo</mat-icon> -->
   </a>
+  </div>
 
-  <!-- Painéis de expansão para os outros itens de menu -->
-  <mat-expansion-panel *ngFor="let item of expandableMenuItems" [expanded]="true" hideToggle>
+  <mat-accordion>
+  <mat-expansion-panel *ngFor="let item of expandableMenuItems" #panel>
     <mat-expansion-panel-header>
       <mat-panel-title>
         {{ item.title }}
       </mat-panel-title>
     </mat-expansion-panel-header>
-
-    <a mat-list-item *ngFor="let link of item.links" [routerLink]="link.route" (click)="onLinkClick()">
-      <mat-icon matListItemIcon>{{
-        link.label === 'Listar Usuários' ? 'people' :
-        link.label === 'Criar Novo Usuário' ? 'person_add' :
-        link.label === 'Exibir Treinos' ? 'fitness_center' :
-        link.label === 'Criar Novo Treino' ? 'add_box' :
-        link.label === 'Listar Exercícios' ? 'directions_run' :
-        link.label === 'Criar Novo Exercício' ? 'add_circle' :
-        link.label === 'Inserir Categoria' ? 'add_circle' :
-        link.label === 'Inativos' ? 'fitness_center' :
-        ''
-        }}</mat-icon>
-      {{ link.label }}
-    </a>
+    <mat-nav-list>
+      <a
+        mat-list-item
+        *ngFor="let link of item.links"
+        [routerLink]="link.route"
+        (click)="onLinkClick()"
+      >
+        <span>{{ link.label }}</span>
+      </a>
+    </mat-nav-list>
   </mat-expansion-panel>
+</mat-accordion>
 </mat-nav-list>

@@ -1,9 +1,18 @@
 @use '@angular/material' as mat;
 
+$toolbar-height: 64px;
 $sidenav-bg: mat.get-color-from-palette(mat.$indigo-palette, 700);
 $sidenav-text: mat.get-color-from-palette(mat.$grey-palette, 50);
 $sidenav-active: mat.get-color-from-palette(mat.$indigo-palette, 500);
-
+.logo {
+  height: $toolbar-height;
+  display: flex;
+  align-items: center;
+  justify-content: center; // Centraliza horizontalmente
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); // Sombra sutil
+  color: $sidenav-text;
+  text-align: center; // Garante centralização de texto, se houver
+}
 mat-sidenav {
   background: $sidenav-bg;
   color: $sidenav-text;
