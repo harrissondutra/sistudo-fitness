@@ -10,17 +10,16 @@ import { User } from '../models/user';
 import { Trainning } from '../models/trainning';
 
 @Component({
-  selector: 'app-user',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTableModule,
-    MatTabsModule
-  ],
-  templateUrl: './user.component.html',
-  styleUrls: ['./user.component.scss']
+    selector: 'app-user',
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTableModule,
+        MatTabsModule
+    ],
+    templateUrl: './user.component.html',
+    styleUrls: ['./user.component.scss']
 })
 export class UserComponent implements OnInit {
   user: User | null = null;

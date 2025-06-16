@@ -28,31 +28,29 @@ import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dial
 
 
 @Component({
-  selector: 'app-trainning-list', // Mantido 'app-trainning-list' conforme o HTML mais recente
-  standalone: true,
-  imports: [
-    CommonModule,
-    // Removido MatTableModule, MatPaginatorModule, MatSortModule
-    MatButtonModule,
-    MatIconModule,
-    RouterModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSnackBarModule,
-    MatDialogModule,
-    MatProgressSpinnerModule,
-    
-// TODO: `HttpClientModule` should not be imported into a component directly.
-// Please refactor the code to add `provideHttpClient()` call to the provider list in the
-// application bootstrap logic and remove the `HttpClientModule` import from this component.
-HttpClientModule, // Necessário para a injeção do HttpClient
-    IonicModule, // Adicionado IonicModule
-    DatePipe // Adicionado DatePipe para o pipe de data no HTML
-  ],
-  templateUrl: './trainning.component.html', // Alterado para o HTML da lista de treinos
-  styleUrls: ['./trainning.component.scss'], // Alterado para o SCSS da lista de treinos
-  providers: [DatePipe] // Fornecer DatePipe se for usado em serviços ou pipes personalizados
+    selector: 'app-trainning-list',
+    imports: [
+        CommonModule,
+        // Removido MatTableModule, MatPaginatorModule, MatSortModule
+        MatButtonModule,
+        MatIconModule,
+        RouterModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSnackBarModule,
+        MatDialogModule,
+        MatProgressSpinnerModule,
+        // TODO: `HttpClientModule` should not be imported into a component directly.
+        // Please refactor the code to add `provideHttpClient()` call to the provider list in the
+        // application bootstrap logic and remove the `HttpClientModule` import from this component.
+        HttpClientModule, // Necessário para a injeção do HttpClient
+        IonicModule, // Adicionado IonicModule
+        DatePipe // Adicionado DatePipe para o pipe de data no HTML
+    ],
+    templateUrl: './trainning.component.html', // Alterado para o HTML da lista de treinos
+    styleUrls: ['./trainning.component.scss'], // Alterado para o SCSS da lista de treinos
+    providers: [DatePipe] // Fornecer DatePipe se for usado em serviços ou pipes personalizados
 })
 export class TrainningComponent implements OnInit { // Mantido o nome `TrainningComponent` conforme o componente original
 

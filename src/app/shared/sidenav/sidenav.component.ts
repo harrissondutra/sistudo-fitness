@@ -14,17 +14,16 @@ interface MenuItem {
 }
 
 @Component({
-  selector: 'app-sidenav',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatListModule,
-    MatIconModule,
-    MatExpansionModule,
-    RouterModule
-  ],
-  templateUrl: './sidenav.component.html',
-  styleUrls: ['./sidenav.component.scss']
+    selector: 'app-sidenav',
+    imports: [
+        CommonModule,
+        MatListModule,
+        MatIconModule,
+        MatExpansionModule,
+        RouterModule
+    ],
+    templateUrl: './sidenav.component.html',
+    styleUrls: ['./sidenav.component.scss']
 })
 export class SidenavComponent {
   @Output() linkClicked = new EventEmitter<void>();

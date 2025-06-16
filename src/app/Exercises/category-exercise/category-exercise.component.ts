@@ -12,20 +12,19 @@ import { CategoryExerciseService } from '../../services/category-exercise/catego
 import { ExerciseCategory } from '../../models/exercise-category'; // ajuste o caminho conforme seu projeto
 
 @Component({
-  selector: 'app-category-exercise',
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatSnackBarModule,
-    MatTooltipModule
-  ],
-  templateUrl: './category-exercise.component.html',
-  styleUrl: './category-exercise.component.scss'
+    selector: 'app-category-exercise',
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatIconModule,
+        MatSnackBarModule,
+        MatTooltipModule
+    ],
+    templateUrl: './category-exercise.component.html',
+    styleUrl: './category-exercise.component.scss'
 })
 export class CategoryExerciseComponent implements OnInit {
   categoryForm!: FormGroup;

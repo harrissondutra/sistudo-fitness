@@ -28,30 +28,28 @@ import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dial
 
 
 @Component({
-  selector: 'app-trainning-list', // Mantido 'app-trainning-list' conforme o HTML mais recente
-  standalone: true,
-  imports: [
-    CommonModule,
-    // Removido MatTableModule, MatPaginatorModule, MatSortModule
-    MatButtonModule,
-    MatIconModule,
-    RouterModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSnackBarModule,
-    MatDialogModule,
-    MatProgressSpinnerModule,
-    
-// TODO: `HttpClientModule` should not be imported into a component directly.
-// Please refactor the code to add `provideHttpClient()` call to the provider list in the
-// application bootstrap logic and remove the `HttpClientModule` import from this component.
-HttpClientModule, // Necessário para a injeção do HttpClient
-    IonicModule, // Adicionado IonicModule
-    DatePipe // Adicionado DatePipe para o pipe de data no HTML
-  ],
-  templateUrl: './inactive-trainning.component.html',
-  styleUrl: './inactive-trainning.component.scss'
+    selector: 'app-trainning-list',
+    imports: [
+        CommonModule,
+        // Removido MatTableModule, MatPaginatorModule, MatSortModule
+        MatButtonModule,
+        MatIconModule,
+        RouterModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSnackBarModule,
+        MatDialogModule,
+        MatProgressSpinnerModule,
+        // TODO: `HttpClientModule` should not be imported into a component directly.
+        // Please refactor the code to add `provideHttpClient()` call to the provider list in the
+        // application bootstrap logic and remove the `HttpClientModule` import from this component.
+        HttpClientModule, // Necessário para a injeção do HttpClient
+        IonicModule, // Adicionado IonicModule
+        DatePipe // Adicionado DatePipe para o pipe de data no HTML
+    ],
+    templateUrl: './inactive-trainning.component.html',
+    styleUrl: './inactive-trainning.component.scss'
 })
 export class InactiveTrainningComponent implements OnInit { // Mantido o nome `TrainningComponent` conforme o componente original
 

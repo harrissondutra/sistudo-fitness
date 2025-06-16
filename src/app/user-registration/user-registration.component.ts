@@ -18,21 +18,20 @@ import { MatIconModule } from '@angular/material/icon';
 import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
-  selector: 'app-user-registration',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    CommonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatSnackBarModule,
-    MatCardModule,
-    MatIconModule,
-    NgxMaskDirective
-  ],
-  templateUrl: './user-registration.component.html',
-  styleUrls: ['./user-registration.component.scss']
+    selector: 'app-user-registration',
+    imports: [
+        ReactiveFormsModule,
+        CommonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatSnackBarModule,
+        MatCardModule,
+        MatIconModule,
+        NgxMaskDirective
+    ],
+    templateUrl: './user-registration.component.html',
+    styleUrls: ['./user-registration.component.scss']
 })
 export class UserRegistrationComponent implements OnInit {
   userForm!: FormGroup;

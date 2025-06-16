@@ -29,20 +29,19 @@ interface Measure {
 }
 
 @Component({
-  selector: 'app-edit-measures',
-  templateUrl: './edit-measures.component.html',
-  styleUrls: ['./edit-measures.component.scss'],
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatSnackBarModule,
-    MatDialogModule
-  ]
+    selector: 'app-edit-measures',
+    templateUrl: './edit-measures.component.html',
+    styleUrls: ['./edit-measures.component.scss'],
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatIconModule,
+        MatSnackBarModule,
+        MatDialogModule
+    ]
 })
 export class EditMeasuresComponent implements OnInit {
   measuresForm: FormGroup;

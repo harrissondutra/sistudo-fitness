@@ -19,24 +19,23 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; /
 import { IonicModule } from '@ionic/angular';
 
 @Component({
-  selector: 'app-user-list',
-  standalone: true,
-  imports: [
-    CommonModule,
-    // Removido MatTableModule, MatPaginatorModule, MatSortModule
-    MatButtonModule,
-    MatIconModule,
-    RouterModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSnackBarModule,
-    MatDialogModule,
-    MatProgressSpinnerModule, // Adicionado para MatSpinner
-    IonicModule // Adicionado para componentes Ionic
-  ],
-  templateUrl: './user-list.component.html',
-  styleUrls: ['./user-list.component.scss']
+    selector: 'app-user-list',
+    imports: [
+        CommonModule,
+        // Removido MatTableModule, MatPaginatorModule, MatSortModule
+        MatButtonModule,
+        MatIconModule,
+        RouterModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSnackBarModule,
+        MatDialogModule,
+        MatProgressSpinnerModule, // Adicionado para MatSpinner
+        IonicModule // Adicionado para componentes Ionic
+    ],
+    templateUrl: './user-list.component.html',
+    styleUrls: ['./user-list.component.scss']
 })
 export class UserListComponent implements OnInit {
   // Lista original de todos os clientes

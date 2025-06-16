@@ -27,22 +27,21 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
-  standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    MatSidenavModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCardModule,
-    SidenavComponent,
-    ToolbarComponent,
-    MatProgressSpinnerModule // Certifique-se de que MatProgressSpinnerModule está importado
-  ]
+    selector: 'app-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.scss'],
+    imports: [
+        CommonModule,
+        RouterModule,
+        MatSidenavModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatIconModule,
+        MatCardModule,
+        SidenavComponent,
+        ToolbarComponent,
+        MatProgressSpinnerModule // Certifique-se de que MatProgressSpinnerModule está importado
+    ]
 })
 // ...existing imports...
 

@@ -19,26 +19,24 @@ import { ExerciseService } from '../../services/exercise/exercise.service'; // A
 import { ExerciseCategoryService } from '../../services/exercise/exercise-category.service'; // Importação do serviço de categoria
 
 @Component({
-  selector: 'app-create-exercise',
-  templateUrl: './create-exercise.component.html',
-  styleUrls: ['./create-exercise.component.scss'],
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatIconModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatSnackBarModule,
-    MatTooltipModule,
-    
-// TODO: `HttpClientModule` should not be imported into a component directly.
-// Please refactor the code to add `provideHttpClient()` call to the provider list in the
-// application bootstrap logic and remove the `HttpClientModule` import from this component.
-HttpClientModule
-  ]
+    selector: 'app-create-exercise',
+    templateUrl: './create-exercise.component.html',
+    styleUrls: ['./create-exercise.component.scss'],
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        MatIconModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSelectModule,
+        MatSnackBarModule,
+        MatTooltipModule,
+        // TODO: `HttpClientModule` should not be imported into a component directly.
+        // Please refactor the code to add `provideHttpClient()` call to the provider list in the
+        // application bootstrap logic and remove the `HttpClientModule` import from this component.
+        HttpClientModule
+    ]
 })
 export class CreateExerciseComponent implements OnInit {
   exerciseForm!: FormGroup;

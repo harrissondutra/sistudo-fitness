@@ -25,34 +25,31 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 
 @Component({
-  selector: 'app-exercise-list', // Mantido 'app-exercise-list' conforme o HTML
-  templateUrl: './list-exercise.component.html',
-  styleUrls: ['./list-exercise.component.scss'], // Apontando para o SCSS da lista de exercícios
-  standalone: true,
-  imports: [
-    CommonModule,
-    // Removido MatTableModule, MatPaginatorModule, MatSortModule
-    MatIconModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    ReactiveFormsModule,
-    MatTooltipModule,
-    MatSnackBarModule,
-    
-// TODO: `HttpClientModule` should not be imported into a component directly.
-// Please refactor the code to add `provideHttpClient()` call to the provider list in the
-// application bootstrap logic and remove the `HttpClientModule` import from this component.
-
-// TODO: `HttpClientModule` should not be imported into a component directly.
-// Please refactor the code to add `provideHttpClient()` call to the provider list in the
-// application bootstrap logic and remove the `HttpClientModule` import from this component.
-HttpClientModule,
-    MatProgressSpinnerModule, // Adicionado para MatSpinner
-    ConfirmDialogComponent, // Importando o componente de diálogo de confirmação
-    MatDialogModule, // Adicionado para MatDialog
-    IonicModule // Adicionado IonicModule
-  ]
+    selector: 'app-exercise-list', // Mantido 'app-exercise-list' conforme o HTML
+    templateUrl: './list-exercise.component.html',
+    styleUrls: ['./list-exercise.component.scss'],
+    imports: [
+        CommonModule,
+        // Removido MatTableModule, MatPaginatorModule, MatSortModule
+        MatIconModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        ReactiveFormsModule,
+        MatTooltipModule,
+        MatSnackBarModule,
+        // TODO: `HttpClientModule` should not be imported into a component directly.
+        // Please refactor the code to add `provideHttpClient()` call to the provider list in the
+        // application bootstrap logic and remove the `HttpClientModule` import from this component.
+        // TODO: `HttpClientModule` should not be imported into a component directly.
+        // Please refactor the code to add `provideHttpClient()` call to the provider list in the
+        // application bootstrap logic and remove the `HttpClientModule` import from this component.
+        HttpClientModule,
+        MatProgressSpinnerModule, // Adicionado para MatSpinner
+        ConfirmDialogComponent, // Importando o componente de diálogo de confirmação
+        MatDialogModule, // Adicionado para MatDialog
+        IonicModule // Adicionado IonicModule
+    ]
 })
 export class ListExerciseComponent implements OnInit { // Removido AfterViewInit
 

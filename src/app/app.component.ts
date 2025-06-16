@@ -16,20 +16,19 @@ import { ToolbarComponent } from './shared/toolbar/toolbar.component'; // Seu co
 
 
 @Component({
-  selector: 'app-root', // Ou o seletor do seu componente de layout
-  templateUrl: './app.component.html', // O HTML que você forneceu
-  styleUrls: ['./app.component.scss'],
-  standalone: true, // Indica que é um componente standalone
-  imports: [
-    CommonModule,
-    RouterModule, // Necessário para routerLink e router-outlet
-    MatSidenavModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatIconModule,
-    SidenavComponent, // Seu componente app-sidenav
-    ToolbarComponent // Seu componente app-toolbar
-  ]
+    selector: 'app-root', // Ou o seletor do seu componente de layout
+    templateUrl: './app.component.html', // O HTML que você forneceu
+    styleUrls: ['./app.component.scss'], // Indica que é um componente standalone
+    imports: [
+        CommonModule,
+        RouterModule, // Necessário para routerLink e router-outlet
+        MatSidenavModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatIconModule,
+        SidenavComponent, // Seu componente app-sidenav
+        ToolbarComponent // Seu componente app-toolbar
+    ]
 })
 export class AppComponent implements OnInit {
   // Obtém uma referência à mat-sidenav usando o #sidenav do seu HTML

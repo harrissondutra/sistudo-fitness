@@ -20,21 +20,20 @@ import { Trainning } from '../../models/trainning'; // Certifique-se de que o mo
 import { finalize } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-trainning-create',
-  templateUrl: './trainning-create.component.html',
-  styleUrls: ['./trainning-create.component.scss'],
-  standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatIconModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatSnackBarModule,
-    MatTooltipModule
-  ]
+    selector: 'app-trainning-create',
+    templateUrl: './trainning-create.component.html',
+    styleUrls: ['./trainning-create.component.scss'],
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        MatIconModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSelectModule,
+        MatSnackBarModule,
+        MatTooltipModule
+    ]
 })
 export class TrainningCreateComponent implements OnInit {
   trainingForm!: FormGroup;
