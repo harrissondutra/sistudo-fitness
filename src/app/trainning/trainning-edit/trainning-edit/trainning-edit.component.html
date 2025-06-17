@@ -1,0 +1,125 @@
+<div class="trainning-edit-container">
+  <!-- Cabeçalho -->
+  <div class="header">
+    <mat-icon style="vertical-align: middle; margin-right: 8px;">edit</mat-icon>
+    <div class="header-content">
+      <h1>Editar Treino</h1>
+      <p class="subtitle">{{ trainning?.name || 'Novo Treino' }}</p>
+    </div>
+  </div>
+
+  <!-- Indicador de carregamento -->
+  @if (isLoading) {
+  <div class="loading-spinner">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Carregando treino...</p>
+  </div>
+  } @else if (!trainning) {
+  <div class="not-found">
+    <p>Treino não encontrado.</p>
+    <button mat-button (click)="goBack()">Voltar</button>
+  </div>
+  } @else {
+  <!-- Formulário de edição -->
+  <div class="content">
+    <div class="info-section">
+      <h2>
+        <mat-icon>info</mat-icon>
+        Informações do Treino
+      </h2>
+      <div class="info-grid">
+        <!-- Campo Nome do Treino -->
+        <mat-form-field appearance="outline">
+          <mat-label>Nome do Treino</mat-label>
+          <input matInput [(ngModel)]="trainning.name" name="trainningName" required>
+          <mat-icon matSuffix>fitness_center</mat-icon>
+        </mat-form-field>
+
+
+        <!-- Campo Categoria do Treino -->
+        <mat-form-field appearance="outline">
+          <mat-label>Categoria</mat-label>
+          <input matInput [(ngModel)]="trainning.category" name="trainningCategory" required>
+          <mat-icon matSuffix>category</mat-icon>
+        </mat-form-field>
+
+        <!-- Campo ID do Cliente -->
+        <mat-form-field appearance="outline">
+          <mat-label>ID do Cliente</mat-label>
+          <input matInput [(ngModel)]="trainning.userId" name="userId" type="number" readonly>
+          <mat-icon matSuffix>person</mat-icon>
+        </mat-form-field>
+
+        <!-- Campo Data de Início -->
+        <mat-form-field appearance="outline">
+          <mat-label>Data de Início</mat-label>
+          <input matInput [matDatepicker]="startDatePicker" [(ngModel)]="trainning.startDate" name="startDate" required>
+          <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #startDatePicker></mat-datepicker>
+        </mat-form-field>
+
+        <!-- Campo Data de Término (Opcional) -->
+        <mat-form-field appearance="outline">
+          <mat-label>Data de Término (Opcional)</mat-label>
+          <input matInput [matDatepicker]="endDatePicker" [(ngModel)]="trainning.endDate" name="endDate">
+          <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #endDatePicker></mat-datepicker>
+        </mat-form-field>
+
+        <!-- Checkbox Ativo -->
+        <mat-checkbox [(ngModel)]="trainning.active" name="trainningActive">
+          Treino Ativo
+        </mat-checkbox>
+      </div>
+    </div>
+
+    <!-- Seção de Exercícios -->
+    <div class="exercises-section">
+      <h2>
+        <mat-icon>directions_run</mat-icon>
+        Exercícios
+      </h2>
+      @if (trainning.exercises && trainning.exercises.length > 0) {
+      <div class="exercises-list">
+        @for (exercise of trainning.exercises; track exercise.id) {
+        <div class="exercise-item">
+          <mat-icon class="exercise-icon">walk</mat-icon>
+          <div class="exercise-details">
+            <h3>{{ exercise.name }}</h3>
+            <p>{{ exercise.description }}</p>
+
+            @if (exercise.categoryId) {
+            <p><strong>Categoria:</strong> {{ exercise.categoryId }}</p>
+            }
+          </div>
+          <!-- Botão para remover este exercício -->
+          <button mat-icon-button color="warn" (click)="deleteExercise(exercise.id!)" class="remove-exercise-button">
+            <mat-icon>delete_forever</mat-icon>
+          </button>
+        </div>
+        }
+      </div>
+      } @else {
+      <p>Nenhum exercício adicionado a este treino.</p>
+      }
+      <!-- Botão para adicionar novo exercício - Chama o método openAddExerciseModal() -->
+      <button mat-button color="accent" (click)="openAddExerciseModal()">
+        <mat-icon>add</mat-icon>
+        Adicionar Exercício
+      </button>
+    </div>
+  </div>
+
+  <!-- Botões de ação -->
+  <div class="actions">
+    <button mat-raised-button color="primary" (click)="onSave()" [disabled]="isSaving">
+      <mat-icon>save</mat-icon>
+      Salvar
+    </button>
+    <button mat-button (click)="goBack()" [disabled]="isSaving">
+      <mat-icon>cancel</mat-icon>
+      Cancelar
+    </button>
+  </div>
+  }
+</div>

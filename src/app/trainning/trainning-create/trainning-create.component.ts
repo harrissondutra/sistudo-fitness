@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common'; // Adicionado CommonModule para standalone
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatDatepickerModule } from '@angular/material/datepicker'; // Para datepickers
+import { MatNativeDateModule } from '@angular/material/core'; // Necessário para MatDatepicker
 
 import { TrainningService } from '../../services/trainning/trainning.service';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -20,10 +23,12 @@ import { Trainning } from '../../models/trainning'; // Certifique-se de que o mo
 import { finalize } from 'rxjs/operators';
 
 @Component({
-    selector: 'app-trainning-create',
-    templateUrl: './trainning-create.component.html',
-    styleUrls: ['./trainning-create.component.scss'],
-    imports: [
+  selector: 'app-trainning-create',
+  templateUrl: './trainning-create.component.html',
+  styleUrls: ['./trainning-create.component.scss'],
+  standalone: true, // Componente definido como standalone
+  imports: [
+    CommonModule, // Importa CommonModule
     ReactiveFormsModule,
     MatIconModule,
     MatButtonModule,
@@ -31,8 +36,10 @@ import { finalize } from 'rxjs/operators';
     MatInputModule,
     MatSelectModule,
     MatSnackBarModule,
-    MatTooltipModule
-]
+    MatTooltipModule,
+    MatDatepickerModule, // Importa MatDatepickerModule
+    MatNativeDateModule // Importa MatNativeDateModule
+  ]
 })
 export class TrainningCreateComponent implements OnInit {
   trainingForm!: FormGroup;
@@ -58,90 +65,92 @@ export class TrainningCreateComponent implements OnInit {
   private initForm(): void {
     this.trainingForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
-      // Se o backend precisar de 'description' no TrainningDto, adicione aqui um controle para ele:
-      // description: [''],
+      // Adicionado campo de descrição conforme o modelo Trainning
+      description: [''],
+      // Adicionado campo de categoria conforme o modelo Trainning
+      category: ['', [Validators.required]],
       exercises: [[], [Validators.required, Validators.minLength(1)]],
-      userId: [null, [Validators.required]]
+      userId: [null, [Validators.required]],
+      // Adicionados campos de data de início e fim
+      startDate: [new Date(), [Validators.required]], // Preenche com a data atual por padrão
+      endDate: [null]
     });
   }
 
   private loadInitialData(): void {
+    this.isLoading = true; // Inicia o carregamento
     this.loadExercises();
     this.loadUsers();
   }
 
   private loadExercises(): void {
     this.exerciseService.getAllExercises()
-      .pipe(finalize(() => this.isLoading = false))
+      // O finalize() deve ser chamado apenas uma vez após todos os carregamentos, ou individualmente
+      // Ajuste o `isLoading = false` para um ponto onde todos os dados iniciais tenham carregado
       .subscribe({
         next: (exercises: Exercise[]) => {
           this.exercises = exercises;
+          // Se este for o último carregamento, defina isLoading como false aqui
+          // Ou gerencie com um contador de carregamentos pendentes
+          this.checkAllDataLoaded();
         },
         error: (error: HttpErrorResponse) => {
           this.handleError('Erro ao carregar exercícios', error);
+          this.checkAllDataLoaded(); // Também chame em caso de erro para parar o spinner
         }
       });
   }
 
   private loadUsers(): void {
     this.userService.getAllUsers()
-      .pipe(finalize(() => this.isLoading = false))
       .subscribe({
         next: (users: User[]) => {
           this.users = users;
+          this.checkAllDataLoaded();
         },
         error: (error: HttpErrorResponse) => {
           this.handleError('Erro ao carregar clientes', error);
+          this.checkAllDataLoaded(); // Também chame em caso de erro para parar o spinner
         }
       });
+  }
+
+  private loadCount = 0;
+  private checkAllDataLoaded(): void {
+    this.loadCount++;
+    // Assumindo 2 carregamentos: exercícios e usuários
+    if (this.loadCount === 2) {
+      this.isLoading = false;
+      this.loadCount = 0; // Reseta o contador
+    }
   }
 
   onSubmit(): void {
     if (this.trainingForm.invalid) {
       this.markFormGroupTouched(this.trainingForm);
-      this.showMessage('Por favor, preencha todos os campos obrigatórios.', 'error');
       return;
     }
 
     const formValue = this.trainingForm.value;
-    const selectedUser = this.users.find(u => u.id === formValue.userId);
 
-    if (!selectedUser) {
-      this.showMessage('Cliente não encontrado', 'error');
-      return;
-    }
-
-    const userId = Number(selectedUser.id);
-    if (isNaN(userId)) {
-      this.showMessage('ID do Cliente inválido', 'error');
-      return;
-    }
-
-    // CORREÇÃO: Mapeia os exercícios para o formato EXATO esperado pelo backend
-    const exercisesToSend = formValue.exercises.map((exercise: Exercise) => ({
-      id: exercise.id,
-      name: exercise.name,
-      description: exercise.description || '', // Se o backend exigir, mas pode ser opcional
-      categoryId: exercise.categoryId, // Mapeia diretamente o ID da categoria
-      videoUrl: exercise.videoUrl || '', // Se o backend exigir, mas pode ser opcional
-
-    }));
-
-    // CORREÇÃO: Constrói o corpo da requisição conforme o modelo JSON EXATO desejado
-    const trainingData = {
+    // Constrói o corpo da requisição conforme o modelo JSON Trainning
+    const trainingData: Trainning = {
       name: formValue.name,
       exercises: formValue.exercises,
       userId: formValue.userId,
-      active: true
+      active: true, // Assumindo que novos treinos são ativos por padrão
+      category: formValue.category, // Adicionado
+      startDate: formValue.startDate, // Adicionado
+      endDate: formValue.endDate // Adicionado
     };
 
-    this.isLoading = true;
-    this.trainningService.createTrainningByUserId(userId, trainingData)
-      .pipe(finalize(() => this.isLoading = false))
+    this.isLoading = true; // Inicia o spinner de salvamento
+    this.trainningService.createTrainningByUserId(trainingData.userId, trainingData)
+      .pipe(finalize(() => this.isLoading = false)) // Finaliza o spinner após a requisição
       .subscribe({
         next: (response: Trainning) => {
           this.showMessage('Treino criado com sucesso!', 'success');
-          this.router.navigate(['/trainning']);
+          this.router.navigate(['/trainning']); // Redireciona para a página de treinos
         },
         error: (error: HttpErrorResponse) => {
           this.handleError('Erro ao criar treino', error);

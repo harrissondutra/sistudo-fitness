@@ -204,4 +204,9 @@ export class TrainningComponent implements OnInit { // Mantido o nome `Trainning
       panelClass: type === 'success' ? ['success-snackbar'] : ['error-snackbar']
     });
   }
+   getTrainningById(id: string) {
+    this.router.navigate(['/trainning-view', id]);
+  }
+
+
 }

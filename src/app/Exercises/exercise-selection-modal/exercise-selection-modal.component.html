@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>
+  <mat-icon style="vertical-align: middle; margin-right: 8px;">add_circle_outline</mat-icon>
+  Selecionar Exercícios
+</h2>
+<mat-dialog-content class="mat-typography">
+  @if (availableExercises.length > 0) {
+  <mat-selection-list class="exercise-selection-list">
+    @for (exercise of availableExercises; track exercise.id) {
+    <mat-list-option (click)="toggleExerciseSelection(exercise)" [selected]="isExerciseSelected(exercise)">
+      <mat-icon matListItemIcon>fitness_center</mat-icon>
+      <div matListItemTitle>{{ exercise.name }}</div>
+      <div matListItemLine>{{ exercise.description || 'Sem descrição' }}</div>
+    </mat-list-option>
+    }
+  </mat-selection-list>
+  } @else {
+  <p class="no-exercises-available">Nenhum exercício disponível para seleção.</p>
+  }
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="onAddSelected()" [disabled]="selectedExercises.length === 0">
+    <mat-icon>add</mat-icon>
+    Adicionar Selecionados ({{ selectedExercises.length }})
+  </button>
+</mat-dialog-actions>

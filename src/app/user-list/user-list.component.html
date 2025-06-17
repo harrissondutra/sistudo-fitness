@@ -24,7 +24,7 @@
   @if (filteredUsers && filteredUsers.length > 0) {
     <ion-list class="user-ionic-list mat-elevation-z2">
       @for (user of filteredUsers; track user) {
-        <ion-item>
+        <ion-item button (click)="goToUser(user.id!)" class="user-item">
           <ion-label>
             <h3>{{ user.name }}</h3>
             <p>Email: {{ user.email }}</p>

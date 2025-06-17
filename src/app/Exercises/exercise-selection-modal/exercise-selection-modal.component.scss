@@ -1,0 +1,73 @@
+.mat-dialog-title {
+  display: flex;
+  align-items: center;
+  color: #1a237e;
+  font-size: 24px;
+  font-weight: 500;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+mat-dialog-content {
+  padding-top: 0 !important;
+  max-height: 400px; /* Limita a altura para permitir rolagem */
+  overflow-y: auto; /* Adiciona rolagem vertical quando necessário */
+}
+
+.exercise-selection-list {
+  width: 100%;
+  .mat-mdc-list-item {
+    border-bottom: 1px solid #eee;
+    &:last-child {
+      border-bottom: none;
+    }
+    .mat-mdc-list-item-title {
+      font-weight: 500;
+      color: #1a237e;
+    }
+    .mat-mdc-list-item-line {
+      color: #666;
+      font-size: 0.9em;
+    }
+    mat-icon {
+      color: #3f51b5;
+    }
+  }
+}
+
+.no-exercises-available {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  padding: 20px;
+}
+
+mat-dialog-actions {
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+  margin-top: 20px;
+
+  button {
+    min-width: 120px;
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  mat-dialog-content {
+    max-height: 300px; /* Ajusta a altura em telas menores */
+  }
+  .mat-dialog-title {
+    font-size: 20px;
+  }
+  mat-dialog-actions {
+    flex-direction: column;
+    button {
+      width: 100%;
+      margin-bottom: 8px;
+    }
+  }
+}

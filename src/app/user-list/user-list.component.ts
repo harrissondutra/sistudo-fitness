@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule, Router } from '@angular/router';
@@ -167,5 +166,9 @@ export class UserListComponent implements OnInit {
    */
   onView(user: User): void {
     this.router.navigate(['/user', user.id]);
+  }
+
+  goToUser(userId: string) {
+    this.router.navigate(['/user', userId]);
   }
 }

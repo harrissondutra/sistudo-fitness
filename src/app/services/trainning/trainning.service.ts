@@ -51,4 +51,8 @@ export class TrainningService {
     return this.http.get<Trainning[]>(`${this.baseUrl}/listAllTrainningsInactive`);
   }
 
+updateTrainning(id: number, trainning: Trainning): Observable<Trainning> {
+  return this.http.put<Trainning>(`${this.baseUrl}/update/${id}`, trainning);
+}
+
 }
