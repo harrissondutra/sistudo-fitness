@@ -20,6 +20,9 @@
 .sidenav-container {
   height: 100vh;
   background: #F5F7FA;
+  /* Make sidenav-container a flex container to manage its children */
+  display: flex;
+  flex-direction: column; /* Stack children vertically */
 }
 
 /* Opcional: estiliza o mat-sidenav para preencher verticalmente */
@@ -32,16 +35,18 @@ mat-sidenav {
 
 mat-sidenav-content {
   display: flex;
-  flex-direction: column;
-  flex-grow: 1;
+  flex-direction: column; /* Stack toolbar, main-content, and footer vertically */
+  flex-grow: 1; /* Allows content to expand and push footer down */
   background-color: var(--mat-sidenav-container-background-color, #fafafa);
+  overflow: auto; /* Allows content to scroll independently if it overflows */
 }
 
 /* Ajusta o conteúdo principal para ocupar o espaço restante */
 .main-content {
   padding: 24px;
   background: #F5F7FA;
-  min-height: calc(100vh - 64px);
+  flex-grow: 1; /* Important: this will make the main content area expand and push the footer down */
+  /* min-height: calc(100vh - 64px); removed as flex-grow handles this better */
 }
 
 /* Para garantir que o toolbar fique no topo e não sobreponha */
@@ -281,6 +286,19 @@ app-toolbar {
     color: #607D8B;
     font-size: 1.1em;
   }
+}
+
+/* --- FOOTER STYLES --- */
+.app-footer {
+  background-color: #f0f0f0; /* Light gray background */
+  color: #555; /* Darker gray text */
+  text-align: center; /* Center the text */
+  padding: 15px 0;
+  font-size: 0.9em;
+  border-top: 1px solid #e0e0e0; /* Subtle top border */
+  width: 100%; /* Ensure it spans the full width */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  flex-shrink: 0; /* Prevent the footer from shrinking */
 }
 
 /* ------------------------------------------------------------- */
