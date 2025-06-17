@@ -20,9 +20,8 @@
 .sidenav-container {
   height: 100vh;
   background: #F5F7FA;
-  /* Make sidenav-container a flex container to manage its children */
   display: flex;
-  flex-direction: column; /* Stack children vertically */
+  flex-direction: column;
 }
 
 /* Opcional: estiliza o mat-sidenav para preencher verticalmente */
@@ -35,18 +34,10 @@ mat-sidenav {
 
 mat-sidenav-content {
   display: flex;
-  flex-direction: column; /* Stack toolbar, main-content, and footer vertically */
-  flex-grow: 1; /* Allows content to expand and push footer down */
+  flex-direction: column;
+  flex-grow: 1;
   background-color: var(--mat-sidenav-container-background-color, #fafafa);
-  overflow: auto; /* Allows content to scroll independently if it overflows */
-}
-
-/* Ajusta o conteúdo principal para ocupar o espaço restante */
-.main-content {
-  padding: 24px;
-  background: #F5F7FA;
-  flex-grow: 1; /* Important: this will make the main content area expand and push the footer down */
-  /* min-height: calc(100vh - 64px); removed as flex-grow handles this better */
+  /* Removido overflow: auto aqui para que a rolagem ocorra apenas no main-content */
 }
 
 /* Para garantir que o toolbar fique no topo e não sobreponha */
@@ -290,15 +281,16 @@ app-toolbar {
 
 /* --- FOOTER STYLES --- */
 .app-footer {
-  background-color: #f0f0f0; /* Light gray background */
-  color: #555; /* Darker gray text */
-  text-align: center; /* Center the text */
+  background-color: #f0f0f0;
+  color: #555;
+  text-align: center;
   padding: 15px 0;
   font-size: 0.9em;
-  border-top: 1px solid #e0e0e0; /* Subtle top border */
-  width: 100%; /* Ensure it spans the full width */
-  box-sizing: border-box; /* Include padding and border in the element's total width and height */
-  flex-shrink: 0; /* Prevent the footer from shrinking */
+  border-top: 1px solid #e0e0e0;
+  width: 100%;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  z-index: 100; /* Ensure it stays above other content if needed */
 }
 
 /* ------------------------------------------------------------- */
@@ -306,7 +298,34 @@ app-toolbar {
 /* ------------------------------------------------------------- */
 
 @media screen and (max-width: 599px) {
-  .main-content { padding: 16px; }
+  /* No mobile, o footer deve ser fixo */
+  .app-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    padding: 10px 0;
+    height: 50px; /* Defina uma altura fixa para o footer mobile */
+  }
+
+  /* Ajusta o mat-sidenav-content para ter uma altura calculada e não ter sua própria rolagem */
+  mat-sidenav-content {
+    /* Altura total da viewport - altura do toolbar - altura do footer fixo */
+    height: calc(100vh - 56px - 50px); /* 56px toolbar, 50px footer (ajuste conforme necessário) */
+    overflow: hidden; /* Garante que mat-sidenav-content não crie sua própria barra de rolagem */
+  }
+
+  /* O main-content é quem deve ter a rolagem */
+  .main-content {
+    padding: 16px;
+    flex-grow: 1; /* Permite que o main-content ocupe o espaço restante */
+    overflow-y: auto; /* Adiciona rolagem vertical ao main-content se o conteúdo exceder */
+    -webkit-overflow-scrolling: touch; /* Otimização para rolagem suave em iOS */
+    /* Removido padding-bottom aqui, pois o main-content já está dentro da área visível */
+  }
+
   .dashboard { padding: 10px; }
   .dashboard-header { margin-bottom: 24px; }
   .dashboard-header h1 { font-size: 2em; }
@@ -338,7 +357,7 @@ app-toolbar {
   }
 
   .cards-grid {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Ajuste para tablets */
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   }
 }
 
@@ -349,11 +368,33 @@ app-toolbar {
 
   .main-content {
     padding: 24px;
+    overflow-y: initial; /* Reseta a rolagem para o padrão em telas maiores */
+    padding-bottom: 24px; /* Volta ao padding padrão em telas maiores */
+  }
+
+  .app-footer {
+    position: static; /* Volta à posição normal (fluxo do documento) */
+    box-shadow: none; /* Remove a sombra específica para o footer fixo */
+    padding: 15px 0;
+    height: auto; /* Volta à altura automática em telas maiores */
+  }
+
+  mat-sidenav-content {
+    height: auto; /* Volta à altura automática, flex-grow fará o trabalho */
+    overflow: auto; /* Permite rolagem no mat-sidenav-content novamente se necessário */
+  }
+
+  .dashboard h2 {
+    font-size: 2.4em;
+  }
+
+  .cards-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
 }
 @media screen and (min-width: 1280px) {
   mat-sidenav {
-    width: 320px; /* Largura maior para telas grandes */
+    width: 320px;
   }
 
   .main-content {
@@ -365,6 +406,6 @@ app-toolbar {
   }
 
   .cards-grid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Mais espaço para cards em telas grandes */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
 }
