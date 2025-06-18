@@ -1,56 +1,58 @@
-<!-- Main Container for Category Form -->
-<div class="category-form-container">
-  <!-- Header Section -->
+<div class="category-exercise-container">
   <div class="header">
-    <mat-icon>category</mat-icon> <!-- Icon for category -->
-    <h1>Criar Nova Categoria</h1> <!-- Title for the form -->
+    <mat-icon style="vertical-align: middle; margin-right: 8px;">category</mat-icon>
+    <div class="header-content">
+      <h1>Criar Nova Categoria</h1>
+      <p class="subtitle">Preencha os detalhes para criar uma nova categoria de exercício.</p>
+    </div>
   </div>
 
-  <!-- Category Form -->
-  <!-- The form is bound to a FormGroup named 'categoryForm' in the TypeScript file -->
-  <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="form-content">
-    <!-- Form Field for Category Name -->
-    <mat-form-field appearance="outline">
-      <mat-label>Nome da Categoria</mat-label>
-      <input matInput formControlName="name" placeholder="Ex: Treino de Força">
-      <!-- Validation messages for the 'name' field -->
-      @if (categoryForm.get('name')?.hasError('required') && categoryForm.get('name')?.touched) {
-        <mat-error>
-          O nome da categoria é obrigatório.
-        </mat-error>
-      }
-      @if (categoryForm.get('name')?.hasError('minlength') && categoryForm.get('name')?.touched) {
-        <mat-error>
-          O nome deve ter no mínimo 3 caracteres.
-        </mat-error>
-      }
-    </mat-form-field>
+  @if (isLoading) {
+  <div class="loading-spinner">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Carregando...</p>
+  </div>
+  } @else {
+  <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="content">
+    <div class="info-section">
+      <h2>
+        <mat-icon>info</mat-icon>
+        Informações da Categoria
+      </h2>
+      <div class="info-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Nome da Categoria</mat-label>
+          <input matInput formControlName="name" placeholder="Ex: Treino de Força" required>
+          <mat-icon matSuffix>label</mat-icon> @if (categoryForm.get('name')?.hasError('required') && categoryForm.get('name')?.touched) {
+          <mat-error>
+            O nome da categoria é obrigatório.
+          </mat-error>
+          }
+          @if (categoryForm.get('name')?.hasError('minlength') && categoryForm.get('name')?.touched) {
+          <mat-error>
+            O nome deve ter no mínimo 3 caracteres.
+          </mat-error>
+          }
+        </mat-form-field>
 
-    <!-- Form Field for Category Description (Optional) -->
-    <mat-form-field appearance="outline">
-      <mat-label>Descrição da Categoria</mat-label>
-      <textarea matInput formControlName="description" placeholder="Ex: Categoriza exercícios focados em ganho de massa e força." rows="3"></textarea>
-      <!-- Description is optional, so no direct validators here on HTML side -->
-    </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width"> <mat-label>Descrição da Categoria</mat-label>
+          <textarea matInput formControlName="description"
+            placeholder="Ex: Categoriza exercícios focados em ganho de massa e força." rows="3"></textarea>
+          <mat-icon matSuffix>description</mat-icon>
+        </mat-form-field>
+      </div>
+    </div>
 
-    <!-- Action Buttons for the Form -->
-    <div class="form-actions">
-      <!-- Cancel Button: Navigates back, assuming a 'cancel()' method in TS -->
-      <button mat-button type="button" (click)="cancel()">
-        <mat-icon>arrow_back</mat-icon>
-        Cancelar
+    <div class="actions">
+      <button mat-button type="button" (click)="cancel()" [disabled]="isLoading">
+        <mat-icon>cancel</mat-icon> Cancelar
       </button>
-      <!-- Submit Button: Triggers onSubmit, disabled if form is invalid -->
-      <button
-        mat-raised-button
-        color="primary"
-        type="submit"
-        [disabled]="categoryForm.invalid"
-        matTooltip="{{ categoryForm.invalid ? 'Preencha todos os campos obrigatórios e válidos' : 'Salvar categoria' }}"
-        >
+      <button mat-raised-button color="primary" type="submit" [disabled]="categoryForm.invalid || isLoading"
+        matTooltip="{{ categoryForm.invalid ? 'Preencha todos os campos obrigatórios e válidos' : 'Salvar categoria' }}">
         <mat-icon>save</mat-icon>
         Salvar Categoria
       </button>
     </div>
   </form>
+  }
 </div>

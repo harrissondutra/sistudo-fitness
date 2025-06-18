@@ -4,7 +4,8 @@
     <mat-icon style="vertical-align: middle; margin-right: 8px;">edit</mat-icon>
     <div class="header-content">
       <h1>Editar Treino</h1>
-      <p class="subtitle">{{ trainning?.name || 'Novo Treino' }}</p>
+      <!-- ATUALIZADO: Acessa o nome do formulário pelo FormGroup -->
+      <p class="subtitle">{{ trainningForm.get('name')?.value || 'Carregando Treino...' }}</p>
     </div>
   </div>
 
@@ -14,14 +15,15 @@
     <mat-spinner diameter="50"></mat-spinner>
     <p>Carregando treino...</p>
   </div>
-  } @else if (!trainning) {
+  <!-- ATUALIZADO: Condição para "não encontrado" (verifica se o FormGroup não está carregado) -->
+  } @else if (!trainningForm.get('id')?.value && !isLoading) { <!-- trainningForm.get('id')?.value === null significa que não carregou um treino válido -->
   <div class="not-found">
-    <p>Treino não encontrado.</p>
+    <p>Treino não encontrado ou ID inválido.</p>
     <button mat-button (click)="goBack()">Voltar</button>
   </div>
   } @else {
-  <!-- Formulário de edição -->
-  <div class="content">
+  <!-- Formulário de edição - ATUALIZADO: Usa [formGroup]="trainningForm" e (ngSubmit) -->
+  <form [formGroup]="trainningForm" (ngSubmit)="onSave()" class="content">
     <div class="info-section">
       <h2>
         <mat-icon>info</mat-icon>
@@ -31,43 +33,84 @@
         <!-- Campo Nome do Treino -->
         <mat-form-field appearance="outline">
           <mat-label>Nome do Treino</mat-label>
-          <input matInput [(ngModel)]="trainning.name" name="trainningName" required>
+          <!-- ATUALIZADO: formControlName -->
+          <input matInput formControlName="name" placeholder="Nome do treino" required>
           <mat-icon matSuffix>fitness_center</mat-icon>
+          <!-- ATUALIZADO: Validações para FormGroup -->
+          @if (trainningForm.get('name')?.hasError('required') && trainningForm.get('name')?.touched) {
+            <mat-error>Nome é obrigatório</mat-error>
+          }
         </mat-form-field>
 
+        <!-- Campo Descrição -->
+        <mat-form-field appearance="outline">
+          <mat-label>Descrição do Treino</mat-label>
+          <!-- ATUALIZADO: formControlName -->
+          <textarea matInput formControlName="description" placeholder="Adicione uma descrição" rows="3"></textarea>
+          <mat-icon matSuffix>description</mat-icon>
+        </mat-form-field>
 
-        <!-- Campo Categoria do Treino -->
+        <!-- Campo Categoria do Treino - AGORA UM MAT-SELECT COM Reactive Forms -->
         <mat-form-field appearance="outline">
           <mat-label>Categoria</mat-label>
-          <input matInput [(ngModel)]="trainning.category" name="trainningCategory" required>
+          <!-- ATUALIZADO: formControlName e [compareWith] -->
+          <mat-select formControlName="category" [compareWith]="compareObjectsById" required>
+            <mat-option [value]="null">-- Selecione a Categoria --</mat-option>
+            @for (category of trainningCategories; track category.id) {
+              <mat-option [value]="category">{{ category.name }}</mat-option>
+            }
+          </mat-select>
           <mat-icon matSuffix>category</mat-icon>
+          <!-- ATUALIZADO: Validação para FormGroup -->
+          @if (trainningForm.get('category')?.hasError('required') && trainningForm.get('category')?.touched) {
+            <mat-error>Categoria é obrigatória</mat-error>
+          }
         </mat-form-field>
 
-        <!-- Campo ID do Cliente -->
+        <!-- Campo Cliente - MAT-SELECT COM Reactive Forms -->
         <mat-form-field appearance="outline">
-          <mat-label>ID do Cliente</mat-label>
-          <input matInput [(ngModel)]="trainning.userId" name="userId" type="number" readonly>
+          <mat-label>Cliente</mat-label>
+          <!-- ATUALIZADO: formControlName -->
+          <mat-select formControlName="clientId" required>
+            <mat-option [value]="null">-- Selecione um Cliente --</mat-option>
+            @for (client of clients; track client.id) {
+              <mat-option [value]="client.id">
+                {{client.name}}
+              </mat-option>
+            }
+          </mat-select>
           <mat-icon matSuffix>person</mat-icon>
+          <!-- ATUALIZADO: Validação para FormGroup -->
+          @if (trainningForm.get('clientId')?.hasError('required') && trainningForm.get('clientId')?.touched) {
+            <mat-error>Selecione um Cliente</mat-error>
+          }
         </mat-form-field>
 
         <!-- Campo Data de Início -->
         <mat-form-field appearance="outline">
           <mat-label>Data de Início</mat-label>
-          <input matInput [matDatepicker]="startDatePicker" [(ngModel)]="trainning.startDate" name="startDate" required>
+          <!-- ATUALIZADO: formControlName -->
+          <input matInput [matDatepicker]="startDatePicker" formControlName="startDate" required>
           <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
           <mat-datepicker #startDatePicker></mat-datepicker>
+          <!-- ATUALIZADO: Validação para FormGroup -->
+          @if (trainningForm.get('startDate')?.hasError('required') && trainningForm.get('startDate')?.touched) {
+            <mat-error>Data de Início é obrigatória</mat-error>
+          }
         </mat-form-field>
 
         <!-- Campo Data de Término (Opcional) -->
         <mat-form-field appearance="outline">
           <mat-label>Data de Término (Opcional)</mat-label>
-          <input matInput [matDatepicker]="endDatePicker" [(ngModel)]="trainning.endDate" name="endDate">
+          <!-- ATUALIZADO: formControlName -->
+          <input matInput [matDatepicker]="endDatePicker" formControlName="endDate">
           <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
           <mat-datepicker #endDatePicker></mat-datepicker>
         </mat-form-field>
 
         <!-- Checkbox Ativo -->
-        <mat-checkbox [(ngModel)]="trainning.active" name="trainningActive">
+        <!-- ATUALIZADO: formControlName -->
+        <mat-checkbox formControlName="active">
           Treino Ativo
         </mat-checkbox>
       </div>
@@ -79,47 +122,58 @@
         <mat-icon>directions_run</mat-icon>
         Exercícios
       </h2>
-      @if (trainning.exercises && trainning.exercises.length > 0) {
-      <div class="exercises-list">
-        @for (exercise of trainning.exercises; track exercise.id) {
-        <div class="exercise-item">
-          <mat-icon class="exercise-icon">walk</mat-icon>
-          <div class="exercise-details">
-            <h3>{{ exercise.name }}</h3>
-            <p>{{ exercise.description }}</p>
-
-            @if (exercise.categoryId) {
-            <p><strong>Categoria:</strong> {{ exercise.categoryId }}</p>
-            }
-          </div>
-          <!-- Botão para remover este exercício -->
-          <button mat-icon-button color="warn" (click)="deleteExercise(exercise.id!)" class="remove-exercise-button">
-            <mat-icon>delete_forever</mat-icon>
-          </button>
-        </div>
+      <!-- MAT-SELECT para múltiplos exercícios com Reactive Forms -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Exercícios Selecionados</mat-label>
+        <!-- ATUALIZADO: formControlName e [compareWith] -->
+        <mat-select formControlName="exercises" multiple [compareWith]="compareObjectsById" required>
+          <mat-option [value]="null">-- Selecione os exercícios --</mat-option>
+          @for (exercise of allAvailableExercises; track exercise.id) {
+            <mat-option [value]="exercise">{{ exercise.name }}</mat-option>
+          }
+        </mat-select>
+        <!-- ATUALIZADO: Validação para FormGroup -->
+        @if (trainningForm.get('exercises')?.hasError('required') && trainningForm.get('exercises')?.touched) {
+          <mat-error>Selecione pelo menos um exercício</mat-error>
         }
-      </div>
+      </mat-form-field>
+
+      <!-- Seção para exibir os exercícios selecionados (opcional, mas boa para UX) -->
+      @if (trainningForm.get('exercises')?.value && trainningForm.get('exercises')?.value.length > 0) {
+        <div class="exercises-selected-list">
+            <h3>Exercícios Adicionados:</h3>
+            <!-- ATUALIZADO: Iterar sobre o valor do formControl -->
+            @for (selectedExercise of trainningForm.get('exercises')?.value; track selectedExercise.id) {
+                <div class="exercise-item">
+                    <mat-icon class="exercise-icon">walk</mat-icon>
+                    <div class="exercise-details">
+                        <h4>{{ selectedExercise.name }}</h4>
+                        <p>{{ selectedExercise.description }}</p>
+                    </div>
+                    <!-- Botão para remover este exercício da seleção -->
+                    <button mat-icon-button color="warn" (click)="removeExerciseFromSelection(selectedExercise.id!)" class="remove-exercise-button">
+                        <mat-icon>remove_circle</mat-icon>
+                    </button>
+                </div>
+            }
+        </div>
       } @else {
-      <p>Nenhum exercício adicionado a este treino.</p>
+        <p>Nenhum exercício adicionado a este treino.</p>
       }
-      <!-- Botão para adicionar novo exercício - Chama o método openAddExerciseModal() -->
-      <button mat-button color="accent" (click)="openAddExerciseModal()">
-        <mat-icon>add</mat-icon>
-        Adicionar Exercício
+
+    </div>
+
+    <!-- Botões de ação - ATUALIZADO: Dentro da tag <form> e desabilitados por invalidade do form ou isSaving -->
+    <div class="actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="trainningForm.invalid || isSaving">
+        <mat-icon>save</mat-icon>
+        Salvar
+      </button>
+      <button mat-button type="button" (click)="goBack()" [disabled]="isSaving">
+        <mat-icon>cancel</mat-icon>
+        Cancelar
       </button>
     </div>
-  </div>
-
-  <!-- Botões de ação -->
-  <div class="actions">
-    <button mat-raised-button color="primary" (click)="onSave()" [disabled]="isSaving">
-      <mat-icon>save</mat-icon>
-      Salvar
-    </button>
-    <button mat-button (click)="goBack()" [disabled]="isSaving">
-      <mat-icon>cancel</mat-icon>
-      Cancelar
-    </button>
-  </div>
+  </form>
   }
 </div>

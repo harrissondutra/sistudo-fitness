@@ -41,7 +41,7 @@ export class SidenavComponent {
       title: 'Clientes',
       icon: 'person',
       links: [
-        { label: 'Listar Clientes', route: '/users-list' },
+        { label: 'Listar Clientes', route: '/clients-list' },
         { label: 'Criar Novo Cliente', route: '/register' },
       ]
     },
@@ -52,6 +52,7 @@ export class SidenavComponent {
         { label: 'Exibir Treinos', route: '/trainning' },
         { label: 'Inativos', route: '/inactive-trainning' },
         { label: 'Criar Novo Treino', route: '/trainning-create' },
+        { label: 'Criar Categoria de Treino', route: '/create-category-trainning' },
       ]
     },
     {

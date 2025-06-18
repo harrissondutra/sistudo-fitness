@@ -1,34 +1,41 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common'; // Adicionado CommonModule para standalone
+import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatDatepickerModule } from '@angular/material/datepicker'; // Para datepickers
-import { MatNativeDateModule } from '@angular/material/core'; // Necessário para MatDatepicker
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 import { TrainningService } from '../../services/trainning/trainning.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { TrainningCategoryService } from '../../services/trainning-category/trainning-category.service';
+import { TrainningCategory } from '../../models/trainning-category';
+
 import { ExerciseService } from '../../services/exercise/exercise.service';
-import { Exercise } from '../../models/exercise'; // Certifique-se de que Exercise tem 'repetitions' e 'series' (ou 'sets')
-import { UserService } from '../../services/user/user.service';
-import { User } from '../../models/user';
-import { Trainning } from '../../models/trainning'; // Certifique-se de que o modelo Trainning foi ajustado
+import { Exercise } from '../../models/exercise';
+
+import { ClientService } from '../../services/client/client.service';
+import { Client } from '../../models/client';
+
+import { Trainning } from '../../models/trainning';
 import { finalize } from 'rxjs/operators';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-trainning-create',
   templateUrl: './trainning-create.component.html',
   styleUrls: ['./trainning-create.component.scss'],
-  standalone: true, // Componente definido como standalone
+  standalone: true,
   imports: [
-    CommonModule, // Importa CommonModule
+    CommonModule,
     ReactiveFormsModule,
     MatIconModule,
     MatButtonModule,
@@ -37,21 +44,24 @@ import { finalize } from 'rxjs/operators';
     MatSelectModule,
     MatSnackBarModule,
     MatTooltipModule,
-    MatDatepickerModule, // Importa MatDatepickerModule
-    MatNativeDateModule // Importa MatNativeDateModule
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatProgressSpinnerModule
   ]
 })
 export class TrainningCreateComponent implements OnInit {
-  trainingForm!: FormGroup;
+  trainningForm!: FormGroup;
   exercises: Exercise[] = [];
-  users: User[] = [];
+  clients: Client[] = [];
+  trainningCategories: TrainningCategory[] = [];
   isLoading = false;
 
   constructor(
     private fb: FormBuilder,
     private trainningService: TrainningService,
     private exerciseService: ExerciseService,
-    private userService: UserService,
+    private clientService: ClientService,
+    private trainningCategoryService: TrainningCategoryService,
     private router: Router,
     private snackBar: MatSnackBar
   ) {
@@ -63,99 +73,107 @@ export class TrainningCreateComponent implements OnInit {
   }
 
   private initForm(): void {
-    this.trainingForm = this.fb.group({
+    this.trainningForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
-      // Adicionado campo de descrição conforme o modelo Trainning
       description: [''],
-      // Adicionado campo de categoria conforme o modelo Trainning
-      category: ['', [Validators.required]],
+      // 'category' deve ser inicializado como null ou um objeto padrão, se não for null
+      category: [null, [Validators.required]],
+      // 'exercises' como um array vazio, mas com validador para minLength(1)
       exercises: [[], [Validators.required, Validators.minLength(1)]],
-      userId: [null, [Validators.required]],
-      // Adicionados campos de data de início e fim
-      startDate: [new Date(), [Validators.required]], // Preenche com a data atual por padrão
+      clientId: [null, [Validators.required]],
+      startDate: [new Date(), [Validators.required]], // Valor padrão para a data atual
       endDate: [null]
     });
   }
 
   private loadInitialData(): void {
-    this.isLoading = true; // Inicia o carregamento
-    this.loadExercises();
-    this.loadUsers();
+    this.isLoading = true;
+    // Usar Promise.all ou forkJoin para carregar tudo em paralelo e gerenciar isLoading melhor
+    Promise.all([
+      this.loadExercises(),
+      this.loadClients(),
+      this.loadTrainningCategories()
+    ]).finally(() => {
+      this.isLoading = false; // Define isLoading como false apenas quando todas as chamadas terminarem
+    });
   }
 
-  private loadExercises(): void {
-    this.exerciseService.getAllExercises()
-      // O finalize() deve ser chamado apenas uma vez após todos os carregamentos, ou individualmente
-      // Ajuste o `isLoading = false` para um ponto onde todos os dados iniciais tenham carregado
-      .subscribe({
-        next: (exercises: Exercise[]) => {
-          this.exercises = exercises;
-          // Se este for o último carregamento, defina isLoading como false aqui
-          // Ou gerencie com um contador de carregamentos pendentes
-          this.checkAllDataLoaded();
-        },
-        error: (error: HttpErrorResponse) => {
-          this.handleError('Erro ao carregar exercícios', error);
-          this.checkAllDataLoaded(); // Também chame em caso de erro para parar o spinner
-        }
-      });
+  private async loadExercises(): Promise<void> {
+    try {
+      this.exercises = (await this.exerciseService.getAllExercises().toPromise()) ?? [];
+    } catch (error: any) {
+      this.handleError('Erro ao carregar exercícios', error);
+    }
   }
 
-  private loadUsers(): void {
-    this.userService.getAllUsers()
-      .subscribe({
-        next: (users: User[]) => {
-          this.users = users;
-          this.checkAllDataLoaded();
-        },
-        error: (error: HttpErrorResponse) => {
-          this.handleError('Erro ao carregar clientes', error);
-          this.checkAllDataLoaded(); // Também chame em caso de erro para parar o spinner
-        }
-      });
+  private async loadClients(): Promise<void> {
+    try {
+      this.clients = (await this.clientService.getAllClients().toPromise()) ?? [];
+    } catch (error: any) {
+      this.handleError('Erro ao carregar clientes', error);
+    }
   }
 
-  private loadCount = 0;
-  private checkAllDataLoaded(): void {
-    this.loadCount++;
-    // Assumindo 2 carregamentos: exercícios e usuários
-    if (this.loadCount === 2) {
-      this.isLoading = false;
-      this.loadCount = 0; // Reseta o contador
+  private async loadTrainningCategories(): Promise<void> {
+    try {
+      this.trainningCategories = (await this.trainningCategoryService.getAllTrainningCategories().toPromise()) ?? [];
+    } catch (error: any) {
+      this.handleError('Erro ao carregar categorias de treino', error);
     }
   }
 
   onSubmit(): void {
-    if (this.trainingForm.invalid) {
-      this.markFormGroupTouched(this.trainingForm);
+    if (this.trainningForm.invalid) {
+      this.markFormGroupTouched(this.trainningForm);
+      this.showMessage('Por favor, preencha todos os campos obrigatórios corretamente.', 'error');
       return;
     }
 
-    const formValue = this.trainingForm.value;
+    const formValue = this.trainningForm.value;
 
-    // Constrói o corpo da requisição conforme o modelo JSON Trainning
-    const trainingData: Trainning = {
+    const trainningData: Trainning = {
       name: formValue.name,
+      category: formValue.category,
       exercises: formValue.exercises,
-      userId: formValue.userId,
-      active: true, // Assumindo que novos treinos são ativos por padrão
-      category: formValue.category, // Adicionado
-      startDate: formValue.startDate, // Adicionado
-      endDate: formValue.endDate // Adicionado
+      clientId: formValue.clientId,
+      active: true,
+      // Formata as datas para 'YYYY-MM-DD' para o backend
+      startDate: formValue.startDate.toISOString().split('T')[0],
+      endDate: formValue.endDate ? formValue.endDate.toISOString().split('T')[0] : null
     };
 
-    this.isLoading = true; // Inicia o spinner de salvamento
-    this.trainningService.createTrainningByUserId(trainingData.userId, trainingData)
-      .pipe(finalize(() => this.isLoading = false)) // Finaliza o spinner após a requisição
+    this.isLoading = true; // Define isLoading para true antes de enviar a requisição
+    this.trainningService.createTrainningByClientId(trainningData.clientId!, trainningData)
+      .pipe(finalize(() => this.isLoading = false)) // Define isLoading como false no final, independentemente do sucesso/erro
       .subscribe({
         next: (response: Trainning) => {
           this.showMessage('Treino criado com sucesso!', 'success');
-          this.router.navigate(['/trainning']); // Redireciona para a página de treinos
+          this.router.navigate(['/trainnings']);
         },
         error: (error: HttpErrorResponse) => {
           this.handleError('Erro ao criar treino', error);
         }
       });
+  }
+
+  /**
+   * Remove um exercício da seleção atual do formulário.
+   * @param exerciseId O ID do exercício a ser removido.
+   */
+  removeExerciseFromSelection(exerciseId: number): void {
+    const currentExercises = this.trainningForm.get('exercises')?.value as Exercise[];
+    if (currentExercises) {
+      const updatedExercises = currentExercises.filter(ex => ex.id !== exerciseId);
+      this.trainningForm.get('exercises')?.setValue(updatedExercises); // Atualiza o formControl
+      // Se necessário, revalidar o campo após a remoção
+      this.trainningForm.get('exercises')?.markAsDirty();
+      this.trainningForm.get('exercises')?.updateValueAndValidity();
+      this.showMessage('Exercício removido da seleção.', 'info');
+    }
+  }
+
+  compareObjectsById(o1: any, o2: any): boolean {
+    return o1 && o2 ? o1.id === o2.id : o1 === o2;
   }
 
   private handleError(message: string, error: HttpErrorResponse): void {
@@ -164,12 +182,12 @@ export class TrainningCreateComponent implements OnInit {
     this.showMessage(`${message}. Detalhes: ${backendMsg}`, 'error');
   }
 
-  private showMessage(message: string, type: 'success' | 'error'): void {
+  private showMessage(message: string, type: 'success' | 'error' | 'info'): void {
     this.snackBar.open(message, 'Fechar', {
       duration: type === 'success' ? 3000 : 5000,
       horizontalPosition: 'end',
       verticalPosition: 'top',
-      panelClass: type === 'success' ? ['success-snackbar'] : ['error-snackbar']
+      panelClass: type === 'success' ? ['success-snackbar'] : (type === 'error' ? ['error-snackbar'] : ['info-snackbar'])
     });
   }
 
@@ -183,6 +201,6 @@ export class TrainningCreateComponent implements OnInit {
   }
 
   cancel(): void {
-    this.router.navigate(['/trainning']);
+    this.router.navigate(['/trainnings']);
   }
 }

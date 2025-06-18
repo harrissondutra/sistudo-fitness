@@ -24,9 +24,7 @@ import { ToolbarComponent } from './shared/toolbar/toolbar.component'; // Seu co
     MatSidenavModule,
     MatToolbarModule,
     MatButtonModule,
-    MatIconModule,
-    SidenavComponent,
-    ToolbarComponent
+    MatIconModule
 ]
 })
 export class AppComponent implements OnInit {

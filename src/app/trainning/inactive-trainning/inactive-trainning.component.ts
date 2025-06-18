@@ -43,6 +43,7 @@ import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dial
     IonicModule,
     DatePipe
 ],
+    providers: [TrainningService],
     templateUrl: './inactive-trainning.component.html',
     styleUrl: './inactive-trainning.component.scss'
 })
@@ -58,7 +59,7 @@ export class InactiveTrainningComponent implements OnInit { // Mantido o nome `T
   searchControl = new FormControl('');
 
   constructor(
-    private TrainningService: TrainningService,
+    private trainningService: TrainningService,
     private router: Router,
     private snackBar: MatSnackBar, // Injetado MatSnackBar
     private dialog: MatDialog // Injetado MatDialog
@@ -87,7 +88,7 @@ export class InactiveTrainningComponent implements OnInit { // Mantido o nome `T
    */
   private loadTrainnings(): void {
     this.isLoading = true;
-    this.TrainningService.listAllTrainningsInactive() // Assumindo que seu TrainningService tem um método getTrainnings()
+    this.trainningService.listAllTrainningsInactive() // Assumindo que seu TrainningService tem um método getTrainnings()
       .pipe(finalize(() => this.isLoading = false))
       .subscribe({
         next: (Trainnings: Trainning[]) => {
@@ -165,7 +166,7 @@ export class InactiveTrainningComponent implements OnInit { // Mantido o nome `T
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.isLoading = true;
-        this.TrainningService.deleteTrainning(Number(id)) // Assumindo que seu TrainningService tem um método deleteTrainning(id: string)
+        this.trainningService.deleteTrainning(Number(id)) // Assumindo que seu TrainningService tem um método deleteTrainning(id: string)
           .pipe(finalize(() => this.isLoading = false))
           .subscribe({
             next: () => {

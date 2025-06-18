@@ -6,7 +6,7 @@
     </div>
   </div>
 
-  <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+  <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
     <mat-card class="form-card">
       <mat-card-header>
         <mat-card-title>
@@ -17,10 +17,10 @@
       <mat-card-content>
         <div class="form-section">
           <mat-form-field appearance="outline" class="full-width-input">
-            <mat-label>Nome</mat-label>
-            <input matInput type="text" formControlName="name" />
+            <mat-label>Nome Completo</mat-label>
+            <input matInput type="text" formControlName="name" placeholder="Ex: João da Silva" />
             <mat-icon matSuffix>person</mat-icon>
-            @if (userForm.get('name')?.invalid && userForm.get('name')?.touched) {
+            @if (clientForm.get('name')?.invalid && clientForm.get('name')?.touched) {
               <mat-error>
                 Nome é obrigatório.
               </mat-error>
@@ -29,14 +29,14 @@
 
           <mat-form-field appearance="outline" class="full-width-input">
             <mat-label>Email</mat-label>
-            <input matInput type="email" formControlName="email" />
+            <input matInput type="email" formControlName="email" placeholder="Ex: joao.silva@example.com" />
             <mat-icon matSuffix>email</mat-icon>
-            @if (userForm.get('email')?.invalid && userForm.get('email')?.touched) {
+            @if (clientForm.get('email')?.invalid && clientForm.get('email')?.touched) {
               <mat-error>
-                @if (userForm.get('email')?.errors?.['required']) {
+                @if (clientForm.get('email')?.errors?.['required']) {
                   <span>Email é obrigatório.</span>
                 }
-                @if (userForm.get('email')?.errors?.['email']) {
+                @if (clientForm.get('email')?.errors?.['email']) {
                   <span>Email inválido.</span>
                 }
               </mat-error>
@@ -45,15 +45,15 @@
 
           <mat-form-field appearance="outline" class="full-width-input">
             <mat-label>CPF</mat-label>
-            <input matInput type="text" formControlName="cpf" mask="000.000.000-00" [dropSpecialCharacters]="true" />
+            <input matInput type="text" formControlName="cpf" mask="000.000.000-00" [dropSpecialCharacters]="true" placeholder="000.000.000-00" />
             <mat-icon matSuffix>badge</mat-icon>
             <mat-hint>11 dígitos numéricos</mat-hint>
-            @if (userForm.get('cpf')?.invalid && userForm.get('cpf')?.touched) {
+            @if (clientForm.get('cpf')?.invalid && clientForm.get('cpf')?.touched) {
               <mat-error>
-                @if (userForm.get('cpf')?.errors?.['required']) {
+                @if (clientForm.get('cpf')?.errors?.['required']) {
                   <span>CPF é obrigatório.</span>
                 }
-                @if (userForm.get('cpf')?.errors?.['pattern']) {
+                @if (clientForm.get('cpf')?.errors?.['pattern']) {
                   <span>CPF deve conter 11 dígitos.</span>
                 }
               </mat-error>
@@ -62,15 +62,15 @@
 
           <mat-form-field appearance="outline" class="full-width-input">
             <mat-label>Peso (kg)</mat-label>
-            <input matInput type="text" formControlName="weight" mask="separator.2" thousandSeparator="" />
+            <input matInput type="text" formControlName="weight" mask="separator.2" thousandSeparator="" placeholder="Ex: 75.5" />
             <mat-icon matSuffix>monitor_weight</mat-icon>
-            <mat-hint>Utilize "." para separação de peso</mat-hint>
-            @if (userForm.get('weight')?.invalid && userForm.get('weight')?.touched) {
+            <mat-hint>Utilize "." para separação de decimais</mat-hint>
+            @if (clientForm.get('weight')?.invalid && clientForm.get('weight')?.touched) {
               <mat-error>
-                @if (userForm.get('weight')?.errors?.['required']) {
+                @if (clientForm.get('weight')?.errors?.['required']) {
                   <span>Peso é obrigatório.</span>
                 }
-                @if (userForm.get('weight')?.errors?.['min'] || userForm.get('weight')?.errors?.['max']) {
+                @if (clientForm.get('weight')?.errors?.['min'] || clientForm.get('weight')?.errors?.['max']) {
                   <span>
                     Peso deve ser entre 30 e 300 kg.
                   </span>
@@ -81,14 +81,15 @@
 
           <mat-form-field appearance="outline" class="full-width-input">
             <mat-label>Altura (cm)</mat-label>
-            <input matInput type="text" formControlName="height" mask="separator.2" thousandSeparator="" />
+            <input matInput type="text" formControlName="height" mask="separator.2" thousandSeparator="" placeholder="Ex: 175" />
             <mat-icon matSuffix>height</mat-icon>
-            @if (userForm.get('height')?.invalid && userForm.get('height')?.touched) {
+            <mat-hint>Utilize "." para separação de decimais</mat-hint>
+            @if (clientForm.get('height')?.invalid && clientForm.get('height')?.touched) {
               <mat-error>
-                @if (userForm.get('height')?.errors?.['required']) {
+                @if (clientForm.get('height')?.errors?.['required']) {
                   <span>Altura é obrigatória.</span>
                 }
-                @if (userForm.get('height')?.errors?.['min'] || userForm.get('height')?.errors?.['max']) {
+                @if (clientForm.get('height')?.errors?.['min'] || clientForm.get('height')?.errors?.['max']) {
                   <span>
                     Altura deve ser entre 50 e 300 cm.
                   </span>
@@ -105,7 +106,7 @@
         <mat-icon>arrow_back</mat-icon>
         <span>Voltar</span>
       </button>
-      <button mat-raised-button color="primary" type="submit" [disabled]="userForm.invalid">
+      <button mat-raised-button color="primary" type="submit" [disabled]="clientForm.invalid">
         <mat-icon>save</mat-icon>
         <span>Cadastrar</span>
       </button>

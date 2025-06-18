@@ -1,4 +1,4 @@
-/* category-exercise.component.scss */
+/* trainning-category.component.scss */
 
 // Variáveis SCSS locais para valores não definidos globalmente como CSS Custom Properties
 $warn-color: #f44336; // Cor para mensagens de erro (geralmente mantida local se não for global)
@@ -17,7 +17,7 @@ $info-color: #2196F3; // Cor para mensagens de info (pode ser o --primary-color 
   align-items: center;
 }
 
-// Container principal do componente (matches HTML: .category-exercise-container)
+// Container principal do componente
 .category-exercise-container {
   padding: var(--spacing-lg);
   max-width: 900px; /* Alinhado com o padrão de outros componentes */
@@ -29,7 +29,7 @@ $info-color: #2196F3; // Cor para mensagens de info (pode ser o --primary-color 
   flex-direction: column; /* Conteúdo em coluna */
 }
 
-// Cabeçalho da tela (matches HTML: .header)
+// Cabeçalho da tela
 .header {
   margin-bottom: var(--spacing-lg);
   display: flex;
@@ -71,7 +71,7 @@ $info-color: #2196F3; // Cor para mensagens de info (pode ser o --primary-color 
   }
 }
 
-// Indicador de Carregamento (matches HTML: .loading-spinner)
+// Indicador de Carregamento
 .loading-spinner {
   display: flex;
   flex-direction: column;
@@ -88,7 +88,7 @@ $info-color: #2196F3; // Cor para mensagens de info (pode ser o --primary-color 
   flex-grow: 1; /* Ocupa o espaço restante no container */
 }
 
-// Conteúdo do formulário (o 'card' principal) (matches HTML: .content)
+// Conteúdo principal (o 'card' que engloba formulário e tabela)
 .content {
   background-color: var(--background-color); /* Fundo branco do card */
   padding: var(--spacing-lg);
@@ -97,14 +97,14 @@ $info-color: #2196F3; // Cor para mensagens de info (pode ser o --primary-color 
   transition: var(--transition-base);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg); /* Espaçamento entre as seções do formulário */
+  gap: var(--spacing-lg); /* Espaçamento entre as seções do formulário e tabela */
   flex-grow: 1; /* Permite que o formulário ocupe o espaço restante */
 
   &:hover {
     box-shadow: var(--shadow-md);
   }
 
-  /* --- Seções do Formulário (matches HTML: .info-section) --- */
+  /* --- Seções do Formulário e Tabela --- */
   .info-section {
     h2 {
       display: flex;
@@ -125,14 +125,76 @@ $info-color: #2196F3; // Cor para mensagens de info (pode ser o --primary-color 
     }
   }
 
-  /* --- Grid de informações (matches HTML: .info-grid) --- */
+  /* --- Grid de informações para o formulário --- */
   .info-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Layout responsivo */
     gap: var(--spacing-md);
   }
 
-  /* --- Estilos globais para campos do Angular Material (matches your previous definition) --- */
+  /* --- Estilos para o campo de filtro da tabela --- */
+  .filter-field {
+    width: 100%;
+    margin-bottom: var(--spacing-md);
+  }
+
+  /* --- Estilos da Tabela Angular Material --- */
+  .category-table-container {
+    overflow-x: auto; /* Permite rolagem horizontal em telas pequenas */
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse; /* Remove espaçamento entre células */
+
+    .mat-header-cell {
+      background-color: var(--primary-light-color); /* Cor de fundo para o cabeçalho da tabela */
+      color: var(--on-primary-light-color); /* Cor do texto no cabeçalho */
+      font-weight: 600;
+      font-size: var(--font-size-sm);
+      padding: var(--spacing-sm) var(--spacing-md); /* Padding ajustado */
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .mat-cell {
+      color: var(--text-color);
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-bottom: 1px solid var(--border-color-light); /* Linha divisória mais suave */
+    }
+
+    .mat-row:last-child .mat-cell {
+      border-bottom: none; /* Remove a borda da última linha */
+    }
+
+    .mat-cell:first-child,
+    .mat-header-cell:first-child {
+      padding-left: var(--spacing-lg); /* Aumenta padding na primeira coluna */
+    }
+
+    .mat-cell:last-child,
+    .mat-header-cell:last-child {
+      padding-right: var(--spacing-lg); /* Aumenta padding na última coluna */
+      text-align: right; /* Alinha botões de ação à direita */
+      button {
+        margin-left: var(--spacing-xs); /* Espaçamento entre os botões de ação */
+      }
+    }
+
+    .mat-no-data-row {
+      text-align: center;
+      padding: var(--spacing-md);
+      color: var(--text-secondary-color);
+    }
+  }
+
+  mat-paginator {
+    background-color: var(--background-color);
+    color: var(--text-secondary-color);
+    border-top: 1px solid var(--border-color);
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  /* --- Estilos globais para campos do Angular Material --- */
   ::ng-deep {
     .mat-form-field-appearance-outline {
       .mat-form-field-outline {
@@ -178,7 +240,7 @@ $info-color: #2196F3; // Cor para mensagens de info (pode ser o --primary-color 
     margin-top: calc(var(--spacing-xs) / 2);
   }
 
-  /* --- Botões de ação do formulário (matches HTML: .actions) --- */
+  /* --- Botões de ação do formulário --- */
   .actions {
     display: flex;
     justify-content: flex-end;
@@ -269,6 +331,16 @@ $info-color: #2196F3; // Cor para mensagens de info (pode ser o --primary-color 
     button {
       width: 100%;
       justify-content: center; /* Centraliza o texto do botão */
+    }
+  }
+  .category-table-container {
+    .mat-cell:first-child,
+    .mat-header-cell:first-child {
+      padding-left: var(--spacing-md);
+    }
+    .mat-cell:last-child,
+    .mat-header-cell:last-child {
+      padding-right: var(--spacing-md);
     }
   }
 }

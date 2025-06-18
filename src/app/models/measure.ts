@@ -1,3 +1,4 @@
+// src/app/models/measure.ts
 export interface Measure {
   id?: number;
   data?: Date;
@@ -12,11 +13,11 @@ export interface Measure {
   coxaEsquerda?: number;
   peitoral?: number;
   abdomem?: number;
-  abdominal?: number;
+  abdominal?: number; // Assuming this is for abdominal skinfold
   suprailiaca?: number;
   subescapular?: number;
   triceps?: number;
   axilar?: number;
   torax?: number;
-  userId: number;
+  clientId?: number; // Changed from userId to clientId for consistency
 }

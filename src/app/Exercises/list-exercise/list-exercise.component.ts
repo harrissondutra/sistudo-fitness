@@ -38,7 +38,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatSnackBarModule,
     HttpClientModule,
     MatProgressSpinnerModule,
-    ConfirmDialogComponent,
     MatDialogModule,
     IonicModule
 ]

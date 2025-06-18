@@ -1,67 +1,145 @@
-<!-- Container Principal -->
 <div class="trainning-create-container">
-  <!-- Cabeçalho -->
   <div class="header">
-    <mat-icon>fitness_center</mat-icon>
-    <h1>Criar Novo Treino</h1>
+    <mat-icon style="vertical-align: middle; margin-right: 8px;">add_circle</mat-icon>
+    <div class="header-content">
+      <h1>Criar Novo Treino</h1>
+      <p class="subtitle">Preencha os detalhes para criar um novo treino.</p>
+    </div>
   </div>
 
-  <!-- Formulário -->
-  <form [formGroup]="trainingForm" (ngSubmit)="onSubmit()" class="form-container">
-    <mat-form-field appearance="outline">
-      <mat-label>Nome do Treino</mat-label>
-      <input matInput formControlName="name" placeholder="Digite o nome do treino">
-      @if (trainingForm.get('name')?.hasError('required') && trainingForm.get('name')?.touched) {
-        <mat-error>Nome é obrigatório</mat-error>
-      }
-      @if (trainingForm.get('name')?.hasError('minlength') && trainingForm.get('name')?.touched) {
-        <mat-error>Nome deve ter no mínimo 3 caracteres</mat-error>
-      }
-    </mat-form-field>
+  @if (isLoading) {
+  <div class="loading-spinner">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Carregando dados necessários...</p>
+  </div>
+  } @else {
+  <form [formGroup]="trainningForm" (ngSubmit)="onSubmit()" class="content">
+    <div class="info-section">
+      <h2>
+        <mat-icon>info</mat-icon>
+        Informações do Treino
+      </h2>
+      <div class="info-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Nome do Treino</mat-label>
+          <input matInput formControlName="name" placeholder="Nome do treino" required>
+          <mat-icon matSuffix>fitness_center</mat-icon>
+          @if (trainningForm.get('name')?.hasError('required') && trainningForm.get('name')?.touched) {
+            <mat-error>Nome é obrigatório</mat-error>
+          }
+          @if (trainningForm.get('name')?.hasError('minlength') && trainningForm.get('name')?.touched) {
+            <mat-error>Nome deve ter no mínimo 3 caracteres</mat-error>
+          }
+        </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Exercícios</mat-label>
-      <mat-select formControlName="exercises" multiple>
-        <mat-option>-- Selecione os exercícios --</mat-option> <!-- Opção para campo vazio/placeholder -->
-        @for (exercise of exercises; track exercise) {
-          <mat-option [value]="exercise">
-            {{exercise.name}}
-          </mat-option>
+        <mat-form-field appearance="outline">
+          <mat-label>Descrição do Treino</mat-label>
+          <textarea matInput formControlName="description" placeholder="Adicione uma descrição" rows="3"></textarea>
+          <mat-icon matSuffix>description</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Categoria</mat-label>
+          <mat-select formControlName="category" [compareWith]="compareObjectsById" required>
+            <mat-option [value]="null">-- Selecione a Categoria --</mat-option>
+            @for (category of trainningCategories; track category.id) {
+              <mat-option [value]="category">{{ category.name }}</mat-option>
+            }
+          </mat-select>
+          <mat-icon matSuffix>category</mat-icon>
+          @if (trainningForm.get('category')?.hasError('required') && trainningForm.get('category')?.touched) {
+            <mat-error>Categoria é obrigatória</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Cliente</mat-label>
+          <mat-select formControlName="clientId" required>
+            <mat-option [value]="null">-- Selecione um Cliente --</mat-option>
+            @for (client of clients; track client.id) {
+              <mat-option [value]="client.id">
+                {{client.name}}
+              </mat-option>
+            }
+          </mat-select>
+          <mat-icon matSuffix>person</mat-icon>
+          @if (trainningForm.get('clientId')?.hasError('required') && trainningForm.get('clientId')?.touched) {
+            <mat-error>Selecione um Cliente</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Data de Início</mat-label>
+          <input matInput [matDatepicker]="startDatePicker" formControlName="startDate" required>
+          <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #startDatePicker></mat-datepicker>
+          @if (trainningForm.get('startDate')?.hasError('required') && trainningForm.get('startDate')?.touched) {
+            <mat-error>Data de Início é obrigatória</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Data de Término (Opcional)</mat-label>
+          <input matInput [matDatepicker]="endDatePicker" formControlName="endDate">
+          <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #endDatePicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-checkbox formControlName="active">
+          Treino Ativo
+        </mat-checkbox>
+      </div>
+    </div>
+
+    <div class="exercises-section">
+      <h2>
+        <mat-icon>directions_run</mat-icon>
+        Exercícios
+      </h2>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Exercícios Selecionados</mat-label>
+        <mat-select formControlName="exercises" multiple [compareWith]="compareObjectsById" required>
+          <mat-option [value]="null">-- Selecione os exercícios --</mat-option>
+          @for (exercise of exercises; track exercise.id) {
+            <mat-option [value]="exercise">{{ exercise.name }}</mat-option>
+          }
+        </mat-select>
+        @if (trainningForm.get('exercises')?.hasError('required') && trainningForm.get('exercises')?.touched) {
+          <mat-error>Selecione pelo menos um exercício</mat-error>
         }
-      </mat-select>
-      @if (trainingForm.get('exercises')?.hasError('required') && trainingForm.get('exercises')?.touched) {
-        <mat-error>Selecione pelo menos um exercício</mat-error>
-      }
-      @if (trainingForm.get('exercises')?.hasError('minlength') && trainingForm.get('exercises')?.touched) {
-        <mat-error>Selecione pelo menos um exercício</mat-error>
-      }
-    </mat-form-field>
+      </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Cliente</mat-label>
-      <mat-select formControlName="userId">
-        <mat-option>-- Selecione um Cliente --</mat-option> <!-- Opção para campo vazio/placeholder -->
-        @for (user of users; track user) {
-          <mat-option [value]="user.id">
-            {{user.name}}
-          </mat-option>
-        }
-      </mat-select>
-      @if (trainingForm.get('userId')?.hasError('required') && trainingForm.get('userId')?.touched) {
-        <mat-error>Selecione um Cliente</mat-error>
+      @if (trainningForm.get('exercises')?.value && trainningForm.get('exercises')?.value.length > 0) {
+        <div class="exercises-selected-list">
+            <h3>Exercícios Adicionados:</h3>
+            @for (selectedExercise of trainningForm.get('exercises')?.value; track selectedExercise.id) {
+                <div class="exercise-item">
+                    <mat-icon class="exercise-icon">walk</mat-icon>
+                    <div class="exercise-details">
+                        <h4>{{ selectedExercise.name }}</h4>
+                        <p>{{ selectedExercise.description }}</p>
+                    </div>
+                    <button mat-icon-button color="warn" (click)="removeExerciseFromSelection(selectedExercise.id!)" class="remove-exercise-button">
+                        <mat-icon>remove_circle</mat-icon>
+                    </button>
+                </div>
+            }
+        </div>
+      } @else {
+        <p>Nenhum exercício adicionado a este treino.</p>
       }
-    </mat-form-field>
+    </div>
 
-    <!-- Botões de Ação -->
-    <div class="form-actions">
-      <button mat-button type="button" (click)="cancel()">
-        <mat-icon>arrow_back</mat-icon>
-        Cancelar
-      </button>
-      <button mat-raised-button color="primary" type="submit" [disabled]="trainingForm.invalid" matTooltip="{{ trainingForm.invalid ? 'Preencha todos os campos obrigatórios' : 'Criar novo treino' }}">
+    <div class="actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="trainningForm.invalid || isLoading">
         <mat-icon>save</mat-icon>
         Criar Treino
       </button>
+      <button mat-button type="button" (click)="cancel()" [disabled]="isLoading">
+        <mat-icon>cancel</mat-icon>
+        Cancelar
+      </button>
     </div>
   </form>
+  }
 </div>

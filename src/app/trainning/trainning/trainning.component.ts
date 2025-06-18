@@ -88,7 +88,7 @@ export class TrainningComponent implements OnInit { // Mantido o nome `Trainning
    */
   private loadTrainnings(): void {
     this.isLoading = true;
-    this.TrainningService.listAllTrainningsActive() // Assumindo que seu TrainningService tem um método getTrainnings()
+    this.TrainningService.listAllActiveTrainnings() // Assumindo que seu TrainningService tem um método getTrainnings()
       .pipe(finalize(() => this.isLoading = false))
       .subscribe({
         next: (Trainnings: Trainning[]) => {
@@ -181,15 +181,68 @@ export class TrainningComponent implements OnInit { // Mantido o nome `Trainning
     });
   }
 
-  /**
-   * Lida com erros de requisição HTTP e exibe uma mensagem.
-   * @param message Mensagem a ser exibida.
-   * @param error Objeto de erro HTTP.
+   /**
+   * Lida com erros de requisição HTTP e exibe uma mensagem no snackbar.
+   * Prioriza a propriedade "message" do JSON enviado pelo backend.
+   * @param error O objeto HttpErrorResponse completo.
    */
   private handleError(error: HttpErrorResponse): void {
-  console.error(error);
-  this.showMessage(error.error?.message || error.message, 'error');
-}
+    console.error('Ocorreu um erro na requisição:', error);
+
+    let errorMessage: string;
+
+    // Cenário 1: Erro do lado do cliente (ex: rede, CORS, erro no código Angular)
+    if (error.error instanceof ErrorEvent) {
+      errorMessage = `Erro de conexão ou cliente: ${error.error.message}`;
+    }
+    // Cenário 2: Erro retornado pelo servidor
+    else {
+      // **PRIORIDADE MÁXIMA: Buscar a propriedade 'message' do objeto error.error**
+      if (error.error && typeof error.error === 'object' && error.error.message) {
+        errorMessage = error.error.message;
+      }
+      // Outras verificações para diferentes formatos de erro do backend
+      else if (typeof error.error === 'string' && error.error.trim() !== '') {
+        // Se o corpo do erro for uma string pura do backend
+        errorMessage = error.error;
+      } else if (error.error && typeof error.error === 'object' && error.error.errors && Array.isArray(error.error.errors) && error.error.errors.length > 0) {
+        // Para erros de validação com lista de erros (ex: Spring Validation com "errors" array)
+        errorMessage = error.error.errors.map((err: any) => err.defaultMessage || err.message || 'Erro de validação').join('; ');
+      } else if (error.error && typeof error.error === 'object' && error.error.error && typeof error.error.error === 'string' && error.error.error.trim() !== '') {
+        // Para o caso em que o "message" está dentro de uma propriedade "error"
+        errorMessage = error.error.error;
+      }
+      // Fallback para mensagens baseadas no status HTTP ou genéricas se o backend não fornecer um "message" claro
+      else {
+        switch (error.status) {
+          case 0:
+            errorMessage = 'Não foi possível conectar ao servidor. Verifique sua conexão ou tente mais tarde.';
+            break;
+          case 400:
+            errorMessage = 'Requisição inválida. Verifique os dados enviados.';
+            break;
+          case 401:
+            errorMessage = 'Não autorizado. Faça login novamente.';
+            break;
+          case 403:
+            errorMessage = 'Acesso negado. Você não tem permissão para esta ação.';
+            break;
+          case 404:
+            errorMessage = 'Recurso não encontrado.';
+            break;
+          case 500:
+            errorMessage = 'Erro interno do servidor. Por favor, tente novamente mais tarde.';
+            break;
+          default:
+            errorMessage = `Erro do servidor (${error.status}): ${error.statusText || 'Ocorreu um erro inesperado.'}`;
+            break;
+        }
+      }
+    }
+
+    this.showMessage(errorMessage, 'error');
+  }
+
   /**
    * Exibe uma mensagem de notificação (snackbar).
    * @param message Mensagem a ser exibida.
@@ -203,6 +256,7 @@ export class TrainningComponent implements OnInit { // Mantido o nome `Trainning
       panelClass: type === 'success' ? ['success-snackbar'] : ['error-snackbar']
     });
   }
+
    getTrainningById(id: string) {
     this.router.navigate(['/trainning-view', id]);
   }

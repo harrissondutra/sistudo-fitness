@@ -1,0 +1,90 @@
+<div class="category-exercise-container">
+  <header class="header">
+    <mat-icon>category</mat-icon>
+    <div class="header-content">
+      <h1>Gerenciar Categorias de Treino</h1>
+      <p class="subtitle">Adicione, edite ou exclua categorias para organizar seus treinos.</p>
+    </div>
+  </header>
+
+  <div class="loading-spinner" *ngIf="isLoading && dataSource.data.length === 0">
+    <mat-spinner [diameter]="50" color="primary"></mat-spinner>
+    <p>Carregando categorias...</p>
+  </div>
+
+  <div class="content" *ngIf="!isLoading || dataSource.data.length > 0">
+    <section class="info-section">
+      <h2><mat-icon>add_circle_outline</mat-icon> {{ isEditing ? 'Editar Categoria' : 'Nova Categoria' }}</h2>
+      <form [formGroup]="trainningCategoryForm" (ngSubmit)="onSubmit()">
+        <div class="info-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Nome da Categoria</mat-label>
+            <input matInput formControlName="name" placeholder="Ex: Força, Cardio, Flexibilidade">
+            <mat-error *ngIf="trainningCategoryForm.get('name')?.invalid && trainningCategoryForm.get('name')?.touched">
+              <span *ngIf="trainningCategoryForm.get('name')?.errors?.['required']">O nome da categoria é obrigatório.</span>
+              <span *ngIf="trainningCategoryForm.get('name')?.errors?.['minlength']">O nome deve ter no mínimo 3 caracteres.</span>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Descrição</mat-label>
+            <textarea matInput formControlName="description" placeholder="Ex: Treinos focados em ganho de força muscular." rows="3"></textarea>
+          </mat-form-field>
+        </div>
+
+        <div class="actions">
+          <button mat-stroked-button color="warn" type="button" (click)="resetForm()" *ngIf="isEditing">
+            <mat-icon>cancel</mat-icon> Cancelar Edição
+          </button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="trainningCategoryForm.invalid || isLoading">
+            <mat-icon>{{ isEditing ? 'save' : 'add' }}</mat-icon> {{ isEditing ? 'Salvar Alterações' : 'Adicionar Categoria' }}
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <mat-divider></mat-divider> <section class="info-section">
+      <h2><mat-icon>list</mat-icon> Categorias Cadastradas</h2>
+      <mat-form-field appearance="fill" class="filter-field">
+        <mat-label>Filtrar categorias</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Buscar por nome ou descrição" #input>
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <div class="mat-elevation-z2 category-table-container">
+        <table mat-table [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Nome </th>
+            <td mat-cell *matCellDef="let category"> {{category.name}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Descrição </th>
+            <td mat-cell *matCellDef="let category"> {{category.description || 'N/A'}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef> Ações </th>
+            <td mat-cell *matCellDef="let category">
+              <button mat-icon-button color="accent" (click)="editCategory(category)" matTooltip="Editar Categoria">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteCategory(category)" matTooltip="Excluir Categoria">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="3">Nenhuma categoria encontrada para o filtro "{{input.value}}".</td>
+          </tr>
+        </table>
+
+        <mat-paginator [pageSizeOptions]="[5, 10, 25, 50]" showFirstLastButtons></mat-paginator>
+      </div>
+    </section>
+  </div>
+</div>

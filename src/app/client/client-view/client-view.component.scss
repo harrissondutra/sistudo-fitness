@@ -1,0 +1,258 @@
+.user-view-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Roboto', sans-serif; // Garante a fonte padrão do Material Design
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid #eee; // Adiciona uma linha sutil para separar o cabeçalho
+    padding-bottom: 24px;
+
+    mat-icon {
+      font-size: 38px; // Um pouco maior para destaque
+      width: 38px;
+      height: 38px;
+      color: #673ab7; // Cor primária para o ícone do cabeçalho
+    }
+
+    .header-content {
+      h1 {
+        margin: 0;
+        font-size: 28px; // Um pouco maior para o título
+        color: #333;
+      }
+
+      .subtitle {
+        margin: 4px 0 0;
+        color: rgba(0, 0, 0, 0.7); // Mais legível
+        font-size: 16px;
+      }
+    }
+  }
+
+  .content {
+    .info-section {
+      background: #fff;
+      border-radius: 12px; // Borda mais arredondada
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); // Sombra mais suave e proeminente
+      margin-bottom: 28px; // Mais espaço entre as seções
+
+      h2 {
+        display: flex;
+        align-items: center;
+        gap: 10px; // Espaçamento levemente maior
+        margin: 0 0 24px;
+        font-size: 22px; // Levemente maior
+        color: #424242; // Cor mais neutra para os títulos de seção
+        border-bottom: 1px solid #f0f0f0; // Linha sutil abaixo do título da seção
+        padding-bottom: 12px;
+
+        mat-icon {
+          color: #673ab7;
+          font-size: 28px; // Ícones de seção um pouco maiores
+        }
+      }
+
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); // Base maior para os itens
+        gap: 20px; // Mais espaçamento
+
+        .info-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 14px 18px; // Mais padding
+          background: #f9f9f9; // Fundo mais claro
+          border-radius: 8px; // Borda mais arredondada
+          border: 1px solid #eee; // Borda sutil
+
+          .label {
+            font-weight: 600; // Um pouco mais forte
+            color: #555;
+          }
+
+          .value {
+            color: #673ab7;
+            font-weight: 600; // Um pouco mais forte
+            text-align: right; // Alinha o valor à direita
+            flex-grow: 1; // Permite que o valor ocupe o espaço restante
+            margin-left: 10px; // Espaçamento entre label e value
+          }
+        }
+      }
+
+      .measures-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); // Base maior para grupos de medidas
+        gap: 32px; // Mais espaçamento entre os grupos
+
+        .measure-group {
+          background: #fdfdfd; // Fundo muito claro
+          border-radius: 10px; // Borda mais arredondada
+          padding: 20px;
+          border: 1px solid #e0e0e0; // Borda mais visível
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); // Sombra mais leve
+
+          h3 {
+            margin: 0 0 18px;
+            font-size: 18px;
+            color: #673ab7;
+            border-bottom: 1px dashed #e0e0e0; // Linha pontilhada para subtítulos
+            padding-bottom: 10px;
+          }
+
+          .measure-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px; // Mais espaçamento
+            margin-bottom: 18px;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+
+          .measure-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            background: #fff;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); // Sombra leve para itens individuais
+
+            .label {
+              font-weight: 500;
+              color: #666;
+            }
+
+            .value {
+              color: #673ab7;
+              font-weight: 600;
+              text-align: right;
+              flex-grow: 1;
+              margin-left: 8px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px; // Espaço entre os botões
+    margin-top: 40px; // Mais espaço acima dos botões
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease; // Transição suave
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+      &:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      &[mat-raised-button] {
+        background-color: #673ab7; // Cor primária do Material
+        color: #fff;
+
+        &:hover {
+          background-color: darken(#673ab7, 8%); // Escurece no hover
+        }
+      }
+
+      &[mat-button] {
+        color: #673ab7;
+
+        &:hover {
+          background-color: rgba(#673ab7, 0.08); // Fundo levemente transparente
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .user-view-container {
+    padding: 16px;
+
+    .header {
+      flex-direction: column; // Empilha o ícone e o conteúdo do cabeçalho
+      text-align: center;
+      gap: 8px;
+
+      .header-content {
+        h1 {
+          font-size: 24px;
+        }
+        .subtitle {
+          font-size: 14px;
+        }
+      }
+    }
+
+    .content {
+      .info-section {
+        padding: 18px;
+
+        h2 {
+          font-size: 18px;
+          justify-content: center; // Centraliza o título da seção
+          text-align: center;
+          mat-icon {
+            font-size: 24px;
+          }
+        }
+
+        .info-grid {
+          grid-template-columns: 1fr; // Uma coluna em telas menores
+          gap: 12px; // Reduz o espaçamento
+        }
+
+        .measures-grid {
+          grid-template-columns: 1fr; // Uma coluna em telas menores
+          gap: 24px;
+
+          .measure-group {
+            padding: 16px;
+
+            h3 {
+              font-size: 16px;
+              text-align: center; // Centraliza o subtítulo
+            }
+
+            .measure-row {
+              grid-template-columns: 1fr; // Uma coluna para cada item de medida
+              gap: 12px;
+            }
+          }
+        }
+      }
+    }
+
+    .actions {
+      flex-direction: column; // Empilha os botões
+      gap: 12px;
+
+      button {
+        width: 100%; // Botões ocupam a largura total
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .user-view-container {
+    padding: 12px;
+  }
+}
