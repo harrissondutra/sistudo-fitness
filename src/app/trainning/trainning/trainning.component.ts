@@ -96,7 +96,7 @@ export class TrainningComponent implements OnInit { // Mantido o nome `Trainning
           this.applyFilter(this.searchControl.value || ''); // Aplica o filtro inicial ou o filtro atual
         },
         error: (error: HttpErrorResponse) => {
-          this.handleError('Erro ao carregar treinos.', error);
+          this.handleError(error.error?.message);
         }
       });
   }
@@ -174,7 +174,7 @@ export class TrainningComponent implements OnInit { // Mantido o nome `Trainning
               this.loadTrainnings(); // Recarrega a lista após a exclusão
             },
             error: (error: HttpErrorResponse) => {
-              this.handleError('Erro ao excluir treino.', error);
+              this.handleError(error);
             }
           });
       }
@@ -186,11 +186,10 @@ export class TrainningComponent implements OnInit { // Mantido o nome `Trainning
    * @param message Mensagem a ser exibida.
    * @param error Objeto de erro HTTP.
    */
-  private handleError(message: string, error: HttpErrorResponse): void {
-    console.error(`${message}:`, error);
-    this.showMessage(message + ' Detalhes: ' + (error.error?.message || error.message), 'error');
-  }
-
+  private handleError(error: HttpErrorResponse): void {
+  console.error(error);
+  this.showMessage(error.error?.message || error.message, 'error');
+}
   /**
    * Exibe uma mensagem de notificação (snackbar).
    * @param message Mensagem a ser exibida.
