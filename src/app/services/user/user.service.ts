@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 })
 export class UserService {
 
-  private baseUrl = `${environment.apiUrl}/user`;
+  private baseUrl = `${environment.apiUrl}/client`;
 
   constructor(private http: HttpClient) { }
 
