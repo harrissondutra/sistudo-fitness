@@ -17,6 +17,7 @@ import { TrainningViewComponent } from './trainning/trainning-view/trainning-vie
 import { TrainningEditComponent } from './trainning/trainning-edit/trainning-edit/trainning-edit.component';
 import { TrainningCategoryComponent } from './trainning/trainning-category/trainning-category.component';
 import { ClientViewComponent } from './client/client-view/client-view.component';
+import { EditMeasuresComponent } from './measures/edit-measures.component';
 
 
 export const routes: Routes = [
@@ -31,6 +32,7 @@ export const routes: Routes = [
       { path: 'client/:id', component: ClientViewComponent },
       { path: 'clients-list', component: ClientListComponent },
       { path: 'clients-edit/:id', component: ClientEditComponent },
+      { path: 'edit-measures/:id', component: EditMeasuresComponent },
       { path: 'trainning-create', component: TrainningCreateComponent },
       { path: 'trainning-view/:id', component: TrainningViewComponent },
       { path: 'trainning-edit/:id', component: TrainningEditComponent },

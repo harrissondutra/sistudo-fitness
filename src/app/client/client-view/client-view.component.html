@@ -1,112 +1,213 @@
-<div class="client-container">
+<!-- Container Principal -->
+<div class="trainning-container">
+  <!-- Cabeçalho -->
   <div class="header">
-    <mat-icon style="vertical-align: middle; margin-right: 8px;">person</mat-icon>
+    <ng-container *ngIf="client && client.evolutionPhotos && client.evolutionPhotos.length > 0; else noAvatar">
+      <img [src]="client.evolutionPhotos[0]" alt="Client Avatar" class="client-avatar">
+    </ng-container>
+    <ng-template #noAvatar>
+      <div class="client-avatar">
+        <mat-icon>fitness_center</mat-icon>
+      </div>
+    </ng-template>
     <div class="header-content">
       <h1>{{ client?.name || 'Cliente' }}</h1>
-      <p class="subtitle">Detalhes do Cliente</p>
+      <p class="subtitle">Detalhes do Cliente e Treinos</p>
     </div>
   </div>
 
   @if (client) {
   <div class="content">
-    <div class="info-section">
-      <h2>
-        <mat-icon>info</mat-icon>
-        Informações Pessoais
-      </h2>
-      <div class="info-grid">
-        <div class="info-item">
-          <span class="label">E-mail:</span>
-          <span class="value">{{ client?.email }}</span>
+    <!-- Linha do Dashboard Superior: Informações Pessoais (1/3) e Medidas Atuais (2/3) -->
+    <div class="dashboard-row dashboard-row-top">
+      <!-- Seção de Informações Pessoais -->
+      <div class="info-section personal-info-section">
+        <h2>
+          <mat-icon>info</mat-icon>
+          Informações Pessoais
+          <!-- Botão de editar agora usa a rota clients-edit/:id -->
+          <button mat-icon-button color="primary" (click)="editClientDetails(client.id?.toString())" matTooltip="Editar Informações Pessoais">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </h2>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">E-mail:</span>
+            <span class="value">{{ client?.email }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Nascimento:</span>
+            <span class="value">{{ client?.dateOfBirth ? (client?.dateOfBirth | date:'dd/MM/yyyy') : '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Altura:</span>
+            <span class="value">{{ client?.height != null ? client?.height + ' cm' : '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Peso:</span>
+            <span class="value">{{ client?.weight != null ? client?.weight + ' kg' : '-' }}</span>
+          </div>
         </div>
-        <div class="info-item">
-          <span class="label">Nascimento:</span>
-          <span class="value">{{ client?.dateOfBirth ? (client?.dateOfBirth | date:'dd/MM/yyyy') : '-' }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Altura:</span>
-          <span class="value">{{ client?.height != null ? client?.height + ' cm' : '-' }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Peso:</span>
-          <span class="value">{{ client?.weight != null ? client?.weight + ' kg' : '-' }}</span>
+      </div>
+
+      <!-- Seção de Medidas Atuais -->
+      <div class="info-section measures-section">
+        <h2>
+          <mat-icon>fitness_center</mat-icon>
+          Medidas Atuais
+          <!-- Botão de editar medidas, mantém a função, que pode navegar para clients-edit/:id com queryParam -->
+          <button mat-icon-button color="primary" (click)="editMeasures(client.id?.toString())" matTooltip="Editar Medidas Atuais">
+            <mat-icon>edit</mat-icon>
+          </button>
+        </h2>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Ombro:</span>
+            <span class="value">{{ client?.measure?.ombro != null ? client?.measure?.ombro + ' cm' : '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Peitoral:</span>
+            <span class="value">{{ client?.measure?.peitoral != null ? client?.measure?.peitoral + ' cm' : '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Cintura:</span>
+            <span class="value">{{ client?.measure?.cintura != null ? client?.measure?.cintura + ' cm' : '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Quadril:</span>
+            <span class="value">{{ client?.measure?.quadril != null ? client?.measure?.quadril + ' cm' : '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Abdômen:</span>
+            <span class="value">{{ client?.measure?.abdomem != null ? client?.measure?.abdomem + ' cm' : '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Tórax:</span>
+            <span class="value">{{ client?.measure?.torax != null ? client?.measure?.torax + ' cm' : '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Braço Direito:</span>
+            <span class="value">{{ client?.measure?.bracoDireito != null ? client?.measure?.bracoDireito + ' cm' : '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Braço Esquerdo:</span>
+            <span class="value">{{ client?.measure?.bracoEsquerdo != null ? client?.measure?.bracoEsquerdo + ' cm' : '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Coxa Direita:</span>
+            <span class="value">{{ client?.measure?.coxaDireita != null ? client?.measure?.coxaDireita + ' cm' : '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Coxa Esquerda:</span>
+            <span class="value">{{ client?.measure?.coxaEsquerda != null ? client?.measure?.coxaEsquerda + ' cm' : '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Panturrilha Direita:</span>
+            <span class="value">{{ client?.measure?.panturrilhaDireita != null ? client?.measure?.panturrilhaDireita + ' cm' : '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Panturrilha Esquerda:</span>
+            <span class="value">{{ client?.measure?.panturrilhaEsquerda != null ? client?.measure?.panturrilhaEsquerda + ' cm' : '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Abdominal:</span>
+            <span class="value">{{ client?.measure?.abdominal != null ? client?.measure?.abdominal + ' mm' : '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Suprailíaca:</span>
+            <span class="value">{{ client?.measure?.suprailiaca != null ? client?.measure?.suprailiaca + ' mm' : '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Subescapular:</span>
+            <span class="value">{{ client?.measure?.subescapular != null ? client?.measure?.subescapular + ' mm' : '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Tríceps:</span>
+            <span class="value">{{ client?.measure?.triceps != null ? client?.measure?.triceps + ' mm' : '-' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Axilar Média:</span>
+            <span class="value">{{ client?.measure?.axilar != null ? client?.measure?.axilar + ' mm' : '-' }}</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="info-section">
-      <h2>
-        <mat-icon>fitness_center</mat-icon>
-        Medidas Atuais
-      </h2>
-      <div class="info-grid">
-        <div class="info-item">
-          <span class="label">Ombro:</span>
-          <span class="value">{{ client?.measure?.ombro != null ? client?.measure?.ombro + ' cm' : '-' }}</span>
+    <!-- Linha do Dashboard Inferior: Treino Atual e Histórico de Treinos -->
+    <div class="dashboard-row dashboard-row-bottom">
+      <div class="exercises-section current-training-section">
+        <h2>
+          <mat-icon>assignment</mat-icon>
+          Treino Atual
+        </h2>
+        @if (currentClientTraining) {
+        <div class="current-training-details">
+          <p><strong>Nome do Treino:</strong> {{ currentClientTraining.name }}</p>
+          <p><strong>Período:</strong> {{ currentClientTraining.startDate | date:'dd/MM/yyyy' }} - {{ currentClientTraining.endDate | date:'dd/MM/yyyy' }}</p>
+          <p><strong>Objetivo:</strong> {{ currentClientTraining.objective }}</p>
+          <p><strong>Frequência Semanal:</strong> {{ currentClientTraining.weeklyFrequency }}</p>
+          <h3>Exercícios:</h3>
+          @if (currentClientTraining.exercises && currentClientTraining.exercises.length > 0) {
+            <ul>
+              @for (exercise of currentClientTraining.exercises; track exercise.id) {
+                <li>{{ exercise.name }} (Séries: {{ exercise.sets }}, Repetições: {{ exercise.reps }})</li>
+              }
+            </ul>
+          } @else {
+            <p>Nenhum exercício cadastrado para este treino.</p>
+          }
         </div>
-        <div class="info-item">
-          <span class="label">Peitoral:</span>
-          <span class="value">{{ client?.measure?.peitoral != null ? client?.measure?.peitoral + ' cm' : '-' }}</span>
+        } @else {
+        <div class="no-training">
+          <mat-icon>sentiment_dissatisfied</mat-icon>
+          <p>Nenhum treino atual atribuído a este cliente.</p>
+          <button mat-raised-button color="primary" class="assign-training-button" (click)="assignNewTraining()">
+            <mat-icon>add</mat-icon> Atribuir Novo Treino
+          </button>
         </div>
-        <div class="info-item">
-          <span class="label">Cintura:</span>
-          <span class="value">{{ client?.measure?.cintura != null ? client?.measure?.cintura + ' cm' : '-' }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Quadril:</span>
-          <span class="value">{{ client?.measure?.quadril != null ? client?.measure?.quadril + ' cm' : '-' }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Abdômen:</span>
-          <span class="value">{{ client?.measure?.abdomem != null ? client?.measure?.abdomem + ' cm' : '-' }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Tórax:</span>
-          <span class="value">{{ client?.measure?.torax != null ? client?.measure?.torax + ' cm' : '-' }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Braço Direito:</span>
-          <span class="value">{{ client?.measure?.bracoDireito != null ? client?.measure?.bracoDireito + ' cm' : '-' }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Braço Esquerdo:</span>
-          <span class="value">{{ client?.measure?.bracoEsquerdo != null ? client?.measure?.bracoEsquerdo + ' cm' : '-' }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Coxa Direita:</span>
-          <span class="value">{{ client?.measure?.coxaDireita != null ? client?.measure?.coxaDireita + ' cm' : '-' }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Coxa Esquerda:</span>
-          <span class="value">{{ client?.measure?.coxaEsquerda != null ? client?.measure?.coxaEsquerda + ' cm' : '-' }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Panturrilha Direita:</span>
-          <span class="value">{{ client?.measure?.panturrilhaDireita != null ? client?.measure?.panturrilhaDireita + ' cm' : '-' }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Panturrilha Esquerda:</span>
-          <span class="value">{{ client?.measure?.panturrilhaEsquerda != null ? client?.measure?.panturrilhaEsquerda + ' cm' : '-' }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Abdominal:</span>
-          <span class="value">{{ client?.measure?.abdominal != null ? client?.measure?.abdominal + ' mm' : '-' }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Suprailíaca:</span>
-          <span class="value">{{ client?.measure?.suprailiaca != null ? client?.measure?.suprailiaca + ' mm' : '-' }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Subescapular:</span>
-          <span class="value">{{ client?.measure?.subescapular != null ? client?.measure?.subescapular + ' mm' : '-' }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Tríceps:</span>
-          <span class="value">{{ client?.measure?.triceps != null ? client?.measure?.triceps + ' mm' : '-' }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Axilar Média:</span>
-          <span class="value">{{ client?.measure?.axilar != null ? client?.measure?.axilar + ' mm' : '-' }}</span>
+        }
+      </div>
+
+      <div class="exercises-section training-history-section">
+        <h2>
+          <mat-icon>history</mat-icon>
+          Histórico de Treinos
+        </h2>
+        <div class="training-history-table-wrapper"> <!-- Wrapper para responsividade da tabela -->
+          <ng-container *ngIf="(client?.trainings?.length ?? 0) > 0; else noTrainingHistory">
+            <table class="training-table">
+              <thead>
+                <tr>
+                  <th>Nome do Treino</th>
+                  <th>Início</th>
+                  <th>Fim</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let training of client.trainings; trackBy: trackByTrainingId">
+                  <td>{{ training.name }}</td>
+                  <td>{{ training.startDate | date:'dd/MM/yyyy' }}</td>
+                  <td>{{ training.endDate | date:'dd/MM/yyyy' }}</td>
+                  <td>-</td>
+                  <td>
+                    <button mat-icon-button color="primary" (click)="viewTrainingDetails(training.id ?? '')">
+                      <mat-icon>visibility</mat-icon>
+                    </button>
+                    <button mat-icon-button color="warn" (click)="deleteTraining(training.id?.toString() ?? '')">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </ng-container>
+          <ng-template #noTrainingHistory>
+            <div class="no-data-row">
+              <p>Nenhum histórico de treino encontrado para este cliente.</p>
+            </div>
+          </ng-template>
         </div>
       </div>
     </div>

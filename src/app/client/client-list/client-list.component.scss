@@ -1,19 +1,29 @@
-/* client-list.component.scss */
-
 @use 'sass:math';
 
-// Variáveis de Sombra
-$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
-$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
-$shadow-lg: 0 6px 16px rgba(0, 0, 0, 0.15);
-$transition-default: all 0.3s ease;
-$transition-fast: all 0.2s ease;
+// Variáveis de Cores (ajustadas conforme o tema Material Design fornecido)
+$primary-color: #3f51b5;
+$accent-color: #ff4081;
+$warn-color: #f44336;
+$text-color: #1a237e; // Cor para títulos e textos principais (mais escura)
+$light-text-color: #666; // Cor para subtítulos e textos secundários
+$border-color: #e0e0e0;
+$background-light: #f5f5f5; // Cor de fundo principal
+$white: #fff; // Cor para elementos com fundo branco
+$lighter-primary: #e8eaf6; // Um tom mais claro da cor primária
+$list-item-background: #f8f9fa; // Cor de fundo para itens de lista (similar a info-item)
+$list-item-hover-background: #e8eaf6; // Cor de fundo para itens de lista no hover
 
-// Mixins de Flexbox
+// Variáveis de Espaçamento
+$spacing-unit: 8px;
+$padding-small: $spacing-unit * 2; // 16px
+$padding-medium: $spacing-unit * 3; // 24px
+$margin-medium: $spacing-unit * 3; // 24px
+
+// Mixins para reutilização de estilos
 @mixin flex-center {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 }
 
 @mixin flex-between-center {
@@ -22,462 +32,364 @@ $transition-fast: all 0.2s ease;
   align-items: center;
 }
 
-@mixin flex-start-align-center {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
+@mixin card-shadow-sm {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Sombra padrão de seção */
 }
 
-@mixin flex-col-center {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+@mixin card-shadow-md {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Usando a mesma sombra de seção para consistência */
 }
 
-@mixin flex-end-gap($gap) {
-  display: flex;
-  justify-content: flex-end;
-  gap: $gap;
-}
-
-// Estilos Globais do Componente
 .client-list-container {
-  background: $surface-color;
-  border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
-  padding: $spacing-lg;
-  margin: $spacing-lg auto;
-  max-width: 1000px;
-  @include respond-to(sm) {
-    padding: $spacing-md;
-    margin: $spacing-md;
-  }
-  @include respond-to(xs) {
-    padding: $spacing-sm;
-    margin: $spacing-sm;
+  padding: $padding-medium; /* 24px */
+  max-width: 1200px; /* Mantido o max-width do padrão trainning-container */
+  margin: $margin-medium auto; /* 24px auto */
+  background-color: $white; /* Fundo branco para o container principal, como exercise-list-container */
+  border-radius: $spacing-unit; /* 8px */
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
+              0 2px 2px 0 rgba(0, 0, 0, 0.14),
+              0 1px 5px 0 rgba(0, 0, 0, 0.12); /* Sombra do card padrão */
+  min-height: calc(100vh - ($padding-medium * 2)); /* Garante que o container ocupe a altura total da viewport */
+}
+
+.header {
+  @include flex-between-center; /* Reutilizando mixin */
+  margin-bottom: $padding-medium; /* 24px */
+  padding-bottom: $padding-small; /* 16px */
+  border-bottom: 1px solid $border-color; /* Linha divisória */
+
+  .title-section {
+    h2 {
+      margin: 0;
+      font-size: 2em; /* Mantido para corresponder ao padrão do exercise-list */
+      color: $text-color;
+    }
+
+    .subtitle {
+      margin: math.div($spacing-unit, 2) 0 0; /* 4px 0 0 */
+      font-size: 0.9em;
+      color: $light-text-color;
+    }
   }
 
-  // Estilos do Cabeçalho
-  .header {
+  .new-client-btn {
+    padding: $spacing-unit $padding-small; /* 8px 16px */
+    font-weight: 500;
+
+    mat-icon { /* Usado mat-icon em vez de .mat-icon */
+      margin-right: $spacing-unit; /* 8px */
+    }
+  }
+}
+
+.search-section {
+  margin-bottom: $padding-medium; /* 24px */
+
+  .search-input {
+    width: 100%;
+
+    // Ajuste para remover padding extra do MatFormField
+    ::ng-deep {
+      .mat-form-field-wrapper {
+        padding-bottom: 0;
+      }
+    }
+  }
+}
+
+/* --- Ionic List Styles (with Material Icons) --- */
+.client-ionic-list {
+  background: transparent; /* Fundo transparente, pois os itens serão cards */
+  border-radius: $spacing-unit; /* 8px */
+  box-shadow: none; /* Removido o box-shadow do container, agora nos itens */
+  padding: 0;
+  margin: 0;
+
+  ion-item {
+    --background: $white; /* Fundo do item */
+    --border-color: transparent; /* Remove a borda padrão do Ionic Item */
+    --border-width: 0; /* Remove a borda padrão do Ionic Item */
+
+    // Padding interno dos itens (card) para dar "respiro"
+    --padding-start: $padding-medium; /* 24px */
+    --padding-end: $padding-medium; /* 24px */
+    --padding-top: $padding-small; /* 16px */
+    --padding-bottom: $padding-small; /* 16px */
+
+    // Adicionando padding direto para garantir, caso as variáveis não funcionem totalmente
+    padding: $padding-small $padding-medium !important; /* 16px top/bottom, 24px left/right */
+
+    margin-bottom: $padding-small; /* 16px Espaçamento entre os cards */
+    border-radius: $spacing-unit; /* 8px Cantos arredondados para o card */
+    @include card-shadow-md; /* Sombra padrão de card */
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    flex-wrap: wrap; /* Permite que o conteúdo quebre linha em telas menores */
+
     display: flex;
-    align-items: center;
-    gap: $spacing-md;
-    margin-bottom: $spacing-lg;
-    .header-content {
-      h1 {
-        font-size: 2rem;
-        color: $primary-color;
-      }
-      .subtitle {
-        color: $secondary-color;
-        font-size: $font-size-sm;
-        margin-top: $spacing-xs;
-      }
-    }
-  }
+    align-items: center; /* Centraliza verticalmente o label e os botões */
+    justify-content: space-between; /* Empurra o slot="end" para a direita */
 
-  // Barra de Ações
-  .action-bar {
-    @include flex-between-center;
-    margin-bottom: var(--spacing-lg);
-    flex-wrap: wrap;
-    gap: var(--spacing-md);
-
-    .search-input {
-      flex: 1;
-      min-width: 300px;
-      max-width: 500px;
-
-      ::ng-deep {
-        .mat-form-field-wrapper {
-          margin: 0;
-          padding: 0;
-        }
-        .mat-form-field-flex {
-          background: var(--background-light);
-          border-radius: var(--border-radius-sm);
-          padding: 0 var(--spacing-md);
-          @include flex-start-align-center;
-          height: 56px;
-        }
-        .mat-form-field-outline {
-          color: var(--border-color);
-        }
-        .mat-form-field-infix {
-          padding: var(--spacing-md) 0;
-        }
-        .mat-form-field-suffix {
-          padding: 0 var(--spacing-xs);
-          align-self: center;
-        }
-        .mat-form-field-label-wrapper {
-          padding-top: 8px;
-        }
-      }
+    &:hover {
+      --background: $list-item-hover-background; /* Cor de fundo no hover */
+      @include card-shadow-md; /* Mantém a sombra no hover, pode ser ajustado para um efeito de elevação se desejado */
     }
 
-    .action-buttons-top {
-      .mat-raised-button {
-        min-width: unset;
-        padding: var(--spacing-xs) var(--spacing-lg);
-        border-radius: var(--border-radius-sm);
+    &:last-child {
+      margin-bottom: 0; /* Remove a margem do último item */
+    }
+
+    ion-label {
+      flex-grow: 1; /* Permite que a label ocupe o espaço restante */
+
+      h3 { /* Alterado de h3.exercise-name para h3 */
+        font-size: 1.1em;
+        color: $text-color;
+        margin: 0 0 math.div($spacing-unit, 2) 0; /* 4px Espaçamento abaixo do nome */
         font-weight: 500;
-        transition: $transition-default;
+      }
+
+      p.client-info { /* Adicionado a classe client-info */
+        font-size: 0.9em;
+        color: $light-text-color;
+        margin: 0 0 math.div($spacing-unit, 2) 0; /* 4px Espaçamento entre parágrafos */
+        display: flex; /* Para alinhar ícone com texto */
+        align-items: center;
+        gap: $spacing-unit / 2; /* 4px de espaço entre ícone e texto */
 
         mat-icon {
-          margin-right: var(--spacing-xs);
+          font-size: 1.1em; /* Tamanho do ícone para alinhar com o texto */
+          width: 1.1em;
+          height: 1.1em;
+          color: $primary-color; /* Cor para ícones de informação */
+        }
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: math.div($spacing-unit, 2); /* 4px de espaço entre os botões */
+      flex-shrink: 0; /* Evita que os botões encolham */
+      padding-left: $padding-small; /* 16px Espaçamento à esquerda para separar do label */
+      justify-content: flex-end; /* Alinha os botões de ação à direita */
+
+      .mat-icon-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 44px; /* Aumentado para acomodar ícones maiores e clique */
+        height: 44px;
+        border-radius: 50%;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+
+        mat-icon { /* Usado mat-icon em vez de .mat-icon */
+          font-size: 28px; /* Tamanho maior para todos os dispositivos */
+          width: 28px;
+          height: 28px;
+        }
+
+        // Cores para os ícones Material
+        &[color="primary"] mat-icon {
+          color: $primary-color;
+        }
+
+        &[color="accent"] mat-icon {
+          color: $accent-color;
+        }
+
+        &[color="warn"] mat-icon {
+          color: $warn-color;
         }
 
         &:hover {
-          transform: translateY(-2px);
-          box-shadow: $shadow-sm;
+          transform: scale(1.1);
+          background-color: rgba($primary-color, 0.1);
+        }
+
+        &:active {
+          background-color: rgba($primary-color, 0.2);
         }
       }
     }
   }
+}
 
-  // Lista de Clientes com Ionic
-  .client-ionic-list {
-    background: transparent;
-    border-radius: var(--border-radius-md);
-    box-shadow: none;
-    padding: 0;
+/* Mensagem quando não há dados */
+.no-data-content {
+  @include flex-center;
+  flex-direction: column;
+  gap: $padding-small; /* 16px Espaçamento */
+  color: $light-text-color;
+  padding: $padding-medium * 2 0; /* 48px 0 Padding maior */
+
+  mat-icon {
+    font-size: $spacing-unit * 6; /* 48px */
+    width: $spacing-unit * 6;
+    height: $spacing-unit * 6;
+    margin-bottom: $spacing-unit; /* 8px */
+    color: $border-color;
+  }
+
+  p {
     margin: 0;
-
-    ion-item {
-      --background: var(--background-color);
-      --border-color: transparent;
-      --border-width: 0;
-      --padding-start: var(--spacing-lg);
-      --padding-end: var(--spacing-lg);
-      --padding-top: var(--spacing-md);
-      --padding-bottom: var(--spacing-md);
-
-      margin-bottom: var(--spacing-md);
-      border-radius: var(--border-radius-md);
-      box-shadow: $shadow-sm;
-      transition: $transition-fast;
-      cursor: pointer;
-      flex-wrap: wrap;
-
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      &:hover {
-        --background: var(--background-light);
-        box-shadow: $shadow-md;
-        transform: translateY(-1px);
-      }
-
-      &:last-child {
-        margin-bottom: 0;
-      }
-
-      // Estilos para o Label (conteúdo do cliente)
-      ion-label {
-        flex-grow: 1;
-
-        h3 {
-          font-size: var(--font-size-lg);
-          color: var(--text-color);
-          margin: 0 0 var(--spacing-xs) 0;
-          font-weight: 500;
-        }
-
-        .client-info {
-          @include flex-start-align-center;
-          font-size: var(--font-size-sm);
-          color: var(--text-secondary-color);
-          margin: 0;
-          gap: var(--spacing-xs);
-
-          &:not(:last-child) {
-            margin-bottom: var(--spacing-xs);
-          }
-
-          mat-icon {
-            font-size: 16px;
-            width: 16px;
-            height: 16px;
-            color: var(--primary-color);
-          }
-        }
-      }
-
-      // Estilos para os Botões de Ação
-      .action-buttons {
-        @include flex-end-gap(var(--spacing-xs));
-        flex-shrink: 0;
-        padding-left: var(--spacing-md);
-
-        .mat-icon-button {
-          @include flex-center;
-          width: 44px;
-          height: 44px;
-          border-radius: 50%;
-          transition: $transition-fast;
-
-          .mat-icon {
-            font-size: 28px;
-            width: 28px;
-            height: 28px;
-          }
-
-          // Cores baseadas nas paletas Material
-          &[color="primary"] .mat-icon { color: var(--primary-color); }
-          &[color="accent"] .mat-icon { color: var(--accent-color); }
-          &[color="warn"] .mat-icon { color: var(--warn-color); }
-
-          &:hover {
-            transform: scale(1.1);
-            background-color: rgba(var(--primary-color-rgb), 0.1);
-            &[color="accent"] { background-color: rgba(var(--accent-color-rgb), 0.1); }
-            &[color="warn"] { background-color: rgba(var(--warn-color-rgb), 0.1); }
-          }
-          &:active {
-            transform: scale(1.05);
-            background-color: rgba(var(--primary-color-rgb), 0.2);
-            &[color="accent"] { background-color: rgba(var(--accent-color-rgb), 0.2); }
-            &[color="warn"] { background-color: rgba(var(--warn-color-rgb), 0.2); }
-          }
-        }
-      }
-    }
-  }
-
-  // Mensagem quando não há dados
-  .no-data-content {
-    @include flex-col-center;
-    gap: var(--spacing-md);
-    color: var(--text-secondary-color);
-    padding: calc(var(--spacing-lg) * 2) 0;
-
-    mat-icon {
-      font-size: 48px;
-      width: 48px;
-      height: 48px;
-    }
-    p {
-      font-size: var(--font-size-lg);
-      margin: 0;
-    }
-  }
-
-  // Indicador de Carregamento
-  .loading-indicator {
-    @include flex-col-center;
-    padding: var(--spacing-lg);
-    gap: var(--spacing-md);
-    color: var(--text-secondary-color);
+    font-size: 1.1em;
   }
 }
 
-// Media Queries para Responsividade
-@media screen and (max-width: 768px) {
+// Indicador de carregamento
+.loading-indicator {
+  @include flex-center;
+  flex-direction: column;
+  padding: $padding-medium; /* 24px */
+  gap: $padding-small; /* 16px */
+  color: $light-text-color;
+}
+
+/* -----------------------------------------------------------
+ * Media Queries para Responsividade
+ * ----------------------------------------------------------- */
+
+// Telas pequenas (smartphones em modo retrato, até 768px)
+@media (max-width: 768px) {
   .client-list-container {
-    padding: var(--spacing-md);
-    margin: var(--spacing-md);
-    border-radius: var(--border-radius-sm);
-    box-shadow: $shadow-sm;
-
-    .header {
-      .title-section {
-        h2 {
-          font-size: var(--font-size-xl);
-        }
-        .subtitle {
-          font-size: var(--font-size-md);
-        }
-      }
-    }
-
-    .action-bar {
-      flex-direction: column;
-      align-items: stretch;
-      gap: var(--spacing-md);
-
-      .search-input {
-        min-width: unset;
-        max-width: none;
-      }
-
-      .action-buttons-top {
-        .mat-raised-button {
-          width: 100%;
-          justify-content: center;
-          height: 44px;
-          line-height: 44px;
-          padding: 0 var(--spacing-md);
-        }
-      }
-    }
-
-    .client-ionic-list {
-      ion-item {
-        flex-direction: column;
-        align-items: flex-start;
-
-        --padding-start: var(--spacing-md);
-        --padding-end: var(--spacing-md);
-        --padding-top: var(--spacing-md);
-        --padding-bottom: var(--spacing-md);
-
-        ion-label {
-          width: 100%;
-
-          h3 {
-            font-size: var(--font-size-md);
-          }
-
-          .client-info {
-            font-size: var(--font-size-sm);
-          }
-        }
-
-        .action-buttons {
-          width: 100%;
-          justify-content: flex-end;
-          margin-top: var(--spacing-sm);
-          padding-left: 0;
-        }
-      }
-    }
+    padding: $padding-small; /* 16px */
+    margin: $padding-small; /* 16px */
   }
-}
 
-@media screen and (max-width: 480px) {
-  .client-list-container {
-    padding: var(--spacing-sm);
-    margin: var(--spacing-sm);
-
-    .header {
-      .title-section {
-        h2 {
-          font-size: var(--font-size-lg);
-        }
-        .subtitle {
-          font-size: var(--font-size-sm);
-        }
-      }
-    }
-
-    .action-bar {
-      .action-buttons-top {
-        .mat-raised-button {
-          height: 38px;
-          font-size: var(--font-size-sm);
-
-          mat-icon {
-            font-size: var(--font-size-md);
-            width: var(--font-size-md);
-            height: var(--font-size-md);
-          }
-        }
-      }
-    }
-
-    .search-section .search-input {
-      ::ng-deep .mat-form-field-wrapper {
-        font-size: var(--font-size-sm);
-      }
-    }
-
-    .client-ionic-list {
-      ion-item {
-        --padding-start: var(--spacing-sm);
-        --padding-end: var(--spacing-sm);
-        --padding-top: var(--spacing-sm);
-        --padding-bottom: var(--spacing-sm);
-
-        ion-label {
-          h3 {
-            font-size: var(--font-size-md);
-          }
-
-          .client-info {
-            font-size: var(--font-size-xs);
-          }
-        }
-
-        .action-buttons {
-          .mat-icon-button {
-            width: 32px;
-            height: 32px;
-
-            .mat-icon {
-              font-size: 20px;
-              width: 20px;
-              height: 20px;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-.table-container {
-  overflow-x: auto;
-  background: $background-color;
-  border-radius: 12px;
-  box-shadow: 0 1px 6px rgba(21, 101, 192, 0.06);
-  padding: $spacing-md;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  th, td {
-    padding: $spacing-sm $spacing-md;
-    text-align: left;
-    border-bottom: 1px solid $border-color;
-  }
-  th {
-    background: $primary-color;
-    color: $text-light;
-    font-weight: $font-weight-bold;
-    font-size: $font-size-base;
-  }
-  tr:last-child td {
-    border-bottom: none;
-  }
-  tr:hover {
-    background: rgba(25, 118, 210, 0.04);
-    transition: background 0.2s;
-  }
-}
-
-.actions {
-  display: flex;
-  gap: $spacing-sm;
-  button {
-    background: $primary-color;
-    color: $text-light;
-    border: none;
-    border-radius: 6px;
-    padding: $spacing-xs $spacing-md;
-    cursor: pointer;
-    font-size: $font-size-sm;
-    transition: background 0.2s;
-    &:hover {
-      background: $secondary-color;
-    }
-  }
-}
-
-@media (max-width: $breakpoint-sm) {
-  .client-list-container {
-    padding: $spacing-md;
-  }
   .header {
     flex-direction: column;
     align-items: flex-start;
+    margin-bottom: $padding-medium; /* 24px */
+
+    .title-section {
+      margin-bottom: $padding-small; /* 16px */
+
+      h2 {
+        font-size: 1.6em;
+      }
+
+      .subtitle {
+        font-size: 0.8em;
+      }
+    }
+
+    .new-client-btn {
+      width: 100%;
+      @include flex-center;
+    }
   }
-  .table-container {
-    padding: $spacing-sm;
+
+  .search-section {
+    .search-input {
+      ::ng-deep {
+        .mat-form-field-wrapper {
+          font-size: 0.9em;
+        }
+      }
+    }
   }
-  th, td {
-    padding: $spacing-xs $spacing-sm;
+
+  .client-ionic-list {
+    ion-item {
+      flex-direction: column; /* Empilha label e botões em telas menores */
+      align-items: flex-start; /* Alinha o conteúdo à esquerda (horizontalmente) */
+
+      // Ajustando padding em mobile
+      --padding-start: $padding-small; /* 16px */
+      --padding-end: $padding-small; /* 16px */
+      --padding-top: $spacing-unit; /* 8px */
+      --padding-bottom: $spacing-unit; /* 8px */
+      padding: $spacing-unit $padding-small !important; /* 8px top/bottom, 16px left/right */
+
+      ion-label {
+        width: 100%;
+
+        h3 {
+          font-size: 1em;
+        }
+
+        p.client-info {
+          font-size: 0.8em;
+          margin: 0 0 math.div($spacing-unit, 2) 0; /* 4px Mantém espaçamento entre linhas */
+        }
+      }
+
+      .action-buttons {
+        width: 100%;
+        justify-content: flex-end; /* Mantém alinhamento à direita dentro do item */
+        margin-top: $spacing-unit; /* 8px Espaçamento entre o texto e os botões */
+        padding-left: 0;
+
+        .mat-icon-button {
+          width: 36px;
+          height: 36px;
+
+          mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Telas muito pequenas (smartphones menores, até 480px)
+@media (max-width: 480px) {
+  .client-list-container {
+    margin: $spacing-unit; /* 8px */
+    padding: $spacing-unit; /* 8px */
+  }
+
+  .header {
+    .title-section {
+      h2 {
+        font-size: 1.4em;
+      }
+
+      .subtitle {
+        font-size: 0.7em;
+      }
+    }
+  }
+
+  .client-ionic-list {
+    ion-item {
+      // Padding interno dos itens (card) em mobile muito pequeno
+      --padding-start: $spacing-unit; /* 8px */
+      --padding-end: $spacing-unit; /* 8px */
+      --padding-top: math.div($spacing-unit, 2); /* 4px */
+      --padding-bottom: math.div($spacing-unit, 2); /* 4px */
+      padding: math.div($spacing-unit, 2) $spacing-unit !important; /* 4px top/bottom, 8px left/right */
+
+      ion-label {
+        h3 {
+          font-size: 0.9em;
+        }
+
+        p.client-info {
+          font-size: 0.7em;
+        }
+      }
+
+      .action-buttons {
+        .mat-icon-button {
+          width: 32px;
+          height: 32px;
+
+          mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+          }
+        }
+      }
+    }
   }
 }

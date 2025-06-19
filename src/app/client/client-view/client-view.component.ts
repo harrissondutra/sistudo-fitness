@@ -27,14 +27,15 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 export class ClientViewComponent implements OnInit {
   client: Client | null = null;
   isLoading = false;
-  // measure: any; // REMOVIDO: A medida agora está diretamente em client.measure
+
+  currentClientTraining: any = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private clientService: ClientService,
     private snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const clientId = this.route.snapshot.paramMap.get('id');
@@ -43,7 +44,7 @@ export class ClientViewComponent implements OnInit {
     } else {
       console.warn('ID do cliente não fornecido na URL.');
       this.snackBar.open('ID do cliente não encontrado.', 'Fechar', { duration: 3000 });
-      this.router.navigate(['/clients']);
+      this.router.navigate(['/clients-list']); // Alterado para clients-list, rota correta de listagem
     }
   }
 
@@ -58,7 +59,7 @@ export class ClientViewComponent implements OnInit {
       error: (error) => {
         console.error('Erro ao carregar cliente:', error);
         this.snackBar.open('Erro ao carregar dados do cliente.', 'Fechar', { duration: 3000 });
-        this.router.navigate(['/clients']);
+        this.router.navigate(['/clients-list']); // Alterado para clients-list
       }
     });
   }
@@ -71,14 +72,53 @@ export class ClientViewComponent implements OnInit {
   }
 
   onBack(): void {
-    this.router.navigate(['/clients']);
+    this.router.navigate(['/clients-list']); // Alterado para clients-list
   }
 
-  onEdit(): void {
-    if (this.client?.id) {
-      this.router.navigate(['/clients', this.client.id, 'edit']);
+  // A função onEdit() foi removida, pois editClientDetails() serve ao mesmo propósito.
+  // Certifique-se de que o HTML chama editClientDetails(client.id) para edição de dados do cliente.
+
+  editClientDetails(clientId: string | undefined): void {
+    if (clientId) {
+      // CORRIGIDO: O ID é passado como um segmento SEPARADO na array.
+      // Esta função é para navegar para a tela de edição de dados gerais do cliente.
+      this.router.navigate(['/clients-edit', clientId]);
     } else {
-      this.snackBar.open('Não é possível editar: Cliente não carregado.', 'Fechar', { duration: 3000 });
+      this.snackBar.open('Não é possível editar: ID do Cliente não carregado.', 'Fechar', { duration: 3000 });
+      console.warn('Não é possível editar: ID do Cliente não carregado.');
     }
+  }
+
+  editMeasures(clientId: string | undefined): void {
+    if (clientId) {
+      // Usando a nova rota dedicada para edição de medidas
+      this.router.navigate(['/edit-measures', clientId]);
+    } else {
+      this.snackBar.open('Não é possível editar medidas: ID do Cliente não carregado.', 'Fechar', { duration: 3000 });
+      console.warn('Não é possível editar medidas: ID do Cliente não carregado.');
+    }
+  }
+
+  trackByTrainingId(index: number, training: any): string {
+    return training.id || index.toString(); // Use o ID do treinamento ou o índice como fallback
+  }
+
+  viewTrainingDetails(trainingId: string | number): void {
+    // TODO: Implement logic to view training details, e.g., open a dialog or navigate to a details page
+    console.log('View training details for training ID:', trainingId);
+    // Exemplo de navegação para a rota de visualização de treino, se aplicável
+    // this.router.navigate(['/trainning-view', trainingId]);
+  }
+
+  deleteTraining(trainingId: string): void {
+    // TODO: Implement the logic to delete a training by its ID.
+    // Example: Call a service to delete the training and update the UI accordingly.
+    console.log('Deleting training with ID:', trainingId);
+  }
+
+  assignNewTraining(): void {
+    // TODO: Implement logic to assign a new training, e.g., navigate to trainning-create
+    console.log('Assigning new training.');
+    this.router.navigate(['/trainning-create']);
   }
 }

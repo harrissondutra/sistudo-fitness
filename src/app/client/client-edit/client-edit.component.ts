@@ -21,6 +21,7 @@ import { Subject } from 'rxjs';
 import { takeUntil, finalize } from 'rxjs/operators';
 import { MatCardModule } from '@angular/material/card'; // Adicionado para consistência
 import { Trainning } from '../../models/trainning'; // Importa a interface Training
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 interface EvolutionPhoto {
   id: string;
@@ -47,6 +48,7 @@ interface EvolutionPhoto {
     MatPaginatorModule,
     MatSortModule,
     MatDialogModule,
+    MatDatepickerModule,
     MatCardModule // Adicionado
   ]
 })
@@ -262,4 +264,5 @@ export class ClientEditComponent implements OnInit, OnDestroy { // Renomeada a c
   goBack(): void {
     this.router.navigate(['/clients']); // Navega de volta para a lista de clientes
   }
+
 }

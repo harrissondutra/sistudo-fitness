@@ -1,26 +1,28 @@
+<!-- Container Principal -->
 <div class="client-list-container">
+  <!-- Cabeçalho -->
   <div class="header">
     <div class="title-section">
       <h2>Lista de Clientes</h2>
       <p class="subtitle">Gerencie todos os clientes cadastrados no sistema</p>
     </div>
+    <!-- Botão "Novo Cliente" movido para dentro do cabeçalho, seguindo o padrão -->
+    <button mat-raised-button color="primary" class="new-client-btn" (click)="createClient()">
+      <mat-icon>add</mat-icon>
+      <span>Novo Cliente</span>
+    </button>
   </div>
 
-  <div class="action-bar">
+  <!-- Seção de Busca, agora separada, seguindo o padrão -->
+  <div class="search-section">
     <mat-form-field appearance="outline" class="search-input">
       <mat-label>Buscar Cliente</mat-label>
       <input matInput [formControl]="searchControl" placeholder="Digite nome, email ou CPF">
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
-
-    <div class="action-buttons-top">
-      <button mat-raised-button color="primary" (click)="createClient()">
-        <mat-icon>add</mat-icon>
-        Novo Cliente
-      </button>
-    </div>
   </div>
 
+  <!-- Indicador de carregamento -->
   @if (isLoading) {
     <div class="loading-indicator">
       <mat-spinner diameter="50"></mat-spinner>
@@ -28,6 +30,7 @@
     </div>
   }
 
+  <!-- Lista de Clientes responsiva usando Ionic com ícones Material -->
   @if (!isLoading && filteredClients && filteredClients.length > 0) {
     <ion-list class="client-ionic-list mat-elevation-z2">
       @for (client of filteredClients; track client.id) {
@@ -93,6 +96,7 @@
     </ion-list>
   }
 
+  <!-- Mensagem quando não há dados -->
   @if (!isLoading && (!filteredClients || filteredClients.length === 0)) {
     <div class="no-data-content">
       <mat-icon>people</mat-icon>
