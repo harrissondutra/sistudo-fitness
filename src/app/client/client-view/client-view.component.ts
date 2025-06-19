@@ -7,6 +7,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ClientService } from '../../services/client/client.service';
 import { Client } from '../../models/client'; // Importa a interface Client atualizada
 import { Measure } from '../../models/measure'; // Importa a interface Measure
+import { MatCardModule } from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-client-view',
@@ -17,7 +19,9 @@ import { Measure } from '../../models/measure'; // Importa a interface Measure
     CommonModule,
     MatButtonModule,
     MatIconModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatCardModule,
+    MatProgressSpinnerModule
   ]
 })
 export class ClientViewComponent implements OnInit {

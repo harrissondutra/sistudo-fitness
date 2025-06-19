@@ -1,14 +1,14 @@
-<div class="user-view-container">
+<div class="client-container">
   <div class="header">
-    <mat-icon>person</mat-icon>
+    <mat-icon style="vertical-align: middle; margin-right: 8px;">person</mat-icon>
     <div class="header-content">
-      <h1>Detalhes do Cliente</h1>
-      <p class="subtitle">Visualize as informações do Cliente</p>
+      <h1>{{ client?.name || 'Cliente' }}</h1>
+      <p class="subtitle">Detalhes do Cliente</p>
     </div>
   </div>
 
-  <div class="content" *ngIf="client">
-    <!-- Informações Pessoais -->
+  @if (client) {
+  <div class="content">
     <div class="info-section">
       <h2>
         <mat-icon>info</mat-icon>
@@ -16,167 +16,105 @@
       </h2>
       <div class="info-grid">
         <div class="info-item">
-          <span class="label">Nome:</span>
-          <span class="value">{{ client.name }}</span>
+          <span class="label">E-mail:</span>
+          <span class="value">{{ client?.email }}</span>
         </div>
         <div class="info-item">
-          <span class="label">Email:</span>
-          <span class="value">{{ client.email }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">CPF:</span>
-          <span class="value">{{ client.cpf || '-' }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Peso:</span>
-          <span class="value">{{ client.weight ? (client.weight + ' kg') : '-' }}</span>
+          <span class="label">Nascimento:</span>
+          <span class="value">{{ client?.dateOfBirth ? (client?.dateOfBirth | date:'dd/MM/yyyy') : '-' }}</span>
         </div>
         <div class="info-item">
           <span class="label">Altura:</span>
-          <span class="value">{{ client.height ? (client.height + ' cm') : '-' }}</span>
+          <span class="value">{{ client?.height != null ? client?.height + ' cm' : '-' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Peso:</span>
+          <span class="value">{{ client?.weight != null ? client?.weight + ' kg' : '-' }}</span>
         </div>
       </div>
     </div>
 
-    <!-- Profissionais Associados -->
     <div class="info-section">
-      <h2>
-        <mat-icon>group</mat-icon>
-        Profissionais Associados
-      </h2>
-      <div class="info-grid">
-        <div class="info-item">
-          <span class="label">Médico:</span>
-          <span class="value">{{ client.doctor?.name || 'Nenhum' }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Personal Trainer:</span>
-          <span class="value">{{ client.personal?.name || 'Nenhum' }}</span>
-        </div>
-        <div class="info-item">
-          <span class="label">Nutricionista:</span>
-          <span class="value">{{ client.nutritionist?.name || 'Nenhum' }}</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Medidas Atuais -->
-    <!-- Agora usa client.measure diretamente, e as propriedades da interface Measure -->
-    <div class="info-section" *ngIf="client.measure">
       <h2>
         <mat-icon>fitness_center</mat-icon>
         Medidas Atuais
       </h2>
-      <div class="measures-grid">
-        <div class="measure-group">
-          <h3>Medidas Corporais</h3>
-          <div class="measure-row">
-            <div class="measure-item">
-              <span class="label">Ombro:</span>
-              <span class="value">{{ formatMeasure(client.measure.ombro) }} cm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Peitoral:</span>
-              <span class="value">{{ formatMeasure(client.measure.peitoral) }} cm</span>
-            </div>
-          </div>
-          <div class="measure-row">
-            <div class="measure-item">
-              <span class="label">Cintura:</span>
-              <span class="value">{{ formatMeasure(client.measure.cintura) }} cm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Quadril:</span>
-              <span class="value">{{ formatMeasure(client.measure.quadril) }} cm</span>
-            </div>
-          </div>
-          <div class="measure-row">
-            <div class="measure-item">
-              <span class="label">Tórax:</span>
-              <span class="value">{{ formatMeasure(client.measure.torax) }} cm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Abdômen:</span>
-              <span class="value">{{ formatMeasure(client.measure.abdomem) }} cm</span>
-            </div>
-          </div>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="label">Ombro:</span>
+          <span class="value">{{ client?.measure?.ombro != null ? client?.measure?.ombro + ' cm' : '-' }}</span>
         </div>
-
-        <div class="measure-group">
-          <h3>Medidas de Membros</h3>
-          <div class="measure-row">
-            <div class="measure-item">
-              <span class="label">Braço Direito:</span>
-              <span class="value">{{ formatMeasure(client.measure.bracoDireito) }} cm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Braço Esquerdo:</span>
-              <span class="value">{{ formatMeasure(client.measure.bracoEsquerdo) }} cm</span>
-            </div>
-          </div>
-          <div class="measure-row">
-            <div class="measure-item">
-              <span class="label">Coxa Direita:</span>
-              <span class="value">{{ formatMeasure(client.measure.coxaDireita) }} cm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Coxa Esquerda:</span>
-              <span class="value">{{ formatMeasure(client.measure.coxaEsquerda) }} cm</span>
-            </div>
-          </div>
-          <div class="measure-row">
-            <div class="measure-item">
-              <span class="label">Panturrilha Dir.:</span>
-              <span class="value">{{ formatMeasure(client.measure.panturrilhaDireita) }} cm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Panturrilha Esq.:</span>
-              <span class="value">{{ formatMeasure(client.measure.panturrilhaEsquerda) }} cm</span>
-            </div>
-          </div>
+        <div class="info-item">
+          <span class="label">Peitoral:</span>
+          <span class="value">{{ client?.measure?.peitoral != null ? client?.measure?.peitoral + ' cm' : '-' }}</span>
         </div>
-
-        <div class="measure-group">
-          <h3>Dobras Cutâneas</h3>
-          <div class="measure-row">
-            <div class="measure-item">
-              <span class="label">Abdominal (DC):</span>
-              <span class="value">{{ formatMeasure(client.measure.abdominal) }} mm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Suprailíaca:</span>
-              <span class="value">{{ formatMeasure(client.measure.suprailiaca) }} mm</span>
-            </div>
-          </div>
-          <div class="measure-row">
-            <div class="measure-item">
-              <span class="label">Subescapular:</span>
-              <span class="value">{{ formatMeasure(client.measure.subescapular) }} mm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Tríceps:</span>
-              <span class="value">{{ formatMeasure(client.measure.triceps) }} mm</span>
-            </div>
-          </div>
-          <div class="measure-row">
-            <div class="measure-item">
-              <span class="label">Axilar Média:</span>
-              <span class="value">{{ formatMeasure(client.measure.axilar) }} mm</span>
-            </div>
-          </div>
+        <div class="info-item">
+          <span class="label">Cintura:</span>
+          <span class="value">{{ client?.measure?.cintura != null ? client?.measure?.cintura + ' cm' : '-' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Quadril:</span>
+          <span class="value">{{ client?.measure?.quadril != null ? client?.measure?.quadril + ' cm' : '-' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Abdômen:</span>
+          <span class="value">{{ client?.measure?.abdomem != null ? client?.measure?.abdomem + ' cm' : '-' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Tórax:</span>
+          <span class="value">{{ client?.measure?.torax != null ? client?.measure?.torax + ' cm' : '-' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Braço Direito:</span>
+          <span class="value">{{ client?.measure?.bracoDireito != null ? client?.measure?.bracoDireito + ' cm' : '-' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Braço Esquerdo:</span>
+          <span class="value">{{ client?.measure?.bracoEsquerdo != null ? client?.measure?.bracoEsquerdo + ' cm' : '-' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Coxa Direita:</span>
+          <span class="value">{{ client?.measure?.coxaDireita != null ? client?.measure?.coxaDireita + ' cm' : '-' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Coxa Esquerda:</span>
+          <span class="value">{{ client?.measure?.coxaEsquerda != null ? client?.measure?.coxaEsquerda + ' cm' : '-' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Panturrilha Direita:</span>
+          <span class="value">{{ client?.measure?.panturrilhaDireita != null ? client?.measure?.panturrilhaDireita + ' cm' : '-' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Panturrilha Esquerda:</span>
+          <span class="value">{{ client?.measure?.panturrilhaEsquerda != null ? client?.measure?.panturrilhaEsquerda + ' cm' : '-' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Abdominal:</span>
+          <span class="value">{{ client?.measure?.abdominal != null ? client?.measure?.abdominal + ' mm' : '-' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Suprailíaca:</span>
+          <span class="value">{{ client?.measure?.suprailiaca != null ? client?.measure?.suprailiaca + ' mm' : '-' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Subescapular:</span>
+          <span class="value">{{ client?.measure?.subescapular != null ? client?.measure?.subescapular + ' mm' : '-' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Tríceps:</span>
+          <span class="value">{{ client?.measure?.triceps != null ? client?.measure?.triceps + ' mm' : '-' }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Axilar Média:</span>
+          <span class="value">{{ client?.measure?.axilar != null ? client?.measure?.axilar + ' mm' : '-' }}</span>
         </div>
       </div>
     </div>
   </div>
-
-  <div class="actions">
-    <button mat-button (click)="onBack()">
-      <mat-icon>arrow_back</mat-icon>
-      Voltar
-    </button>
-    <button mat-raised-button color="primary" (click)="onEdit()">
-      <mat-icon>edit</mat-icon>
-      Editar Cliente
-    </button>
+  } @else {
+  <div class="loading-spinner">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Carregando cliente ou cliente não encontrado...</p>
   </div>
+  }
 </div>

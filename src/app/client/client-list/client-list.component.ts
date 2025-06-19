@@ -150,28 +150,28 @@ export class ClientListComponent implements OnInit { // Renamed class
    * Navigates to the client creation screen.
    */
   createClient(): void { // Renamed method
-    this.router.navigate(['/clients/new']); // Adjusted route for client creation
+    this.router.navigate(['/register']); // Adjusted route for client creation
   }
 
   /**
    * Navigates to the client edit screen.
    * @param client The Client to be edited.
    */
-  onEdit(client: Client): void { // Renamed parameter
-    this.router.navigate(['/clients', client.id, 'edit']); // Adjusted route for client edit
+  onEdit(client: Client): void {
+    this.router.navigate(['/clients-edit', client.id]);
   }
 
   /**
    * Navigates to the client view screen.
    * @param client The Client to be viewed.
    */
-  onView(client: Client): void { // Renamed parameter
-    this.router.navigate(['/clients', client.id]); // Adjusted route for client view
+  onView(client: Client): void {
+    this.router.navigate(['/client', client.id]);
   }
 
-  goToClient(clientId: string | undefined): void { // Renamed method and parameter
+  goToClient(clientId: string | undefined): void {
     if (clientId) {
-      this.router.navigate(['/clients', clientId]); // Adjusted route
+      this.router.navigate(['/client', clientId]);
     }
   }
 }

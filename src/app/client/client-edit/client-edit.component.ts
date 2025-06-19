@@ -127,7 +127,7 @@ export class ClientEditComponent implements OnInit, OnDestroy { // Renomeada a c
         error: (error: Error) => {
           console.error('Erro ao carregar Cliente:', error);
           this.snackBar.open('Erro ao carregar Cliente', 'Fechar', { duration: 3000 });
-          this.router.navigate(['/clients']); // Redireciona em caso de erro
+          this.router.navigate(['/clients-list']); // Redireciona para a lista de clientes
         }
       });
   }

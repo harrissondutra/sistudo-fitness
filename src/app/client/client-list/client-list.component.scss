@@ -5,9 +5,9 @@
 // Variáveis de Sombra
 $shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
 $shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
-$shadow-lg: 0 6px 16px rgba(0, 0, 0, 0.15); // Adicionado para maior variação
+$shadow-lg: 0 6px 16px rgba(0, 0, 0, 0.15);
 $transition-default: all 0.3s ease;
-$transition-fast: all 0.2s ease; // Para interações rápidas como hover
+$transition-fast: all 0.2s ease;
 
 // Mixins de Flexbox
 @mixin flex-center {
@@ -42,63 +42,52 @@ $transition-fast: all 0.2s ease; // Para interações rápidas como hover
 
 // Estilos Globais do Componente
 .client-list-container {
-  padding: var(--spacing-lg);
-  max-width: 1400px;
-  margin: var(--spacing-lg) auto;
-  background: var(--background-color);
-  border-radius: var(--border-radius-md);
-  box-shadow: $shadow-md;
-  box-sizing: border-box; // Garante que padding e border sejam incluídos no width/height
+  background: $surface-color;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(25, 118, 210, 0.08);
+  padding: $spacing-lg;
+  margin: $spacing-lg auto;
+  max-width: 1000px;
+  @include respond-to(sm) {
+    padding: $spacing-md;
+    margin: $spacing-md;
+  }
+  @include respond-to(xs) {
+    padding: $spacing-sm;
+    margin: $spacing-sm;
+  }
 
   // Estilos do Cabeçalho
   .header {
-    @include flex-between-center;
-    margin-bottom: var(--spacing-lg); // Ajustado para maior espaçamento
-    flex-wrap: wrap; // Permite quebrar linha em telas menores
-
-    .title-section {
-      h2 {
-        font-size: var(--font-size-xxl);
-        color: var(--text-color);
-        margin: 0 0 var(--spacing-xs) 0;
-        font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    margin-bottom: $spacing-lg;
+    .header-content {
+      h1 {
+        font-size: 2rem;
+        color: $primary-color;
       }
       .subtitle {
-        color: var(--text-secondary-color);
-        font-size: var(--font-size-md);
-        margin: 0;
-      }
-    }
-
-    .new-client-btn { // Renomeado de new-user-btn
-      // Usando mat-raised-button, ele já tem padding padrão. Ajustes finos:
-      min-width: unset; // Remove min-width padrão
-      padding: var(--spacing-xs) var(--spacing-lg);
-      border-radius: var(--border-radius-sm);
-      font-weight: 500;
-      // Transição para feedback visual
-      transition: $transition-default;
-
-      mat-icon {
-        margin-right: var(--spacing-xs);
-      }
-
-      &:hover {
-        transform: translateY(-2px); // Pequeno efeito de levantamento
-        box-shadow: $shadow-sm;
+        color: $secondary-color;
+        font-size: $font-size-sm;
+        margin-top: $spacing-xs;
       }
     }
   }
 
-  // Seção de Busca/Filtro
-  .search-section {
+  // Barra de Ações
+  .action-bar {
+    @include flex-between-center;
     margin-bottom: var(--spacing-lg);
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
 
     .search-input {
-      width: 100%;
+      flex: 1;
+      min-width: 300px;
       max-width: 500px;
 
-      // Sobrescreve estilos internos do MatFormField com ::ng-deep (usar com cautela)
       ::ng-deep {
         .mat-form-field-wrapper {
           margin: 0;
@@ -106,9 +95,9 @@ $transition-fast: all 0.2s ease; // Para interações rápidas como hover
         }
         .mat-form-field-flex {
           background: var(--background-light);
-          border-radius: var(--border-radius-sm); // Usando variável para consistência
+          border-radius: var(--border-radius-sm);
           padding: 0 var(--spacing-md);
-          @include flex-start-align-center; // Alinha itens de input
+          @include flex-start-align-center;
           height: 56px;
         }
         .mat-form-field-outline {
@@ -119,17 +108,36 @@ $transition-fast: all 0.2s ease; // Para interações rápidas como hover
         }
         .mat-form-field-suffix {
           padding: 0 var(--spacing-xs);
-          align-self: center; // Garante que o ícone esteja centralizado verticalmente
+          align-self: center;
         }
         .mat-form-field-label-wrapper {
-          padding-top: 8px; // Ajuste para o label flutuante
+          padding-top: 8px;
+        }
+      }
+    }
+
+    .action-buttons-top {
+      .mat-raised-button {
+        min-width: unset;
+        padding: var(--spacing-xs) var(--spacing-lg);
+        border-radius: var(--border-radius-sm);
+        font-weight: 500;
+        transition: $transition-default;
+
+        mat-icon {
+          margin-right: var(--spacing-xs);
+        }
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: $shadow-sm;
         }
       }
     }
   }
 
-  // --- Estilos para a Lista de Clientes (com Ionic Item) ---
-  .client-ionic-list { // Renomeado de user-ionic-list
+  // Lista de Clientes com Ionic
+  .client-ionic-list {
     background: transparent;
     border-radius: var(--border-radius-md);
     box-shadow: none;
@@ -140,30 +148,26 @@ $transition-fast: all 0.2s ease; // Para interações rápidas como hover
       --background: var(--background-color);
       --border-color: transparent;
       --border-width: 0;
-
-      // Variáveis de Padding do Ionic (preferível usar estas)
       --padding-start: var(--spacing-lg);
       --padding-end: var(--spacing-lg);
       --padding-top: var(--spacing-md);
       --padding-bottom: var(--spacing-md);
 
-      // Estilos de Card para cada item da lista
       margin-bottom: var(--spacing-md);
       border-radius: var(--border-radius-md);
       box-shadow: $shadow-sm;
-      transition: $transition-fast; // Transição mais rápida para hover
+      transition: $transition-fast;
       cursor: pointer;
-      flex-wrap: wrap; // Permite quebrar linha em mobile
+      flex-wrap: wrap;
 
-      // Layout interno do ion-item
       display: flex;
       align-items: center;
       justify-content: space-between;
 
       &:hover {
         --background: var(--background-light);
-        box-shadow: $shadow-md; // Sombra mais intensa no hover
-        transform: translateY(-1px); // Pequeno efeito de levantamento
+        box-shadow: $shadow-md;
+        transform: translateY(-1px);
       }
 
       &:last-child {
@@ -172,31 +176,43 @@ $transition-fast: all 0.2s ease; // Para interações rápidas como hover
 
       // Estilos para o Label (conteúdo do cliente)
       ion-label {
-        flex-grow: 1; // Permite que o label ocupe o espaço disponível
+        flex-grow: 1;
+
         h3 {
           font-size: var(--font-size-lg);
           color: var(--text-color);
           margin: 0 0 var(--spacing-xs) 0;
           font-weight: 500;
         }
-        p {
+
+        .client-info {
+          @include flex-start-align-center;
           font-size: var(--font-size-sm);
           color: var(--text-secondary-color);
-          margin: 0; // Removido espaçamento extra entre parágrafos, já que o flex-direction column já cria o espaçamento natural
-          &:not(:last-child) { // Adiciona espaçamento apenas se não for o último parágrafo
+          margin: 0;
+          gap: var(--spacing-xs);
+
+          &:not(:last-child) {
             margin-bottom: var(--spacing-xs);
+          }
+
+          mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+            color: var(--primary-color);
           }
         }
       }
 
       // Estilos para os Botões de Ação
       .action-buttons {
-        @include flex-end-gap(var(--spacing-xs)); // Usa mixin para gap
-        flex-shrink: 0; // Garante que os botões não encolham
-        padding-left: var(--spacing-md); // Espaçamento entre o texto e os botões
+        @include flex-end-gap(var(--spacing-xs));
+        flex-shrink: 0;
+        padding-left: var(--spacing-md);
 
         .mat-icon-button {
-          @include flex-center; // Centraliza ícone dentro do botão
+          @include flex-center;
           width: 44px;
           height: 44px;
           border-radius: 50%;
@@ -215,13 +231,12 @@ $transition-fast: all 0.2s ease; // Para interações rápidas como hover
 
           &:hover {
             transform: scale(1.1);
-            // Usando variáveis RGB para cores de hover mais flexíveis
             background-color: rgba(var(--primary-color-rgb), 0.1);
             &[color="accent"] { background-color: rgba(var(--accent-color-rgb), 0.1); }
             &[color="warn"] { background-color: rgba(var(--warn-color-rgb), 0.1); }
           }
           &:active {
-            transform: scale(1.05); // Menor escala no active
+            transform: scale(1.05);
             background-color: rgba(var(--primary-color-rgb), 0.2);
             &[color="accent"] { background-color: rgba(var(--accent-color-rgb), 0.2); }
             &[color="warn"] { background-color: rgba(var(--warn-color-rgb), 0.2); }
@@ -235,7 +250,7 @@ $transition-fast: all 0.2s ease; // Para interações rápidas como hover
   .no-data-content {
     @include flex-col-center;
     gap: var(--spacing-md);
-    color: var(--text-secondary-color); // Usando variável para cor
+    color: var(--text-secondary-color);
     padding: calc(var(--spacing-lg) * 2) 0;
 
     mat-icon {
@@ -244,7 +259,7 @@ $transition-fast: all 0.2s ease; // Para interações rápidas como hover
       height: 48px;
     }
     p {
-      font-size: var(--font-size-lg); // Usando variável para fonte
+      font-size: var(--font-size-lg);
       margin: 0;
     }
   }
@@ -258,9 +273,7 @@ $transition-fast: all 0.2s ease; // Para interações rápidas como hover
   }
 }
 
-// --- Media Queries para Responsividade ---
-
-
+// Media Queries para Responsividade
 @media screen and (max-width: 768px) {
   .client-list-container {
     padding: var(--spacing-md);
@@ -269,11 +282,6 @@ $transition-fast: all 0.2s ease; // Para interações rápidas como hover
     box-shadow: $shadow-sm;
 
     .header {
-      flex-direction: column;
-      gap: var(--spacing-md);
-      align-items: flex-start;
-      margin-bottom: var(--spacing-lg);
-
       .title-section {
         h2 {
           font-size: var(--font-size-xl);
@@ -282,44 +290,56 @@ $transition-fast: all 0.2s ease; // Para interações rápidas como hover
           font-size: var(--font-size-md);
         }
       }
-      .new-client-btn {
-        width: 100%;
-        justify-content: center;
-        height: 44px;
-        line-height: 44px; // Para alinhar texto e ícone no centro
-        padding: 0 var(--spacing-md);
-      }
     }
 
-    .search-section .search-input {
-      max-width: 100%;
+    .action-bar {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--spacing-md);
+
+      .search-input {
+        min-width: unset;
+        max-width: none;
+      }
+
+      .action-buttons-top {
+        .mat-raised-button {
+          width: 100%;
+          justify-content: center;
+          height: 44px;
+          line-height: 44px;
+          padding: 0 var(--spacing-md);
+        }
+      }
     }
 
     .client-ionic-list {
       ion-item {
         flex-direction: column;
-        align-items: flex-start; // Alinha o conteúdo (label, botões) à esquerda
+        align-items: flex-start;
 
-        // Ajusta o padding do Ionic Item para mobile
         --padding-start: var(--spacing-md);
         --padding-end: var(--spacing-md);
         --padding-top: var(--spacing-md);
         --padding-bottom: var(--spacing-md);
 
         ion-label {
-          width: 100%; // Ocupa a largura total quando empilhado
+          width: 100%;
+
           h3 {
             font-size: var(--font-size-md);
           }
-          p {
+
+          .client-info {
             font-size: var(--font-size-sm);
           }
         }
+
         .action-buttons {
           width: 100%;
-          justify-content: flex-end; // Mantém os botões à direita
+          justify-content: flex-end;
           margin-top: var(--spacing-sm);
-          padding-left: 0; // Remove padding à esquerda
+          padding-left: 0;
         }
       }
     }
@@ -328,64 +348,136 @@ $transition-fast: all 0.2s ease; // Para interações rápidas como hover
 
 @media screen and (max-width: 480px) {
   .client-list-container {
-    padding: var(--spacing-sm); // Um pouco mais compacto
+    padding: var(--spacing-sm);
     margin: var(--spacing-sm);
-  }
 
-  .header {
-    .title-section {
-      h2 {
-        font-size: var(--font-size-lg); // Ajuste fino para telas muito pequenas
-      }
-      .subtitle {
-        font-size: var(--font-size-sm);
-      }
-    }
-    .new-client-btn {
-      height: 38px;
-      font-size: var(--font-size-sm);
-      mat-icon {
-        font-size: var(--font-size-md);
-        width: var(--font-size-md);
-        height: var(--font-size-md);
-      }
-    }
-  }
-
-  // Ajustes de fonte para o input de busca
-  .search-section .search-input {
-    ::ng-deep .mat-form-field-wrapper {
-      font-size: var(--font-size-sm);
-    }
-  }
-
-  .client-ionic-list {
-    ion-item {
-      // Padings mais compactos para telas muito pequenas
-      --padding-start: var(--spacing-sm);
-      --padding-end: var(--spacing-sm);
-      --padding-top: var(--spacing-sm);
-      --padding-bottom: var(--spacing-sm);
-
-      ion-label {
-        h3 {
-          font-size: var(--font-size-md);
+    .header {
+      .title-section {
+        h2 {
+          font-size: var(--font-size-lg);
         }
-        p {
-          font-size: var(--font-size-xs);
+        .subtitle {
+          font-size: var(--font-size-sm);
         }
       }
-      .action-buttons {
-        .mat-icon-button {
-          width: 32px;
-          height: 32px;
-          .mat-icon {
-            font-size: 20px;
-            width: 20px;
-            height: 20px;
+    }
+
+    .action-bar {
+      .action-buttons-top {
+        .mat-raised-button {
+          height: 38px;
+          font-size: var(--font-size-sm);
+
+          mat-icon {
+            font-size: var(--font-size-md);
+            width: var(--font-size-md);
+            height: var(--font-size-md);
           }
         }
       }
     }
+
+    .search-section .search-input {
+      ::ng-deep .mat-form-field-wrapper {
+        font-size: var(--font-size-sm);
+      }
+    }
+
+    .client-ionic-list {
+      ion-item {
+        --padding-start: var(--spacing-sm);
+        --padding-end: var(--spacing-sm);
+        --padding-top: var(--spacing-sm);
+        --padding-bottom: var(--spacing-sm);
+
+        ion-label {
+          h3 {
+            font-size: var(--font-size-md);
+          }
+
+          .client-info {
+            font-size: var(--font-size-xs);
+          }
+        }
+
+        .action-buttons {
+          .mat-icon-button {
+            width: 32px;
+            height: 32px;
+
+            .mat-icon {
+              font-size: 20px;
+              width: 20px;
+              height: 20px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.table-container {
+  overflow-x: auto;
+  background: $background-color;
+  border-radius: 12px;
+  box-shadow: 0 1px 6px rgba(21, 101, 192, 0.06);
+  padding: $spacing-md;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  th, td {
+    padding: $spacing-sm $spacing-md;
+    text-align: left;
+    border-bottom: 1px solid $border-color;
+  }
+  th {
+    background: $primary-color;
+    color: $text-light;
+    font-weight: $font-weight-bold;
+    font-size: $font-size-base;
+  }
+  tr:last-child td {
+    border-bottom: none;
+  }
+  tr:hover {
+    background: rgba(25, 118, 210, 0.04);
+    transition: background 0.2s;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: $spacing-sm;
+  button {
+    background: $primary-color;
+    color: $text-light;
+    border: none;
+    border-radius: 6px;
+    padding: $spacing-xs $spacing-md;
+    cursor: pointer;
+    font-size: $font-size-sm;
+    transition: background 0.2s;
+    &:hover {
+      background: $secondary-color;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .client-list-container {
+    padding: $spacing-md;
+  }
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .table-container {
+    padding: $spacing-sm;
+  }
+  th, td {
+    padding: $spacing-xs $spacing-sm;
   }
 }

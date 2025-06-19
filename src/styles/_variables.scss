@@ -1,0 +1,48 @@
+// Cores
+$primary-color: #1976d2;
+$secondary-color: #1565c0;
+$accent-color: #ffca28;
+$background-color: #f5f7fa;
+$surface-color: #fff;
+$text-color: #222;
+$text-light: #fff;
+$error-color: #e53935;
+$success-color: #43a047;
+$border-color: #e0e0e0;
+
+// Espaçamentos
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+// Fontes
+$font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+$font-size-base: 16px;
+$font-size-lg: 20px;
+$font-size-sm: 14px;
+$font-weight-normal: 400;
+$font-weight-bold: 600;
+
+// Breakpoints
+$breakpoint-xs: 480px;
+$breakpoint-sm: 768px;
+$breakpoint-md: 1024px;
+$breakpoint-lg: 1280px;
+$breakpoint-xl: 1920px;
+
+// Mixins
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == xs {
+    @media (max-width: $breakpoint-xs) { @content; }
+  } @else if $breakpoint == sm {
+    @media (max-width: $breakpoint-sm) { @content; }
+  } @else if $breakpoint == md {
+    @media (max-width: $breakpoint-md) { @content; }
+  } @else if $breakpoint == lg {
+    @media (max-width: $breakpoint-lg) { @content; }
+  } @else if $breakpoint == xl {
+    @media (max-width: $breakpoint-xl) { @content; }
+  }
+}

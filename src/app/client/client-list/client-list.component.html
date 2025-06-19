@@ -2,79 +2,105 @@
   <div class="header">
     <div class="title-section">
       <h2>Lista de Clientes</h2>
-      <p class="subtitle">Gerencie os Clientes do sistema</p>
+      <p class="subtitle">Gerencie todos os clientes cadastrados no sistema</p>
     </div>
-    <button mat-raised-button color="primary" class="new-client-btn" (click)="createClient()">
-      <mat-icon>add</mat-icon>
-      <span>Novo Cliente</span>
-    </button>
   </div>
 
-  <div class="search-section">
+  <div class="action-bar">
     <mat-form-field appearance="outline" class="search-input">
       <mat-label>Buscar Cliente</mat-label>
       <input matInput [formControl]="searchControl" placeholder="Digite nome, email ou CPF">
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
+
+    <div class="action-buttons-top">
+      <button mat-raised-button color="primary" (click)="createClient()">
+        <mat-icon>add</mat-icon>
+        Novo Cliente
+      </button>
+    </div>
   </div>
 
   @if (isLoading) {
     <div class="loading-indicator">
       <mat-spinner diameter="50"></mat-spinner>
-      <p>Carregando Clientes...</p>
+      <p>Carregando clientes...</p>
     </div>
   }
 
-  @if (!isLoading) {
-    @if (filteredClients && filteredClients.length > 0) {
-      <ion-list class="client-ionic-list mat-elevation-z2">
-        @for (client of filteredClients; track client) {
-          <ion-item button (click)="goToClient(client.id!.toString())" class="client-item">
-            <ion-label>
-              <h3>{{ client.name }}</h3>
-              <p>Email: {{ client.email }}</p>
-              @if (client.cpf) {
-                <p>CPF: {{ client.cpf }}</p>
-              }
-              @if (client.weight) {
-                <p>Peso: {{ client.weight }} kg</p>
-              }
-              @if (client.height) {
-                <p>Altura: {{ client.height }} cm</p>
-              }
-              @if (client.doctor) {
-                <p>Médico: {{ client.doctor.name }}</p>
-              }
-              @if (client.personal) {
-                <p>Personal Trainer: {{ client.personal.name }}</p>
-              }
-              @if (client.nutritionist) {
-                <p>Nutricionista: {{ client.nutritionist.name }}</p>
-              }
-            </ion-label>
-            <div class="action-buttons" slot="end">
-              <button mat-icon-button color="primary" (click)="onView(client); $event.stopPropagation()" matTooltip="Visualizar">
-                <mat-icon>visibility</mat-icon>
-              </button>
-              <button mat-icon-button color="accent" (click)="onEdit(client); $event.stopPropagation()" matTooltip="Editar">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button mat-icon-button color="warn" (click)="deleteClient(client.id!.toString()); $event.stopPropagation()" matTooltip="Excluir">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-          </ion-item>
-        }
-      </ion-list>
-    } @else {
-      <div class="no-data-content">
-        <mat-icon>search_off</mat-icon>
-        @if (searchControl.value) {
-          <p>Nenhum Cliente encontrado com o filtro aplicado.</p>
-        } @else {
-          <p>Nenhum Cliente cadastrado ainda.</p>
-        }
-      </div>
-    }
+  @if (!isLoading && filteredClients && filteredClients.length > 0) {
+    <ion-list class="client-ionic-list mat-elevation-z2">
+      @for (client of filteredClients; track client.id) {
+        <ion-item button (click)="goToClient(client.id!.toString())" class="client-item">
+          <ion-label>
+            <h3>{{ client.name }}</h3>
+            <p class="client-info">
+              <mat-icon>email</mat-icon>
+              {{ client.email }}
+            </p>
+            @if (client.cpf) {
+              <p class="client-info">
+                <mat-icon>badge</mat-icon>
+                {{ client.cpf }}
+              </p>
+            }
+            @if (client.weight || client.height) {
+              <p class="client-info">
+                <mat-icon>fitness_center</mat-icon>
+                @if (client.weight && client.height) {
+                  {{ client.weight }} kg | {{ client.height }} cm
+                } @else if (client.weight) {
+                  {{ client.weight }} kg
+                } @else if (client.height) {
+                  {{ client.height }} cm
+                }
+              </p>
+            }
+            @if (client.doctor || client.personal || client.nutritionist) {
+              <p class="client-info">
+                <mat-icon>people</mat-icon>
+                @if (client.doctor && client.personal && client.nutritionist) {
+                  Médico, Personal e Nutricionista
+                } @else if (client.doctor && client.personal) {
+                  Médico e Personal
+                } @else if (client.doctor && client.nutritionist) {
+                  Médico e Nutricionista
+                } @else if (client.personal && client.nutritionist) {
+                  Personal e Nutricionista
+                } @else if (client.doctor) {
+                  {{ client.doctor.name }}
+                } @else if (client.personal) {
+                  {{ client.personal.name }}
+                } @else if (client.nutritionist) {
+                  {{ client.nutritionist.name }}
+                }
+              </p>
+            }
+          </ion-label>
+          <div class="action-buttons" slot="end">
+            <button mat-icon-button color="primary" (click)="onView(client); $event.stopPropagation()" matTooltip="Visualizar">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button mat-icon-button color="accent" (click)="onEdit(client); $event.stopPropagation()" matTooltip="Editar">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteClient(client.id!.toString()); $event.stopPropagation()" matTooltip="Excluir">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </ion-item>
+      }
+    </ion-list>
+  }
+
+  @if (!isLoading && (!filteredClients || filteredClients.length === 0)) {
+    <div class="no-data-content">
+      <mat-icon>people</mat-icon>
+      @if (searchControl.value) {
+        <p>Nenhum cliente encontrado com o filtro aplicado.</p>
+      } @else {
+        <p>Nenhum cliente cadastrado ainda.</p>
+      }
+    </div>
   }
 </div>

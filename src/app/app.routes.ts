@@ -8,7 +8,6 @@ import { ClientListComponent } from './client/client-list/client-list.component'
 import { ClientEditComponent } from './client/client-edit/client-edit.component';
 import { TrainningCreateComponent } from '../app/trainning/trainning-create/trainning-create.component'; // Importe o componente de criação de treino
 import { TrainningComponent } from './trainning/trainning/trainning.component';
-import { ClientComponent } from './client/client.component';
 import { ListExerciseComponent } from './Exercises/list-exercise/list-exercise.component';
 // import { TrainningEditComponent } from './trainning-edit/trainning-edit.component'; // **Assumindo que você terá um componente de edição de treino**
 import { CreateExerciseComponent } from './Exercises/create-exercise/create-exercise.component';
@@ -17,6 +16,7 @@ import { InactiveTrainningComponent } from './trainning/inactive-trainning/inact
 import { TrainningViewComponent } from './trainning/trainning-view/trainning-view/trainning-view.component';
 import { TrainningEditComponent } from './trainning/trainning-edit/trainning-edit/trainning-edit.component';
 import { TrainningCategoryComponent } from './trainning/trainning-category/trainning-category.component';
+import { ClientViewComponent } from './client/client-view/client-view.component';
 
 
 export const routes: Routes = [
@@ -28,13 +28,12 @@ export const routes: Routes = [
       { path: 'settings', component: SettingsComponent },
       { path: 'logout', component: LogoutComponent },
       { path: 'register', component: ClientRegistrationComponent },
-      { path: 'client/:id', component: ClientComponent },
+      { path: 'client/:id', component: ClientViewComponent },
       { path: 'clients-list', component: ClientListComponent },
       { path: 'clients-edit/:id', component: ClientEditComponent },
       { path: 'trainning-create', component: TrainningCreateComponent },
       { path: 'trainning-view/:id', component: TrainningViewComponent },
       { path: 'trainning-edit/:id', component: TrainningEditComponent },
-      { path: 'exercises', component: ListExerciseComponent},
       { path: 'exercises', component: ListExerciseComponent},
       { path: 'create-exercise', component: CreateExerciseComponent},
       { path: 'create-category-trainning', component: TrainningCategoryComponent},

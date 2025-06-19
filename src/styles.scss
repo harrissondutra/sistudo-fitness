@@ -1,15 +1,23 @@
 /* You can add global styles to this file, and also import other style files */
 @use '@angular/material' as mat;
+@import 'styles/variables';
 
 :root {
   --primary-color: #3f51b5;
   --accent-color: #ff4081;
   --warn-color: #f44336;
   --background-color: #ffffff;
+  --background-light: #f8f9fa;
   --text-color: rgba(0, 0, 0, 0.87);
   --text-secondary-color: rgba(0, 0, 0, 0.6);
   --border-color: rgba(0, 0, 0, 0.12);
   --hover-color: rgba(0, 0, 0, 0.04);
+
+  /* RGB values for rgba() usage */
+  --primary-color-rgb: 63, 81, 181;
+  --accent-color-rgb: 255, 64, 129;
+  --warn-color-rgb: 244, 67, 54;
+
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-md: 16px;
@@ -26,14 +34,47 @@
   --font-size-xxl: 24px;
 }
 
-html, body {
-  height: 100%;
+body {
+  font-family: $font-family;
+  font-size: $font-size-base;
+  background: $background-color;
+  color: $text-color;
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-  background-color: #f5f5f5;
-  font-size: var(--font-size-md);
-  line-height: 1.5;
-  color: var(--text-color);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: $font-weight-bold;
+  margin: 0 0 $spacing-md 0;
+}
+
+p {
+  margin: 0 0 $spacing-sm 0;
+}
+
+.mat-icon {
+  vertical-align: middle;
+}
+
+// Utilitários
+.mt-md { margin-top: $spacing-md; }
+.mb-md { margin-bottom: $spacing-md; }
+.pt-md { padding-top: $spacing-md; }
+.pb-md { padding-bottom: $spacing-md; }
+
+// Responsividade global
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $spacing-lg;
+  @include respond-to(sm) {
+    padding: $spacing-md;
+  }
+  @include respond-to(xs) {
+    padding: $spacing-sm;
+  }
 }
 
 /* Container Principal */
@@ -214,14 +255,6 @@ html, body {
   font-size: var(--font-size-xs);
   background-color: var(--text-color);
   padding: var(--spacing-xs) var(--spacing-sm);
-}
-
-// Estilos globais para ícones
-.mat-icon {
-  vertical-align: middle;
-  font-size: 24px;
-  width: 24px;
-  height: 24px;
 }
 
 // Estilos globais para inputs
