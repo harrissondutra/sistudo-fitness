@@ -112,7 +112,7 @@ export class HomeComponent implements OnInit {
   }
 
   loadTotalTrainingsCount(): void {
-    this.trainningService.listAllTrainnings().pipe(
+    this.trainningService.listAllActiveTrainnings().pipe(
       tap((trainings: Trainning[]) => {
         this.totalTrainingsCount = trainings.length;
         this.loading = false;

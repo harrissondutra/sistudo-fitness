@@ -221,16 +221,8 @@ export class TrainningEditComponent implements OnInit {
     // Pega o valor do formulário
     const formData = this.trainningForm.value;
 
-    // Formata as datas para string 'DD/MM/YYYY' para enviar ao backend
-    const formattedStartDate = formData.startDate instanceof Date
-      ? `${String(formData.startDate.getDate()).padStart(2, '0')}/${String(formData.startDate.getMonth() + 1).padStart(2, '0')}/${formData.startDate.getFullYear()}`
-      : undefined;
-
-    const formattedEndDate = formData.endDate instanceof Date
-      ? `${String(formData.endDate.getDate()).padStart(2, '0')}/${String(formData.endDate.getMonth() + 1).padStart(2, '0')}/${formData.endDate.getFullYear()}`
-      : undefined;
-
     // Constrói o objeto Trainning para enviar ao backend
+    // O interceptor de formatação de data cuidará da conversão das datas
     const trainningToSave: Trainning = {
       id: this.currentTrainningId!,
       name: formData.name,
@@ -238,8 +230,8 @@ export class TrainningEditComponent implements OnInit {
       categories: formData.categories,
       exercises: formData.exercises,
       client: formData.client,
-      startDate: formattedStartDate as any, // Cast para string, se necessário, ou ajuste o tipo no model
-      endDate: formattedEndDate as any,     // Cast para string, se necessário, ou ajuste o tipo no model
+      startDate: formData.startDate, // Deixa o interceptor formatar
+      endDate: formData.endDate,     // Deixa o interceptor formatar
       active: formData.active
     };
 

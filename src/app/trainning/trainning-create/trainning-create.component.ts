@@ -192,23 +192,18 @@ export class TrainningCreateComponent implements OnInit {
 
     const formValue = this.trainningForm.value;
 
-      // Formata as datas para formato ISO
-  const formattedStartDate = formValue.startDate ?
-    this.datePipe.transform(formValue.startDate, 'yyyy-MM-ddTHH:mm:ss') : undefined;
-
-  const formattedEndDate = formValue.endDate ?
-    this.datePipe.transform(formValue.endDate, 'yyyy-MM-ddTHH:mm:ss') : undefined;
-
-  const trainningData: Trainning = {
-    name: formValue.name,
-    description: formValue.description,
-    categories: formValue.categories,
-    exercises: formValue.exercises,
-    client: formValue.client,
-    active: formValue.active,
-    startDate: formattedStartDate as any,
-    endDate: formattedEndDate as any
-  };
+    // Constrói o objeto Trainning para enviar ao backend
+    // O interceptor de formatação de data cuidará da conversão das datas
+    const trainningData: Trainning = {
+      name: formValue.name,
+      description: formValue.description,
+      categories: formValue.categories,
+      exercises: formValue.exercises,
+      client: formValue.client,
+      active: formValue.active,
+      startDate: formValue.startDate, // Deixa o interceptor formatar
+      endDate: formValue.endDate      // Deixa o interceptor formatar
+    };
 
     // Assumindo que createTrainningByClientId espera o ID do cliente e o objeto Trainning
     this.trainningService.createTrainningByClientId(trainningData.client.id!, trainningData)
