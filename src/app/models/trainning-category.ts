@@ -7,3 +7,9 @@ export interface TrainningCategory {
   description?: string; // 'String' no Java vira 'string' em TypeScript.
   trainning?: Trainning; // Mapeia para a entidade Trainning no backend. Aqui, '?' indica que pode ser opcional/carregado lazy.
 }
+
+export interface TrainningCategoryDto {
+  id: number;
+  name?: string; // Exemplo de propriedade, ajuste conforme seu TrainningCategoryDto real
+  // Adicione outras propriedades de TrainningCategoryDto que seu backend envia
+}

@@ -112,4 +112,11 @@ export class TrainningViewComponent implements OnInit {
   goToTrainning(id: string | number) {
     this.router.navigate(['/trainning-view', id]);
   }
+
+  getCategoryNames(trainning: Trainning): string {
+    if (!trainning || !trainning.categories || trainning.categories.length === 0) {
+      return 'Sem categorias'; // Retorna uma mensagem padrão se não houver categorias
+    }
+    return trainning.categories.map(category => category.name).join(', '); // Junta os nomes das categorias
+  }
 }

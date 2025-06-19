@@ -1,106 +1,203 @@
-.trainning-edit-container {
-  padding: 24px;
-  max-width: 1200px;
-  margin: 0 auto;
-  background-color: #f5f5f5;
-  min-height: 100vh;
+/* trainning-edit.component.scss */
+
+@use 'sass:math';
+
+// ================================================================
+// Variáveis Globais (Devem ser importadas de um arquivo global de variáveis)
+// Estas são duplicadas aqui para demonstração, mas idealmente viriam de:
+// @import 'path/to/your/global-variables';
+// ================================================================
+$primary-color: #2196F3;
+$accent-color: #FFC107;
+$warn-color: #F44336;
+
+$text-primary: #2C3E50;
+$text-secondary: #607D8B;
+
+$background-color: #F5F7FA;
+$background-card: #FFFFFF;
+$background-light: #ECEFF1;
+
+$border-color: rgba(0, 0, 0, 0.08);
+
+$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+$shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.18);
+
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+
+$spacing-xs: 8px;
+$spacing-sm: 12px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-md: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 24px;
+$font-size-xxl: 28px;
+
+$transition-default: all 0.3s ease;
+$transition-fast: all 0.2s ease;
+
+// ================================================================
+// Mixins (Devem ser importadas de um arquivo global de mixins)
+// ================================================================
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.loading-spinner,
-.not-found {
+@mixin flex-between-center {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin flex-col-center {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 300px; /* Garante que o spinner esteja centralizado verticalmente */
-  p {
-    margin-top: 16px;
-    font-size: 1.1rem;
-    color: #555;
-  }
-  button {
-    margin-top: 20px;
+}
+
+@mixin card-style {
+  background: $background-card;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-sm;
+  transition: $transition-default;
+
+  &:hover {
+    box-shadow: $shadow-md;
   }
 }
 
+// ================================================================
+// Estilos do Componente
+// ================================================================
 
+// ---
+// Container Principal do Componente
+// ---
+.trainning-edit-container {
+  padding: $spacing-xl;
+  max-width: 1000px; // Consistent with create component
+  margin: $spacing-lg auto; // Consistent with create component
+  background-color: $background-color;
+  min-height: calc(100vh - ($spacing-lg * 2)); // Adjusted for margin
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl; // Consistent spacing between main sections
+}
+
+// ---
+// Indicadores de Estado (Loading, Not Found)
+// ---
+.loading-spinner,
+.not-found {
+  @include flex-col-center; // Use mixin
+  gap: $spacing-md; // Consistent gap
+  min-height: 300px;
+  color: $text-secondary;
+  @include card-style; // Apply card style
+  padding: $spacing-xl; // Consistent padding
+  text-align: center;
+
+  p {
+    margin-top: $spacing-md; // Consistent spacing
+    font-size: $font-size-md; // Consistent font size
+    color: $text-secondary;
+  }
+  button {
+    margin-top: $spacing-lg; // Consistent spacing
+    font-size: $font-size-md; // Consistent font size
+  }
+}
+
+// ---
+// Cabeçalho da Página
+// ---
 .header {
+  @include card-style; // Apply card style
   display: flex;
   align-items: center;
-  margin-bottom: 32px;
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  gap: $spacing-md; // Consistent spacing
+  padding: $spacing-md $spacing-lg; // Consistent padding
+  margin-bottom: 0; // Removed direct margin-bottom, using container gap
 
   mat-icon {
-    font-size: 36px;
-    width: 36px;
-    height: 36px;
-    margin-right: 20px;
-    color: #3f51b5; /* Cor primária do Angular Material */
-    background: #e8eaf6; /* Um tom mais claro da cor primária */
-    padding: 8px;
+    font-size: $font-size-xxl; // Consistent icon size
+    width: $font-size-xxl;
+    height: $font-size-xxl;
+    color: $primary-color;
+    background: lighten($primary-color, 35%); // Use lighten for lighter shade
+    padding: $spacing-xs; // Consistent padding
     border-radius: 50%;
   }
 
   .header-content {
     h1 {
       margin: 0;
-      font-size: 28px;
-      color: #1a237e; /* Cor mais escura para o título */
-      font-weight: 500;
+      font-size: $font-size-xxl; // Consistent font size
+      color: $text-primary; // Use text primary
+      font-weight: 600; // Consistent font weight
     }
 
     .subtitle {
-      margin: 8px 0 0;
-      color: #666;
-      font-size: 16px;
+      margin: $spacing-xs 0 0; // Consistent spacing
+      color: $text-secondary; // Consistent color
+      font-size: $font-size-md; // Consistent font size
     }
   }
 }
 
+// ---
+// Conteúdo Principal do Formulário/Seções
+// ---
 .content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 24px;
-  margin-bottom: 32px;
+  display: flex; // Changed to flex to use gap more effectively for sections
+  flex-direction: column; // Stack sections vertically
+  gap: $spacing-xl; // Consistent spacing between sections (info and exercises)
+  flex-grow: 1; // Allows content to fill available space
+  // Note: Individual sections (info-section, exercises-section) will have card-style, not .content itself
 }
 
 .info-section,
 .exercises-section {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-  }
+  @include card-style; // Apply card style
+  padding: $spacing-xl; // Consistent padding
+  // transition: transform 0.2s ease; // Already included in card-style mixin if you want hover effect
 
   h2 {
     display: flex;
     align-items: center;
-    margin: 0 0 24px;
-    font-size: 20px;
-    color: #1a237e;
+    margin: 0 0 $spacing-xl; // Consistent bottom margin
+    font-size: $font-size-xl; // Consistent font size
+    color: $text-primary; // Consistent color
     font-weight: 500;
 
     mat-icon {
-      margin-right: 12px;
-      color: #3f51b5;
-      background: #e8eaf6;
-      padding: 6px;
+      margin-right: $spacing-sm; // Consistent margin
+      color: $primary-color; // Consistent color
+      background: lighten($primary-color, 35%); // Consistent background
+      padding: math.div($spacing-xs, 2); // Slightly smaller padding for section icons
       border-radius: 50%;
+      font-size: $font-size-xl; // Ensure icon size is consistent
+      width: $font-size-xl;
+      height: $font-size-xl;
     }
   }
 }
 
 .info-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); // Consistent min-width
+  gap: $spacing-lg; // Consistent gap
 
   /* Estilos para campos de formulário Material */
   mat-form-field {
@@ -108,139 +205,314 @@
   }
 
   mat-checkbox {
-    margin-top: 10px;
-    margin-bottom: 10px;
-    align-self: flex-start; /* Alinha o checkbox no início da célula do grid */
+    margin-top: $spacing-xs; // Consistent spacing
+    margin-bottom: $spacing-xs; // Consistent spacing
+    align-self: flex-start;
   }
 }
 
 .exercises-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-bottom: 20px; /* Espaçamento antes do botão "Adicionar Exercício" */
+  gap: $spacing-md; // Consistent gap
+  margin-bottom: $spacing-lg; // Consistent spacing before button
+
+  // If you also need ::ng-deep styles for form fields like in the create component, add them here
+  ::ng-deep {
+    .mat-form-field-appearance-outline {
+      .mat-form-field-outline { color: $border-color; }
+      .mat-form-field-outline-thick { color: $primary-color; }
+      &.mat-focused {
+        .mat-form-field-outline-thick { color: $primary-color; }
+        .mat-form-field-label { color: $primary-color; }
+      }
+    }
+    .mat-form-field-label { color: $text-secondary; }
+    .mat-input-element, .mat-select-value { color: $text-primary; }
+    .mat-form-field-suffix { color: $text-secondary; }
+  }
+
+  mat-error {
+    font-size: $font-size-xs;
+    color: $warn-color;
+    margin-top: math.div($spacing-xs, 2);
+  }
 }
 
 .exercise-item {
-  background: #f8f9fa;
-  padding: 16px;
-  border-radius: 8px;
+  background: $background-light; // Consistent background
+  padding: $spacing-md; // Consistent padding
+  border-radius: $border-radius-md; // Consistent border radius
   display: flex;
   align-items: flex-start;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  transition: $transition-fast; // Consistent transition
 
   &:hover {
-    background: #e8eaf6;
+    background: lighten($background-light, 2%); // Consistent hover effect
     transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); // Consistent shadow on hover
   }
 
   .exercise-icon {
-    font-size: 28px;
-    width: 28px;
-    height: 28px;
-    margin-right: 16px;
-    color: #3f51b5;
+    font-size: $font-size-xl; // Consistent icon size
+    width: $font-size-xl;
+    height: $font-size-xl;
+    margin-right: $spacing-md; // Consistent margin
+    color: $primary-color;
     flex-shrink: 0;
   }
 
   .exercise-details {
     flex-grow: 1;
     h3 {
-      font-size: 1.2rem;
+      font-size: $font-size-lg; // Consistent font size
       font-weight: 600;
-      margin: 0 0 4px;
-      color: #1a237e;
+      margin: 0 0 math.div($spacing-xs, 2); // Consistent margin
+      color: $text-primary; // Consistent color
     }
     p {
-      font-size: 0.95rem;
-      margin: 0 0 4px;
-      color: #555;
+      font-size: $font-size-sm; // Consistent font size
+      margin: 0 0 math.div($spacing-xs, 2); // Consistent margin
+      color: $text-secondary; // Consistent color
 
       &:last-child {
         margin-bottom: 0;
       }
       strong {
-        color: #333;
+        color: $text-primary; // Consistent color
+      }
+    }
+  }
+
+  // Styles for remove button inside exercise-item, if any
+  .remove-exercise-button {
+    color: $warn-color;
+    margin-left: $spacing-md; // Add margin for spacing from details
+    mat-icon {
+      font-size: $font-size-lg;
+      width: $font-size-lg;
+      height: $font-size-lg;
+    }
+    &:hover {
+      background-color: rgba($warn-color, 0.1);
+    }
+  }
+}
+
+
+.actions {
+  margin-top: $spacing-xl; // Consistent margin
+  display: flex;
+  gap: $spacing-md; // Consistent gap
+  justify-content: flex-end; // Align actions to the right, consistent with create component
+  padding-top: $spacing-lg; // Consistent padding top
+  border-top: 1px solid $border-color; // Consistent border top
+
+  button {
+    height: 48px; // Consistent button height
+    font-size: $font-size-md; // Consistent font size
+    font-weight: 500;
+    padding: 0 $spacing-lg; // Consistent padding
+    border-radius: $border-radius-sm; // Consistent border radius
+
+    mat-icon {
+      margin-right: $spacing-xs; // Consistent margin
+      font-size: $font-size-lg; // Consistent icon size
+      width: $font-size-lg;
+      height: $font-size-lg;
+    }
+
+    // Efeitos de hover/active para botões
+    &.mat-raised-button {
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: $shadow-sm;
+      }
+      &:active {
+        transform: translateY(0);
+        box-shadow: none;
       }
     }
   }
 }
 
-.actions {
-  margin-top: 32px;
-  display: flex;
-  gap: 16px;
-  justify-content: flex-start;
-
-  button {
-    min-width: 120px;
-    mat-icon {
-      margin-right: 8px;
-    }
+/* ---
+ * Media Queries
+ * --- */
+@media (max-width: 992px) {
+  .trainning-edit-container {
+    padding: $spacing-lg;
+    gap: $spacing-lg;
+  }
+  .content {
+    gap: $spacing-lg;
+  }
+  .info-grid {
+    grid-template-columns: repeat(auto-fit, minmin(250px, 1fr)); // Consistent min-width
+    gap: $spacing-md;
   }
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
   .trainning-edit-container {
-    padding: 16px;
+    padding: $spacing-md;
+    margin: $spacing-md auto;
+    gap: $spacing-md;
   }
 
   .header {
-    padding: 16px;
-    margin-bottom: 24px;
-
-    mat-icon {
-      font-size: 28px;
-      width: 28px;
-      height: 28px;
-    }
-
+    padding: $spacing-sm $spacing-md;
+    flex-wrap: wrap; // Consistent wrapping
     .header-content {
       h1 {
-        font-size: 24px;
+        font-size: $font-size-xl;
+      }
+      .subtitle {
+        font-size: $font-size-sm;
       }
     }
+    mat-icon {
+      font-size: $font-size-xl;
+      width: $font-size-xl;
+      height: $font-size-xl;
+    }
+  }
+
+  .loading-spinner, .not-found {
+    padding: $spacing-md;
   }
 
   .content {
-    grid-template-columns: 1fr;
-    gap: 16px;
+    gap: $spacing-md; // Consistent gap
+  }
+
+  .info-section, .exercises-section {
+    padding: $spacing-md; // Consistent padding
+    h2 {
+      font-size: $font-size-lg;
+      margin-bottom: $spacing-lg; // Consistent margin
+      mat-icon {
+        font-size: $font-size-lg;
+        width: $font-size-lg;
+        height: $font-size-lg;
+      }
+    }
   }
 
   .info-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; // Consistent single column
+    gap: $spacing-md; // Consistent gap
   }
 
   .exercises-list {
-    gap: 12px;
+    gap: $spacing-sm; // Consistent gap
+    margin-bottom: $spacing-md; // Consistent margin
   }
 
   .exercise-item {
-    padding: 12px;
+    flex-direction: column; // Stack details and button
+    align-items: flex-start;
+    padding: $spacing-sm; // Consistent padding
+    gap: $spacing-xs; // Consistent gap
     .exercise-icon {
-      font-size: 24px;
-      width: 24px;
-      height: 24px;
-      margin-right: 12px;
+      font-size: $font-size-lg; // Consistent icon size
+      width: $font-size-lg;
+      height: $font-size-lg;
+      margin-right: $spacing-sm; // Adjust margin
     }
     .exercise-details {
       h3 {
-        font-size: 1rem;
+        font-size: $font-size-md; // Consistent font size
       }
       p {
-        font-size: 0.9rem;
+        font-size: $font-size-sm; // Consistent font size
       }
+    }
+    .remove-exercise-button {
+      margin-left: auto; // Push button to the right
+      margin-top: $spacing-xs; // Add margin for spacing
     }
   }
 
   .actions {
-    flex-direction: column;
-    align-items: stretch;
-
+    flex-direction: column-reverse; // Consistent button stack
+    gap: $spacing-sm;
     button {
       width: 100%;
+      height: 44px; // Consistent button height
+      font-size: $font-size-sm;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .trainning-edit-container {
+    padding: $spacing-sm;
+    margin: $spacing-sm auto;
+    gap: $spacing-sm;
+  }
+
+  .header {
+    padding: $spacing-xs $spacing-sm;
+    .header-content {
+      h1 {
+        font-size: $font-size-lg;
+      }
+      .subtitle {
+        font-size: $font-size-xs;
+      }
+    }
+    mat-icon {
+      font-size: $font-size-md;
+      width: $font-size-md;
+      height: $font-size-md;
+    }
+  }
+
+  .content {
+    gap: $spacing-sm;
+  }
+
+  .info-section, .exercises-section {
+    padding: $spacing-sm; // Consistent padding
+    h2 {
+      font-size: $font-size-md;
+      margin-bottom: $spacing-md; // Consistent margin
+      mat-icon {
+        font-size: $font-size-md;
+        width: $font-size-md;
+        height: $font-size-md;
+      }
+    }
+  }
+
+  .exercises-list {
+    gap: $spacing-xs; // Consistent gap
+    margin-bottom: $spacing-sm; // Consistent margin
+  }
+
+  .exercise-item {
+    padding: $spacing-xs; // Consistent padding
+    .exercise-icon {
+      font-size: $font-size-md; // Consistent icon size
+      width: $font-size-md;
+      height: $font-size-md;
+    }
+    .exercise-details {
+      h3 {
+        font-size: $font-size-sm; // Consistent font size
+      }
+      p {
+        font-size: $font-size-xs; // Consistent font size
+      }
+    }
+    .remove-exercise-button {
+      mat-icon {
+        font-size: $font-size-sm;
+        width: $font-size-sm;
+        height: $font-size-sm;
+      }
     }
   }
 }

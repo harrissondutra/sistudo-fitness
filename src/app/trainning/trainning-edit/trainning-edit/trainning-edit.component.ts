@@ -1,21 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-// REMOVIDO FormsModule:
-// import { FormsModule } from '@angular/forms';
-// ADICIONADO FormBuilder, FormGroup, Validators, ReactiveFormsModule
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms'; // <--- ATUALIZADO
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core'; // Reativado
+import { MatDatepickerModule } from '@angular/material/datepicker'; // Reativado
 
 // Importa os serviços e modelos necessários
 import { TrainningService } from '../../../services/trainning/trainning.service';
@@ -23,32 +20,34 @@ import { ExerciseService } from '../../../services/exercise/exercise.service';
 import { ClientService } from '../../../services/client/client.service';
 import { TrainningCategoryService } from '../../../services/trainning-category/trainning-category.service';
 
-import { Trainning } from '../../../models/trainning';
-import { Exercise } from '../../../models/exercise';
-import { Client } from '../../../models/client';
-import { TrainningCategory } from '../../../models/trainning-category';
+import { Trainning } from '../../../models/trainning'; // Interface Trainning
+import { ExerciseDto } from '../../../models/exercise'; // DTO
+import { ClientDto } from '../../../models/client';     // DTO
+import { TrainningCategoryDto } from '../../../models/trainning-category'; // DTO
 
 // Importa o componente correto para seleção de exercícios
 import { ExerciseSelectionModalComponent } from '../../../Exercises/exercise-selection-modal/exercise-selection-modal.component';
 
 import { forkJoin, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
+import { HttpErrorResponse } from '@angular/common/http';
+
 
 @Component({
   selector: 'app-trainning-edit',
   standalone: true,
   imports: [
     CommonModule,
-    // REMOVIDO FormsModule, ADICIONADO ReactiveFormsModule
-    ReactiveFormsModule, // <--- ATUALIZADO
+    ReactiveFormsModule,
     MatButtonModule,
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
     MatCheckboxModule,
     MatProgressSpinnerModule,
-    MatNativeDateModule,
-    MatDatepickerModule,
+    MatSnackBarModule,
+    MatNativeDateModule, // Reativado
+    MatDatepickerModule, // Reativado
     MatSelectModule,
     MatDialogModule,
   ],
@@ -57,20 +56,19 @@ import { catchError, finalize } from 'rxjs/operators';
 })
 export class TrainningEditComponent implements OnInit {
 
-  trainningForm!: FormGroup; // <--- ATUALIZADO: Usará FormGroup para gerenciar o formulário
-  // REMOVIDO: trainning: Trainning | null = null; // Não será mais usado diretamente para o formulário
+  trainningForm!: FormGroup;
   isLoading = true;
   isSaving = false;
-  allAvailableExercises: Exercise[] = [];
-  trainningCategories: TrainningCategory[] = [];
-  clients: Client[] = [];
+  allAvailableExercises: ExerciseDto[] = [];
+  trainningCategories: TrainningCategoryDto[] = [];
+  clients: ClientDto[] = [];
 
-  private currentTrainningId: number | null = null; // <--- NOVO: Para guardar o ID do treino sendo editado
+  private currentTrainningId: number | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private fb: FormBuilder, // <--- ATUALIZADO: Injetado FormBuilder
+    private fb: FormBuilder,
     private trainningService: TrainningService,
     private exerciseService: ExerciseService,
     private clientService: ClientService,
@@ -78,34 +76,36 @@ export class TrainningEditComponent implements OnInit {
     private snackBar: MatSnackBar,
     private dialog: MatDialog
   ) {
-    this.initForm(); // <--- ATUALIZADO: Inicializa o formulário no construtor
+    this.initForm();
   }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       const trainningIdParam = params.get('id');
       if (trainningIdParam) {
-        this.currentTrainningId = Number(trainningIdParam); // <--- ATUALIZADO
-        this.loadAllData(this.currentTrainningId); // <--- ATUALIZADO
+        this.currentTrainningId = Number(trainningIdParam);
+        this.loadAllData(this.currentTrainningId);
       } else {
         console.error('ID do treino não fornecido na rota.');
-        this.snackBar.open('Erro: ID do treino não encontrado.', 'Fechar', { duration: 3000 });
+        this.showMessage('Erro: ID do treino não encontrado.', 'error');
         this.goBack();
       }
     });
   }
 
-  // <--- NOVO MÉTODO: Inicializa o FormGroup
+  /**
+   * Inicializa o FormGroup para o formulário de treino.
+   */
   private initForm(): void {
     this.trainningForm = this.fb.group({
-      id: [null], // Pode ser útil ter o ID no formulário para o patchValue
-      name: ['', Validators.required],
+      id: [null],
+      name: ['', [Validators.required, Validators.minLength(3)]],
       description: [''],
-      category: [null, Validators.required], // Para objetos TrainningCategory
-      exercises: [[], Validators.required], // Para array de objetos Exercise
-      clientId: [null, Validators.required], // Para ID do Cliente
-      startDate: [null, Validators.required], // Data inicial como Date object
-      endDate: [null], // Data final como Date object ou null
+      categories: [[], [Validators.required, Validators.minLength(1)]],
+      exercises: [[], [Validators.required, Validators.minLength(1)]],
+      client: [null, [Validators.required]], // Assumindo que client é um ClientDto completo
+      startDate: [null, Validators.required], // Reativado
+      endDate: [null], // Reativado
       active: [true]
     });
   }
@@ -115,74 +115,65 @@ export class TrainningEditComponent implements OnInit {
    */
   private loadAllData(id: number): void {
     this.isLoading = true;
-    forkJoin([
-      this.trainningService.getTrainningById(id).pipe(
-        catchError(error => {
-          console.error('Erro ao carregar treino:', error);
-          this.snackBar.open('Erro ao carregar treino.', 'Fechar', { duration: 3000 });
+    forkJoin({
+      trainning: this.trainningService.getTrainningById(id).pipe(
+        catchError((error: HttpErrorResponse) => {
+          this.handleError('Erro ao carregar os dados do treino', error);
           this.router.navigate(['/trainnings']);
           return of(null);
         })
       ),
-      this.exerciseService.getAllExercises().pipe(
-        catchError(error => {
-          console.error('Erro ao carregar lista de exercícios disponíveis:', error);
-          this.snackBar.open('Erro ao carregar exercícios disponíveis.', 'Fechar', { duration: 3000 });
+      exercises: this.exerciseService.getAllExercises().pipe(
+        catchError((error: HttpErrorResponse) => {
+          this.handleError('Erro ao carregar lista de exercícios disponíveis', error);
           return of([]);
         })
       ),
-      this.trainningCategoryService.getAllTrainningCategories().pipe(
-        catchError(error => {
-          console.error('Erro ao carregar categorias de treino:', error);
-          this.snackBar.open('Erro ao carregar categorias de treino.', 'Fechar', { duration: 3000 });
+      categories: this.trainningCategoryService.getAllTrainningCategories().pipe(
+        catchError((error: HttpErrorResponse) => {
+          this.handleError('Erro ao carregar categorias de treino', error);
           return of([]);
         })
       ),
-      this.clientService.getAllClients().pipe(
-        catchError(error => {
-          console.error('Erro ao carregar clientes:', error);
-          this.snackBar.open('Erro ao carregar clientes.', 'Fechar', { duration: 3000 });
+      clients: this.clientService.getAllClients().pipe(
+        catchError((error: HttpErrorResponse) => {
+          this.handleError('Erro ao carregar clientes', error);
           return of([]);
         })
       )
-    ]).pipe(
+    }).pipe(
       finalize(() => this.isLoading = false)
     ).subscribe({
-      next: ([trainningData, exercisesData, categoriesData, clientsData]) => {
-        if (trainningData) {
-          // Atribua os dados carregados ao FormGroup usando patchValue
+      next: (results) => {
+        const { trainning, exercises, categories, clients } = results;
+
+        this.allAvailableExercises = (exercises as ExerciseDto[]).filter(ex => ex && typeof ex.id === 'number');
+        this.trainningCategories = (categories as any[]).filter((cat): cat is TrainningCategoryDto => cat && typeof cat.id === 'number');
+        this.clients = (clients as any[]).filter((c): c is ClientDto => c && typeof c.id === 'number');
+
+        if (trainning) {
+          // Preenche o formulário com os dados do treino carregado
           this.trainningForm.patchValue({
-            id: trainningData.id,
-            name: trainningData.name,
-            // Encontra o objeto category correspondente na lista de categorias
-            category: categoriesData.find(cat => {
-              if (trainningData.category && typeof trainningData.category === 'object' && 'id' in trainningData.category) {
-                return cat.id === (trainningData.category as { id: number }).id;
-              } else {
-                return cat.id === Number(trainningData.category);
-              }
-            }),
-            // Filtra os exercícios carregados para incluir apenas os que estão no treino
-            exercises: exercisesData.filter(ex => trainningData.exercises?.some(tEx => tEx.id === ex.id)),
-            clientId: trainningData.clientId,
-            // Converte strings de data para objetos Date para o datepicker
-            startDate: trainningData.startDate && typeof trainningData.startDate === 'string' ? new Date(trainningData.startDate) : null,
-            endDate: trainningData.endDate && typeof trainningData.endDate === 'string' ? new Date(trainningData.endDate) : null,
-            active: trainningData.active
+            id: trainning.id,
+            name: trainning.name,
+            description: trainning.description,
+            categories: trainning.categories.map(tc =>
+                this.trainningCategories.find(cat => cat.id === tc.id)
+            ).filter(Boolean) as TrainningCategoryDto[],
+            exercises: trainning.exercises.map(ex =>
+                this.allAvailableExercises.find(aEx => aEx.id === ex.id)
+            ).filter(Boolean) as ExerciseDto[],
+            client: this.clients.find(c => c.id === trainning.client.id) || null,
+            startDate: trainning.startDate ? new Date(trainning.startDate) : null, // Converte string para Date
+            endDate: trainning.endDate ? new Date(trainning.endDate) : null,     // Converte string para Date
+            active: trainning.active
           });
-
-          // Popula as listas para os mat-selects
-          this.allAvailableExercises = exercisesData;
-          this.trainningCategories = categoriesData;
-          this.clients = clientsData;
-
         } else {
           this.router.navigate(['/trainnings']);
         }
       },
       error: (error) => {
-        console.error('Erro geral no carregamento de dados:', error);
-        this.snackBar.open('Erro ao carregar todos os dados necessários.', 'Fechar', { duration: 3000 });
+        this.showMessage('Erro ao carregar todos os dados necessários para edição.', 'error');
         this.router.navigate(['/trainnings']);
       }
     });
@@ -197,18 +188,18 @@ export class TrainningEditComponent implements OnInit {
       data: { exercises: this.allAvailableExercises }
     });
 
-    dialogRef.afterClosed().subscribe((selectedExercises: Exercise[]) => {
-      if (selectedExercises) { // Não precisa mais de this.trainning, pois o formulário gerencia
-        const currentExercises = this.trainningForm.get('exercises')?.value || []; // Pega os exercícios atuais do formulário
+    dialogRef.afterClosed().subscribe((selectedExercises: ExerciseDto[]) => {
+      if (selectedExercises) {
+        const currentExercises = this.trainningForm.get('exercises')?.value || [];
         const newExercisesToAdd = selectedExercises.filter(
-          selectedEx => !currentExercises.some((existingEx: Exercise) => existingEx.id === selectedEx.id)
+          selectedEx => !currentExercises.some((existingEx: ExerciseDto) => existingEx.id === selectedEx.id)
         );
 
         if (newExercisesToAdd.length > 0) {
-          this.trainningForm.get('exercises')?.setValue([...currentExercises, ...newExercisesToAdd]); // Atualiza o formControl
-          this.snackBar.open(`${newExercisesToAdd.length} exercício(s) adicionado(s)!`, 'Fechar', { duration: 2000 });
+          this.trainningForm.get('exercises')?.setValue([...currentExercises, ...newExercisesToAdd]);
+          this.showMessage(`${newExercisesToAdd.length} exercício(s) adicionado(s)!`, 'info');
         } else {
-          this.snackBar.open('Nenhum novo exercício selecionado ou já adicionado.', 'Fechar', { duration: 2000 });
+          this.showMessage('Nenhum novo exercício selecionado ou já adicionado.', 'info');
         }
       }
     });
@@ -218,53 +209,51 @@ export class TrainningEditComponent implements OnInit {
    * Salva as alterações no treino atual.
    */
   onSave(): void {
-    // ATUALIZADO: Validação do FormGroup
+    this.markFormGroupTouched(this.trainningForm);
+
     if (this.trainningForm.invalid) {
-      this.markFormGroupTouched(this.trainningForm); // Marcar campos como touched para mostrar erros
-      this.snackBar.open('Por favor, preencha todos os campos obrigatórios corretamente.', 'Fechar', { duration: 3000 });
+      this.showMessage('Por favor, preencha todos os campos obrigatórios corretamente.', 'error');
       return;
     }
 
     this.isSaving = true;
 
     // Pega o valor do formulário
-    const trainningToSave = { ...this.trainningForm.value }; // <--- ATUALIZADO: Pega valor do FormGroup
+    const formData = this.trainningForm.value;
 
     // Formata as datas para string 'DD/MM/YYYY' para enviar ao backend
-    if (trainningToSave.startDate instanceof Date) {
-      const day = String(trainningToSave.startDate.getDate()).padStart(2, '0');
-      const month = String(trainningToSave.startDate.getMonth() + 1).padStart(2, '0');
-      const year = trainningToSave.startDate.getFullYear();
-      trainningToSave.startDate = `${day}/${month}/${year}`;
-    } else {
-      trainningToSave.startDate = undefined; // Ou null se o backend aceitar null para startDate opcional
-    }
+    const formattedStartDate = formData.startDate instanceof Date
+      ? `${String(formData.startDate.getDate()).padStart(2, '0')}/${String(formData.startDate.getMonth() + 1).padStart(2, '0')}/${formData.startDate.getFullYear()}`
+      : undefined;
 
-    if (trainningToSave.endDate instanceof Date && trainningToSave.endDate) {
-      const day = String(trainningToSave.endDate.getDate()).padStart(2, '0');
-      const month = String(trainningToSave.endDate.getMonth() + 1).padStart(2, '0');
-      const year = trainningToSave.endDate.getFullYear();
-      trainningToSave.endDate = `${day}/${month}/${year}`;
-    } else {
-      trainningToSave.endDate = undefined; // Ou null, dependendo do backend
-    }
+    const formattedEndDate = formData.endDate instanceof Date
+      ? `${String(formData.endDate.getDate()).padStart(2, '0')}/${String(formData.endDate.getMonth() + 1).padStart(2, '0')}/${formData.endDate.getFullYear()}`
+      : undefined;
 
-    // Certifica-se de que o ID do treino está incluído para a atualização
-    // O ID deve vir da rota ou do formulário se ele foi patchValue
-    trainningToSave.id = this.currentTrainningId; // <--- ATUALIZADO: Usa o ID guardado da rota
+    // Constrói o objeto Trainning para enviar ao backend
+    const trainningToSave: Trainning = {
+      id: this.currentTrainningId!,
+      name: formData.name,
+      description: formData.description,
+      categories: formData.categories,
+      exercises: formData.exercises,
+      client: formData.client,
+      startDate: formattedStartDate as any, // Cast para string, se necessário, ou ajuste o tipo no model
+      endDate: formattedEndDate as any,     // Cast para string, se necessário, ou ajuste o tipo no model
+      active: formData.active
+    };
 
-    this.trainningService.updateTrainning(trainningToSave.id!, trainningToSave).subscribe({
-      next: (updatedTrainning: Trainning) => {
-        this.snackBar.open('Treino atualizado com sucesso!', 'Fechar', { duration: 3000 });
-        this.isSaving = false;
-        this.router.navigate(['/trainning-view', updatedTrainning.id]);
-      },
-      error: (error: any) => {
-        console.error('Erro ao salvar treino:', error);
-        this.snackBar.open('Erro ao salvar treino. Tente novamente.', 'Fechar', { duration: 3000 });
-        this.isSaving = false;
-      }
-    });
+    this.trainningService.updateTrainning(trainningToSave.id!, trainningToSave)
+      .pipe(finalize(() => this.isSaving = false))
+      .subscribe({
+        next: (updatedTrainning: Trainning) => {
+          this.showMessage('Treino atualizado com sucesso!', 'success');
+          this.router.navigate(['/trainning-view', updatedTrainning.id]);
+        },
+        error: (error: HttpErrorResponse) => {
+          this.handleError('Erro ao salvar treino', error);
+        }
+      });
   }
 
   /**
@@ -278,24 +267,25 @@ export class TrainningEditComponent implements OnInit {
    * Remove um exercício do treino da seleção atual do formulário.
    * @param exerciseId O ID do exercício a ser removido.
    */
-  removeExerciseFromSelection(exerciseId: number): void { // <--- ATUALIZADO: Nome do método para Reactive Forms
-    const currentExercises = this.trainningForm.get('exercises')?.value as Exercise[];
+  removeExerciseFromSelection(exerciseId: number): void {
+    const currentExercises = this.trainningForm.get('exercises')?.value as ExerciseDto[];
     if (currentExercises) {
       const updatedExercises = currentExercises.filter(ex => ex.id !== exerciseId);
-      this.trainningForm.get('exercises')?.setValue(updatedExercises); // <--- ATUALIZADO: Atualiza o formControl
-      this.snackBar.open('Exercício removido do treino.', 'Fechar', { duration: 2000 });
+      this.trainningForm.get('exercises')?.setValue(updatedExercises);
+      this.trainningForm.get('exercises')?.markAsDirty();
+      this.trainningForm.get('exercises')?.updateValueAndValidity();
+      this.showMessage('Exercício removido do treino.', 'info');
     } else {
-      this.snackBar.open('Erro ao remover exercício. Treino não encontrado.', 'Fechar', { duration: 3000 });
+      this.showMessage('Erro ao remover exercício. Treino não encontrado ou seleção vazia.', 'error');
     }
   }
 
 
   /**
    * Método para comparar objetos por ID, essencial para mat-select que usa objetos como valor.
-   * Usado para comparar objetos TrainningCategory no mat-select e também em `ExerciseSelectionModalComponent`.
    */
   compareObjectsById(o1: any, o2: any): boolean {
-    return o1 && o2 ? o1.id === o2.id : o1 === o2;
+    return o1 && o2 && typeof o1 === 'object' && typeof o2 === 'object' ? o1.id === o2.id : o1 === o2;
   }
 
   /**
@@ -307,6 +297,71 @@ export class TrainningEditComponent implements OnInit {
       if (control instanceof FormGroup) {
         this.markFormGroupTouched(control);
       }
+    });
+  }
+
+  /**
+   * Lida com erros de requisição HTTP e exibe uma mensagem no snackbar.
+   */
+  private handleError(contextMessage: string, error: HttpErrorResponse): void {
+    console.error(`${contextMessage}:`, error);
+
+    let backendMessage: string | undefined;
+
+    if (error.error) {
+      if (typeof error.error === 'string') {
+        backendMessage = error.error;
+      } else if (typeof error.error === 'object') {
+        if (error.error.message) {
+          backendMessage = error.error.message;
+        } else if (Array.isArray(error.error.errors) && error.error.errors.length > 0) {
+          backendMessage = error.error.errors.map((err: any) => err.defaultMessage || err.message || 'Erro de validação').join('; ');
+        } else if (error.error.error && typeof error.error.error === 'string') {
+          backendMessage = error.error.error;
+        }
+      }
+    }
+
+    let finalMessage = backendMessage || error.message;
+
+    if (!backendMessage) {
+      switch (error.status) {
+        case 0:
+          finalMessage = 'Não foi possível conectar ao servidor. Verifique sua conexão.';
+          break;
+        case 400:
+          finalMessage = 'Requisição inválida. Verifique os dados enviados.';
+          break;
+        case 401:
+          finalMessage = 'Sessão expirada ou não autorizado. Faça login novamente.';
+          break;
+        case 403:
+          finalMessage = 'Acesso negado. Você não tem permissão para esta ação.';
+          break;
+        case 404:
+          finalMessage = 'Recurso não encontrado.';
+          break;
+        case 500:
+          finalMessage = 'Erro interno do servidor. Tente novamente mais tarde.';
+          break;
+        default:
+          finalMessage = `Erro (${error.status}): Ocorreu um problema inesperado.`;
+          break;
+      }
+    }
+
+    this.showMessage(`${contextMessage}. Detalhes: ${finalMessage}`, 'error');
+  }
+
+  /**
+   * Exibe uma mensagem de notificação (snackbar).
+   */
+  private showMessage(message: string, type: 'success' | 'error' | 'info'): void {
+    this.snackBar.open(message, 'Fechar', {
+      duration: type === 'success' ? 3000 : 5000,
+      horizontalPosition: 'end',
+      verticalPosition: 'top',
+      panelClass: type === 'success' ? ['success-snackbar'] : (type === 'error' ? ['error-snackbar'] : ['info-snackbar'])
     });
   }
 }

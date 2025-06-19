@@ -1,28 +1,23 @@
 <div class="trainning-edit-container">
-  <!-- Cabeçalho -->
   <div class="header">
     <mat-icon style="vertical-align: middle; margin-right: 8px;">edit</mat-icon>
     <div class="header-content">
       <h1>Editar Treino</h1>
-      <!-- ATUALIZADO: Acessa o nome do formulário pelo FormGroup -->
       <p class="subtitle">{{ trainningForm.get('name')?.value || 'Carregando Treino...' }}</p>
     </div>
   </div>
 
-  <!-- Indicador de carregamento -->
   @if (isLoading) {
   <div class="loading-spinner">
     <mat-spinner diameter="50"></mat-spinner>
     <p>Carregando treino...</p>
   </div>
-  <!-- ATUALIZADO: Condição para "não encontrado" (verifica se o FormGroup não está carregado) -->
-  } @else if (!trainningForm.get('id')?.value && !isLoading) { <!-- trainningForm.get('id')?.value === null significa que não carregou um treino válido -->
+  } @else if (!trainningForm.get('id')?.value) {
   <div class="not-found">
     <p>Treino não encontrado ou ID inválido.</p>
     <button mat-button (click)="goBack()">Voltar</button>
   </div>
   } @else {
-  <!-- Formulário de edição - ATUALIZADO: Usa [formGroup]="trainningForm" e (ngSubmit) -->
   <form [formGroup]="trainningForm" (ngSubmit)="onSave()" class="content">
     <div class="info-section">
       <h2>
@@ -30,144 +25,128 @@
         Informações do Treino
       </h2>
       <div class="info-grid">
-        <!-- Campo Nome do Treino -->
         <mat-form-field appearance="outline">
           <mat-label>Nome do Treino</mat-label>
-          <!-- ATUALIZADO: formControlName -->
           <input matInput formControlName="name" placeholder="Nome do treino" required>
           <mat-icon matSuffix>fitness_center</mat-icon>
-          <!-- ATUALIZADO: Validações para FormGroup -->
           @if (trainningForm.get('name')?.hasError('required') && trainningForm.get('name')?.touched) {
             <mat-error>Nome é obrigatório</mat-error>
           }
+          @if (trainningForm.get('name')?.hasError('minlength') && trainningForm.get('name')?.touched) {
+            <mat-error>O nome deve ter no mínimo 3 caracteres</mat-error>
+          }
         </mat-form-field>
 
-        <!-- Campo Descrição -->
         <mat-form-field appearance="outline">
           <mat-label>Descrição do Treino</mat-label>
-          <!-- ATUALIZADO: formControlName -->
           <textarea matInput formControlName="description" placeholder="Adicione uma descrição" rows="3"></textarea>
           <mat-icon matSuffix>description</mat-icon>
         </mat-form-field>
 
-        <!-- Campo Categoria do Treino - AGORA UM MAT-SELECT COM Reactive Forms -->
         <mat-form-field appearance="outline">
-          <mat-label>Categoria</mat-label>
-          <!-- ATUALIZADO: formControlName e [compareWith] -->
-          <mat-select formControlName="category" [compareWith]="compareObjectsById" required>
-            <mat-option [value]="null">-- Selecione a Categoria --</mat-option>
+          <mat-label>Categorias</mat-label>
+          <mat-select formControlName="categories" [compareWith]="compareObjectsById" multiple required>
+            <mat-option [value]="null" disabled>-- Selecione as Categorias --</mat-option>
             @for (category of trainningCategories; track category.id) {
               <mat-option [value]="category">{{ category.name }}</mat-option>
             }
           </mat-select>
           <mat-icon matSuffix>category</mat-icon>
-          <!-- ATUALIZADO: Validação para FormGroup -->
-          @if (trainningForm.get('category')?.hasError('required') && trainningForm.get('category')?.touched) {
-            <mat-error>Categoria é obrigatória</mat-error>
+          @if (trainningForm.get('categories')?.hasError('required') && trainningForm.get('categories')?.touched) {
+            <mat-error>Pelo menos uma categoria é obrigatória</mat-error>
+          }
+          @if (trainningForm.get('categories')?.hasError('minlength') && trainningForm.get('categories')?.touched) {
+            <mat-error>Selecione ao menos uma categoria</mat-error>
           }
         </mat-form-field>
 
-        <!-- Campo Cliente - MAT-SELECT COM Reactive Forms -->
         <mat-form-field appearance="outline">
           <mat-label>Cliente</mat-label>
-          <!-- ATUALIZADO: formControlName -->
-          <mat-select formControlName="clientId" required>
+          <mat-select formControlName="client" [compareWith]="compareObjectsById" required>
             <mat-option [value]="null">-- Selecione um Cliente --</mat-option>
             @for (client of clients; track client.id) {
-              <mat-option [value]="client.id">
+              <mat-option [value]="client">
                 {{client.name}}
               </mat-option>
             }
           </mat-select>
           <mat-icon matSuffix>person</mat-icon>
-          <!-- ATUALIZADO: Validação para FormGroup -->
-          @if (trainningForm.get('clientId')?.hasError('required') && trainningForm.get('clientId')?.touched) {
+          @if (trainningForm.get('client')?.hasError('required') && trainningForm.get('client')?.touched) {
             <mat-error>Selecione um Cliente</mat-error>
           }
         </mat-form-field>
 
-        <!-- Campo Data de Início -->
         <mat-form-field appearance="outline">
           <mat-label>Data de Início</mat-label>
-          <!-- ATUALIZADO: formControlName -->
           <input matInput [matDatepicker]="startDatePicker" formControlName="startDate" required>
           <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
           <mat-datepicker #startDatePicker></mat-datepicker>
-          <!-- ATUALIZADO: Validação para FormGroup -->
           @if (trainningForm.get('startDate')?.hasError('required') && trainningForm.get('startDate')?.touched) {
             <mat-error>Data de Início é obrigatória</mat-error>
           }
         </mat-form-field>
 
-        <!-- Campo Data de Término (Opcional) -->
         <mat-form-field appearance="outline">
           <mat-label>Data de Término (Opcional)</mat-label>
-          <!-- ATUALIZADO: formControlName -->
           <input matInput [matDatepicker]="endDatePicker" formControlName="endDate">
           <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
           <mat-datepicker #endDatePicker></mat-datepicker>
         </mat-form-field>
 
-        <!-- Checkbox Ativo -->
-        <!-- ATUALIZADO: formControlName -->
         <mat-checkbox formControlName="active">
           Treino Ativo
         </mat-checkbox>
       </div>
     </div>
 
-    <!-- Seção de Exercícios -->
     <div class="exercises-section">
       <h2>
         <mat-icon>directions_run</mat-icon>
         Exercícios
       </h2>
-      <!-- MAT-SELECT para múltiplos exercícios com Reactive Forms -->
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Exercícios Selecionados</mat-label>
-        <!-- ATUALIZADO: formControlName e [compareWith] -->
-        <mat-select formControlName="exercises" multiple [compareWith]="compareObjectsById" required>
-          <mat-option [value]="null">-- Selecione os exercícios --</mat-option>
-          @for (exercise of allAvailableExercises; track exercise.id) {
-            <mat-option [value]="exercise">{{ exercise.name }}</mat-option>
-          }
-        </mat-select>
-        <!-- ATUALIZADO: Validação para FormGroup -->
-        @if (trainningForm.get('exercises')?.hasError('required') && trainningForm.get('exercises')?.touched) {
-          <mat-error>Selecione pelo menos um exercício</mat-error>
-        }
-      </mat-form-field>
 
-      <!-- Seção para exibir os exercícios selecionados (opcional, mas boa para UX) -->
+      <button mat-raised-button color="accent" type="button" (click)="openAddExerciseModal()">
+        <mat-icon>add</mat-icon>
+        Adicionar Exercícios
+      </button>
+
+      @if (trainningForm.get('exercises')?.hasError('required') && trainningForm.get('exercises')?.touched) {
+        <mat-error class="exercise-validation-error">Selecione pelo menos um exercício</mat-error>
+      }
+      @if (trainningForm.get('exercises')?.hasError('minlength') && trainningForm.get('exercises')?.touched) {
+        <mat-error class="exercise-validation-error">Selecione ao menos um exercício</mat-error>
+      }
+
       @if (trainningForm.get('exercises')?.value && trainningForm.get('exercises')?.value.length > 0) {
         <div class="exercises-selected-list">
             <h3>Exercícios Adicionados:</h3>
-            <!-- ATUALIZADO: Iterar sobre o valor do formControl -->
             @for (selectedExercise of trainningForm.get('exercises')?.value; track selectedExercise.id) {
                 <div class="exercise-item">
-                    <mat-icon class="exercise-icon">walk</mat-icon>
-                    <div class="exercise-details">
-                        <h4>{{ selectedExercise.name }}</h4>
-                        <p>{{ selectedExercise.description }}</p>
-                    </div>
-                    <!-- Botão para remover este exercício da seleção -->
-                    <button mat-icon-button color="warn" (click)="removeExerciseFromSelection(selectedExercise.id!)" class="remove-exercise-button">
-                        <mat-icon>remove_circle</mat-icon>
-                    </button>
+                  <mat-icon class="exercise-icon">walk</mat-icon>
+                  <div class="exercise-details">
+                      <h4>{{ selectedExercise.name }}</h4>
+                      <p>{{ selectedExercise.description }}</p>
+                  </div>
+                  <button mat-icon-button color="warn" (click)="removeExerciseFromSelection(selectedExercise.id!)" class="remove-exercise-button" matTooltip="Remover exercício">
+                      <mat-icon>remove_circle</mat-icon>
+                  </button>
                 </div>
             }
         </div>
       } @else {
-        <p>Nenhum exercício adicionado a este treino.</p>
+        <p class="no-exercises-message">Nenhum exercício adicionado a este treino ainda.</p>
       }
 
     </div>
 
-    <!-- Botões de ação - ATUALIZADO: Dentro da tag <form> e desabilitados por invalidade do form ou isSaving -->
     <div class="actions">
       <button mat-raised-button color="primary" type="submit" [disabled]="trainningForm.invalid || isSaving">
         <mat-icon>save</mat-icon>
-        Salvar
+        @if (isSaving) {
+          Salvando...
+        } @else {
+          Salvar
+        }
       </button>
       <button mat-button type="button" (click)="goBack()" [disabled]="isSaving">
         <mat-icon>cancel</mat-icon>

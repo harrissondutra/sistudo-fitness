@@ -14,3 +14,10 @@ export interface ExerciseCategory {
   name: string;
   description?: string;
 }
+
+export interface ExerciseDto {
+  id: number;
+  name?: string;
+  description?: string;
+  // Adicione outras propriedades de ExerciseDto que seu backend envia
+}

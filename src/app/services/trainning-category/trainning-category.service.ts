@@ -47,4 +47,8 @@ export class TrainningCategoryService { // Nome do serviço com 'Trainning' (nn)
    deleteTrainningCategory(id: number): Observable<void> {
      return this.http.delete<void>(`${this.baseUrl}/${id}`);
    }
+
+   getCategoryNames(): Observable<string[]> {
+     return this.http.get<string[]>(`${this.baseUrl}/categoryNames`);
+   }
 }

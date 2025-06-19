@@ -1,23 +1,16 @@
 <div class="trainning-container">
-  <!-- Cabeçalho -->
   <div class="header">
-    <!-- Ícone da Mat-Icon para halteres, alinhado verticalmente e com margem à direita -->
     <mat-icon style="vertical-align: middle; margin-right: 8px;">fitness_center</mat-icon>
     <div class="header-content">
-      <!-- Título do treino, exibe 'Treino' se o nome não estiver disponível -->
       <h1>{{ trainning?.name || 'Treino' }}</h1>
-      <!-- Subtítulo do treino, exibe a descrição -->
-      <!-- <p class="subtitle">{{ trainning?.description }}</p> -->
+      <p class="subtitle">{{ trainning?.description }}</p>
     </div>
   </div>
 
-  <!-- Conteúdo Principal, visível apenas se 'trainning' existir -->
   @if (trainning) {
   <div class="content">
-    <!-- Seção de Informações do Treino -->
     <div class="info-section">
       <h2>
-        <!-- Ícone da Mat-Icon para informações -->
         <mat-icon>info</mat-icon>
         Informações do Treino
       </h2>
@@ -31,41 +24,50 @@
           <span class="value">{{ trainning.name }}</span>
         </div>
 
-         <div class="info-item">
-          <span class="label">Categoria:</span>
-          <span class="value">{{ trainning.category }}</span>
+        <div class="info-item">
+          <span class="label">Descrição:</span>
+          <span class="value">{{ trainning.description || 'N/A' }}</span>
         </div>
 
-         <div class="info-item">
-          <span class="label">Início:</span>
-          <span class="value">{{ trainning.startDate }}</span>
+        <div class="info-item">
+          <span class="label">Categorias:</span>
+          <span class="value">
+            {{ getCategoryNames(trainning) }}
+          </span>
+        </div>
+
+        <div class="info-item">
+          <span class="label">Cliente:</span>
+          <span class="value">
+            @if (trainning.client) {
+              {{ trainning.client.name }} (ID: {{ trainning.client.id }})
+            } @else {
+              N/A
+            }
+          </span>
         </div>
 
         <div class="info-item">
           <span class="label">Início:</span>
-          <span class="value">{{ trainning.startDate }}</span>
+          <span class="value">
+            @if (trainning.startDate) {
+              {{ trainning.startDate | date:'dd/MM/yyyy' }}
+            } @else {
+              N/A
+            }
+          </span>
         </div>
 
         <div class="info-item">
           <span class="label">Fim:</span>
-          <span class="value">{{ trainning.endDate }}</span>
-        </div>
-
-        <!-- Lista de exercícios resumida dentro da seção de informações -->
-        @if (trainning.exercises && trainning.exercises.length) {
-        <div class="exercise-list">
-          <h4>Exercícios</h4>
-          <ul>
-            @for (exercise of trainning.exercises; track exercise) {
-            <li>
-              <strong>{{ exercise.name }}</strong>
-              @if (exercise.description) { - <span>{{ exercise.description }}</span> }
-              @if (exercise.categoryId) { | Categoria: <span>{{ exercise.categoryId }}</span> }
-            </li>
+          <span class="value">
+            @if (trainning.endDate) {
+              {{ trainning.endDate | date:'dd/MM/yyyy' }}
+            } @else {
+              N/A
             }
-          </ul>
+          </span>
         </div>
-        }
 
         <div class="info-item">
           <span class="label">Ativo:</span>
@@ -78,55 +80,47 @@
       </div>
     </div>
 
-    <!-- Seção de Exercícios Detalhada, visível apenas se houver exercícios -->
     @if (trainning.exercises?.length) {
     <div class="exercises-section">
       <h2>
-        <!-- Ícone da Mat-Icon para exercícios -->
         <mat-icon>directions_run</mat-icon>
         Exercícios
       </h2>
       <div class="exercises-list">
-        <!-- Loop para exibir cada exercício -->
         @for (exercise of trainning.exercises; track exercise) {
         <div class="exercise-item">
-          <!-- Ícone do exercício -->
           <mat-icon class="exercise-icon">walk</mat-icon>
           <div class="exercise-details">
-            <!-- Nome do exercício -->
             <h3>{{ exercise.name }}</h3>
-            <!-- Descrição do exercício -->
             <p>{{ exercise.description }}</p>
-            <!-- Repetições e Séries (re-comentadas se não existirem na sua interface Trainning) -->
-            <!-- @if (exercise.reps) {
-            <p><strong>Repetições:</strong> {{ exercise.reps }}</p>
-            }
-            @if (exercise.series) {
-            <p><strong>Séries:</strong> {{ exercise.series }}</p>
-            } -->
-          </div>
+            </div>
         </div>
         }
       </div>
     </div>
+    } @else {
+    <div class="exercises-section">
+      <p class="no-exercises-message">Nenhum exercício adicionado a este treino.</p>
+    </div>
     }
+  </div>
+  } @else {
+  <div class="loading-spinner">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Carregando treino ou treino não encontrado...</p>
   </div>
   }
 
-  <!-- Botões de ação -->
   <div class="actions">
-    <!-- Botão Editar com ícone -->
     <button mat-raised-button color="primary" [disabled]="!trainning"
       (click)="trainning && editTrainningById(trainning)">
       <mat-icon>edit</mat-icon>
       Editar
     </button>
-    <!-- Botão Excluir com ícone -->
     <button mat-raised-button color="warn" [disabled]="!trainning" (click)="trainning && onDelete(trainning)">
       <mat-icon>delete</mat-icon>
       Excluir
     </button>
-    <!-- Botão Voltar com ícone -->
     <button mat-button (click)="goBack()">
       <mat-icon>arrow_back</mat-icon>
       Voltar

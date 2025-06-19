@@ -1,73 +1,122 @@
-// Variáveis baseadas no modelo user-registration.component.scss
-$primary-color: #2196F3;     // Cor primária do modelo
-$text-primary: #2C3E50;      // Cor principal de texto do modelo
-$text-secondary: #607D8B;    // Cor secundária de texto do modelo
-$background-light: #F5F7FA;  // Cor de fundo do container no modelo
-$background-white: #FFFFFF;  // Cor de fundo para elementos "card" no modelo
-$border-color: rgba(0, 0, 0, 0.08); // Cor da borda do modelo
-$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);   // Sombra pequena do modelo
-$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);  // Sombra média do modelo
-$border-radius: 12px;       // Raio da borda do modelo
-$spacing-xs: 8px;           // Espaçamento extra pequeno do modelo
-$spacing-sm: 12px;          // Espaçamento pequeno do modelo
-$spacing-md: 16px;          // Espaçamento médio do modelo
-$spacing-lg: 24px;          // Espaçamento grande do modelo
-$transition: all 0.3s ease; // Transição do modelo
-$warn-color: #f44336;       // Mantido para mensagens de erro
-$info-color: #2196F3;       // Adicionado para mensagens de info (azul, igual primary-color)
+/* trainning-create.component.scss */
 
-// ---
-// Container Principal
-// ---
-.trainning-create-container { /* Nome da classe atualizado para 'trainning-create-container' */
-  padding: $spacing-lg;
-  max-width: 900px; /* Aumentei um pouco para acomodar mais campos/exercícios */
-  margin: 0 auto;
-  background: $background-light;
-  min-height: 100vh;
-  box-sizing: border-box;
-  display: flex; /* Adicionado para centralizar conteúdo */
-  flex-direction: column; /* Conteúdo em coluna */
+@use 'sass:math';
+
+// Variáveis baseadas no padrão do app (ajustadas para um conjunto mais genérico)
+// Idealmente, estas deveriam vir de um arquivo de variáveis globais.
+$primary-color: #2196F3;
+$accent-color: #FFC107; // Exemplo de cor de destaque, ajuste se tiver uma
+$warn-color: #F44336;
+
+$text-primary: #2C3E50;
+$text-secondary: #607D8B;
+
+$background-color: #F5F7FA; // Fundo principal da página/container
+$background-card: #FFFFFF; // Fundo para elementos tipo card
+$background-light: #ECEFF1; // Fundo para campos de input/itens selecionados
+
+$border-color: rgba(0, 0, 0, 0.08);
+
+$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+$shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.18); // Adicionado para profundidade extra
+
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px; // Maior raio para cards principais
+
+$spacing-xs: 8px;
+$spacing-sm: 12px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px; // Adicionado
+
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-md: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 24px;
+$font-size-xxl: 28px; // Para títulos grandes
+
+$transition-default: all 0.3s ease;
+$transition-fast: all 0.2s ease;
+
+// Mixins de Flexbox
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-// ---
-// Cabeçalho
-// ---
-.header {
-  margin-bottom: $spacing-lg;
+@mixin flex-between-center {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: $spacing-md;
-  background: $background-white; /* Estilo de card para o cabeçalho */
-  border-radius: $border-radius;
+}
+
+@mixin flex-col-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@mixin card-style {
+  background: $background-card;
+  border-radius: $border-radius-lg;
   box-shadow: $shadow-sm;
-  padding: $spacing-md $spacing-lg; /* Padding ajustado */
-  transition: $transition;
+  transition: $transition-default;
 
   &:hover {
     box-shadow: $shadow-md;
   }
+}
 
-  .header-content { /* Nova classe para agrupar h1 e p */
-    flex-grow: 1; /* Permite que o conteúdo ocupe o espaço restante */
+// ---
+// Container Principal do Componente
+// ---
+.trainning-create-container {
+  padding: $spacing-xl; // Um pouco mais de padding para o container geral
+  max-width: 1000px; // Aumentado para melhor visualização em desktops
+  margin: $spacing-lg auto; // Centraliza e dá margem superior/inferior
+  background: $background-color;
+  min-height: calc(100vh - ($spacing-lg * 2)); // Ajustado para a margem
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl; // Espaçamento entre as grandes seções (cabeçalho, formulário, etc.)
+}
+
+// ---
+// Cabeçalho da Página
+// ---
+.header {
+  @include card-style; // Aplica estilo de card
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+  margin-bottom: 0; // Removido margin-bottom direto, usando gap do container
+
+  mat-icon {
+    font-size: $font-size-xxl; // Tamanho maior para o ícone do cabeçalho
+    width: $font-size-xxl;
+    height: $font-size-xxl;
+    color: $primary-color;
+  }
+
+  .header-content {
+    flex-grow: 1;
     h1 {
       margin: 0;
       color: $text-primary;
-      font-size: 28px;
-      font-weight: 500;
+      font-size: $font-size-xxl;
+      font-weight: 600; // Mais negrito para o título principal
     }
-    .subtitle { /* Adicionado para o subtítulo */
+    .subtitle {
       margin: $spacing-xs 0 0;
       color: $text-secondary;
-      font-size: 16px;
+      font-size: $font-size-md;
     }
-  }
-
-  mat-icon {
-    font-size: 32px;
-    width: 32px;
-    height: 32px;
-    color: $primary-color;
   }
 }
 
@@ -75,37 +124,46 @@ $info-color: #2196F3;       // Adicionado para mensagens de info (azul, igual pr
 // Indicador de Carregamento
 // ---
 .loading-spinner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  @include flex-col-center;
   gap: $spacing-md;
-  min-height: 200px; /* Garante que o spinner tenha espaço */
+  min-height: 300px; // Altura maior para o spinner de carregamento
   color: $text-secondary;
-  background: $background-white;
-  border-radius: $border-radius;
-  box-shadow: $shadow-sm;
-  padding: $spacing-lg;
+  @include card-style; // Aplica estilo de card
+  padding: $spacing-xl;
   text-align: center;
 }
 
 // ---
-// Formulário (agora a classe .content)
+// Seção de "Não Encontrado" (para edição/visualização, se for o caso)
 // ---
-.content { /* Renomeado de .form-container para .content */
-  background: $background-white;
-  border-radius: $border-radius;
-  box-shadow: $shadow-sm;
-  transition: $transition;
+.not-found {
+  @include flex-col-center;
+  gap: $spacing-md;
+  min-height: 200px;
+  color: $text-secondary;
+  @include card-style;
   padding: $spacing-lg;
+  text-align: center;
+
+  p {
+    font-size: $font-size-lg;
+  }
+
+  button {
+    font-size: $font-size-md;
+  }
+}
+
+// ---
+// Conteúdo Principal do Formulário
+// ---
+.content {
+  @include card-style; // Estilo de card para o formulário
+  padding: $spacing-xl; // Padding interno maior
   display: flex;
   flex-direction: column;
-  gap: $spacing-lg; /* Aumentei o gap entre as seções */
-  flex-grow: 1; /* Permite que o formulário ocupe o espaço restante */
-
-  &:hover {
-    box-shadow: $shadow-md;
-  }
+  gap: $spacing-xl; // Espaçamento entre as seções do formulário
+  flex-grow: 1;
 
   /* ---
    * Seções do Formulário (Informações e Exercícios)
@@ -115,31 +173,33 @@ $info-color: #2196F3;       // Adicionado para mensagens de info (azul, igual pr
     h2 {
       display: flex;
       align-items: center;
-      gap: $spacing-xs;
+      gap: $spacing-sm; // Espaçamento entre ícone e título da seção
       color: $text-primary;
-      font-size: 24px;
+      font-size: $font-size-xl;
       font-weight: 500;
       margin-top: 0;
-      margin-bottom: $spacing-md; /* Espaçamento abaixo do título da seção */
+      margin-bottom: $spacing-xl; // Espaçamento maior abaixo do título da seção
 
       mat-icon {
-        font-size: 28px;
-        width: 28px;
-        height: 28px;
+        font-size: $font-size-xl;
+        width: $font-size-xl;
+        height: $font-size-xl;
         color: $primary-color;
       }
     }
   }
 
+  // Grid para os campos de informação
   .info-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Layout responsivo para campos */
-    gap: $spacing-md; /* Espaçamento entre os campos */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); // Mais largo para campos
+    gap: $spacing-lg; // Espaçamento entre os campos do grid
   }
 
   /* ---
    * Estilos globais para campos de formulário (MatForm-Field)
    * --- */
+  // Usar variáveis CSS ou mixins aqui se possível para evitar ::ng-deep
   ::ng-deep {
     .mat-form-field-appearance-outline {
       .mat-form-field-outline {
@@ -162,7 +222,7 @@ $info-color: #2196F3;       // Adicionado para mensagens de info (azul, igual pr
       color: $text-secondary;
     }
     .mat-input-element,
-    .mat-select-value { /* Também para o valor selecionado do mat-select */
+    .mat-select-value {
       color: $text-primary;
     }
     .mat-form-field-suffix {
@@ -175,84 +235,131 @@ $info-color: #2196F3;       // Adicionado para mensagens de info (azul, igual pr
   }
 
   mat-error {
-    font-size: 12px;
+    font-size: $font-size-xs;
     color: $warn-color;
-    margin-top: $spacing-xs / 2;
+    margin-top: math.div($spacing-xs, 2);
+  }
+
+  // Estilo específico para erros de validação de exercícios
+  .exercise-validation-error {
+    display: block; // Garante que o erro ocupe sua própria linha
+    margin-top: $spacing-sm;
+    margin-bottom: $spacing-md;
+    font-weight: 500;
   }
 
   /* ---
    * Estilos da lista de exercícios selecionados
    * --- */
   .exercises-selected-list {
-    margin-top: $spacing-md;
+    margin-top: $spacing-xl; // Mais espaçamento antes da lista
     border-top: 1px solid $border-color;
-    padding-top: $spacing-md;
+    padding-top: $spacing-xl;
 
     h3 {
       color: $text-primary;
-      font-size: 18px;
+      font-size: $font-size-lg;
       margin-bottom: $spacing-md;
       margin-top: 0;
+      font-weight: 500;
     }
 
     .exercise-item {
       display: flex;
       align-items: center;
-      padding: $spacing-sm;
+      padding: $spacing-md; // Mais padding para o item
       background: $background-light;
-      border-radius: $border-radius / 2; /* Borda um pouco menor para itens */
+      border-radius: $border-radius-md; // Raio de borda médio
       margin-bottom: $spacing-xs;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); /* Sombra mais sutil */
-      gap: $spacing-sm;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+      gap: $spacing-md; // Espaçamento maior entre elementos do item
+      transition: $transition-fast;
+
+      &:hover {
+        background: lighten($background-light, 2%);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
 
       .exercise-icon {
-        font-size: 24px;
-        width: 24px;
-        height: 24px;
+        font-size: $font-size-xl;
+        width: $font-size-xl;
+        height: $font-size-xl;
         color: $primary-color;
-        flex-shrink: 0; /* Não encolher o ícone */
+        flex-shrink: 0;
       }
 
       .exercise-details {
-        flex-grow: 1; /* Ocupa o espaço restante */
+        flex-grow: 1;
         h4 {
           margin: 0;
           color: $text-primary;
-          font-size: 16px;
+          font-size: $font-size-md;
           font-weight: 500;
         }
         p {
-          margin: 0;
+          margin: $spacing-xs / 2 0 0; // Pequena margem para a descrição
           color: $text-secondary;
-          font-size: 14px;
+          font-size: $font-size-sm;
         }
       }
 
       .remove-exercise-button {
         color: $warn-color;
         mat-icon {
-          font-size: 20px;
-          width: 20px;
-          height: 20px;
+          font-size: $font-size-lg; // Ícone de remoção maior
+          width: $font-size-lg;
+          height: $font-size-lg;
+        }
+        &:hover {
+          background-color: rgba($warn-color, 0.1);
         }
       }
     }
   }
 
+  .no-exercises-message {
+    text-align: center;
+    color: $text-secondary;
+    font-size: $font-size-md;
+    padding: $spacing-md 0;
+    margin: 0;
+  }
+
   /* ---
    * Botões de Ação
    * --- */
-  .actions { /* Renomeado de .form-actions para .actions */
+  .actions {
     display: flex;
     justify-content: flex-end;
     gap: $spacing-md;
-    margin-top: auto; /* Empurra os botões para a parte inferior do card */
+    margin-top: $spacing-xl; // Mais espaçamento antes dos botões
     padding-top: $spacing-lg;
     border-top: 1px solid $border-color;
 
     button {
+      height: 48px; // Altura padrão para botões de ação
+      font-size: $font-size-md;
+      font-weight: 500;
+      padding: 0 $spacing-lg; // Ajuste de padding
+      border-radius: $border-radius-sm; // Cantos ligeiramente arredondados
+
       mat-icon {
         margin-right: $spacing-xs;
+        font-size: $font-size-lg; // Ícones maiores nos botões
+        width: $font-size-lg;
+        height: $font-size-lg;
+      }
+
+      // Efeitos de hover/active para botões
+      &.mat-raised-button {
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: $shadow-sm;
+        }
+        &:active {
+          transform: translateY(0);
+          box-shadow: none;
+        }
       }
     }
   }
@@ -261,57 +368,115 @@ $info-color: #2196F3;       // Adicionado para mensagens de info (azul, igual pr
 /* ---
  * SnackBar Customizado
  * --- */
+// Variáveis RGB para cores de hover nos botões
+// Assumindo que você tem essas variáveis CSS customizadas no seu global styles
+// ou calculando-as em SCSS. Ex:
+// $primary-color-rgb: 33, 150, 243;
+// $accent-color-rgb: 255, 193, 7;
+// $warn-color-rgb: 244, 67, 54;
+
 .success-snackbar {
-  background-color: #4CAF50 !important; /* Verde */
+  background-color: #4CAF50 !important;
   color: white !important;
 }
 
 .error-snackbar {
-  background-color: #F44336 !important; /* Vermelho */
+  background-color: $warn-color !important;
   color: white !important;
 }
 
 .info-snackbar {
-  background-color: $info-color !important; /* Azul */
+  background-color: $primary-color !important;
   color: white !important;
 }
 
 /* ---
  * Media Queries
  * --- */
+@media (max-width: 992px) {
+  .trainning-create-container {
+    padding: $spacing-lg;
+    gap: $spacing-lg;
+  }
+  .content {
+    padding: $spacing-lg;
+    gap: $spacing-lg;
+  }
+  .info-grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); // Mais compacto
+    gap: $spacing-md;
+  }
+}
+
 @media (max-width: 768px) {
   .trainning-create-container {
     padding: $spacing-md;
+    margin: $spacing-md auto;
+    gap: $spacing-md;
   }
 
   .header {
+    padding: $spacing-sm $spacing-md;
+    flex-wrap: wrap; // Permite que o cabeçalho quebre linha
     .header-content {
       h1 {
-        font-size: 24px;
+        font-size: $font-size-xl;
+      }
+      .subtitle {
+        font-size: $font-size-sm;
       }
     }
+    mat-icon {
+      font-size: $font-size-xl;
+      width: $font-size-xl;
+      height: $font-size-xl;
+    }
+  }
+
+  .loading-spinner, .not-found {
+    padding: $spacing-md;
   }
 
   .content {
     padding: $spacing-md;
-  }
+    gap: $spacing-md;
 
-  .info-section,
-  .exercises-section {
-    h2 {
-      font-size: 20px;
-      mat-icon {
-        font-size: 24px;
-        width: 24px;
-        height: 24px;
+    .info-section, .exercises-section {
+      h2 {
+        font-size: $font-size-lg;
+        mat-icon {
+          font-size: $font-size-lg;
+          width: $font-size-lg;
+          height: $font-size-lg;
+        }
       }
     }
-  }
 
-  .actions {
-    flex-direction: column-reverse;
-    button {
-      width: 100%;
+    .exercises-selected-list {
+      padding-top: $spacing-md;
+      h3 {
+        font-size: $font-size-md;
+      }
+      .exercise-item {
+        flex-direction: column; // Empilha detalhes e botão
+        align-items: flex-start;
+        padding: $spacing-sm;
+        gap: $spacing-xs;
+        .remove-exercise-button {
+          margin-left: auto; // Empurra o botão para a direita
+          margin-top: $spacing-xs;
+        }
+      }
+    }
+
+    .actions {
+      flex-direction: column-reverse; // Inverte ordem em mobile (Cancelar em cima, Salvar em baixo)
+      gap: $spacing-sm;
+      button {
+        width: 100%;
+        height: 44px;
+        font-size: $font-size-sm;
+      }
     }
   }
 }
@@ -319,27 +484,64 @@ $info-color: #2196F3;       // Adicionado para mensagens de info (azul, igual pr
 @media (max-width: 480px) {
   .trainning-create-container {
     padding: $spacing-sm;
+    margin: $spacing-sm auto;
+    gap: $spacing-sm;
   }
 
   .header {
+    padding: $spacing-xs $spacing-sm;
     .header-content {
       h1 {
-        font-size: 20px;
+        font-size: $font-size-lg;
       }
+      .subtitle {
+        font-size: $font-size-xs;
+      }
+    }
+    mat-icon {
+      font-size: $font-size-md;
+      width: $font-size-md;
+      height: $font-size-md;
     }
   }
 
   .content {
     padding: $spacing-sm;
-  }
+    gap: $spacing-sm;
 
-  .info-grid {
-    grid-template-columns: 1fr; /* Uma coluna em telas muito pequenas */
-  }
+    .info-section, .exercises-section {
+      h2 {
+        font-size: $font-size-md;
+        mat-icon {
+          font-size: $font-size-md;
+          width: $font-size-md;
+          font-size: $font-size-md;
+        }
+      }
+    }
 
-  .exercises-section {
-    h2 {
-      font-size: 18px;
+    .exercises-selected-list {
+      h3 {
+        font-size: $font-size-sm;
+      }
+      .exercise-item {
+        padding: $spacing-xs;
+        .exercise-details {
+          h4 {
+            font-size: $font-size-sm;
+          }
+          p {
+            font-size: $font-size-xs;
+          }
+        }
+        .remove-exercise-button {
+          mat-icon {
+            font-size: $font-size-sm;
+            width: $font-size-sm;
+            height: $font-size-sm;
+          }
+        }
+      }
     }
   }
 }

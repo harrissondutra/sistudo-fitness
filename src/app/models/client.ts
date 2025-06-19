@@ -10,7 +10,7 @@ export interface Client {
   name: string;
   email: string;
   cpf: string;
-  dateOfBirth?: string; // LocalDateTime no backend -> string no frontend (ISO 8601)
+  dateOfBirth?: Date | string; // LocalDateTime no backend -> string no frontend (ISO 8601)
   weight?: number;
   height?: number;
   measure?: Measure; // Objeto Measure completo (ManyToOne no backend)
@@ -22,4 +22,9 @@ export interface Client {
   personal?: Personal; // Objeto Personal completo (ManyToOne no backend)
   nutritionist?: Nutritionist; // Objeto Nutritionist completo (ManyToOne no backend)
   evolutionPhotos?: string[]; // Lista de URLs de fotos de evolução (OneToMany no backend)
+}
+export interface ClientDto {
+  id: number;
+  name?: string; // Exemplo de propriedade, ajuste conforme seu ClientDto real
+  // Adicione outras propriedades de ClientDto que seu backend envia
 }

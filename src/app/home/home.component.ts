@@ -1,9 +1,9 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Observable, of } from 'rxjs';
-import { map, shareReplay, take, catchError, tap } from 'rxjs/operators';
-import { Router, RouterModule } from '@angular/router';
+import { Observable, of, Subscription } from 'rxjs';
+import { map, shareReplay, take, catchError, tap, filter } from 'rxjs/operators';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 // Importe os módulos do Angular Material
@@ -59,6 +59,7 @@ export class HomeComponent implements OnInit {
   totalTrainingsInactiveCount: number = 0; // Mantido
 
   loading: boolean = false;
+  private routerSubscription: Subscription | null = null;
 
   constructor(
     private breakpointObserver: BreakpointObserver,
@@ -67,16 +68,37 @@ export class HomeComponent implements OnInit {
     private trainningService: TrainningService // Injetado TrainingService
   ) { }
 
-  ngOnInit(): void {
-    this.loadTotalClientsCount(); // Chamando loadTotalClientsCount
+   ngOnInit(): void {
+    // Carrega dados inicialmente
+    this.loadAllData();
+
+    // Configura listener para atualizar dados quando navegar de volta ao dashboard
+    this.routerSubscription = this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+      filter(() => this.router.url === '/' || this.router.url === '/home')
+    ).subscribe(() => {
+      this.loadAllData();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
+    }
+  }
+
+   loadAllData(): void {
+    this.loading = true;
+
+    // Usando forkJoin para carregar tudo em paralelo seria mais eficiente
+    this.loadTotalClientsCount();
     this.loadTotalTrainingsCount();
     this.loadTotalTrainingsInactiveCount();
   }
 
-  loadTotalClientsCount(): void { // Renomeado para loadTotalClientsCount
-    this.loading = true;
-    this.clientService.getAllClients().pipe( // Usando clientService.getAllClients()
-      tap((clients: Client[]) => { // Tipando como Client[]
+   loadTotalClientsCount(): void {
+    this.clientService.getAllClients().pipe(
+      tap((clients: Client[]) => {
         this.totalClientsCount = clients.length;
         this.loading = false;
       }),
@@ -90,10 +112,9 @@ export class HomeComponent implements OnInit {
   }
 
   loadTotalTrainingsCount(): void {
-    this.loading = true;
-    this.trainningService.listAllTrainnings().pipe( // Usando trainingService.listAllTrainings()
-      tap((trainings: Trainning[]) => { // Tipando como Training[]
-        this.totalTrainingsCount = trainings.length; // Total de todos os treinos
+    this.trainningService.listAllTrainnings().pipe(
+      tap((trainings: Trainning[]) => {
+        this.totalTrainingsCount = trainings.length;
         this.loading = false;
       }),
       catchError(error => {
@@ -106,11 +127,9 @@ export class HomeComponent implements OnInit {
   }
 
   loadTotalTrainingsInactiveCount(): void {
-    this.loading = true;
-    this.trainningService.listAllTrainnings().pipe( // Usando trainingService.listAllTrainings()
-      tap((trainings: Trainning[]) => { // Tipando como Training[]
-        const inactiveTrainings = trainings.filter(t => !t.active);
-        this.totalTrainingsInactiveCount = inactiveTrainings.length;
+    this.trainningService.listAllTrainningsInactive().pipe(
+      tap((trainings: Trainning[]) => {
+        this.totalTrainingsInactiveCount = trainings.length;
         this.loading = false;
       }),
       catchError(error => {
