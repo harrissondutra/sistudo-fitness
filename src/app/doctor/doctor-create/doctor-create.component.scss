@@ -1,0 +1,264 @@
+@use 'sass:math';
+
+// Variáveis
+$primary-color: #3f51b5; // Cor primária do Material Design padrão
+$accent-color: #ff4081; // Cor de destaque do Material Design padrão
+$warn-color: #f44336;   // Cor de aviso do Material Design padrão
+
+$text-primary: #1a237e;     // Cor para títulos e textos principais (mais escura)
+$text-secondary: #666;      // Cor para subtítulos e textos secundários
+$border-color: #e0e0e0;     // Cor de borda clara
+$background-light: #f5f5f5; // Cor de fundo principal
+$background-white: #fff;    // Cor para elementos com fundo branco
+$lighter-primary: #e8eaf6;  // Um tom mais claro da cor primária para hover/active
+
+$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05); /* Sombra padrão de seção */
+$shadow-md: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
+            0 2px 2px 0 rgba(0, 0, 0, 0.14),
+            0 1px 5px 0 rgba(0, 0, 0, 0.12); /* Sombra do card padrão */
+
+$border-radius: 8px; // Raio da borda para elementos de card
+$spacing-unit: 8px; // Unidade base de espaçamento
+$padding-small: $spacing-unit * 2; // 16px
+$padding-medium: $spacing-unit * 3; // 24px
+$margin-medium: $spacing-unit * 3; // 24px
+
+$transition: all 0.3s ease;
+
+// Mixins para reutilização de estilos
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between-center {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+// --- Container Principal ---
+.doctor-update-container {
+  padding: $padding-medium; /* 24px */
+  max-width: 800px; /* Largura padrão para formulários */
+  margin: $margin-medium auto; /* Centraliza o container */
+  background-color: $background-white; /* Fundo branco para o container principal */
+  border-radius: $border-radius; /* 8px */
+  box-shadow: $shadow-md; /* Sombra do card padrão */
+  min-height: calc(100vh - ($margin-medium * 2)); /* Garante altura mínima */
+  display: flex;
+  flex-direction: column;
+}
+
+// --- Cabeçalho ---
+.header {
+  @include flex-between-center; /* Reutilizando mixin */
+  margin-bottom: $padding-medium; /* 24px */
+  padding-bottom: $padding-small; /* 16px */
+  border-bottom: 1px solid $border-color; /* Linha divisória */
+  flex-wrap: wrap; // Permite que o conteúdo quebre em telas pequenas
+
+  .title-section {
+    h2 {
+      margin: 0;
+      font-size: 2em;
+      color: $text-primary;
+      font-weight: 500;
+    }
+
+    .subtitle {
+      margin: math.div($spacing-unit, 2) 0 0; /* 4px 0 0 */
+      font-size: 0.9em;
+      color: $text-secondary;
+    }
+  }
+
+  // O botão "Novo Médico" (se fosse usado aqui) seguiria o padrão de cabeçalho,
+  // mas na tela de update/create ele geralmente está ausente.
+  // Se tivesse um botão "Voltar", ficaria aqui.
+}
+
+// --- Indicador de Carregamento ---
+.loading-indicator {
+  @include flex-center;
+  flex-direction: column;
+  padding: $padding-medium;
+  gap: $padding-small;
+  color: $text-secondary;
+  flex-grow: 1; // Ocupa o espaço disponível para centralizar
+}
+
+// --- Formulário do Médico ---
+.doctor-form {
+  background: $background-white;
+  border-radius: $border-radius;
+  box-shadow: $shadow-sm; // Sombra mais sutil para o formulário dentro do container
+  transition: $transition;
+  padding: $padding-medium; // Padding interno para o formulário
+  flex-grow: 1; // Permite que o formulário cresça e ocupe o espaço
+
+  ion-list {
+    background: transparent; // Remove o background padrão da lista Ionic
+    padding: 0;
+    margin: 0;
+  }
+
+  .form-item {
+    --background: transparent; // Fundo transparente para o item Ionic
+    --border-color: transparent; // Remove bordas
+    --inner-border-width: 0; // Remove linha divisória interna do Ionic
+    --padding-start: 0; // Remove padding padrão do item Ionic
+    --padding-end: 0;
+    --padding-top: 0;
+    --padding-bottom: 0;
+    margin-bottom: $padding-small; // Espaçamento entre os campos
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .full-width {
+    width: 100%;
+  }
+}
+
+// --- Botões de Ação ---
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $padding-small; // 16px de espaço entre os botões
+  margin-top: $padding-medium; // 24px acima dos botões
+  padding-top: $padding-small; // 16px de padding acima da borda
+  border-top: 1px solid $border-color; // Linha divisória
+
+  button {
+    mat-icon {
+      margin-right: $spacing-unit; // 8px
+    }
+  }
+}
+
+// --- Estilos globais para campos de formulário (MatFormField) ---
+// Usar ::ng-deep é geralmente desencorajado no Angular moderno.
+// Considere alternativas como usar mixins de tema ou incluir esses estilos em um arquivo global.
+// No entanto, para compatibilidade com o snippet original, vou manter.
+::ng-deep {
+  .mat-form-field-appearance-outline {
+    .mat-form-field-outline {
+      color: $border-color;
+    }
+
+    .mat-form-field-outline-thick {
+      color: $primary-color;
+    }
+
+    &.mat-focused {
+      .mat-form-field-outline-thick {
+        color: $primary-color;
+      }
+
+      .mat-form-field-label {
+        color: $primary-color;
+      }
+    }
+
+    .mat-form-field-label {
+      color: $text-secondary;
+    }
+
+    .mat-input-element {
+      color: $text-primary;
+    }
+
+    .mat-form-field-suffix {
+      color: $text-secondary;
+    }
+
+    // Estilo para mat-error (mensagens de validação)
+    .mat-error {
+      font-size: 0.75em; // Um pouco menor que o texto padrão
+      color: $warn-color; // Cor de aviso para erros
+    }
+  }
+}
+
+// --- Media Queries ---
+
+// Telas médias (tablets e pequenos laptops)
+@media (max-width: 768px) {
+  .doctor-update-container {
+    padding: $padding-small;
+    margin: $padding-small auto; // Centraliza e reduz margem
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: $padding-small;
+
+    .title-section {
+      margin-bottom: $spacing-unit; // 8px
+      h2 {
+        font-size: 1.6em;
+      }
+      .subtitle {
+        font-size: 0.8em;
+      }
+    }
+  }
+
+  .doctor-form {
+    padding: $padding-small; // Reduz padding interno do formulário
+  }
+
+  .form-actions {
+    flex-direction: column-reverse; // Empilha botões em telas pequenas
+    gap: $spacing-unit; // 8px
+    padding-top: $spacing-unit; // 8px
+    margin-top: $padding-small; // 16px
+
+    button {
+      width: 100%; // Botões ocupam a largura total
+      margin-right: 0 !important; // Garante que não haja margem extra
+      mat-icon {
+        margin-right: $spacing-unit;
+      }
+    }
+  }
+}
+
+// Telas pequenas (smartphones)
+@media (max-width: 480px) {
+  .doctor-update-container {
+    padding: $spacing-unit;
+    margin: $spacing-unit auto;
+    min-height: calc(100vh - ($spacing-unit * 2));
+  }
+
+  .header {
+    margin-bottom: $spacing-unit;
+    .title-section {
+      h2 {
+        font-size: 1.4em;
+      }
+      .subtitle {
+        font-size: 0.7em;
+      }
+    }
+  }
+
+  .doctor-form {
+    padding: $spacing-unit;
+    .form-item {
+      margin-bottom: $spacing-unit; // Reduz o espaço entre os campos
+    }
+  }
+
+  .form-actions {
+    gap: math.div($spacing-unit, 2); // 4px
+    padding-top: math.div($spacing-unit, 2); // 4px
+    margin-top: $spacing-unit; // 8px
+  }
+}

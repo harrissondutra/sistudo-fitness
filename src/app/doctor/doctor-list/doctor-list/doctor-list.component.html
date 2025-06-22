@@ -1,0 +1,86 @@
+<div class="doctor-list-container">
+  <div class="header">
+    <div class="title-section">
+      <h2>Lista de Médicos</h2>
+      <p class="subtitle">Gerencie todos os médicos cadastrados no sistema</p>
+    </div>
+    <button mat-raised-button color="primary" class="new-doctor-btn" (click)="onCreateDoctor()">
+      <mat-icon>add</mat-icon>
+      <span>Novo Médico</span>
+    </button>
+  </div>
+
+  <div class="search-section">
+    <mat-form-field appearance="outline" class="search-input">
+      <mat-label>Buscar Médico</mat-label>
+      <input matInput [formControl]="searchControl" placeholder="Digite nome, email, CRM ou especialidade">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  @if (isLoading) {
+  <div class="loading-indicator">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Carregando médicos...</p>
+  </div>
+  }
+
+  @if (!isLoading && filteredDoctors && filteredDoctors.length > 0) {
+  <ion-list class="doctor-ionic-list mat-elevation-z2">
+    @for (doctor of filteredDoctors; track doctor.id) {
+    <ion-item button (click)="onViewDoctor(doctor)" class="doctor-item">
+      <ion-label>
+        <h3>{{ doctor.name }}</h3>
+        <p class="doctor-info">
+          <mat-icon>email</mat-icon>
+          {{ doctor.email }}
+        </p>
+        @if (doctor.crm) {
+        <p class="doctor-info">
+          <mat-icon>assignment_ind</mat-icon>
+          {{ doctor.crm }}
+        </p>
+        }
+        @if (doctor.specialty) {
+        <p class="doctor-info">
+          <mat-icon>medical_services</mat-icon>
+          {{ doctor.specialty }}
+        </p>
+        }
+        @if (doctor.phone) {
+        <p class="doctor-info">
+          <mat-icon>phone</mat-icon>
+          {{ doctor.phone }}
+        </p>
+        }
+      </ion-label>
+      <div class="action-buttons" slot="end">
+        <button mat-icon-button color="primary" (click)="onViewDoctor(doctor); $event.stopPropagation()"
+          matTooltip="Visualizar">
+          <mat-icon>visibility</mat-icon>
+        </button>
+        <button mat-icon-button color="accent" (click)="onEditDoctor(doctor); $event.stopPropagation()"
+          matTooltip="Editar">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="onDeleteDoctor(doctor.id!.toString()); $event.stopPropagation()"
+          matTooltip="Excluir">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </ion-item>
+    }
+  </ion-list>
+  }
+
+  @if (!isLoading && (!filteredDoctors || filteredDoctors.length === 0)) {
+  <div class="no-data-content">
+    <mat-icon>medical_services</mat-icon>
+    @if (searchControl.value) {
+    <p>Nenhum médico encontrado com o filtro aplicado.</p>
+    } @else {
+    <p>Nenhum médico cadastrado ainda.</p>
+    }
+  </div>
+  }
+</div>

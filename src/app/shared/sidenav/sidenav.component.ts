@@ -45,6 +45,37 @@ export class SidenavComponent {
         { label: 'Criar Novo Cliente', route: '/register' },
       ]
     },
+     {
+      title: 'Médicos',
+      icon: 'stethoscope',
+
+      links: [
+        { label: 'Listar Médicos', route: '/doctor-list' },
+        { label: 'Criar Novo Médico', route: '/doctor-create' },
+        { label: 'Editar Médico', route: '/doctor-update/:id' },
+      ]
+    },
+     {
+      title: 'Personal Trainers',
+      icon: 'body_system',
+
+      links: [
+        { label: 'Listar Personal', route: '/personal-list' },
+        { label: 'Criar Novo Personal', route: '/personal-create' },
+        { label: 'Editar Personal', route: '/personal-update/:id' },
+      ]
+    },
+     {
+      title: 'Nutricionistas',
+      icon: 'body_fat',
+
+      links: [
+        { label: 'Listar Nutricionistas', route: '/nutritionist-list' },
+        { label: 'Criar Novo Nutricionista', route: '/nutritionist-create' },
+        { label: 'Editar Nutricionista', route: '/nutritionist-update/:id' },
+      ]
+    },
+
     {
       title: 'Treinos',
       icon: 'fitness_center',

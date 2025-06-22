@@ -1,0 +1,582 @@
+@use 'sass:math';
+
+// Variáveis de Cores (ajustadas conforme o tema Material Design fornecido)
+$primary-color: #3f51b5;
+$accent-color: #ff4081;
+$warn-color: #f44336;
+$text-color: #1a237e; // Cor para títulos e textos principais (mais escura)
+$light-text-color: #666; // Cor para subtítulos e textos secundários
+$border-color: #e0e0e0;
+$background-light: #f5f5f5; // Cor de fundo principal
+$white: #fff; // Cor para elementos com fundo branco
+$lighter-primary: #e8eaf6; // Um tom mais claro da cor primária
+$info-item-background: #f8f9fa; // Fundo para info-item
+$info-item-hover-background: #e8eaf6; // Fundo para info-item no hover
+
+// Variáveis de Espaçamento
+$spacing-unit: 8px;
+$padding-small: $spacing-unit * 2; // 16px
+$padding-medium: $spacing-unit * 3; // 24px
+$margin-medium: $spacing-unit * 3; // 24px
+$gap-sections: $spacing-unit * 3; // 24px, para espaçamento entre seções principais
+
+// Mixins para reutilização de estilos
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between-center {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin card-shadow-sm {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Sombra padrão de seção */
+}
+
+@mixin card-shadow-md {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Usando a mesma sombra de seção para consistência */
+}
+
+/* Garante que padding e bordas sejam incluídos no cálculo da largura/altura */
+html {
+  box-sizing: border-box;
+}
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+.client-edit-container {
+  padding: $padding-medium; /* 24px */
+  max-width: 900px; /* Aumentado o max-width para acomodar melhor o novo layout */
+  margin: $margin-medium auto; /* 24px auto */
+  background-color: $background-light; /* #f5f5f5 */
+  border-radius: $spacing-unit * 1.5; /* 12px (para consistência com 12px originais) */
+  @include card-shadow-sm; /* Sombra padrão de seção */
+  min-height: calc(100vh - ($padding-medium * 2)); /* Garante que o container ocupe a altura total da viewport, considerando padding */
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-unit * 4; /* 32px */
+  background: $white; /* Fundo branco */
+  padding: $padding-medium; /* 24px */
+  border-radius: $spacing-unit * 1.5; /* 12px */
+  @include card-shadow-sm; /* Sombra padrão de seção */
+
+  mat-icon {
+    font-size: $spacing-unit * 4.5; /* 36px */
+    width: $spacing-unit * 4.5;
+    height: $spacing-unit * 4.5;
+    margin-right: $spacing-unit * 2.5; /* 20px */
+    color: $primary-color; /* Cor primária do Angular Material */
+    background: $lighter-primary; /* Um tom mais claro da cor primária */
+    padding: $spacing-unit; /* 8px */
+    border-radius: 50%;
+  }
+
+  .header-content {
+    flex-grow: 1; /* Permite que o conteúdo do cabeçalho ocupe o espaço disponível */
+    h1 {
+      margin: 0;
+      font-size: 28px; /* Mantido em px para corresponder ao padrão original */
+      color: $text-color; /* Cor mais escura para o título */
+      font-weight: 500;
+    }
+
+    .subtitle {
+      margin: $spacing-unit 0 0; /* 8px 0 0 */
+      color: $light-text-color;
+      font-size: 16px; /* Mantido em px */
+    }
+
+    .client-name-display {
+      p.subtitle {
+        margin-bottom: 0;
+      }
+      h2 {
+        margin: $spacing-unit / 2 0 0; /* Espaçamento menor para o nome do cliente */
+        font-size: 22px;
+        color: $text-color;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+.content {
+  /* Não aplicar display grid aqui, será no form-sections-wrapper */
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: $gap-sections; /* Espaçamento entre as grandes seções do formulário */
+}
+
+.form-sections-wrapper {
+  display: grid;
+  grid-template-columns: 1fr; /* Padrão mobile-first: uma coluna */
+  gap: $gap-sections; /* Espaçamento entre as seções do formulário */
+
+  @media (min-width: 769px) { /* Em telas maiores, 2 colunas */
+    grid-template-columns: 1.5fr 1fr; /* Informações Pessoais (maior), Medidas e Fotos (menores) */
+    /* Você pode ajustar a proporção aqui. Ex: 2fr 1fr para infos pessoais ser maior */
+  }
+
+  /* Ajuste para quando a seção de fotos pode ir para uma nova linha */
+  @media (min-width: 1024px) { /* Ex: 3 colunas em telas muito largas, ou ajustar conforme necessário */
+    grid-template-columns: 1.5fr 1fr; /* Manter 2 colunas para info pessoal / medidas e fotos */
+  }
+}
+
+.form-section {
+  background: $white; /* Fundo branco para a seção do formulário */
+  border-radius: $spacing-unit * 1.5; /* 12px */
+  padding: $padding-medium; /* 24px */
+  @include card-shadow-sm; /* Sombra padrão de seção */
+  /* Removido margin-bottom aqui, pois o gap do grid lidará com isso */
+  transition: transform 0.2s ease;
+  height: 100%; /* Garante que o card preencha a altura do grid row */
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  h2 { /* Padronizado para títulos de seção */
+    display: flex;
+    align-items: center;
+    margin: 0 0 $padding-medium; /* 24px */
+    font-size: $spacing-unit * 2.5; /* 20px */
+    color: $text-color;
+    font-weight: 500;
+
+    mat-icon {
+      margin-right: $spacing-unit * 1.5; /* 12px */
+      color: $primary-color;
+      background: $lighter-primary;
+      padding: $spacing-unit * 0.75; /* 6px */
+      border-radius: 50%;
+    }
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Padrão mobile-first: uma coluna */
+  gap: $padding-small; /* 16px Espaçamento entre os campos */
+
+  @media (min-width: 600px) { /* Em telas maiores, 2 colunas */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Campos se ajustam em 2 ou mais colunas */
+  }
+
+  .mat-form-field {
+    width: 100%;
+  }
+}
+
+.assistance-checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-unit; /* 8px */
+  margin-top: $padding-small; /* 16px */
+}
+
+/* Estilos para a seção de Medidas Atuais (Display) */
+.measures-section-display,
+.evolution-photos-section {
+  /* Herda estilos de .form-section */
+  .section-header {
+    @include flex-between-center; /* Título e botão lado a lado */
+    margin-bottom: $padding-medium; /* 24px */
+
+    .title {
+      display: flex;
+      align-items: center;
+      h2 { /* Ajusta o h2 dentro de title */
+        margin: 0;
+        font-size: $spacing-unit * 2.5; /* 20px */
+        color: $text-color;
+        font-weight: 500;
+      }
+    }
+    button {
+      font-size: 0.8em; /* Tamanho do texto do botão */
+      padding: $spacing-unit $padding-small; /* Padding do botão */
+      mat-icon {
+        font-size: 1.2em; /* Tamanho do ícone no botão */
+        margin-right: $spacing-unit / 2; /* Espaçamento menor para o ícone */
+        padding: 0; /* Remover padding extra */
+        background: transparent; /* Fundo transparente para o ícone no botão */
+        color: $white; /* Cor do ícone */
+        border-radius: 0; /* Remover border-radius do ícone no botão */
+      }
+    }
+  }
+}
+
+.measures-grid-display {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Ajustado minmax para mais itens por linha */
+  gap: $spacing-unit * 2; /* 16px de espaçamento entre os itens de medida */
+
+  .measure-item {
+    background: $info-item-background;
+    padding: $spacing-unit * 1.5; /* 12px */
+    border-radius: $spacing-unit; /* 8px */
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-unit / 2; /* 4px */
+    border: 1px solid $border-color; /* Borda sutil */
+
+    .label {
+      font-size: 13px;
+      color: $light-text-color;
+      font-weight: 500;
+      margin-bottom: 0; /* Removido margin-bottom extra */
+    }
+
+    .value {
+      font-size: 15px;
+      color: $text-color;
+      font-weight: 600;
+    }
+  }
+}
+
+.no-measures-data {
+  @include flex-center;
+  flex-direction: column;
+  gap: $spacing-unit; /* 8px */
+  color: $light-text-color;
+  padding: $padding-medium 0; /* 24px 0 */
+  text-align: center;
+
+  mat-icon {
+    font-size: $spacing-unit * 5; /* 40px */
+    width: $spacing-unit * 5;
+    height: $spacing-unit * 5;
+    color: $border-color;
+  }
+  p {
+    margin: 0;
+    font-size: 1em;
+  }
+}
+
+/* Estilos para a seção de Fotos de Evolução */
+.photos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Colunas flexíveis para fotos */
+  gap: $spacing-unit * 2; /* 16px */
+
+  .photo-card {
+    background: $white;
+    border-radius: $spacing-unit; /* 8px */
+    @include card-shadow-sm;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+
+    img {
+      width: 100%;
+      height: 120px; /* Altura fixa para as imagens, pode ser ajustada */
+      object-fit: cover;
+      display: block;
+    }
+
+    .photo-info {
+      @include flex-between-center;
+      padding: $spacing-unit; /* 8px */
+      background-color: $info-item-background;
+      border-top: 1px solid $border-color;
+      font-size: 0.85em;
+      color: $light-text-color;
+
+      button {
+        mat-icon {
+          font-size: 1.2em;
+          padding: 0;
+          background: transparent;
+          color: $warn-color; /* Cor de alerta para o botão de exclusão */
+        }
+      }
+    }
+  }
+
+  .photo-upload {
+    @include flex-center;
+    flex-direction: column;
+    border: 2px dashed $border-color;
+    border-radius: $spacing-unit; /* 8px */
+    padding: $padding-medium;
+    height: 100%; /* Para preencher o espaço na grid */
+    min-height: 180px; /* Altura mínima similar aos cards de foto */
+    text-align: center;
+
+    button {
+      font-size: 0.9em;
+      mat-icon {
+        margin-right: $spacing-unit / 2;
+        font-size: 1.2em;
+        padding: 0;
+        background: transparent;
+        color: $white;
+      }
+    }
+  }
+}
+
+
+.actions {
+  margin-top: $spacing-unit * 4; /* 32px */
+  display: flex;
+  gap: $padding-small; /* 16px */
+  justify-content: flex-end; /* Alinhado à direita para os botões de ação */
+
+  button {
+    min-width: 120px;
+    background: $primary-color; /* Cor primária do Angular Material */
+    color: $white;
+    border: none;
+    border-radius: $spacing-unit * 0.75; /* 6px */
+    padding: $spacing-unit $padding-small; /* 8px 16px */
+    cursor: pointer;
+    font-size: $padding-small; /* 16px */
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background: darken($primary-color, 10%); /* Tom mais escuro no hover */
+    }
+
+    mat-icon {
+      margin-right: $spacing-unit; /* 8px */
+    }
+  }
+}
+
+/* -----------------------------------------------------------
+ * Media Queries para Responsividade
+ * ----------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  .client-edit-container {
+    padding: $padding-small; /* 16px */
+    margin: $padding-small; /* 16px */
+    max-width: 100%; /* Ocupa a largura total em telas menores */
+  }
+
+  .header {
+    padding: $padding-small; /* 16px */
+    margin-bottom: $padding-medium; /* 24px */
+    flex-direction: column; /* Empilha itens em telas menores */
+    align-items: flex-start; /* Alinha o conteúdo à esquerda */
+
+    mat-icon {
+      font-size: $spacing-unit * 3.5; /* 28px */
+      width: $spacing-unit * 3.5;
+      height: $spacing-unit * 3.5;
+      margin-right: 0; /* Remove margem lateral quando empilhado */
+      margin-bottom: $spacing-unit; /* Espaço entre o ícone e o texto quando empilhado */
+    }
+
+    .header-content {
+      width: 100%; /* Ocupa a largura total */
+      h1 {
+        font-size: 24px;
+      }
+      .subtitle {
+        font-size: 14px;
+      }
+      .client-name-display {
+        h2 {
+          font-size: 20px;
+        }
+      }
+    }
+  }
+
+  .form-sections-wrapper {
+    grid-template-columns: 1fr; /* Uma coluna em telas menores */
+    gap: $padding-small; /* 16px */
+  }
+
+  .form-section {
+    padding: $padding-small; /* 16px */
+    margin-bottom: 0; /* Removido margin-bottom, já que o grid tem gap */
+
+    h2 {
+      margin-bottom: $padding-small; /* 16px */
+      font-size: 18px;
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+        margin-right: $spacing-unit; /* 8px */
+      }
+    }
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr; /* Uma coluna em telas menores */
+    gap: $spacing-unit * 1.5; /* 12px */
+  }
+
+  .assistance-checkboxes {
+    margin-top: $spacing-unit * 1.5; /* 12px */
+  }
+
+  .measures-section-display,
+  .evolution-photos-section {
+    .section-header {
+      flex-direction: column; /* Empilha título e botão */
+      align-items: flex-start; /* Alinha ao topo */
+      margin-bottom: $spacing-unit * 1.5; /* 12px */
+
+      .title {
+        margin-bottom: $spacing-unit; /* 8px */
+      }
+      button {
+        width: 100%; /* Botão ocupa a largura total */
+        @include flex-center; /* Centraliza o conteúdo do botão */
+      }
+    }
+  }
+
+  .measures-grid-display {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* Ajuste para telas menores */
+    gap: $spacing-unit; /* 8px */
+  }
+
+  .photos-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Ajuste para telas menores */
+    gap: $spacing-unit; /* 8px */
+
+    .photo-card {
+      img {
+        height: 100px; /* Altura ajustada para mobile */
+      }
+    }
+    .photo-upload {
+      min-height: 140px; /* Altura mínima ajustada */
+      padding: $spacing-unit * 2; /* 16px */
+    }
+  }
+
+  .actions {
+    flex-direction: column; /* Botões empilhados */
+    align-items: stretch; /* Estica os botões para preencher a largura */
+    gap: $spacing-unit * 1.5; /* 12px */
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .client-edit-container {
+    margin: $spacing-unit; /* 8px */
+    padding: $spacing-unit; /* 8px */
+  }
+
+  .header {
+    padding: $spacing-unit; /* 8px */
+    margin-bottom: $padding-small; /* 16px */
+
+    mat-icon {
+      font-size: $spacing-unit * 3; /* 24px */
+      width: $spacing-unit * 3;
+      height: $spacing-unit * 3;
+      margin-bottom: $spacing-unit / 2; /* 4px */
+    }
+
+    .header-content {
+      h1 {
+        font-size: 20px;
+      }
+      .subtitle {
+        font-size: 12px;
+      }
+      .client-name-display {
+        h2 {
+          font-size: 18px;
+        }
+      }
+    }
+  }
+
+  .form-container {
+    gap: $spacing-unit * 1.5; /* 12px */
+  }
+
+  .form-section {
+    padding: $spacing-unit * 1.5; /* 12px */
+
+    h2 {
+      font-size: 16px;
+      margin-bottom: $spacing-unit; /* 8px */
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+
+  .form-grid {
+    gap: $spacing-unit; /* 8px */
+  }
+
+  .assistance-checkboxes {
+    margin-top: $spacing-unit; /* 8px */
+  }
+
+  .measures-section-display,
+  .evolution-photos-section {
+    .section-header {
+      margin-bottom: $spacing-unit; /* 8px */
+      .title {
+        h2 {
+          font-size: 16px;
+        }
+      }
+      button {
+        font-size: 0.7em;
+      }
+    }
+  }
+
+  .measures-grid-display {
+    grid-template-columns: 1fr; /* Uma coluna em telas muito pequenas */
+    gap: $spacing-unit / 2; /* 4px */
+  }
+
+  .photos-grid {
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); /* Ajuste para telas muito pequenas */
+    gap: $spacing-unit / 2; /* 4px */
+
+    .photo-card {
+      img {
+        height: 80px;
+      }
+    }
+    .photo-upload {
+      min-height: 100px;
+      padding: $spacing-unit;
+    }
+  }
+
+  .actions {
+    gap: $spacing-unit; /* 8px */
+  }
+}

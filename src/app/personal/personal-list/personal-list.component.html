@@ -1,0 +1,82 @@
+<div class="personal-list-container">
+  <div class="header">
+    <div class="title-section">
+      <h2>Lista de Profissionais</h2>
+      <p class="subtitle">Gerencie todos os profissionais cadastrados no sistema.</p>
+    </div>
+    <button mat-raised-button color="primary" class="new-personal-btn" (click)="addNewPersonal()">
+      <mat-icon>add</mat-icon>
+      <span>Novo Profissional</span>
+    </button>
+  </div>
+
+  <div class="search-section">
+    <mat-form-field appearance="outline" class="search-input">
+      <mat-label>Buscar Profissional</mat-label>
+      <input matInput [formControl]="searchControl" placeholder="Digite nome, email, registro ou especialidade">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  @if (isLoading$ | async) {
+    <div class="loading-indicator">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Carregando profissionais...</p>
+    </div>
+  } @else {
+    @if ((personalList$ | async)?.length) {
+      <ion-list class="personal-ionic-list mat-elevation-z2">
+        @for (personal of personalList$ | async; track personal.id) {
+          <ion-item button (click)="editPersonal(personal.id)" class="personal-item">
+            <ion-label>
+              <h3>{{ personal.name }}</h3>
+              <p class="personal-info">
+                <mat-icon>email</mat-icon>
+                {{ personal.email }}
+              </p>
+              <p class="personal-info">
+                <mat-icon>badge</mat-icon>
+                Registro: {{ personal.registry }}
+              </p>
+              <p class="personal-info">
+                <mat-icon>work</mat-icon>
+                {{ personal.specialty }}
+              </p>
+              @if (personal.phone) {
+                <p class="personal-info">
+                  <mat-icon>phone</mat-icon>
+                  {{ personal.phone }}
+                </p>
+              }
+              @if (personal.clientId) {
+                <p class="personal-info">
+                  <mat-icon>corporate_fare</mat-icon>
+                  Cliente ID: {{ personal.clientId }}
+                </p>
+              }
+            </ion-label>
+            <div class="action-buttons" slot="end">
+              <button mat-icon-button color="accent" (click)="$event.stopPropagation(); editPersonal(personal.id)"
+                matTooltip="Editar">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="$event.stopPropagation(); deletePersonal(personal.id)"
+                matTooltip="Excluir">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </ion-item>
+        }
+      </ion-list>
+    } @else {
+      <div class="no-data-content">
+        <mat-icon>people_outline</mat-icon>
+        @if (searchControl.value) {
+          <p>Nenhum profissional encontrado com os critérios de busca.</p>
+        } @else {
+          <p>Ainda não há profissionais cadastrados.</p>
+          }
+      </div>
+    }
+  }
+</div>

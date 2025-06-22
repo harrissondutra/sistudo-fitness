@@ -1,0 +1,367 @@
+@use 'sass:math';
+
+// --- Variáveis ---
+// Cores da Paleta Material Design
+$primary-color: #3f51b5;     // Azul índigo (ex: botões, foco)
+$accent-color: #ff4081;      // Rosa (ex: destaque, ícones de ação)
+$warn-color: #f44336;        // Vermelho (ex: erros, alertas, excluir)
+
+// Cores de Texto
+$primary-text-color: #212121;    // Preto quase puro para títulos e texto principal
+$secondary-text-color: #757575;  // Cinza médio para subtítulos e texto secundário
+
+// Cores de Fundo e Borda
+$border-color: #e0e0e0;          // Cinza claro para bordas e divisores
+$background-page: #f5f5f5;      // Fundo geral da página (cinza muito claro)
+$background-card: #fff;         // Fundo para cards e elementos principais
+$background-hover: #f5f5f5;      // Fundo para hover de itens de lista (cinza mais claro)
+
+// Espaçamento
+$spacing-unit: 8px;              // Unidade base de espaçamento (8px grid)
+$padding-small: $spacing-unit * 2;   // 16px
+$padding-medium: $spacing-unit * 3;  // 24px
+$margin-medium: $spacing-unit * 3;   // 24px
+
+// Transições
+$transition-speed: 0.25s ease-in-out; // Velocidade de transição uniforme
+
+// --- Mixins ---
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between-center {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+// Mixins para sombras Material Design
+@mixin shadow-sm {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+@mixin shadow-md {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+@mixin shadow-lg {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); // Sombra mais proeminente para hover ou destaque
+}
+
+// --- Container Principal ---
+.doctor-list-container {
+  padding: $padding-medium;
+  max-width: 1200px;
+  margin: $margin-medium auto;
+  background-color: $background-card;
+  border-radius: $spacing-unit;
+  @include shadow-md; // Sombra padrão para o container principal
+  min-height: calc(100vh - ($margin-medium * 2));
+  display: flex;
+  flex-direction: column;
+}
+
+// --- Cabeçalho da Lista ---
+.header {
+  @include flex-between-center;
+  margin-bottom: $padding-medium;
+  padding-bottom: $padding-small;
+  border-bottom: 1px solid $border-color;
+  flex-wrap: wrap; // Garante que o cabeçalho se ajuste em telas pequenas
+
+  .title-section {
+    h2 {
+      margin: 0;
+      font-size: 2em;
+      color: $primary-text-color;
+      font-weight: 500;
+    }
+
+    .subtitle {
+      margin: math.div($spacing-unit, 2) 0 0;
+      font-size: 0.9em;
+      color: $secondary-text-color;
+    }
+  }
+
+  .new-doctor-btn {
+    padding: $spacing-unit $padding-small;
+    font-weight: 500;
+    transition: background-color $transition-speed;
+
+    mat-icon {
+      margin-right: $spacing-unit;
+    }
+
+    &:hover {
+      background-color: lighten($primary-color, 5%);
+    }
+  }
+}
+
+// --- Seção de Pesquisa ---
+.search-section {
+  margin-bottom: $padding-medium;
+
+  .search-input {
+    width: 100%;
+
+    // Estilos específicos para MatFormField via ::ng-deep
+    // ATENÇÃO: ::ng-deep é depreciado. Considere usar mixins de tema do Angular Material
+    // ou estilos globais para estas personalizações.
+    ::ng-deep {
+      .mat-form-field-wrapper {
+        padding-bottom: 0 !important;
+      }
+      .mat-form-field-underline {
+        background-color: $border-color;
+      }
+      .mat-form-field-ripple {
+        background-color: $primary-color;
+      }
+    }
+  }
+}
+
+// --- Estilos da Lista de Médicos (Ionic com Material) ---
+.doctor-ionic-list {
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  flex-grow: 1; // Permite que a lista ocupe o espaço restante
+
+  ion-item {
+    --background: $background-card;      // Fundo do item da lista
+    --border-color: transparent;         // Remove bordas padrão do Ionic
+    --border-width: 0;
+    --inner-border-width: 0;             // Remove a linha divisória interna do Ionic
+
+    padding: $padding-small $padding-medium !important; // Padding interno do item
+
+    margin-bottom: $padding-small;
+    border-radius: $spacing-unit;
+    @include shadow-sm; // Sombra sutil para cada item
+    transition: background-color $transition-speed, box-shadow $transition-speed;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap; // Permite quebra de linha em telas pequenas
+
+    &:hover {
+      --background: $background-hover; // Fundo no hover
+      @include shadow-lg; // Efeito de elevação no hover
+    }
+
+    &:last-child {
+      margin-bottom: 0; // Remove margem do último item
+    }
+
+    ion-label {
+      flex-grow: 1;
+
+      h3 {
+        font-size: 1.1em;
+        color: $primary-text-color;
+        margin: 0 0 math.div($spacing-unit, 2) 0;
+        font-weight: 500;
+      }
+
+      p.doctor-info {
+        font-size: 0.9em;
+        color: $secondary-text-color;
+        margin: 0 0 math.div($spacing-unit, 2) 0;
+        display: flex;
+        align-items: center;
+        gap: math.div($spacing-unit, 2);
+
+        mat-icon {
+          font-size: 1.1em;
+          width: 1.1em;
+          height: 1.1em;
+          color: $primary-color; // Ícones informativos
+        }
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: math.div($spacing-unit, 2);
+      flex-shrink: 0;
+      padding-left: $padding-small;
+      justify-content: flex-end;
+
+      .mat-icon-button {
+        @include flex-center;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        transition: background-color $transition-speed, transform $transition-speed;
+
+        mat-icon {
+          font-size: 28px;
+          width: 28px;
+          height: 28px;
+        }
+
+        // Cores dos ícones baseadas nos temas Material
+        &[color="primary"] mat-icon { color: $primary-color; }
+        &[color="accent"] mat-icon { color: $accent-color; }
+        &[color="warn"] mat-icon { color: $warn-color; }
+
+        &:hover {
+          transform: scale(1.1);
+          background-color: rgba($primary-color, 0.1);
+        }
+
+        &:active {
+          background-color: rgba($primary-color, 0.2);
+        }
+      }
+    }
+  }
+}
+
+// --- Mensagem quando não há dados ---
+.no-data-content {
+  @include flex-center;
+  flex-direction: column;
+  gap: $padding-small;
+  color: $secondary-text-color;
+  padding: $padding-medium * 2 0;
+
+  mat-icon {
+    font-size: $spacing-unit * 6;
+    width: $spacing-unit * 6;
+    height: $spacing-unit * 6;
+    margin-bottom: $spacing-unit;
+    color: $border-color;
+  }
+
+  p {
+    margin: 0;
+    font-size: 1.1em;
+    text-align: center;
+  }
+}
+
+// --- Indicador de Carregamento ---
+.loading-indicator {
+  @include flex-center;
+  flex-direction: column;
+  padding: $padding-medium;
+  gap: $padding-small;
+  color: $secondary-text-color;
+  flex-grow: 1;
+}
+
+// --- Media Queries para Responsividade ---
+
+// Telas médias (tablets e pequenos laptops)
+@media (max-width: 768px) {
+  .doctor-list-container {
+    padding: $padding-small;
+    margin: $padding-small;
+    min-height: calc(100vh - ($padding-small * 2));
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: $padding-medium;
+
+    .title-section {
+      margin-bottom: $padding-small;
+      h2 { font-size: 1.6em; }
+      .subtitle { font-size: 0.8em; }
+    }
+    .new-doctor-btn {
+      width: 100%;
+      @include flex-center;
+    }
+  }
+
+  .search-section .search-input ::ng-deep .mat-form-field-wrapper {
+    font-size: 0.9em;
+  }
+
+  .doctor-ionic-list {
+    ion-item {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: $spacing-unit $padding-small !important; // Mais compacto
+
+      ion-label {
+        width: 100%;
+        h3 { font-size: 1em; }
+        p.doctor-info {
+          font-size: 0.8em;
+          margin-bottom: math.div($spacing-unit, 2);
+        }
+      }
+
+      .action-buttons {
+        width: 100%;
+        justify-content: flex-end;
+        margin-top: $spacing-unit;
+        padding-left: 0;
+
+        .mat-icon-button {
+          width: 36px;
+          height: 36px;
+          mat-icon { font-size: 20px; width: 20px; height: 20px; }
+        }
+      }
+    }
+  }
+
+  .no-data-content {
+    padding: $padding-medium 0;
+  }
+
+  .loading-indicator {
+    padding: $padding-medium;
+  }
+}
+
+// Telas muito pequenas (smartphones menores)
+@media (max-width: 480px) {
+  .doctor-list-container {
+    margin: $spacing-unit;
+    padding: $spacing-unit;
+    min-height: calc(100vh - ($spacing-unit * 2));
+  }
+
+  .header {
+    .title-section {
+      h2 { font-size: 1.4em; }
+      .subtitle { font-size: 0.7em; }
+    }
+  }
+
+  .doctor-ionic-list {
+    ion-item {
+      padding: math.div($spacing-unit, 2) $spacing-unit !important; // Ainda mais compacto
+
+      ion-label {
+        h3 { font-size: 0.9em; }
+        p.doctor-info { font-size: 0.7em; }
+      }
+
+      .action-buttons {
+        .mat-icon-button {
+          width: 32px;
+          height: 32px;
+          mat-icon { font-size: 18px; width: 18px; height: 18px; }
+        }
+      }
+    }
+  }
+}

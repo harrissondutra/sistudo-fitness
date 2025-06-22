@@ -1,3 +1,4 @@
+
 <mat-nav-list [class.collapsed]="collapsed">
   <!-- Link Home direto -->
   <div class="logo">
@@ -16,7 +17,7 @@
       <mat-expansion-panel #panel [class.collapsed]="collapsed">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+            <mat-icon [fontSet]="'material-symbols-outlined'" matListItemIcon>{{ item.icon }}</mat-icon>
             <span [class.hidden]="collapsed">{{ item.title }}</span>
           </mat-panel-title>
         </mat-expansion-panel-header>
