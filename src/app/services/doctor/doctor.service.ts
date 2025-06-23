@@ -28,4 +28,8 @@ export class DoctorService {
       return this.http.delete<any>(`${this.baseUrl}/delete/${id}`);
     }
 
+    getDoctorByClientId(clientId: number) {
+      return this.http.get<any[]>(`${this.baseUrl}/getDoctorByClientId/${clientId}`);
+    }
+
 }

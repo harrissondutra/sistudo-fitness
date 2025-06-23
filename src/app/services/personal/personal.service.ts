@@ -94,4 +94,10 @@ export class PersonalService {
     // Retorna um Observable de erro para que o componente possa lidar com ele
     return throwError(() => new Error(errorMessage));
   }
+
+  getPersonalByClientId(clientId: number): Observable<Personal[]> {
+    return this.http.get<Personal[]>(`${this.baseUrl}/getPersonalByClientId/${clientId}`).pipe(
+      catchError(this.handleError)
+    );
+  }
 }

@@ -9,6 +9,11 @@ import { Client } from '../../models/client'; // Importa a interface Client atua
 import { Measure } from '../../models/measure'; // Importa a interface Measure
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Doctor } from '../../models/doctor';
+import { DoctorService } from '../../services/doctor/doctor.service'; // Importa o serviço de médico, se necessário
+import { Personal } from '../../models/personal';
+import { PersonalService } from '../../services/personal/personal.service';
+import { NutritionistService } from '../../services/nutritionist/nutritionist.service';
 
 @Component({
   selector: 'app-client-view',
@@ -29,12 +34,18 @@ export class ClientViewComponent implements OnInit {
   isLoading = false;
 
   currentClientTraining: any = null;
+  associatedDoctors: Doctor[] = [];
+  associatedPersonals: Personal[] = [];
+  associatedNutritionists: any[] = []; // Ajuste o tipo conforme necessário
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private clientService: ClientService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private DoctorService: DoctorService ,
+    private PersonalService: PersonalService,
+    private NutritionistService: NutritionistService
   ) { }
 
   ngOnInit(): void {
@@ -121,4 +132,48 @@ export class ClientViewComponent implements OnInit {
     console.log('Assigning new training.');
     this.router.navigate(['/trainning-create']);
   }
+
+  getDoctorByClientId(clientId: number): void {
+    // Implementa a lógica para obter o médico associado ao cliente, se necessário
+    this.DoctorService.getDoctorByClientId(clientId).subscribe({
+      next: (doctor: Doctor[]) => {
+        console.log('Médico(s) associado(s) ao cliente:', doctor);
+        // Aqui você pode armazenar o médico em uma variável ou exibir em um modal
+      },
+      error: (error) => {
+        console.error('Erro ao obter médico por ID do cliente:', error);
+        this.snackBar.open('Erro ao obter médico associado.', 'Fechar', { duration: 3000 });
+      }
+    });
+  }
+
+  getPersonalByClientId(clientId: number): void {
+    // Implementa a lógica para obter o personal associado ao cliente, se necessário
+    this.PersonalService.getPersonalByClientId(clientId).subscribe({
+      next: (personal: Personal[]) => {
+        console.log('Personal(s) associado(s) ao cliente:', personal);
+        // Aqui você pode armazenar o personal em uma variável ou exibir em um modal
+      },
+      error: (error) => {
+        console.error('Erro ao obter personal por ID do cliente:', error);
+        this.snackBar.open('Erro ao obter personal associado.', 'Fechar', { duration: 3000 });
+      }
+    });
+  }
+
+  getNutritionistByClientId(clientId: number): void {
+    // Implementa a lógica para obter o nutricionista associado ao cliente, se necessário
+    this.NutritionistService.getNutritionistByClientId(clientId).subscribe({
+      next: (nutritionists: any[]) => {
+        console.log('Nutricionista(s) associado(s) ao cliente:', nutritionists);
+        // Aqui você pode armazenar o nutricionista em uma variável ou exibir em um modal
+      },
+      error: (error) => {
+        console.error('Erro ao obter nutricionista por ID do cliente:', error);
+        this.snackBar.open('Erro ao obter nutricionista associado.', 'Fechar', { duration: 3000 });
+      }
+    });
+  }
+
+
 }

@@ -57,4 +57,6 @@ export class ClientService {
   deleteClient(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/delete/${id}`);
   }
+
+
 }

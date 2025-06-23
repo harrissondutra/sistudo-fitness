@@ -26,7 +26,8 @@
           <mat-icon>info</mat-icon>
           Informações Pessoais
           <!-- Botão de editar agora usa a rota clients-edit/:id -->
-          <button mat-icon-button color="primary" (click)="editClientDetails(client.id?.toString())" matTooltip="Editar Informações Pessoais">
+          <button mat-icon-button color="primary" (click)="editClientDetails(client.id?.toString())"
+            matTooltip="Editar Informações Pessoais">
             <mat-icon>edit</mat-icon>
           </button>
         </h2>
@@ -56,7 +57,8 @@
           <mat-icon>fitness_center</mat-icon>
           Medidas Atuais
           <!-- Botão de editar medidas, mantém a função, que pode navegar para clients-edit/:id com queryParam -->
-          <button mat-icon-button color="primary" (click)="editMeasures(client.id?.toString())" matTooltip="Editar Medidas Atuais">
+          <button mat-icon-button color="primary" (click)="editMeasures(client.id?.toString())"
+            matTooltip="Editar Medidas Atuais">
             <mat-icon>edit</mat-icon>
           </button>
         </h2>
@@ -87,39 +89,48 @@
           </div>
           <div class="info-item">
             <span class="label">Braço Direito:</span>
-            <span class="value">{{ client?.measure?.bracoDireito != null ? client?.measure?.bracoDireito + ' cm' : '-' }}</span>
+            <span class="value">{{ client?.measure?.bracoDireito != null ? client?.measure?.bracoDireito + ' cm' : '-'
+              }}</span>
           </div>
           <div class="info-item">
             <span class="label">Braço Esquerdo:</span>
-            <span class="value">{{ client?.measure?.bracoEsquerdo != null ? client?.measure?.bracoEsquerdo + ' cm' : '-' }}</span>
+            <span class="value">{{ client?.measure?.bracoEsquerdo != null ? client?.measure?.bracoEsquerdo + ' cm' :
+              '-' }}</span>
           </div>
           <div class="info-item">
             <span class="label">Coxa Direita:</span>
-            <span class="value">{{ client?.measure?.coxaDireita != null ? client?.measure?.coxaDireita + ' cm' : '-' }}</span>
+            <span class="value">{{ client?.measure?.coxaDireita != null ? client?.measure?.coxaDireita + ' cm' : '-'
+              }}</span>
           </div>
           <div class="info-item">
             <span class="label">Coxa Esquerda:</span>
-            <span class="value">{{ client?.measure?.coxaEsquerda != null ? client?.measure?.coxaEsquerda + ' cm' : '-' }}</span>
+            <span class="value">{{ client?.measure?.coxaEsquerda != null ? client?.measure?.coxaEsquerda + ' cm' :
+              '-' }}</span>
           </div>
           <div class="info-item">
             <span class="label">Panturrilha Direita:</span>
-            <span class="value">{{ client?.measure?.panturrilhaDireita != null ? client?.measure?.panturrilhaDireita + ' cm' : '-' }}</span>
+            <span class="value">{{ client?.measure?.panturrilhaDireita != null ? client?.measure?.panturrilhaDireita + '
+              cm' : '-' }}</span>
           </div>
           <div class="info-item">
             <span class="label">Panturrilha Esquerda:</span>
-            <span class="value">{{ client?.measure?.panturrilhaEsquerda != null ? client?.measure?.panturrilhaEsquerda + ' cm' : '-' }}</span>
+            <span class="value">{{ client?.measure?.panturrilhaEsquerda != null ? client?.measure?.panturrilhaEsquerda
+              + ' cm' : '-' }}</span>
           </div>
           <div class="info-item">
             <span class="label">Abdominal:</span>
-            <span class="value">{{ client?.measure?.abdominal != null ? client?.measure?.abdominal + ' mm' : '-' }}</span>
+            <span class="value">{{ client?.measure?.abdominal != null ? client?.measure?.abdominal + ' mm' : '-'
+              }}</span>
           </div>
           <div class="info-item">
             <span class="label">Suprailíaca:</span>
-            <span class="value">{{ client?.measure?.suprailiaca != null ? client?.measure?.suprailiaca + ' mm' : '-' }}</span>
+            <span class="value">{{ client?.measure?.suprailiaca != null ? client?.measure?.suprailiaca + ' mm' : '-'
+              }}</span>
           </div>
           <div class="info-item">
             <span class="label">Subescapular:</span>
-            <span class="value">{{ client?.measure?.subescapular != null ? client?.measure?.subescapular + ' mm' : '-' }}</span>
+            <span class="value">{{ client?.measure?.subescapular != null ? client?.measure?.subescapular + ' mm' : '-'
+              }}</span>
           </div>
           <div class="info-item">
             <span class="label">Tríceps:</span>
@@ -133,6 +144,84 @@
       </div>
     </div>
 
+    <!-- Nova linha para profissionais associados -->
+    <div class="dashboard-row dashboard-row-middle">
+      <!-- Seção de Médico(s) Associado(s) -->
+      <div class="info-section associated-professionals-section">
+        <h2>
+          <mat-icon>local_hospital</mat-icon>
+          Médico(s) Associado(s)
+        </h2>
+        <ng-container *ngIf="associatedDoctors.length > 0; else noAssociatedDoctors">
+          <div class="info-grid">
+            <div class="info-item" *ngFor="let doctor of associatedDoctors">
+              <span class="label">Nome:</span>
+              <span class="value">{{ doctor.name }}</span>
+              <span class="label">Email:</span>
+              <span class="value">{{ doctor.email || '-' }}</span>
+              <span class="label">CRM:</span>
+              <span class="value">{{ doctor.crm || '-' }}</span>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #noAssociatedDoctors>
+          <div class="no-data-row">
+            <p>Nenhum médico associado a este cliente.</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Seção de Personal(is) Associado(s) -->
+      <div class="info-section associated-professionals-section">
+        <h2>
+          <mat-icon>person</mat-icon>
+          Personal(is) Associado(s)
+        </h2>
+        <ng-container *ngIf="associatedPersonals.length > 0; else noAssociatedPersonals">
+          <div class="info-grid">
+            <div class="info-item" *ngFor="let personal of associatedPersonals">
+              <span class="label">Nome:</span>
+              <span class="value">{{ personal.name }}</span>
+              <span class="label">Email:</span>
+              <span class="value">{{ personal.email || '-' }}</span>
+              <span class="label">CREF:</span>
+              <span class="value">{{ personal.registry }}</span>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #noAssociatedPersonals>
+          <div class="no-data-row">
+            <p>Nenhum personal associado a este cliente.</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Seção de Nutricionista(s) Associado(s) -->
+      <div class="info-section associated-professionals-section">
+        <h2>
+          <mat-icon>restaurant</mat-icon>
+          Nutricionista(s) Associado(s)
+        </h2>
+        <ng-container *ngIf="associatedNutritionists.length > 0; else noAssociatedNutritionists">
+          <div class="info-grid">
+            <div class="info-item" *ngFor="let nutritionist of associatedNutritionists">
+              <span class="label">Nome:</span>
+              <span class="value">{{ nutritionist.name }}</span>
+              <span class="label">Email:</span>
+              <span class="value">{{ nutritionist.email || '-' }}</span>
+              <span class="label">CRN:</span>
+              <span class="value">{{ nutritionist.crn || '-' }}</span>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #noAssociatedNutritionists>
+          <div class="no-data-row">
+            <p>Nenhum nutricionista associado a este cliente.</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
     <!-- Linha do Dashboard Inferior: Treino Atual e Histórico de Treinos -->
     <div class="dashboard-row dashboard-row-bottom">
       <div class="exercises-section current-training-section">
@@ -143,18 +232,19 @@
         @if (currentClientTraining) {
         <div class="current-training-details">
           <p><strong>Nome do Treino:</strong> {{ currentClientTraining.name }}</p>
-          <p><strong>Período:</strong> {{ currentClientTraining.startDate | date:'dd/MM/yyyy' }} - {{ currentClientTraining.endDate | date:'dd/MM/yyyy' }}</p>
+          <p><strong>Período:</strong> {{ currentClientTraining.startDate | date:'dd/MM/yyyy' }} - {{
+            currentClientTraining.endDate | date:'dd/MM/yyyy' }}</p>
           <p><strong>Objetivo:</strong> {{ currentClientTraining.objective }}</p>
           <p><strong>Frequência Semanal:</strong> {{ currentClientTraining.weeklyFrequency }}</p>
           <h3>Exercícios:</h3>
           @if (currentClientTraining.exercises && currentClientTraining.exercises.length > 0) {
-            <ul>
-              @for (exercise of currentClientTraining.exercises; track exercise.id) {
-                <li>{{ exercise.name }} (Séries: {{ exercise.sets }}, Repetições: {{ exercise.reps }})</li>
-              }
-            </ul>
+          <ul>
+            @for (exercise of currentClientTraining.exercises; track exercise.id) {
+            <li>{{ exercise.name }} (Séries: {{ exercise.sets }}, Repetições: {{ exercise.reps }})</li>
+            }
+          </ul>
           } @else {
-            <p>Nenhum exercício cadastrado para este treino.</p>
+          <p>Nenhum exercício cadastrado para este treino.</p>
           }
         </div>
         } @else {
@@ -173,7 +263,8 @@
           <mat-icon>history</mat-icon>
           Histórico de Treinos
         </h2>
-        <div class="training-history-table-wrapper"> <!-- Wrapper para responsividade da tabela -->
+        <div class="training-history-table-wrapper">
+          <!-- Wrapper para responsividade da tabela -->
           <ng-container *ngIf="(client?.trainings?.length ?? 0) > 0; else noTrainingHistory">
             <table class="training-table">
               <thead>
