@@ -57,6 +57,13 @@ export class ClientService {
   deleteClient(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/delete/${id}`);
   }
+  createDoctorByClientId(id: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/createDoctorByClientId/${id}`, {});
+  }
+
+  getDoctorByClientId(id: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/getDoctorByClientId/${id}`);
+  }
 
 
 }

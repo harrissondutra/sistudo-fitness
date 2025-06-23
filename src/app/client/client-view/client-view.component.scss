@@ -2,28 +2,37 @@
 
 @use 'sass:math';
 
-// Variáveis de Cores (ajustadas conforme o tema Material Design fornecido)
+// =====================================
+// 1. Variáveis Globais
+// =====================================
+
+// Cores
 $primary-color: #3f51b5;
 $accent-color: #ff4081;
 $warn-color: #f44336;
-$text-color: #1a237e; // Cor para títulos e textos principais (mais escura)
-$light-text-color: #666; // Cor para subtítulos e textos secundários
+$text-color: #1a237e;
+$light-text-color: #666;
 $border-color: #e0e0e0;
-$background-light: #f5f5f5; // Cor de fundo principal
-$white: #fff; // Cor para elementos com fundo branco
-$lighter-primary: #e8eaf6; // Um tom mais claro da cor primária
-$info-item-background: #f8f9fa; // Fundo para info-item
-$info-item-hover-background: #e8eaf6; // Fundo para info-item no hover
+$background-light: #f5f5f5;
+$white: #fff;
+$lighter-primary: #e8eaf6;
+$info-item-background: #f8f9fa;
+$info-item-hover-background: #e8eaf6;
 
-// Variáveis de Espaçamento
+// Espaçamento
 $spacing-unit: 8px;
+$padding-xs: $spacing-unit; // 8px
 $padding-small: $spacing-unit * 2; // 16px
 $padding-medium: $spacing-unit * 3; // 24px
+$padding-large: $spacing-unit * 4; // 32px
 $margin-medium: $spacing-unit * 3; // 24px
 $gap-sections: $spacing-unit * 3; // 24px, para espaçamento entre seções principais
 $gap-info-grid: $spacing-unit * 2.5; // 20px, para espaçamento dentro do info-grid
 
-// Mixins para reutilização de estilos
+// =====================================
+// 2. Mixins
+// =====================================
+
 @mixin flex-center {
   display: flex;
   align-items: center;
@@ -37,45 +46,62 @@ $gap-info-grid: $spacing-unit * 2.5; // 20px, para espaçamento dentro do info-g
 }
 
 @mixin card-shadow {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Sombra padrão para cards e seções */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-/* Garante que padding e bordas sejam incluídos no cálculo da largura/altura */
+// =====================================
+// 3. Estilos Base
+// =====================================
+
 html {
   box-sizing: border-box;
 }
+
 *, *::before, *::after {
   box-sizing: inherit;
 }
 
+body {
+  font-family: 'Roboto', 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #333;
+  margin: 0; // Ensure no default body margin
+  padding: 0; // Ensure no default body padding
+}
+
+// =====================================
+// 4. Layout Principal
+// =====================================
+
 .trainning-container {
-  padding: $padding-medium; /* 24px */
+  padding: $padding-medium;
   max-width: 1200px;
   margin: 0 auto;
-  background-color: $background-light; /* #f5f5f5 */
-  min-height: 100vh; /* Garante que o container ocupe a altura total da viewport */
+  background-color: $background-light;
+  min-height: 100vh;
 }
 
 .header {
   display: flex;
   align-items: center;
-  margin-bottom: $spacing-unit * 4; /* 32px */
+  margin-bottom: $padding-large;
   background: $white;
-  padding: $padding-medium; /* 24px */
-  border-radius: $spacing-unit * 1.5; /* 12px */
+  padding: $padding-medium;
+  border-radius: $spacing-unit * 1.5;
   @include card-shadow;
 
   .client-avatar {
-    width: $spacing-unit * 7.5; /* 60px */
-    height: $spacing-unit * 7.5; /* 60px */
+    width: $spacing-unit * 7.5;
+    height: $spacing-unit * 7.5;
     border-radius: 50%;
     overflow: hidden;
-    margin-right: $spacing-unit * 2.5; /* 20px */
+    margin-right: $spacing-unit * 2.5;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: $lighter-primary;
-    flex-shrink: 0; /* Impede o encolhimento do avatar */
+    flex-shrink: 0;
 
     img {
       width: 100%;
@@ -84,7 +110,7 @@ html {
     }
 
     mat-icon {
-      font-size: $spacing-unit * 5; /* 40px */
+      font-size: $spacing-unit * 5;
       width: $spacing-unit * 5;
       height: $spacing-unit * 5;
       color: $primary-color;
@@ -97,54 +123,45 @@ html {
       font-size: 28px;
       color: $text-color;
       font-weight: 500;
+      line-height: 1.2;
     }
 
     .subtitle {
-      margin: $spacing-unit 0 0; /* 8px 0 0 */
+      margin: $spacing-unit 0 0;
       color: $light-text-color;
       font-size: 16px;
+      line-height: 1.4;
     }
   }
 }
 
 .content {
-  display: flex; /* Usar flexbox para empilhar as rows */
+  display: flex;
   flex-direction: column;
-  gap: $gap-sections; /* 24px de espaçamento entre as linhas do dashboard */
-  margin-bottom: $spacing-unit * 4; /* 32px */
+  gap: $gap-sections;
+  margin-bottom: $padding-large;
 }
 
-/* Layout para as linhas do dashboard */
 .dashboard-row {
   display: grid;
-  gap: $gap-sections; /* 24px de espaçamento entre os cards dentro da linha */
-  align-items: flex-start; /* Alinha o conteúdo dos cards no topo */
+  gap: $gap-sections;
+  align-items: flex-start;
 
-  /* Garantir que as seções dentro de uma linha de dashboard preencham a altura */
   .info-section,
   .exercises-section {
-    /* Removido height: 100% para evitar sobreposição em conteúdo variável */
-    min-width: 0; /* Permite que o item do grid encolha além do seu conteúdo mínimo intrínseco */
+    min-width: 0;
   }
 }
 
-.dashboard-row-top {
-  /* No desktop: Informações Pessoais (1/3) e Medidas Atuais (2/3) */
-  /* Ajustado para repeat(auto-fit, minmax) para melhor flexibilidade e ajuste */
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-}
+// =====================================
+// 5. Seções (Cards)
+// =====================================
 
-.dashboard-row-bottom {
-  /* No desktop: Treino Atual e Histórico de Treinos (ocupam a largura total e se dividem igualmente) */
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Divide em colunas flexíveis */
-}
-
-/* Estilos gerais para as seções de informação e exercícios */
 .info-section,
 .exercises-section {
   background: $white;
-  border-radius: $spacing-unit * 1.5; /* 12px */
-  padding: $padding-medium; /* 24px */
+  border-radius: $spacing-unit * 1.5;
+  padding: $padding-medium;
   @include card-shadow;
   transition: transform 0.2s ease;
 
@@ -153,81 +170,99 @@ html {
   }
 
   h2 {
-    display: flex;
-    align-items: center;
-    margin: 0 0 $padding-medium; /* 24px */
+    @include flex-between-center; // Use mixin for alignment
+    margin: 0 0 $padding-medium;
     font-size: 20px;
     color: $text-color;
     font-weight: 500;
+    line-height: 1.3;
 
     mat-icon {
-      margin-right: $spacing-unit * 1.5; /* 12px */
+      margin-right: $spacing-unit * 1.5;
       color: $primary-color;
       background: $lighter-primary;
-      padding: $spacing-unit * 0.75; /* 6px */
+      padding: $spacing-unit * 0.75;
       border-radius: 50%;
+    }
+
+    // Styles for buttons within h2 (edit/add)
+    button {
+        color: $primary-color; // Material button default color
+        &:hover {
+            background-color: rgba($primary-color, 0.04); // Subtle hover for icon buttons
+        }
     }
   }
 }
 
 .info-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Ajustado minmax para maior flexibilidade */
-  gap: $gap-info-grid; /* 20px */
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: $gap-info-grid;
+
+  // Specific overrides for the measures section to allow more columns
+  .measures-section & { // Apply to .info-grid within .measures-section
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
 }
 
 .info-item {
-  background: $info-item-background; /* #f8f9fa */
-  padding: $padding-small; /* 16px */
-  border-radius: $spacing-unit; /* 8px */
+  background: $info-item-background;
+  padding: $padding-small;
+  border-radius: $spacing-unit;
   transition: background-color 0.2s ease;
 
   &:hover {
-    background: $info-item-hover-background; /* #e8eaf6 */
+    background: $info-item-hover-background;
   }
 
   .label {
     display: block;
     font-size: 14px;
     color: $light-text-color;
-    margin-bottom: $spacing-unit; /* 8px */
+    margin-bottom: $spacing-unit;
     font-weight: 500;
-    word-break: break-word; /* Garante quebra de texto em palavras longas */
+    word-break: break-word;
   }
 
   .value {
     font-size: 16px;
     color: $text-color;
     font-weight: 500;
-    word-break: break-word; /* Garante quebra de texto em palavras longas */
+    word-break: break-word;
   }
 }
 
-/* Estilos específicos para a lista de exercícios dentro da seção de treino atual */
+// =====================================
+// 6. Treino e Histórico
+// =====================================
+
 .current-training-details {
   h3 {
     font-size: 1.1rem;
     color: $primary-color;
-    margin-bottom: $spacing-unit * 1.5; /* 12px */
+    margin-bottom: $spacing-unit * 1.5;
+    line-height: 1.3;
   }
 
   ul {
-    list-style: none; /* Remove marcadores de lista padrão */
+    list-style: none;
     padding: 0;
     margin: 0;
   }
 
   li {
-    background: #f0f4f8; /* Fundo ligeiramente diferente para os itens da lista */
-    padding: $spacing-unit * 1.25 $spacing-unit * 1.875; /* 10px 15px */
-    border-radius: $spacing-unit * 0.75; /* 6px */
-    margin-bottom: $spacing-unit; /* 8px */
+    background: #f0f4f8;
+    padding: $spacing-unit * 1.25 $spacing-unit * 1.875;
+    border-radius: $spacing-unit * 0.75;
+    margin-bottom: $spacing-unit;
     font-size: 0.95rem;
     color: #333;
     display: flex;
-    flex-wrap: wrap; /* Permite quebrar linha em telas menores */
+    flex-wrap: wrap;
     align-items: center;
-    gap: $spacing-unit; /* 8px Espaçamento entre os spans */
+    gap: $spacing-unit;
+    line-height: 1.4;
 
     &:last-child {
       margin-bottom: 0;
@@ -244,7 +279,7 @@ html {
   flex-direction: column;
   gap: $padding-small;
   color: $light-text-color;
-  padding: $padding-medium 0; /* Reduzido o padding para consistência */
+  padding: $padding-medium 0;
 
   mat-icon {
     font-size: $spacing-unit * 6;
@@ -258,6 +293,7 @@ html {
     margin: 0;
     font-size: 1.1em;
     text-align: center;
+    line-height: 1.5;
   }
 
   .assign-training-button {
@@ -265,10 +301,10 @@ html {
     background: $primary-color;
     color: $white;
     border: none;
-    border-radius: $spacing-unit * 0.75; /* 6px */
-    padding: $spacing-unit $padding-small; /* 8px 16px */
+    border-radius: $spacing-unit * 0.75;
+    padding: $spacing-unit $padding-small;
     cursor: pointer;
-    font-size: $padding-small; /* 16px */
+    font-size: $padding-small;
     transition: background-color 0.2s ease;
 
     &:hover {
@@ -281,23 +317,26 @@ html {
   }
 }
 
+// =====================================
+// 7. Tabela de Histórico
+// =====================================
 
-/* Estilos para a tabela de histórico de treinos */
 .training-history-table-wrapper {
-  overflow-x: auto; /* Permite scroll horizontal em telas menores */
-  width: 100%; /* Garante que o wrapper ocupe a largura total */
+  overflow-x: auto;
+  width: 100%;
 
   .training-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: $spacing-unit * 2; /* 16px */
+    margin-top: $spacing-unit * 2;
 
     th,
     td {
       text-align: left;
-      padding: $spacing-unit * 1.5; /* 12px */
+      padding: $spacing-unit * 1.5;
       border-bottom: 1px solid $border-color;
       color: $text-color;
+      line-height: 1.4;
     }
 
     th {
@@ -315,7 +354,7 @@ html {
     }
 
     td:last-child {
-      white-space: nowrap; /* Evita que os botões quebrem linha */
+      white-space: nowrap;
     }
   }
 }
@@ -325,8 +364,12 @@ html {
   padding: $padding-medium;
   color: $light-text-color;
   font-size: 1.1em;
+  line-height: 1.5;
 }
 
+// =====================================
+// 8. Spinner de Carregamento
+// =====================================
 
 .loading-spinner {
   @include flex-center;
@@ -335,31 +378,170 @@ html {
   gap: $padding-small;
   color: $light-text-color;
   text-align: center;
-  mat-spinner { /* Adicionado para garantir que o spinner não seja esmagado */
+  mat-spinner {
     flex-shrink: 0;
   }
 }
 
-/* Responsividade */
+// =====================================
+// 9. Estilos de Diálogo (Modais)
+// =====================================
+
+.doctor-selection-dialog-overlay,
+.personal-selection-dialog-overlay,
+.nutritionist-selection-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  @include flex-center; // Centraliza o conteúdo do diálogo
+  z-index: 1000; // Garante que o diálogo esteja acima de outros elementos
+}
+
+.doctor-selection-dialog,
+.personal-selection-dialog,
+.nutritionist-selection-dialog {
+  background-color: $white;
+  padding: $padding-medium; // 24px
+  border-radius: $spacing-unit; // 8px
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  width: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.dialog-header {
+  @include flex-between-center;
+  margin-bottom: $padding-small; // 16px
+  border-bottom: 1px solid $border-color; // E.g., #eee
+  padding-bottom: $spacing-unit; // 8px
+
+  h3 {
+    margin: 0;
+    color: $primary-color;
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  button.mat-icon-button {
+    color: $light-text-color;
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+  }
+}
+
+.dialog-content {
+  flex-grow: 1;
+  overflow-y: auto; // Permite rolagem se o conteúdo for muito grande
+
+  p {
+    text-align: center;
+    color: $light-text-color; // E.g., #757575
+    margin-top: $padding-small;
+    margin-bottom: $padding-small;
+  }
+
+  // Styles for the list of available items (doctors, personals, nutritionists)
+  .available-doctors-list,
+  .available-personals-list,
+  .available-nutritionists-list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-unit; // 8px
+  }
+
+  mat-checkbox {
+    padding: $spacing-unit; // 8px
+    background-color: #f9f9f9;
+    border-radius: $spacing-unit / 2; // 4px
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $info-item-hover-background; // Lighter primary hover
+    }
+    .mat-checkbox-layout {
+      width: 100%; // Ensure checkbox takes full width for clickability
+      justify-content: space-between; // Space out label and checkbox
+    }
+  }
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-unit; // 8px
+  margin-top: $padding-small; // 16px
+  padding-top: $padding-small; // 16px
+  border-top: 1px solid $border-color; // E.g., #eee
+
+  button.mat-button {
+    color: $light-text-color; // Cancel button style
+  }
+
+  button.mat-raised-button {
+    background: $primary-color;
+    color: $white;
+    &:hover {
+      background: darken($primary-color, 10%);
+    }
+  }
+}
+
+
+// =====================================
+// 10. Responsividade (Media Queries)
+// =====================================
+
+@media (min-width: 768px) {
+  .dashboard-row-personal-info,
+  .dashboard-row-measures {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-row-professionals {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
+  .dashboard-row-bottom {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .info-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+  .measures-section .info-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
   .trainning-container {
-    padding: $padding-small; /* 16px */
+    padding: $padding-small;
   }
 
   .header {
-    padding: $padding-small; /* 16px */
-    margin-bottom: $padding-medium; /* 24px */
-    flex-direction: column; /* Empilha itens em telas menores */
-    align-items: flex-start; /* Alinha o conteúdo à esquerda */
+    padding: $padding-small;
+    margin-bottom: $padding-medium;
+    flex-direction: column;
+    align-items: flex-start;
 
     .client-avatar {
       margin-right: 0;
-      margin-bottom: $spacing-unit * 1.5; /* 12px */
-      width: $spacing-unit * 6; /* 48px */
-      height: $spacing-unit * 6; /* 48px */
+      margin-bottom: $spacing-unit * 1.5;
+      width: $spacing-unit * 6;
+      height: $spacing-unit * 6;
 
       mat-icon {
-        font-size: $spacing-unit * 4; /* 32px */
+        font-size: $spacing-unit * 4;
         width: $spacing-unit * 4;
         height: $spacing-unit * 4;
       }
@@ -369,32 +551,35 @@ html {
       width: 100%;
       h1 {
         font-size: 24px;
+        line-height: 1.2;
       }
       .subtitle {
         font-size: 14px;
+        line-height: 1.4;
       }
     }
   }
 
   .content {
-    gap: $padding-small; /* 16px */
+    gap: $padding-small;
   }
 
   .dashboard-row {
-    grid-template-columns: 1fr; /* Colunas únicas, empilhadas */
-    gap: $padding-small; /* 16px */
+    grid-template-columns: 1fr;
+    gap: $padding-small;
   }
 
   .info-section,
   .exercises-section {
-    padding: $padding-small; /* 16px */
+    padding: $padding-small;
 
     h2 {
-      margin-bottom: $padding-small; /* 16px */
+      margin-bottom: $padding-small;
       font-size: 18px;
+      line-height: 1.3;
 
       mat-icon {
-        margin-right: $spacing-unit; /* 8px */
+        margin-right: $spacing-unit;
         font-size: 24px;
         width: 24px;
         height: 24px;
@@ -403,15 +588,15 @@ html {
   }
 
   .info-grid {
-    grid-template-columns: 1fr; /* Coluna única para itens de informação */
-    gap: $spacing-unit * 1.5; /* 12px */
+    grid-template-columns: 1fr;
+    gap: $spacing-unit * 1.5;
   }
 
   .info-item {
-    padding: $spacing-unit * 1.5; /* 12px */
+    padding: $spacing-unit * 1.5;
     .label {
       font-size: 13px;
-      margin-bottom: $spacing-unit / 2; /* 4px */
+      margin-bottom: $spacing-unit / 2;
     }
     .value {
       font-size: 15px;
@@ -422,10 +607,12 @@ html {
     h3 {
       font-size: 1rem;
       margin-bottom: $spacing-unit;
+      line-height: 1.3;
     }
     ul li {
-      padding: $spacing-unit $spacing-unit * 1.5; /* 8px 12px */
+      padding: $spacing-unit $spacing-unit * 1.5;
       font-size: 0.9rem;
+      line-height: 1.4;
     }
   }
 
@@ -433,27 +620,48 @@ html {
     .training-table {
       font-size: 0.9em;
       th, td {
-        padding: $spacing-unit; /* 8px */
+        padding: $spacing-unit;
+        line-height: 1.4;
       }
+    }
+  }
+
+  // Dialogs for smaller screens
+  .doctor-selection-dialog,
+  .personal-selection-dialog,
+  .nutritionist-selection-dialog {
+    padding: $padding-small;
+  }
+
+  .dialog-header {
+    h3 {
+      font-size: 18px;
+    }
+  }
+
+  .dialog-content {
+    mat-checkbox {
+      padding: $spacing-unit * 0.75;
+      font-size: 0.9rem;
     }
   }
 }
 
 @media (max-width: 480px) {
   .trainning-container {
-    padding: $spacing-unit; /* 8px */
+    padding: $spacing-unit;
   }
 
   .header {
-    padding: $spacing-unit; /* 8px */
-    margin-bottom: $padding-small; /* 16px */
+    padding: $spacing-unit;
+    margin-bottom: $padding-small;
 
     .client-avatar {
-      width: $spacing-unit * 5; /* 40px */
-      height: $spacing-unit * 5; /* 40px */
+      width: $spacing-unit * 5;
+      height: $spacing-unit * 5;
       margin-bottom: $spacing-unit;
       mat-icon {
-        font-size: $spacing-unit * 3.5; /* 28px */
+        font-size: $spacing-unit * 3.5;
         width: $spacing-unit * 3.5;
         height: $spacing-unit * 3.5;
       }
@@ -462,28 +670,31 @@ html {
     .header-content {
       h1 {
         font-size: 20px;
+        line-height: 1.2;
       }
       .subtitle {
         font-size: 12px;
+        line-height: 1.4;
       }
     }
   }
 
   .content {
-    gap: $spacing-unit * 1.5; /* 12px */
+    gap: $spacing-unit * 1.5;
   }
 
   .dashboard-row {
-    gap: $spacing-unit * 1.5; /* 12px */
+    gap: $spacing-unit * 1.5;
   }
 
   .info-section,
   .exercises-section {
-    padding: $spacing-unit * 1.5; /* 12px */
+    padding: $spacing-unit * 1.5;
 
     h2 {
       font-size: 16px;
-      margin-bottom: $spacing-unit; /* 8px */
+      margin-bottom: $spacing-unit;
+      line-height: 1.3;
       mat-icon {
         font-size: 20px;
         width: 20px;
@@ -493,7 +704,7 @@ html {
   }
 
   .info-item {
-    padding: $spacing-unit; /* 8px */
+    padding: $spacing-unit;
     .label {
       font-size: 12px;
     }
@@ -507,7 +718,7 @@ html {
       font-size: 0.9rem;
     }
     ul li {
-      padding: $spacing-unit / 2 $spacing-unit; /* 4px 8px */
+      padding: $spacing-unit / 2 $spacing-unit;
       font-size: 0.85rem;
     }
   }
@@ -515,7 +726,7 @@ html {
   .training-history-table-wrapper {
     .training-table {
       th, td {
-        padding: $spacing-unit * 0.75; /* 6px */
+        padding: $spacing-unit * 0.75;
       }
     }
   }
@@ -523,6 +734,7 @@ html {
     padding: $padding-small;
     p {
       font-size: 0.9em;
+      line-height: 1.5;
     }
   }
 }

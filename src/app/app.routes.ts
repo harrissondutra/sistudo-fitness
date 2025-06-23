@@ -57,6 +57,7 @@ export const routes: Routes = [
       { path: 'doctor-view', component: DoctorViewComponent },
       { path: 'doctor-update/:id', component: DoctorUpdateComponent },
       { path: 'doctor-create', component: DoctorCreateComponent },
+      { path: 'doctor-create/:id', component: DoctorCreateComponent },
       { path: 'nutritionist-list', component: NutritionistListComponent},
       { path: 'nutritionist-view', component: NutritionistViewComponent },
       { path: 'nutritionist-update/:id', component: NutritionistUpdateComponent },

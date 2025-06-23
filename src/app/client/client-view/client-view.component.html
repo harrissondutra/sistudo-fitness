@@ -18,14 +18,13 @@
 
   @if (client) {
   <div class="content">
-    <!-- Linha do Dashboard Superior: Informações Pessoais (1/3) e Medidas Atuais (2/3) -->
-    <div class="dashboard-row dashboard-row-top">
+    <!-- Linha para Informações Pessoais -->
+    <div class="dashboard-row dashboard-row-personal-info">
       <!-- Seção de Informações Pessoais -->
       <div class="info-section personal-info-section">
         <h2>
           <mat-icon>info</mat-icon>
           Informações Pessoais
-          <!-- Botão de editar agora usa a rota clients-edit/:id -->
           <button mat-icon-button color="primary" (click)="editClientDetails(client.id?.toString())"
             matTooltip="Editar Informações Pessoais">
             <mat-icon>edit</mat-icon>
@@ -50,13 +49,15 @@
           </div>
         </div>
       </div>
+    </div>
 
+    <!-- Linha para Medidas Atuais (ocupando 3/3) -->
+    <div class="dashboard-row dashboard-row-measures">
       <!-- Seção de Medidas Atuais -->
       <div class="info-section measures-section">
         <h2>
           <mat-icon>fitness_center</mat-icon>
           Medidas Atuais
-          <!-- Botão de editar medidas, mantém a função, que pode navegar para clients-edit/:id com queryParam -->
           <button mat-icon-button color="primary" (click)="editMeasures(client.id?.toString())"
             matTooltip="Editar Medidas Atuais">
             <mat-icon>edit</mat-icon>
@@ -145,12 +146,15 @@
     </div>
 
     <!-- Nova linha para profissionais associados -->
-    <div class="dashboard-row dashboard-row-middle">
+    <div class="dashboard-row dashboard-row-professionals">
       <!-- Seção de Médico(s) Associado(s) -->
       <div class="info-section associated-professionals-section">
         <h2>
           <mat-icon>local_hospital</mat-icon>
           Médico(s) Associado(s)
+          <button mat-icon-button color="primary" (click)="openAddDoctorDialog()" matTooltip="Adicionar Médico">
+            <mat-icon>add_circle_outline</mat-icon>
+          </button>
         </h2>
         <ng-container *ngIf="associatedDoctors.length > 0; else noAssociatedDoctors">
           <div class="info-grid">
@@ -176,6 +180,9 @@
         <h2>
           <mat-icon>person</mat-icon>
           Personal(is) Associado(s)
+          <button mat-icon-button color="primary" (click)="openAddPersonalDialog()" matTooltip="Adicionar Personal">
+            <mat-icon>add_circle_outline</mat-icon>
+          </button>
         </h2>
         <ng-container *ngIf="associatedPersonals.length > 0; else noAssociatedPersonals">
           <div class="info-grid">
@@ -185,7 +192,7 @@
               <span class="label">Email:</span>
               <span class="value">{{ personal.email || '-' }}</span>
               <span class="label">CREF:</span>
-              <span class="value">{{ personal.registry }}</span>
+              <span class="value">{{ personal.registry || personal.registry || '-' }}</span>
             </div>
           </div>
         </ng-container>
@@ -201,6 +208,9 @@
         <h2>
           <mat-icon>restaurant</mat-icon>
           Nutricionista(s) Associado(s)
+          <button mat-icon-button color="primary" (click)="openAddNutritionistDialog()" matTooltip="Adicionar Nutricionista">
+            <mat-icon>add_circle_outline</mat-icon>
+          </button>
         </h2>
         <ng-container *ngIf="associatedNutritionists.length > 0; else noAssociatedNutritionists">
           <div class="info-grid">
@@ -277,7 +287,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let training of client.trainings; trackBy: trackByTrainingId">
+                <tr *ngFor="let training of client?.trainings || []; trackBy: trackByTrainingId">
                   <td>{{ training.name }}</td>
                   <td>{{ training.startDate | date:'dd/MM/yyyy' }}</td>
                   <td>{{ training.endDate | date:'dd/MM/yyyy' }}</td>
@@ -309,4 +319,205 @@
     <p>Carregando cliente ou cliente não encontrado...</p>
   </div>
   }
+
+  <!-- Doctor Selection Dialog -->
+  <div class="doctor-selection-dialog-overlay" *ngIf="showAddDoctorDialog" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  ">
+    <div class="doctor-selection-dialog" style="
+      background-color: #fff;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      max-width: 500px;
+      width: 90%;
+      max-height: 90%;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    ">
+      <div class="dialog-header" style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 8px;
+      ">
+        <h3 style="margin: 0; color: #3f51b5;">Selecionar Médico(s)</h3>
+        <button mat-icon-button (click)="closeAddDoctorDialog()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <div class="dialog-content" style="flex-grow: 1; overflow-y: auto;">
+        <p *ngIf="availableDoctors.length === 0" style="text-align: center; color: #757575;">Nenhum médico disponível no sistema.</p>
+        <div class="available-doctors-list" style="
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        ">
+          <mat-checkbox *ngFor="let doctor of availableDoctors || []; trackBy: trackByDoctorId"
+                        [checked]="isDoctorSelected(doctor.id != null ? doctor.id.toString() : '')"
+                        (change)="toggleDoctorSelection(doctor.id != null ? doctor.id.toString() : '')"
+                        style="padding: 8px; background-color: #f9f9f9; border-radius: 4px; transition: background-color 0.2s;">
+            {{ doctor.name }} (CRM: {{ doctor.crm || 'N/A' }})
+          </mat-checkbox>
+        </div>
+      </div>
+      <div class="dialog-actions" style="
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid #eee;
+      ">
+        <button mat-button (click)="closeAddDoctorDialog()">Cancelar</button>
+        <button mat-raised-button color="primary" (click)="saveSelectedDoctors()">Adicionar Selecionados</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Personal Selection Dialog -->
+  <div class="personal-selection-dialog-overlay" *ngIf="showAddPersonalDialog" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  ">
+    <div class="personal-selection-dialog" style="
+      background-color: #fff;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      max-width: 500px;
+      width: 90%;
+      max-height: 90%;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    ">
+      <div class="dialog-header" style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 8px;
+      ">
+        <h3 style="margin: 0; color: #3f51b5;">Selecionar Personal(s)</h3>
+        <button mat-icon-button (click)="closeAddPersonalDialog()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <div class="dialog-content" style="flex-grow: 1; overflow-y: auto;">
+        <p *ngIf="availablePersonals.length === 0" style="text-align: center; color: #757575;">Nenhum personal disponível no sistema.</p>
+        <div class="available-personals-list" style="
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        ">
+          <mat-checkbox *ngFor="let personal of availablePersonals || []; trackBy: trackByPersonalId"
+                        [checked]="isPersonalSelected(personal.id != null ? personal.id.toString() : '')"
+                        (change)="togglePersonalSelection(personal.id != null ? personal.id.toString() : '')"
+                        style="padding: 8px; background-color: #f9f9f9; border-radius: 4px; transition: background-color 0.2s;">
+            {{ personal.name }} (CREF: {{ personal.cref || personal.registry || 'N/A' }})
+          </mat-checkbox>
+        </div>
+      </div>
+      <div class="dialog-actions" style="
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid #eee;
+      ">
+        <button mat-button (click)="closeAddPersonalDialog()">Cancelar</button>
+        <button mat-raised-button color="primary" (click)="saveSelectedPersonals()">Adicionar Selecionados</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nutritionist Selection Dialog -->
+  <div class="nutritionist-selection-dialog-overlay" *ngIf="showAddNutritionistDialog" style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  ">
+    <div class="nutritionist-selection-dialog" style="
+      background-color: #fff;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      max-width: 500px;
+      width: 90%;
+      max-height: 90%;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    ">
+      <div class="dialog-header" style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 8px;
+      ">
+        <h3 style="margin: 0; color: #3f51b5;">Selecionar Nutricionista(s)</h3>
+        <button mat-icon-button (click)="closeAddNutritionistDialog()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <div class="dialog-content" style="flex-grow: 1; overflow-y: auto;">
+        <p *ngIf="availableNutritionists.length === 0" style="text-align: center; color: #757575;">Nenhum nutricionista disponível no sistema.</p>
+        <div class="available-nutritionists-list" style="
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        ">
+          <mat-checkbox *ngFor="let nutritionist of availableNutritionists || []; trackBy: trackByNutritionistId"
+                        [checked]="isNutritionistSelected(nutritionist.id != null ? nutritionist.id.toString() : '')"
+                        (change)="toggleNutritionistSelection(nutritionist.id != null ? nutritionist.id.toString() : '')"
+                        style="padding: 8px; background-color: #f9f9f9; border-radius: 4px; transition: background-color 0.2s;">
+            {{ nutritionist.name }} (CRN: {{ nutritionist.crn || 'N/A' }})
+          </mat-checkbox>
+        </div>
+      </div>
+      <div class="dialog-actions" style="
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid #eee;
+      ">
+        <button mat-button (click)="closeAddNutritionistDialog()">Cancelar</button>
+        <button mat-raised-button color="primary" (click)="saveSelectedNutritionists()">Adicionar Selecionados</button>
+      </div>
+    </div>
+  </div>
 </div>
