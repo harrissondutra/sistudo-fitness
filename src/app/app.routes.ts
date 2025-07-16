@@ -52,6 +52,7 @@ export const routes: Routes = [
       { path: 'create-exercise', component: CreateExerciseComponent},
       { path: 'create-category-trainning', component: TrainningCategoryComponent},
       { path: 'category-exercise', component: CategoryExerciseComponent},
+      { path: 'trainnings', component: TrainningComponent },
       { path: 'inactive-trainning', component: InactiveTrainningComponent },
       { path: 'doctor-list', component: DoctorListComponent },
       { path: 'doctor-view', component: DoctorViewComponent },
