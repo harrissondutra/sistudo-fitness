@@ -128,7 +128,11 @@ export class DoctorListComponent implements OnInit{
 
 
   ngOnInit(): void {
-    throw new Error('Method not implemented.');
-  }
-
+  this.loadAllDoctors();
+  // Configure a pesquisa aqui
+  this.searchControl.valueChanges.pipe(
+    debounceTime(300),
+    distinctUntilChanged()
+  ).subscribe(() => this.onSearch());
+}
 }

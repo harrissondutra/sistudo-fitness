@@ -1,0 +1,395 @@
+@use 'sass:math';
+
+// Variáveis de Cores (ajustadas conforme o tema Material Design fornecido)
+$primary-color: #3f51b5;
+$accent-color: #ff4081;
+$warn-color: #f44336;
+$text-color: #1a237e; // Cor para títulos e textos principais (mais escura)
+$light-text-color: #666; // Cor para subtítulos e textos secundários
+$border-color: #e0e0e0;
+$background-light: #f5f5f5; // Cor de fundo principal
+$white: #fff; // Cor para elementos com fundo branco
+$lighter-primary: #e8eaf6; // Um tom mais claro da cor primária
+$list-item-background: #f8f9fa; // Cor de fundo para itens de lista (similar a info-item)
+$list-item-hover-background: #e8eaf6; // Cor de fundo para itens de lista no hover
+
+// Variáveis de Espaçamento
+$spacing-unit: 8px;
+$padding-small: $spacing-unit * 2; // 16px
+$padding-medium: $spacing-unit * 3; // 24px
+$margin-medium: $spacing-unit * 3; // 24px
+
+// Mixins para reutilização de estilos
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between-center {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin card-shadow-sm {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Sombra padrão de seção */
+}
+
+@mixin card-shadow-md {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Usando a mesma sombra de seção para consistência */
+}
+
+.nutritionist-list-container {
+  padding: $padding-medium; /* 24px */
+  max-width: 1200px; /* Mantido o max-width do padrão trainning-container */
+  margin: $margin-medium auto; /* 24px auto */
+  background-color: $white; /* Fundo branco para o container principal */
+  border-radius: $spacing-unit; /* 8px */
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
+              0 2px 2px 0 rgba(0, 0, 0, 0.14),
+              0 1px 5px 0 rgba(0, 0, 0, 0.12); /* Sombra do card padrão */
+  min-height: calc(100vh - ($padding-medium * 2)); /* Garante que o container ocupe a altura total da viewport */
+}
+
+.header {
+  @include flex-between-center; /* Reutilizando mixin */
+  margin-bottom: $padding-medium; /* 24px */
+  padding-bottom: $padding-small; /* 16px */
+  border-bottom: 1px solid $border-color; /* Linha divisória */
+
+  .title-section {
+    h2 {
+      margin: 0;
+      font-size: 2em; /* Mantido para corresponder ao padrão do exercise-list */
+      color: $text-color;
+    }
+
+    .subtitle {
+      margin: math.div($spacing-unit, 2) 0 0; /* 4px 0 0 */
+      font-size: 0.9em;
+      color: $light-text-color;
+    }
+  }
+
+  .new-nutritionist-btn {
+    padding: $spacing-unit $padding-small; /* 8px 16px */
+    font-weight: 500;
+
+    mat-icon { /* Usado mat-icon em vez de .mat-icon */
+      margin-right: $spacing-unit; /* 8px */
+    }
+  }
+}
+
+.search-section {
+  margin-bottom: $padding-medium; /* 24px */
+
+  .search-input {
+    width: 100%;
+
+    // Ajuste para remover padding extra do MatFormField
+    ::ng-deep {
+      .mat-form-field-wrapper {
+        padding-bottom: 0;
+      }
+    }
+  }
+}
+
+/* --- Ionic List Styles (with Material Icons) --- */
+.nutritionist-ionic-list {
+  background: transparent; /* Fundo transparente, pois os itens serão cards */
+  border-radius: $spacing-unit; /* 8px */
+  box-shadow: none; /* Removido o box-shadow do container, agora nos itens */
+  padding: 0;
+  margin: 0;
+
+  ion-item {
+    --background: $white; /* Fundo do item */
+    --border-color: transparent; /* Remove a borda padrão do Ionic Item */
+    --border-width: 0; /* Remove a borda padrão do Ionic Item */
+
+    // Padding interno dos itens (card) para dar "respiro"
+    --padding-start: $padding-medium; /* 24px */
+    --padding-end: $padding-medium; /* 24px */
+    --padding-top: $padding-small; /* 16px */
+    --padding-bottom: $padding-small; /* 16px */
+
+    // Adicionando padding direto para garantir, caso as variáveis não funcionem totalmente
+    padding: $padding-small $padding-medium !important; /* 16px top/bottom, 24px left/right */
+
+    margin-bottom: $padding-small; /* 16px Espaçamento entre os cards */
+    border-radius: $spacing-unit; /* 8px Cantos arredondados para o card */
+    @include card-shadow-md; /* Sombra padrão de card */
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    flex-wrap: wrap; /* Permite que o conteúdo quebre linha em telas menores */
+
+    display: flex;
+    align-items: center; /* Centraliza verticalmente o label e os botões */
+    justify-content: space-between; /* Empurra o slot="end" para a direita */
+
+    &:hover {
+      --background: $list-item-hover-background; /* Cor de fundo no hover */
+      @include card-shadow-md; /* Mantém a sombra no hover, pode ser ajustado para um efeito de elevação se desejado */
+    }
+
+    &:last-child {
+      margin-bottom: 0; /* Remove a margem do último item */
+    }
+
+    ion-label {
+      flex-grow: 1; /* Permite que a label ocupe o espaço restante */
+
+      h3 { /* Alterado de h3.exercise-name para h3 */
+        font-size: 1.1em;
+        color: $text-color;
+        margin: 0 0 math.div($spacing-unit, 2) 0; /* 4px Espaçamento abaixo do nome */
+        font-weight: 500;
+      }
+
+      p.nutritionist-info { /* Alterado para nutritionist-info */
+        font-size: 0.9em;
+        color: $light-text-color;
+        margin: 0 0 math.div($spacing-unit, 2) 0; /* 4px Espaçamento entre parágrafos */
+        display: flex; /* Para alinhar ícone com texto */
+        align-items: center;
+        gap: $spacing-unit / 2; /* 4px de espaço entre ícone e texto */
+
+        mat-icon {
+          font-size: 1.1em; /* Tamanho do ícone para alinhar com o texto */
+          width: 1.1em;
+          height: 1.1em;
+          color: $primary-color; /* Cor para ícones de informação */
+        }
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: math.div($spacing-unit, 2); /* 4px de espaço entre os botões */
+      flex-shrink: 0; /* Evita que os botões encolham */
+      padding-left: $padding-small; /* 16px Espaçamento à esquerda para separar do label */
+      justify-content: flex-end; /* Alinha os botões de ação à direita */
+
+      .mat-icon-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 44px; /* Aumentado para acomodar ícones maiores e clique */
+        height: 44px;
+        border-radius: 50%;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+
+        mat-icon { /* Usado mat-icon em vez de .mat-icon */
+          font-size: 28px; /* Tamanho maior para todos os dispositivos */
+          width: 28px;
+          height: 28px;
+        }
+
+        // Cores para os ícones Material
+        &[color="primary"] mat-icon {
+          color: $primary-color;
+        }
+
+        &[color="accent"] mat-icon {
+          color: $accent-color;
+        }
+
+        &[color="warn"] mat-icon {
+          color: $warn-color;
+        }
+
+        &:hover {
+          transform: scale(1.1);
+          background-color: rgba($primary-color, 0.1);
+        }
+
+        &:active {
+          background-color: rgba($primary-color, 0.2);
+        }
+      }
+    }
+  }
+}
+
+/* Mensagem quando não há dados */
+.no-data-content {
+  @include flex-center;
+  flex-direction: column;
+  gap: $padding-small; /* 16px Espaçamento */
+  color: $light-text-color;
+  padding: $padding-medium * 2 0; /* 48px 0 Padding maior */
+
+  mat-icon {
+    font-size: $spacing-unit * 6; /* 48px */
+    width: $spacing-unit * 6;
+    height: $spacing-unit * 6;
+    margin-bottom: $spacing-unit; /* 8px */
+    color: $border-color;
+  }
+
+  p {
+    margin: 0;
+    font-size: 1.1em;
+  }
+}
+
+// Indicador de carregamento
+.loading-indicator {
+  @include flex-center;
+  flex-direction: column;
+  padding: $padding-medium; /* 24px */
+  gap: $padding-small; /* 16px */
+  color: $light-text-color;
+}
+
+/* -----------------------------------------------------------
+ * Media Queries para Responsividade
+ * ----------------------------------------------------------- */
+
+// Telas pequenas (smartphones em modo retrato, até 768px)
+@media (max-width: 768px) {
+  .nutritionist-list-container {
+    padding: $padding-small; /* 16px */
+    margin: $padding-small; /* 16px */
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: $padding-medium; /* 24px */
+
+    .title-section {
+      margin-bottom: $padding-small; /* 16px */
+
+      h2 {
+        font-size: 1.6em;
+      }
+
+      .subtitle {
+        font-size: 0.8em;
+      }
+    }
+
+    .new-nutritionist-btn {
+      width: 100%;
+      @include flex-center;
+    }
+  }
+
+  .search-section {
+    .search-input {
+      ::ng-deep {
+        .mat-form-field-wrapper {
+          font-size: 0.9em;
+        }
+      }
+    }
+  }
+
+  .nutritionist-ionic-list {
+    ion-item {
+      flex-direction: column; /* Empilha label e botões em telas menores */
+      align-items: flex-start; /* Alinha o conteúdo à esquerda (horizontalmente) */
+
+      // Ajustando padding em mobile
+      --padding-start: $padding-small; /* 16px */
+      --padding-end: $padding-small; /* 16px */
+      --padding-top: $spacing-unit; /* 8px */
+      --padding-bottom: $spacing-unit; /* 8px */
+      padding: $spacing-unit $padding-small !important; /* 8px top/bottom, 16px left/right */
+
+      ion-label {
+        width: 100%;
+
+        h3 {
+          font-size: 1em;
+        }
+
+        p.nutritionist-info {
+          font-size: 0.8em;
+          margin: 0 0 math.div($spacing-unit, 2) 0; /* 4px Mantém espaçamento entre linhas */
+        }
+      }
+
+      .action-buttons {
+        width: 100%;
+        justify-content: flex-end; /* Mantém alinhamento à direita dentro do item */
+        margin-top: $spacing-unit; /* 8px Espaçamento entre o texto e os botões */
+        padding-left: 0;
+
+        .mat-icon-button {
+          width: 36px;
+          height: 36px;
+
+          mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Telas muito pequenas (smartphones menores, até 480px)
+@media (max-width: 480px) {
+  .nutritionist-list-container {
+    margin: $spacing-unit; /* 8px */
+    padding: $spacing-unit; /* 8px */
+  }
+
+  .header {
+    .title-section {
+      h2 {
+        font-size: 1.4em;
+      }
+
+      .subtitle {
+        font-size: 0.7em;
+      }
+    }
+  }
+
+  .nutritionist-ionic-list {
+    ion-item {
+      // Padding interno dos itens (card) em mobile muito pequeno
+      --padding-start: $spacing-unit; /* 8px */
+      --padding-end: $spacing-unit; /* 8px */
+      --padding-top: math.div($spacing-unit, 2); /* 4px */
+      --padding-bottom: math.div($spacing-unit, 2); /* 4px */
+      padding: math.div($spacing-unit, 2) $spacing-unit !important; /* 4px top/bottom, 8px left/right */
+
+      ion-label {
+        h3 {
+          font-size: 0.9em;
+        }
+
+        p.nutritionist-info {
+          font-size: 0.7em;
+        }
+      }
+
+      .action-buttons {
+        .mat-icon-button {
+          width: 32px;
+          height: 32px;
+
+          mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+          }
+        }
+      }
+    }
+  }
+}

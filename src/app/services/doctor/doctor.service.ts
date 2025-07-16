@@ -6,20 +6,20 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class DoctorService {
-   private baseUrl = `${environment.apiUrl}/clients`;
+   private baseUrl = `${environment.apiUrl}/doctors`;
 
    constructor(private http: HttpClient) { }
 
    getAllDoctors() {
-     return this.http.get<any[]>(`${this.baseUrl}/listAll`);
+     return this.http.get<any[]>(`${this.baseUrl}/list`);
    }
 
     getDoctorById(id: string) {
-      return this.http.get<any>(`${this.baseUrl}/getById/${id}`);
+      return this.http.get<any>(`${this.baseUrl}/getDoctorById/${id}`);
     }
 
     createDoctor(doctor: any) {
-      return this.http.post<any>(`${this.baseUrl}/create`, doctor);
+      return this.http.post<any>(`${this.baseUrl}/createDoctor`, doctor);
     }
     updateDoctor(doctor: any) {
       return this.http.put<any>(`${this.baseUrl}/update/${doctor.id}`, doctor);

@@ -1,31 +1,25 @@
 @use 'sass:math';
 
-// --- Variáveis ---
-// Cores da Paleta Material Design
-$primary-color: #3f51b5;     // Azul índigo (ex: botões, foco)
-$accent-color: #ff4081;      // Rosa (ex: destaque, ícones de ação)
-$warn-color: #f44336;        // Vermelho (ex: erros, alertas, excluir)
+// Variáveis de Cores (ajustadas conforme o tema Material Design fornecido)
+$primary-color: #3f51b5;
+$accent-color: #ff4081;
+$warn-color: #f44336;
+$text-color: #1a237e; // Cor para títulos e textos principais (mais escura)
+$light-text-color: #666; // Cor para subtítulos e textos secundários
+$border-color: #e0e0e0;
+$background-light: #f5f5f5; // Cor de fundo principal
+$white: #fff; // Cor para elementos com fundo branco
+$lighter-primary: #e8eaf6; // Um tom mais claro da cor primária
+$list-item-background: #f8f9fa; // Cor de fundo para itens de lista (similar a info-item)
+$list-item-hover-background: #e8eaf6; // Cor de fundo para itens de lista no hover
 
-// Cores de Texto
-$primary-text-color: #212121;    // Preto quase puro para títulos e texto principal
-$secondary-text-color: #757575;  // Cinza médio para subtítulos e texto secundário
+// Variáveis de Espaçamento
+$spacing-unit: 8px;
+$padding-small: $spacing-unit * 2; // 16px
+$padding-medium: $spacing-unit * 3; // 24px
+$margin-medium: $spacing-unit * 3; // 24px
 
-// Cores de Fundo e Borda
-$border-color: #e0e0e0;          // Cinza claro para bordas e divisores
-$background-page: #f5f5f5;      // Fundo geral da página (cinza muito claro)
-$background-card: #fff;         // Fundo para cards e elementos principais
-$background-hover: #f5f5f5;      // Fundo para hover de itens de lista (cinza mais claro)
-
-// Espaçamento
-$spacing-unit: 8px;              // Unidade base de espaçamento (8px grid)
-$padding-small: $spacing-unit * 2;   // 16px
-$padding-medium: $spacing-unit * 3;  // 24px
-$margin-medium: $spacing-unit * 3;   // 24px
-
-// Transições
-$transition-speed: 0.25s ease-in-out; // Velocidade de transição uniforme
-
-// --- Mixins ---
+// Mixins para reutilização de estilos
 @mixin flex-center {
   display: flex;
   align-items: center;
@@ -38,89 +32,66 @@ $transition-speed: 0.25s ease-in-out; // Velocidade de transição uniforme
   align-items: center;
 }
 
-// Mixins para sombras Material Design
-@mixin shadow-sm {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+@mixin card-shadow-sm {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Sombra padrão de seção */
 }
 
-@mixin shadow-md {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+@mixin card-shadow-md {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Usando a mesma sombra de seção para consistência */
 }
 
-@mixin shadow-lg {
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); // Sombra mais proeminente para hover ou destaque
-}
-
-// --- Container Principal ---
 .personal-list-container {
-  padding: $padding-medium;
-  max-width: 1200px;
-  margin: $margin-medium auto;
-  background-color: $background-card;
-  border-radius: $spacing-unit;
-  @include shadow-md; // Sombra padrão para o container principal
-  min-height: calc(100vh - ($margin-medium * 2));
-  display: flex; // Permite que o conteúdo interno (lista, no-data, loading) use flexbox
-  flex-direction: column; // Conteúdo se organiza em coluna
+  padding: $padding-medium; /* 24px */
+  max-width: 1200px; /* Mantido o max-width do padrão trainning-container */
+  margin: $margin-medium auto; /* 24px auto */
+  background-color: $white; /* Fundo branco para o container principal */
+  border-radius: $spacing-unit; /* 8px */
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
+              0 2px 2px 0 rgba(0, 0, 0, 0.14),
+              0 1px 5px 0 rgba(0, 0, 0, 0.12); /* Sombra do card padrão */
+  min-height: calc(100vh - ($padding-medium * 2)); /* Garante que o container ocupe a altura total da viewport */
 }
 
-// --- Cabeçalho da Lista ---
 .header {
-  @include flex-between-center;
-  margin-bottom: $padding-medium;
-  padding-bottom: $padding-small;
-  border-bottom: 1px solid $border-color;
-  flex-wrap: wrap; // Garante que o cabeçalho se ajuste em telas pequenas
+  @include flex-between-center; /* Reutilizando mixin */
+  margin-bottom: $padding-medium; /* 24px */
+  padding-bottom: $padding-small; /* 16px */
+  border-bottom: 1px solid $border-color; /* Linha divisória */
 
   .title-section {
     h2 {
       margin: 0;
-      font-size: 2em;
-      color: $primary-text-color;
-      font-weight: 500;
+      font-size: 2em; /* Mantido para corresponder ao padrão das outras listas */
+      color: $text-color;
     }
 
     .subtitle {
-      margin: math.div($spacing-unit, 2) 0 0;
+      margin: math.div($spacing-unit, 2) 0 0; /* 4px 0 0 */
       font-size: 0.9em;
-      color: $secondary-text-color;
+      color: $light-text-color;
     }
   }
 
   .new-personal-btn {
-    padding: $spacing-unit $padding-small;
+    padding: $spacing-unit $padding-small; /* 8px 16px */
     font-weight: 500;
-    transition: background-color $transition-speed;
 
-    mat-icon {
-      margin-right: $spacing-unit;
-    }
-
-    &:hover {
-      background-color: lighten($primary-color, 5%);
+    mat-icon { /* Usado mat-icon em vez de .mat-icon */
+      margin-right: $spacing-unit; /* 8px */
     }
   }
 }
 
-// --- Seção de Pesquisa ---
 .search-section {
-  margin-bottom: $padding-medium;
+  margin-bottom: $padding-medium; /* 24px */
 
   .search-input {
     width: 100%;
 
     // Ajuste para remover padding extra do MatFormField
-    // ATENÇÃO: ::ng-deep é depreciado. Considere usar mixins de tema do Angular Material
-    // ou estilos globais para estas personalizações.
     ::ng-deep {
       .mat-form-field-wrapper {
-        padding-bottom: 0 !important;
-      }
-      .mat-form-field-underline {
-        background-color: $border-color; // Cor da linha padrão
-      }
-      .mat-form-field-ripple {
-        background-color: $primary-color; // Cor do ripple de foco
+        padding-bottom: 0;
       }
     }
   }
@@ -128,71 +99,69 @@ $transition-speed: 0.25s ease-in-out; // Velocidade de transição uniforme
 
 /* --- Ionic List Styles (with Material Icons) --- */
 .personal-ionic-list {
-  background: transparent; // Fundo transparente, pois os itens serão cards
-  border-radius: $spacing-unit; // 8px
-  box-shadow: none; // Removido o box-shadow do container, agora nos itens
+  background: transparent; /* Fundo transparente, pois os itens serão cards */
+  border-radius: $spacing-unit; /* 8px */
+  box-shadow: none; /* Removido o box-shadow do container, agora nos itens */
   padding: 0;
   margin: 0;
-  flex-grow: 1; // Permite que a lista ocupe o espaço restante vertical
 
   ion-item {
-    --background: $background-card;      // Fundo do item
-    --border-color: transparent;         // Remove a borda padrão do Ionic Item
-    --border-width: 0;                   // Remove a borda padrão do Ionic Item
-    --inner-border-width: 0;             // Remove a linha divisória interna do Ionic
+    --background: $white; /* Fundo do item */
+    --border-color: transparent; /* Remove a borda padrão do Ionic Item */
+    --border-width: 0; /* Remove a borda padrão do Ionic Item */
 
     // Padding interno dos itens (card) para dar "respiro"
-    --padding-start: $padding-medium; // 24px
-    --padding-end: $padding-medium;   // 24px
-    --padding-top: $padding-small;    // 16px
-    --padding-bottom: $padding-small; // 16px
+    --padding-start: $padding-medium; /* 24px */
+    --padding-end: $padding-medium; /* 24px */
+    --padding-top: $padding-small; /* 16px */
+    --padding-bottom: $padding-small; /* 16px */
 
     // Adicionando padding direto para garantir, caso as variáveis não funcionem totalmente
-    padding: $padding-small $padding-medium !important; // 16px top/bottom, 24px left/right
+    padding: $padding-small $padding-medium !important; /* 16px top/bottom, 24px left/right */
 
-    margin-bottom: $padding-small; // 16px Espaçamento entre os cards
-    border-radius: $spacing-unit; // 8px Cantos arredondados para o card
-    @include shadow-sm; // Sombra sutil padrão de card
-    transition: background-color $transition-speed, box-shadow $transition-speed;
+    margin-bottom: $padding-small; /* 16px Espaçamento entre os cards */
+    border-radius: $spacing-unit; /* 8px Cantos arredondados para o card */
+    @include card-shadow-md; /* Sombra padrão de card */
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
     cursor: pointer;
-    flex-wrap: wrap; // Permite que o conteúdo quebre linha em telas menores
+    flex-wrap: wrap; /* Permite que o conteúdo quebre linha em telas menores */
 
     display: flex;
-    align-items: center; // Centraliza verticalmente o label e os botões
-    justify-content: space-between; // Empurra o slot="end" para a direita
+    align-items: center; /* Centraliza verticalmente o label e os botões */
+    justify-content: space-between; /* Empurra o slot="end" para a direita */
 
     &:hover {
-      --background: $background-hover; // Cor de fundo no hover
-      @include shadow-lg; // Efeito de elevação no hover
+      --background: $list-item-hover-background; /* Cor de fundo no hover */
+      @include card-shadow-md; /* Mantém a sombra no hover, pode ser ajustado para um efeito de elevação se desejado */
     }
 
     &:last-child {
-      margin-bottom: 0; // Remove a margem do último item
+      margin-bottom: 0; /* Remove a margem do último item */
     }
 
     ion-label {
-      flex-grow: 1; // Permite que a label ocupe o espaço restante
+      flex-grow: 1; /* Permite que a label ocupe o espaço restante */
 
-      h3 {
+      h3 { /* Alterado de h3.exercise-name para h3 */
         font-size: 1.1em;
-        color: $primary-text-color;
-        margin: 0 0 math.div($spacing-unit, 2) 0; // 4px Espaçamento abaixo do nome
+        color: $text-color;
+        margin: 0 0 math.div($spacing-unit, 2) 0; /* 4px Espaçamento abaixo do nome */
         font-weight: 500;
       }
 
-      p.personal-info {
+      p.personal-info { /* Alterado para personal-info */
         font-size: 0.9em;
-        color: $secondary-text-color;
-        margin: 0 0 math.div($spacing-unit, 2) 0; // 4px Espaçamento entre parágrafos
-        display: flex; // Para alinhar ícone com texto
+        color: $light-text-color;
+        margin: 0 0 math.div($spacing-unit, 2) 0; /* 4px Espaçamento entre parágrafos */
+        display: flex; /* Para alinhar ícone com texto */
         align-items: center;
-        gap: math.div($spacing-unit, 2); // 4px de espaço entre ícone e texto
+        gap: $spacing-unit / 2; /* 4px de espaço entre ícone e texto */
 
         mat-icon {
-          font-size: 1.1em; // Tamanho do ícone para alinhar com o texto
+          font-size: 1.1em; /* Tamanho do ícone para alinhar com o texto */
           width: 1.1em;
           height: 1.1em;
-          color: $primary-color; // Cor para ícones de informação
+          color: $primary-color; /* Cor para ícones de informação */
         }
 
         &:last-child {
@@ -203,23 +172,23 @@ $transition-speed: 0.25s ease-in-out; // Velocidade de transição uniforme
 
     .action-buttons {
       display: flex;
-      gap: math.div($spacing-unit, 2); // 4px de espaço entre os botões
-      flex-shrink: 0; // Evita que os botões encolham
-      padding-left: $padding-small; // 16px Espaçamento à esquerda para separar do label
-      justify-content: flex-end; // Alinha os botões de ação à direita
+      gap: math.div($spacing-unit, 2); /* 4px de espaço entre os botões */
+      flex-shrink: 0; /* Evita que os botões encolham */
+      padding-left: $padding-small; /* 16px Espaçamento à esquerda para separar do label */
+      justify-content: flex-end; /* Alinha os botões de ação à direita */
 
       .mat-icon-button {
         display: flex;
         align-items: center;
         justify-content: center;
 
-        width: 44px; // Aumentado para acomodar ícones maiores e clique
+        width: 44px; /* Aumentado para acomodar ícones maiores e clique */
         height: 44px;
         border-radius: 50%;
-        transition: background-color $transition-speed, transform $transition-speed;
+        transition: background-color 0.2s ease, transform 0.2s ease;
 
-        mat-icon {
-          font-size: 28px; // Tamanho maior para todos os dispositivos
+        mat-icon { /* Usado mat-icon em vez de .mat-icon */
+          font-size: 28px; /* Tamanho maior para todos os dispositivos */
           width: 28px;
           height: 28px;
         }
@@ -254,16 +223,15 @@ $transition-speed: 0.25s ease-in-out; // Velocidade de transição uniforme
 .no-data-content {
   @include flex-center;
   flex-direction: column;
-  gap: $padding-small; // 16px Espaçamento
-  color: $secondary-text-color; // Usando a nova variável para texto secundário
-  padding: $padding-medium * 2 0; // 48px 0 Padding maior
-  text-align: center; // Centraliza o texto
+  gap: $padding-small; /* 16px Espaçamento */
+  color: $light-text-color;
+  padding: $padding-medium * 2 0; /* 48px 0 Padding maior */
 
   mat-icon {
-    font-size: $spacing-unit * 6; // 48px
+    font-size: $spacing-unit * 6; /* 48px */
     width: $spacing-unit * 6;
     height: $spacing-unit * 6;
-    margin-bottom: $spacing-unit; // 8px
+    margin-bottom: $spacing-unit; /* 8px */
     color: $border-color;
   }
 
@@ -277,10 +245,9 @@ $transition-speed: 0.25s ease-in-out; // Velocidade de transição uniforme
 .loading-indicator {
   @include flex-center;
   flex-direction: column;
-  padding: $padding-medium; // 24px
-  gap: $padding-small; // 16px
-  color: $secondary-text-color; // Usando a nova variável para texto secundário
-  flex-grow: 1; // Permite que o indicador ocupe o espaço restante verticalmente
+  padding: $padding-medium; /* 24px */
+  gap: $padding-small; /* 16px */
+  color: $light-text-color;
 }
 
 /* -----------------------------------------------------------
@@ -290,18 +257,17 @@ $transition-speed: 0.25s ease-in-out; // Velocidade de transição uniforme
 // Telas pequenas (smartphones em modo retrato, até 768px)
 @media (max-width: 768px) {
   .personal-list-container {
-    padding: $padding-small; // 16px
-    margin: $padding-small; // 16px
-    min-height: calc(100vh - ($padding-small * 2)); // Ajusta min-height para margens menores
+    padding: $padding-small; /* 16px */
+    margin: $padding-small; /* 16px */
   }
 
   .header {
     flex-direction: column;
     align-items: flex-start;
-    margin-bottom: $padding-medium; // 24px
+    margin-bottom: $padding-medium; /* 24px */
 
     .title-section {
-      margin-bottom: $padding-small; // 16px
+      margin-bottom: $padding-small; /* 16px */
 
       h2 {
         font-size: 1.6em;
@@ -330,16 +296,15 @@ $transition-speed: 0.25s ease-in-out; // Velocidade de transição uniforme
 
   .personal-ionic-list {
     ion-item {
-      flex-direction: column; // Empilha label e botões em telas menores
-      align-items: flex-start; // Alinha o conteúdo à esquerda (horizontalmente)
+      flex-direction: column; /* Empilha label e botões em telas menores */
+      align-items: flex-start; /* Alinha o conteúdo à esquerda (horizontalmente) */
 
       // Ajustando padding em mobile
-      // As variáveis do Ionic são mais flexíveis, mas o `!important` ainda pode ser útil como fallback.
-      --padding-start: $padding-small; // 16px
-      --padding-end: $padding-small; // 16px
-      --padding-top: $spacing-unit; // 8px
-      --padding-bottom: $spacing-unit; // 8px
-      padding: $spacing-unit $padding-small !important; // 8px top/bottom, 16px left/right
+      --padding-start: $padding-small; /* 16px */
+      --padding-end: $padding-small; /* 16px */
+      --padding-top: $spacing-unit; /* 8px */
+      --padding-bottom: $spacing-unit; /* 8px */
+      padding: $spacing-unit $padding-small !important; /* 8px top/bottom, 16px left/right */
 
       ion-label {
         width: 100%;
@@ -350,15 +315,15 @@ $transition-speed: 0.25s ease-in-out; // Velocidade de transição uniforme
 
         p.personal-info {
           font-size: 0.8em;
-          margin: 0 0 math.div($spacing-unit, 2) 0; // 4px Mantém espaçamento entre linhas
+          margin: 0 0 math.div($spacing-unit, 2) 0; /* 4px Mantém espaçamento entre linhas */
         }
       }
 
       .action-buttons {
         width: 100%;
-        justify-content: flex-end; // Mantém alinhamento à direita dentro do item
-        margin-top: $spacing-unit; // 8px Espaçamento entre o texto e os botões
-        padding-left: 0; // Remove padding lateral em mobile, pois os botões já ocupam 100%
+        justify-content: flex-end; /* Mantém alinhamento à direita dentro do item */
+        margin-top: $spacing-unit; /* 8px Espaçamento entre o texto e os botões */
+        padding-left: 0;
 
         .mat-icon-button {
           width: 36px;
@@ -373,22 +338,13 @@ $transition-speed: 0.25s ease-in-out; // Velocidade de transição uniforme
       }
     }
   }
-
-  .no-data-content {
-    padding: $padding-medium 0;
-  }
-
-  .loading-indicator {
-    padding: $padding-medium;
-  }
 }
 
 // Telas muito pequenas (smartphones menores, até 480px)
 @media (max-width: 480px) {
   .personal-list-container {
-    margin: $spacing-unit; // 8px
-    padding: $spacing-unit; // 8px
-    min-height: calc(100vh - ($spacing-unit * 2)); // Ajusta min-height para margens menores
+    margin: $spacing-unit; /* 8px */
+    padding: $spacing-unit; /* 8px */
   }
 
   .header {
@@ -406,11 +362,11 @@ $transition-speed: 0.25s ease-in-out; // Velocidade de transição uniforme
   .personal-ionic-list {
     ion-item {
       // Padding interno dos itens (card) em mobile muito pequeno
-      --padding-start: $spacing-unit; // 8px
-      --padding-end: $spacing-unit; // 8px
-      --padding-top: math.div($spacing-unit, 2); // 4px
-      --padding-bottom: math.div($spacing-unit, 2); // 4px
-      padding: math.div($spacing-unit, 2) $spacing-unit !important; // 4px top/bottom, 8px left/right
+      --padding-start: $spacing-unit; /* 8px */
+      --padding-end: $spacing-unit; /* 8px */
+      --padding-top: math.div($spacing-unit, 2); /* 4px */
+      --padding-bottom: math.div($spacing-unit, 2); /* 4px */
+      padding: math.div($spacing-unit, 2) $spacing-unit !important; /* 4px top/bottom, 8px left/right */
 
       ion-label {
         h3 {
