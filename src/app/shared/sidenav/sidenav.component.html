@@ -13,7 +13,7 @@
   </button>
 
   <mat-accordion>
-    @for (item of expandableMenuItems; track item) {
+    @for (item of visibleMenuItems; track item) {
       <mat-expansion-panel #panel [class.collapsed]="collapsed">
         <mat-expansion-panel-header>
           <mat-panel-title>

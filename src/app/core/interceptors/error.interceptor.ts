@@ -1,10 +1,12 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const snackBar = inject(MatSnackBar);
+  const router = inject(Router);
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
@@ -21,9 +23,11 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             break;
           case 401:
             errorMessage = 'Não autorizado.';
+            router.navigate(['/login']);
             break;
           case 403:
             errorMessage = 'Acesso negado.';
+            router.navigate(['/login']);
             break;
           case 404:
             errorMessage = 'Recurso não encontrado.';
@@ -43,4 +47,4 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       return throwError(() => error);
     })
   );
-}; 
+};

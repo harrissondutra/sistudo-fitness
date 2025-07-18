@@ -3,7 +3,7 @@ import { MatSidenav } from '@angular/material/sidenav'; // Importa MatSidenav
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout'; // Para isHandset$
 import { Observable } from 'rxjs';
 import { map, shareReplay, take } from 'rxjs/operators'; // Adiciona 'take' para subscrições pontuais
-import { RouterModule, Router } from '@angular/router'; // Para router-outlet e navegação
+import { Router, NavigationEnd } from '@angular/router'; // Para router-outlet e navegação
  // Para *ngIf e async pipe
 
 // Importa os módulos do Angular Material e seus componentes filhos (se for standalone)
@@ -13,7 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { SidenavComponent } from './shared/sidenav/sidenav.component'; // Seu componente de navegação
 import { ToolbarComponent } from './shared/toolbar/toolbar.component'; // Seu componente da toolbar
-
+import { RouterModule } from '@angular/router';
 
 @Component({
     selector: 'app-root', // Ou o seletor do seu componente de layout
@@ -42,7 +42,14 @@ export class AppComponent implements OnInit {
   constructor(
     private breakpointObserver: BreakpointObserver,
     public router: Router // Injeta o Router para usar router.url no template
-  ) { }
+  ) {
+    // Log de navegação
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        console.warn('[AppComponent] Navegou para:', event.urlAfterRedirects);
+      }
+    });
+  }
 
   ngOnInit(): void {
     // Lógica de inicialização do componente, se houver.

@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
 
 interface MenuItem {
   title: string;
@@ -31,6 +32,8 @@ export class SidenavComponent {
   @Output() linkClicked = new EventEmitter<void>();
   @Output() expandClicked = new EventEmitter<void>();
   @Input() collapsed = false;
+
+  constructor(public authService: AuthService) {}
 
   // Novo item para o link Home direto
   homeLink = { label: 'Home', route: '/', icon: 'home' };
@@ -96,6 +99,15 @@ export class SidenavComponent {
       ]
     },
   ];
+
+  get visibleMenuItems(): MenuItem[] {
+    if (this.authService.isAdmin()) {
+      return this.expandableMenuItems;
+    }
+    // Aqui você pode filtrar por outras roles, se desejar
+    // Exemplo: return this.expandableMenuItems.filter(item => !item.adminOnly);
+    return this.expandableMenuItems;
+  }
 
   toggleSidenav() {
     this.collapsed = !this.collapsed;

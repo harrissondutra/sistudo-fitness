@@ -12,6 +12,7 @@ import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/mat
 import { routes } from './app.routes';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { DateFormatInterceptor } from './core/interceptors/date-format.interceptor/date-format.interceptor';
+import { jwtInterceptor } from './core/interceptors/jwt.interceptor';
 
 // Formato de datas para exibição no formulário
 export const DATE_FORMATS = {
@@ -29,8 +30,8 @@ export const DATE_FORMATS = {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    // Múltiplos interceptores - error e date-format
-    provideHttpClient(withInterceptors([errorInterceptor, DateFormatInterceptor])),
+    // Múltiplos interceptores - error, date-format e jwt
+    provideHttpClient(withInterceptors([errorInterceptor, DateFormatInterceptor, jwtInterceptor])),
     provideAnimations(),
     provideClientHydration(),
 

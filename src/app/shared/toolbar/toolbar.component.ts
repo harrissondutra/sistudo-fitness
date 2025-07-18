@@ -3,27 +3,33 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenav } from '@angular/material/sidenav';
+import { MatMenuModule } from '@angular/material/menu';
 
 import { Router, RouterModule } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { AuthService } from '../../services/auth.service';
+import { CommonModule } from '@angular/common'; // Adicione esta linha
+
 
 @Component({
-    selector: 'app-toolbar',
-    imports: [
-    MatToolbarModule,
-    MatIconModule,
-    MatButtonModule,
-    RouterModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSnackBarModule
-],
-    templateUrl: './toolbar.component.html',
-    styleUrls: ['./toolbar.component.scss']
+  selector: 'app-toolbar',
+  imports: [
+      CommonModule, // Adicione aqui
+      MatToolbarModule,
+      MatIconModule,
+      MatButtonModule,
+      RouterModule,
+      ReactiveFormsModule,
+      MatFormFieldModule,
+      MatInputModule,
+      MatSnackBarModule,
+      MatMenuModule
+  ],
+  templateUrl: './toolbar.component.html',
+  styleUrls: ['./toolbar.component.scss']
 })
 export class ToolbarComponent {
   @Input() sidenav!: MatSidenav;
@@ -31,7 +37,7 @@ export class ToolbarComponent {
   showSearchInput: boolean = false;
   searchControl = new FormControl('');
 
-  constructor(private router: Router, private snackBar: MatSnackBar) { }
+  constructor(private router: Router, private snackBar: MatSnackBar, public authService: AuthService) { }
 
   toggleSidenav(): void {
     this.sidenav.toggle();
@@ -39,6 +45,18 @@ export class ToolbarComponent {
 
   goToHome(): void {
     this.router.navigate(['/']); // Navega para a rota raiz
+  }
+
+  logout(): void {
+    console.warn('[ToolbarComponent] Logout disparado pelo menu do usuário');
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  getUserName(): string {
+    const user = this.authService.getUserInfo();
+    // Ajuste o campo conforme o backend (ex: 'name', 'username', 'email')
+    return user?.name || user?.username || user?.email || 'Usuário';
   }
 
   /**

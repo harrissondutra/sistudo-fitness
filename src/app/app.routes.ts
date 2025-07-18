@@ -6,10 +6,9 @@ import { LogoutComponent } from './logout/logout.component';
 import { ClientRegistrationComponent } from './client/client-registration/client-registration.component';
 import { ClientListComponent } from './client/client-list/client-list.component';
 import { ClientEditComponent } from './client/client-edit/client-edit.component';
-import { TrainningCreateComponent } from '../app/trainning/trainning-create/trainning-create.component'; // Importe o componente de criação de treino
+import { TrainningCreateComponent } from '../app/trainning/trainning-create/trainning-create.component';
 import { TrainningComponent } from './trainning/trainning/trainning.component';
 import { ListExerciseComponent } from './Exercises/list-exercise/list-exercise.component';
-// import { TrainningEditComponent } from './trainning-edit/trainning-edit.component'; // **Assumindo que você terá um componente de edição de treino**
 import { CreateExerciseComponent } from './Exercises/create-exercise/create-exercise.component';
 import { CategoryExerciseComponent } from './Exercises/category-exercise/category-exercise.component';
 import { InactiveTrainningComponent } from './trainning/inactive-trainning/inactive-trainning.component';
@@ -30,12 +29,15 @@ import { PersonalListComponent } from './personal/personal-list/personal-list.co
 import { PersonalViewComponent } from './personal/personal-view/personal-view.component';
 import { PersonalUpdateComponent } from './personal/personal-update/personal-update.component';
 import { PersonalCreateComponent } from './personal/personal-create/personal-create.component';
-
+import { LoginComponent } from './login/login.component';
+import { AuthGuard } from './core/auth.guard';
 
 export const routes: Routes = [
+  { path: 'login', component: LoginComponent },
   {
     path: '',
     component: HomeComponent,
+    canActivate: [AuthGuard],
     children: [
       { path: 'profile', component: ProfileComponent },
       { path: 'settings', component: SettingsComponent },
@@ -67,19 +69,11 @@ export const routes: Routes = [
       { path: 'personal-view', component: PersonalViewComponent },
       { path: 'personal-update/:id', component: PersonalUpdateComponent },
       { path: 'personal-create', component: PersonalCreateComponent },
-
-
       {
         path: 'trainning',
         loadChildren: () => import('./trainning/trainning.module').then(m => m.TrainningModule)
-      }
-      // { path: 'trainings-edit/:id', component: TrainningEditComponent }, // **Nova rota para editar treino (descomente quando tiver o componente)**
-      // { path: 'clients-search', component: ClientSearchComponent },
-      // { path: 'clients-delete', component: ClientDeleteComponent },
+      },
     ]
   },
-  {
-    path: '**',
-    redirectTo: '',
-  }
+  { path: '**', redirectTo: '' }
 ];
