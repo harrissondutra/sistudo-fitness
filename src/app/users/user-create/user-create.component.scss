@@ -1,0 +1,80 @@
+@use 'sass:math';
+
+$primary-color: #3f51b5;
+$accent-color: #ff4081;
+$warn-color: #f44336;
+$text-color: #1a237e;
+$light-text-color: #666;
+$border-color: #e0e0e0;
+$background-light: #f5f5f5;
+$white: #fff;
+$lighter-primary: #e8eaf6;
+
+$spacing-unit: 8px;
+$padding-small: $spacing-unit * 2;
+$padding-medium: $spacing-unit * 3;
+$margin-medium: $spacing-unit * 3;
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-create-container {
+  padding: $padding-medium;
+  max-width: 500px;
+  margin: $margin-medium auto;
+  background-color: $white;
+  border-radius: $spacing-unit;
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
+              0 2px 2px 0 rgba(0, 0, 0, 0.14),
+              0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  min-height: 400px;
+}
+
+h2 {
+  color: $text-color;
+  font-size: 2em;
+  margin-bottom: $padding-medium;
+  text-align: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: $padding-small;
+}
+
+.form-field {
+  width: 100%;
+}
+
+button[type="submit"] {
+  margin-top: $padding-small;
+  font-weight: 600;
+}
+
+button[color="warn"] {
+  margin-top: $spacing-unit;
+}
+
+.mat-form-field {
+  background: $background-light;
+  border-radius: $spacing-unit / 2;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline {
+  color: $primary-color;
+}
+
+@media (max-width: 600px) {
+  .user-create-container {
+    padding: $padding-small;
+    margin: $padding-small;
+    max-width: 100%;
+  }
+  h2 {
+    font-size: 1.3em;
+  }
+}
