@@ -24,9 +24,13 @@ export class LoginComponent {
     this.loading = true;
     this.authService.login(this.email, this.password).subscribe({
       next: (res) => {
-        this.authService.setToken(res.token);
+        this.authService.setToken(res.token, {
+          email: res.email,
+          username: res.username,
+          role: res.role
+        });
         this.loading = false;
-        this.router.navigate(['/app']);
+        this.router.navigate(['/']);
       },
       error: (err) => {
         this.loading = false;

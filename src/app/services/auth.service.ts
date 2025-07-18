@@ -19,10 +19,13 @@ export class AuthService {
   }
 
   /**
-   * Salva o token JWT no localStorage.
+   * Salva o token JWT e informações do usuário no localStorage.
    */
-  setToken(token: string) {
+  setToken(token: string, userInfo?: { email?: string, username?: string, role?: string }) {
     localStorage.setItem('token', token);
+    if (userInfo) {
+      localStorage.setItem('userInfo', JSON.stringify(userInfo));
+    }
   }
 
   /**
@@ -33,11 +36,20 @@ export class AuthService {
   }
 
   /**
-   * Remove o token JWT do localStorage e efetua logout.
+   * Recupera informações do usuário do localStorage.
+   */
+  getUserInfoFromStorage(): any {
+    const userInfo = localStorage.getItem('userInfo');
+    return userInfo ? JSON.parse(userInfo) : null;
+  }
+
+  /**
+   * Remove o token JWT e informações do usuário do localStorage e efetua logout.
    */
   logout() {
     console.warn('[AuthService] Logout chamado');
     localStorage.removeItem('token');
+    localStorage.removeItem('userInfo');
   }
 
   /**

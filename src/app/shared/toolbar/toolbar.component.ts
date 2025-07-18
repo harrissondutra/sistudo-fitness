@@ -54,9 +54,8 @@ export class ToolbarComponent {
   }
 
   getUserName(): string {
-    const user = this.authService.getUserInfo();
-    // Ajuste o campo conforme o backend (ex: 'name', 'username', 'email')
-    return user?.name || user?.username || user?.email || 'Usuário';
+    const user = this.authService.getUserInfoFromStorage() || this.authService.getUserInfo();
+    return user?.name || user?.username || user?.email || user?.sub || 'Usuário';
   }
 
   /**
