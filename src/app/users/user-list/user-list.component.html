@@ -1,0 +1,58 @@
+<div class="user-list-container">
+  <div class="header">
+    <div class="title-section">
+      <h2>Lista de Usuários</h2>
+      <p class="subtitle">Gerencie todos os usuários cadastrados no sistema</p>
+    </div>
+    <button mat-raised-button color="primary" class="new-user-btn" [routerLink]="['/user-create']">
+      <mat-icon>add</mat-icon>
+      <span>Novo Usuário</span>
+    </button>
+  </div>
+
+  <div class="search-section">
+    <mat-form-field appearance="outline" class="search-input">
+      <mat-label>Buscar Usuário</mat-label>
+      <input matInput [formControl]="searchControl" placeholder="Digite nome, email ou username">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-indicator">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Carregando usuários...</p>
+  </div>
+
+  <div *ngIf="!isLoading && filteredUsers && filteredUsers.length > 0">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Email</th>
+          <th>Perfil</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of filteredUsers">
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.role }}</td>
+          <td>
+            <button mat-icon-button color="primary" (click)="onEdit(user)" matTooltip="Editar">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="onDelete(user)" matTooltip="Excluir">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!isLoading && (!filteredUsers || filteredUsers.length === 0)" class="no-data-content">
+    <mat-icon>people</mat-icon>
+    <p>Nenhum usuário encontrado.</p>
+  </div>
+</div>

@@ -1,0 +1,187 @@
+@use 'sass:math';
+
+$primary-color: #3f51b5;
+$accent-color: #ff4081;
+$warn-color: #f44336;
+$text-color: #1a237e;
+$light-text-color: #666;
+$border-color: #e0e0e0;
+$background-light: #f5f5f5;
+$white: #fff;
+$lighter-primary: #e8eaf6;
+
+$spacing-unit: 8px;
+$padding-small: $spacing-unit * 2;
+$padding-medium: $spacing-unit * 3;
+$margin-medium: $spacing-unit * 3;
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between-center {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin card-shadow-sm {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.user-list-container {
+  padding: $padding-medium;
+  max-width: 1200px;
+  margin: $margin-medium auto;
+  background-color: $white;
+  border-radius: $spacing-unit;
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
+              0 2px 2px 0 rgba(0, 0, 0, 0.14),
+              0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  min-height: calc(100vh - ($padding-medium * 2));
+}
+
+.header {
+  @include flex-between-center;
+  margin-bottom: $padding-medium;
+  padding-bottom: $padding-small;
+  border-bottom: 1px solid $border-color;
+
+  .title-section {
+    h2 {
+      margin: 0;
+      font-size: 2em;
+      color: $text-color;
+    }
+    .subtitle {
+      margin: math.div($spacing-unit, 2) 0 0;
+      font-size: 0.9em;
+      color: $light-text-color;
+    }
+  }
+  .new-user-btn {
+    padding: $spacing-unit $padding-small;
+    font-weight: 500;
+    mat-icon {
+      margin-right: $spacing-unit;
+    }
+  }
+}
+
+.search-section {
+  margin-bottom: $padding-medium;
+  .search-input {
+    width: 100%;
+    ::ng-deep {
+      .mat-form-field-wrapper {
+        padding-bottom: 0;
+      }
+    }
+  }
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: $white;
+  border-radius: $spacing-unit;
+  @include card-shadow-sm;
+  overflow: hidden;
+  th, td {
+    padding: $spacing-unit $padding-small;
+    text-align: left;
+    border-bottom: 1px solid $border-color;
+  }
+  th {
+    background: $lighter-primary;
+    color: $text-color;
+    font-weight: 600;
+    font-size: 1em;
+  }
+  tr:last-child td {
+    border-bottom: none;
+  }
+  td {
+    color: $light-text-color;
+    font-size: 0.98em;
+  }
+  .mat-icon-button {
+    margin-right: $spacing-unit / 2;
+    &:last-child {
+      margin-right: 0;
+    }
+    mat-icon {
+      font-size: 22px;
+    }
+    &[color="primary"] mat-icon {
+      color: $primary-color;
+    }
+    &[color="warn"] mat-icon {
+      color: $warn-color;
+    }
+  }
+}
+
+.no-data-content {
+  @include flex-center;
+  flex-direction: column;
+  gap: $padding-small;
+  color: $light-text-color;
+  padding: $padding-medium * 2 0;
+  mat-icon {
+    font-size: $spacing-unit * 6;
+    width: $spacing-unit * 6;
+    height: $spacing-unit * 6;
+    margin-bottom: $spacing-unit;
+    color: $border-color;
+  }
+  p {
+    margin: 0;
+    font-size: 1.1em;
+  }
+}
+
+.loading-indicator {
+  @include flex-center;
+  flex-direction: column;
+  padding: $padding-medium;
+  gap: $padding-small;
+  color: $light-text-color;
+}
+
+@media (max-width: 768px) {
+  .user-list-container {
+    padding: $padding-small;
+    margin: $padding-small;
+  }
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: $padding-medium;
+    .title-section {
+      margin-bottom: $padding-small;
+      h2 { font-size: 1.6em; }
+      .subtitle { font-size: 0.8em; }
+    }
+    .new-user-btn { width: 100%; @include flex-center; }
+  }
+  .search-section .search-input {
+    ::ng-deep { .mat-form-field-wrapper { font-size: 0.9em; } }
+  }
+  .user-table th, .user-table td {
+    padding: $spacing-unit;
+    font-size: 0.95em;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-list-container {
+    margin: $spacing-unit;
+    padding: $spacing-unit;
+  }
+  .header .title-section h2 { font-size: 1.4em; }
+  .header .title-section .subtitle { font-size: 0.7em; }
+  .user-table th, .user-table td { font-size: 0.9em; }
+}

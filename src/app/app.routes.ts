@@ -31,6 +31,8 @@ import { PersonalUpdateComponent } from './personal/personal-update/personal-upd
 import { PersonalCreateComponent } from './personal/personal-create/personal-create.component';
 import { LoginComponent } from './login/login.component';
 import { AuthGuard } from './core/auth.guard';
+import { UserListComponent } from './users/user-list/user-list.component';
+import { UserCreateComponent } from './users/user-create/user-create.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -39,6 +41,8 @@ export const routes: Routes = [
     component: HomeComponent,
     canActivate: [AuthGuard],
     children: [
+      { path: 'user-list', component: UserListComponent },
+      { path: 'user-create', component: UserCreateComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'settings', component: SettingsComponent },
       { path: 'logout', component: LogoutComponent },
