@@ -21,9 +21,9 @@
             <input matInput type="text" formControlName="name" placeholder="Ex: João da Silva" />
             <mat-icon matSuffix>person</mat-icon>
             @if (clientForm.get('name')?.invalid && clientForm.get('name')?.touched) {
-              <mat-error>
-                Nome é obrigatório.
-              </mat-error>
+            <mat-error>
+              Nome é obrigatório.
+            </mat-error>
             }
           </mat-form-field>
 
@@ -32,69 +32,93 @@
             <input matInput type="email" formControlName="email" placeholder="Ex: joao.silva@example.com" />
             <mat-icon matSuffix>email</mat-icon>
             @if (clientForm.get('email')?.invalid && clientForm.get('email')?.touched) {
-              <mat-error>
-                @if (clientForm.get('email')?.errors?.['required']) {
-                  <span>Email é obrigatório.</span>
-                }
-                @if (clientForm.get('email')?.errors?.['email']) {
-                  <span>Email inválido.</span>
-                }
-              </mat-error>
+            <mat-error>
+              @if (clientForm.get('email')?.errors?.['required']) {
+              <span>Email é obrigatório.</span>
+              }
+              @if (clientForm.get('email')?.errors?.['email']) {
+              <span>Email inválido.</span>
+              }
+            </mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="full-width-input">
             <mat-label>CPF</mat-label>
-            <input matInput type="text" formControlName="cpf" mask="000.000.000-00" [dropSpecialCharacters]="true" placeholder="000.000.000-00" />
+            <input matInput type="text" formControlName="cpf" mask="000.000.000-00" [dropSpecialCharacters]="true"
+              placeholder="000.000.000-00" />
             <mat-icon matSuffix>badge</mat-icon>
             <mat-hint>11 dígitos numéricos</mat-hint>
             @if (clientForm.get('cpf')?.invalid && clientForm.get('cpf')?.touched) {
-              <mat-error>
-                @if (clientForm.get('cpf')?.errors?.['required']) {
-                  <span>CPF é obrigatório.</span>
-                }
-                @if (clientForm.get('cpf')?.errors?.['pattern']) {
-                  <span>CPF deve conter 11 dígitos.</span>
-                }
-              </mat-error>
+            <mat-error>
+              @if (clientForm.get('cpf')?.errors?.['required']) {
+              <span>CPF é obrigatório.</span>
+              }
+              @if (clientForm.get('cpf')?.errors?.['pattern']) {
+              <span>CPF deve conter 11 dígitos.</span>
+              }
+            </mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="full-width-input">
+            <mat-label>Data de Nascimento</mat-label>
+            <input matInput [matDatepicker]="birthDatePicker" formControlName="dateOfBirth" placeholder="DD/MM/AAAA">
+            <mat-datepicker-toggle matSuffix [for]="birthDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #birthDatePicker></mat-datepicker>
+            @if (clientForm.get('dateOfBirth')?.invalid && clientForm.get('dateOfBirth')?.touched) {
+            <mat-error>
+              @if (clientForm.get('dateOfBirth')?.errors?.['required']) {
+              <span>Data de Nascimento é obrigatória.</span>
+              }
+              @if (clientForm.get('dateOfBirth')?.errors?.['matDatepickerParse'] ||
+              clientForm.get('dateOfBirth')?.errors?.['matDatepickerMin'] ||
+              clientForm.get('dateOfBirth')?.errors?.['matDatepickerMax']) {
+              <span>Data de Nascimento inválida.</span>
+              }
+            </mat-error>
+            }
+          </mat-form-field>
+
+
+
+          <mat-form-field appearance="outline" class="full-width-input">
             <mat-label>Peso (kg)</mat-label>
-            <input matInput type="text" formControlName="weight" mask="separator.2" thousandSeparator="" placeholder="Ex: 75.5" />
+            <input matInput type="text" formControlName="weight" mask="separator.2" thousandSeparator=""
+              placeholder="Ex: 75.5" />
             <mat-icon matSuffix>monitor_weight</mat-icon>
             <mat-hint>Utilize "." para separação de decimais</mat-hint>
             @if (clientForm.get('weight')?.invalid && clientForm.get('weight')?.touched) {
-              <mat-error>
-                @if (clientForm.get('weight')?.errors?.['required']) {
-                  <span>Peso é obrigatório.</span>
-                }
-                @if (clientForm.get('weight')?.errors?.['min'] || clientForm.get('weight')?.errors?.['max']) {
-                  <span>
-                    Peso deve ser entre 30 e 300 kg.
-                  </span>
-                }
-              </mat-error>
+            <mat-error>
+              @if (clientForm.get('weight')?.errors?.['required']) {
+              <span>Peso é obrigatório.</span>
+              }
+              @if (clientForm.get('weight')?.errors?.['min'] || clientForm.get('weight')?.errors?.['max']) {
+              <span>
+                Peso deve ser entre 30 e 300 kg.
+              </span>
+              }
+            </mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="full-width-input">
             <mat-label>Altura (cm)</mat-label>
-            <input matInput type="text" formControlName="height" mask="separator.2" thousandSeparator="" placeholder="Ex: 175" />
+            <input matInput type="text" formControlName="height" mask="separator.2" thousandSeparator=""
+              placeholder="Ex: 175" />
             <mat-icon matSuffix>height</mat-icon>
             <mat-hint>Utilize "." para separação de decimais</mat-hint>
             @if (clientForm.get('height')?.invalid && clientForm.get('height')?.touched) {
-              <mat-error>
-                @if (clientForm.get('height')?.errors?.['required']) {
-                  <span>Altura é obrigatória.</span>
-                }
-                @if (clientForm.get('height')?.errors?.['min'] || clientForm.get('height')?.errors?.['max']) {
-                  <span>
-                    Altura deve ser entre 50 e 300 cm.
-                  </span>
-                }
-              </mat-error>
+            <mat-error>
+              @if (clientForm.get('height')?.errors?.['required']) {
+              <span>Altura é obrigatória.</span>
+              }
+              @if (clientForm.get('height')?.errors?.['min'] || clientForm.get('height')?.errors?.['max']) {
+              <span>
+                Altura deve ser entre 50 e 300 cm.
+              </span>
+              }
+            </mat-error>
             }
           </mat-form-field>
         </div>

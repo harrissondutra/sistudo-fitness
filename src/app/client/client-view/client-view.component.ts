@@ -74,30 +74,51 @@ export class ClientViewComponent implements OnInit {
       this.router.navigate(['/clients-list']);
     }
   }
-
   private loadClient(id: string): void {
     this.isLoading = true;
     this.clientService.getClientById(id).subscribe({
       next: (clientData: Client) => {
+        console.log('Cliente recebido:', clientData);
+        console.log('Data de nascimento (tipo):', typeof clientData.dateOfBirth);
+        console.log('Data de nascimento (valor):', clientData.dateOfBirth);
+
         this.client = clientData;
-        this.isLoading = false;
-        // Se houver treinos no cliente, tenta definir o treino atual (exemplo, o primeiro)
-        if (this.client?.trainings && this.client.trainings.length > 0) {
-          this.currentClientTraining = this.client.trainings[0]; // Ou defina uma lógica para o 'treino atual'
+
+        // Tratar dateOfBirth quando é um array (como está chegando do backend)
+        if (this.client?.dateOfBirth && Array.isArray(this.client.dateOfBirth)) {
+          try {
+            const [year, month, day, hour = 0, minute = 0] = this.client.dateOfBirth as any[];
+            this.client.dateOfBirth = new Date(year, month - 1, day, hour, minute);
+            console.log('Data convertida de array:', this.client.dateOfBirth);
+          } catch (error) {
+            console.error('Erro ao converter data de array:', error);
+            this.client.dateOfBirth = undefined;
+          }
         }
+        // Código existente - tratar quando é string
+        else if (this.client?.dateOfBirth && typeof this.client.dateOfBirth === 'string') {
+          // Seu código atual para processar strings...
+        }
+
+        this.isLoading = false;
       },
       error: (error) => {
         console.error('Erro ao carregar cliente:', error);
+        this.isLoading = false;
         this.snackBar.open('Erro ao carregar dados do cliente.', 'Fechar', { duration: 3000 });
-        this.router.navigate(['/clients-list']);
       }
     });
   }
 
   private loadAssociatedProfessionals(clientId: string): void {
-    // Carregar médicos associados
-    this.doctorService.getDoctorByClientId(Number(clientId)).subscribe({ // Assumindo método no DoctorService
-      next: (doctors: Doctor[]) => this.associatedDoctors = doctors,
+    console.log(`Carregando profissionais para o cliente ID: ${clientId}`);
+
+    // Carregar médicos associados (este é o método correto para buscar médicos ASSOCIADOS)
+    this.doctorService.getDoctorByClientId(Number(clientId)).subscribe({
+      next: (doctors: Doctor[]) => {
+        console.log('Médicos associados recebidos:', doctors);
+        this.associatedDoctors = doctors;
+      },
       error: (err) => console.error('Erro ao carregar médicos associados:', err)
     });
 
@@ -177,7 +198,7 @@ export class ClientViewComponent implements OnInit {
         this.availableDoctors = doctors;
         // Pré-seleciona os médicos já associados
         this.selectedDoctorIds = new Set(this.associatedDoctors.map(d => d.id!.toString()));
-        this.showAddDoctorDialog = true; // Abre o diálogo após carregar os dados
+        this.showAddDoctorDialog = true;
       },
       error: (error) => {
         console.error('Erro ao carregar médicos disponíveis:', error);
@@ -248,19 +269,28 @@ export class ClientViewComponent implements OnInit {
       return;
     }
 
-    const doctorIdsToAssociate = Array.from(this.selectedDoctorIds);
+    // Verificar se há médicos selecionados
+    if (this.selectedDoctorIds.size === 0) {
+      this.snackBar.open('Nenhum médico selecionado.', 'Fechar', { duration: 3000 });
+      return;
+    }
 
-    this.clientService.getDoctorByClientId(this.client.id.toString()).subscribe({
-      next: () => {
-        this.snackBar.open('Médicos associados com sucesso!', 'Fechar', { duration: 3000 });
-        this.closeAddDoctorDialog();
-        this.loadAssociatedProfessionals(this.client!.id!.toString()); // Recarrega para refletir as mudanças
-      },
-      error: (error: any) => {
-        console.error('Erro ao associar médicos:', error);
-        this.snackBar.open('Erro ao associar médicos.', 'Fechar', { duration: 3000 });
-      }
-    });
+    // No saveSelectedDoctors()
+    const selectedDoctorIds = Array.from(this.selectedDoctorIds).map(id => Number(id));
+
+    this.doctorService.associateDoctorToClient(this.client.id, selectedDoctorIds)
+      .subscribe({
+        next: (updatedClient) => {
+          this.snackBar.open('Médicos associados com sucesso!', 'Fechar', { duration: 3000 });
+          this.client = updatedClient;
+          this.closeAddDoctorDialog();
+          this.loadAssociatedProfessionals(updatedClient.id!.toString());
+        },
+        error: (error) => {
+          console.error('Erro ao associar médicos:', error);
+          this.snackBar.open('Erro ao associar médicos.', 'Fechar', { duration: 3000 });
+        }
+      });
   }
   addDoctorToClient(clientId: string): void {
     // Implement your logic here, e.g., open a dialog or set a flag
@@ -282,7 +312,7 @@ export class ClientViewComponent implements OnInit {
     this.router.navigate(['/nutritionist-create', clientId]);
   }
 
-     togglePersonalSelection(personalId: string): void {
+  togglePersonalSelection(personalId: string): void {
     if (this.selectedPersonalIds.has(personalId)) {
       this.selectedPersonalIds.delete(personalId);
     } else {
@@ -302,7 +332,7 @@ export class ClientViewComponent implements OnInit {
     this.closeAddPersonalDialog();
   }
 
-   closeAddNutritionistDialog(): void {
+  closeAddNutritionistDialog(): void {
     this.showAddNutritionistDialog = false;
   }
 
@@ -318,7 +348,7 @@ export class ClientViewComponent implements OnInit {
     return this.selectedNutritionistIds.has(nutritionistId);
   }
 
-   saveSelectedNutritionists(): void {
+  saveSelectedNutritionists(): void {
     // Implement your logic to save selected nutritionists here
     // For example, you might emit an event, call a service, or update the client object
     // Example placeholder:
@@ -330,7 +360,7 @@ export class ClientViewComponent implements OnInit {
     return doctor?.id;
   }
 
-   trackByPersonalId(index: number, personal: any): string | number {
+  trackByPersonalId(index: number, personal: any): string | number {
     return personal && personal.id != null ? personal.id : index;
   }
 

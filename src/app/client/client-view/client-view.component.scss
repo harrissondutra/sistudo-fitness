@@ -208,7 +208,6 @@ body {
 
 .info-item {
   background: $info-item-background;
-  padding: $padding-small;
   border-radius: $spacing-unit;
   transition: background-color 0.2s ease;
 
@@ -220,9 +219,9 @@ body {
     display: block;
     font-size: 14px;
     color: $light-text-color;
-    margin-bottom: $spacing-unit;
     font-weight: 500;
     word-break: break-word;
+    padding-top: $spacing-unit ; // 4px
   }
 
   .value {
@@ -230,6 +229,8 @@ body {
     color: $text-color;
     font-weight: 500;
     word-break: break-word;
+    margin-top: 20; // 4px
+
   }
 }
 

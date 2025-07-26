@@ -12,6 +12,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 
 // NgxMaskDirective
 import { NgxMaskDirective } from 'ngx-mask';
@@ -28,7 +31,16 @@ import { NgxMaskDirective } from 'ngx-mask';
     MatSnackBarModule,
     MatCardModule,
     MatIconModule,
-    NgxMaskDirective
+    NgxMaskDirective,
+    MatDatepickerModule,
+    MatNativeDateModule,
+
+  ],
+
+  providers: [
+    MatDatepickerModule,
+    { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' }, // Set default locale
+    { provide: MAT_DATE_FORMATS, useValue: { parse: { dateInput: 'DD/MM/YYYY' }, display: { dateInput: 'DD/MM/YYYY', monthYearLabel: 'MMM YYYY', dateA11yLabel: 'LL', monthYearA11yLabel: 'MMMM YYYY' } } }
   ],
   templateUrl: './client-registration.component.html', // Renamed template file
   styleUrls: ['./client-registration.component.scss'] // Renamed stylesheet file
@@ -57,6 +69,7 @@ export class ClientRegistrationComponent implements OnInit { // Renamed class
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       cpf: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]], // CPF should be 11 digits after mask
+      dateOfBirth: ['', [Validators.required]],
       weight: [null, [Validators.required, Validators.min(30), Validators.max(300)]],
       height: [null, [Validators.required, Validators.min(50), Validators.max(300)]] // Height in centimeters
     });
