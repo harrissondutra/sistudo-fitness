@@ -18,6 +18,9 @@ import { CommonModule } from '@angular/common'; // Necessário para ngIf, ngFor
 // Importe a interface Personal e o serviço PersonalService
 import { Personal } from '../../models/personal'; // Ajuste o caminho conforme a localização do seu modelo
 import { PersonalService } from '../../services/personal/personal.service'; // Ajuste o caminho conforme a localização do seu serviço
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 
 @Component({
   selector: 'app-personal-list',
@@ -30,7 +33,13 @@ import { PersonalService } from '../../services/personal/personal.service'; // A
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    IonicModule
+    IonicModule,
+    NgxMaskDirective,  // Adicione o diretivo
+    NgxMaskPipe
+  ],
+
+  providers: [
+    provideNgxMask()  // Use provideNgxMask() em vez de MaskModule.forRoot()
   ],
   templateUrl: './personal-list.component.html',
   styleUrl: './personal-list.component.scss'
@@ -96,6 +105,18 @@ export class PersonalListComponent implements OnInit {
    */
   addNewPersonal(): void {
     this.router.navigate(['/personal/new']); // Rota para criar novo profissional
+  }
+
+  /**
+ * Navega para a tela de visualização detalhada de um profissional.
+ * @param id O ID do profissional a ser visualizado.
+ */
+  viewPersonal(id: number | undefined): void {
+    if (id !== undefined) {
+      this.router.navigate(['/personal/view', id]); // Rota para visualizar detalhes do personal
+    } else {
+      this.snackBar.open('ID do profissional não encontrado.', 'Fechar', { duration: 3000 });
+    }
   }
 
   /**

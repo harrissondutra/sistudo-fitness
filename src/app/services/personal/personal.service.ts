@@ -4,13 +4,14 @@ import { Observable, throwError } from 'rxjs'; // Importe Observable e throwErro
 import { catchError } from 'rxjs/operators'; // Importe catchError de 'rxjs/operators'
 import { Personal } from '../../models/personal'; // Ajuste o caminho para o seu modelo Personal
 import { environment } from '../../../environments/environment';
+import { Client } from '../../models/client';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PersonalService {
   // **ATENÇÃO**: Substitua 'http://localhost:8080/api/personal' pela URL real da sua API de profissionais
-  private baseUrl = `${environment.apiUrl}/clients`;
+  private baseUrl = `${environment.apiUrl}/personals`;
 
   constructor(private http: HttpClient) { } // Injete o HttpClient no construtor
 
@@ -19,7 +20,7 @@ export class PersonalService {
    * @returns Um Observable que emite um array de Personal.
    */
   getAllPersonal(): Observable<Personal[]> {
-    return this.http.get<Personal[]>(this.baseUrl).pipe(
+    return this.http.get<Personal[]>(`${this.baseUrl}/listAll`).pipe(
       catchError(this.handleError) // Trata erros na requisição
     );
   }
@@ -97,6 +98,13 @@ export class PersonalService {
 
   getPersonalByClientId(clientId: number): Observable<Personal[]> {
     return this.http.get<Personal[]>(`${this.baseUrl}/getPersonalByClientId/${clientId}`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  associatePersonalToClient(clientId: number, personalIds: number[]): Observable<Client> {
+    // O endpoint correto conforme o controller backend é: /associatePersonal/{clientId}
+    return this.http.post<Client>(`${this.baseUrl}/associatePersonal/${clientId}`, personalIds).pipe(
       catchError(this.handleError)
     );
   }

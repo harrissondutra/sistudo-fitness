@@ -44,7 +44,7 @@ $margin-medium: $spacing-unit * 3; // 24px
   padding: $padding-medium; /* 24px */
   max-width: 1200px; /* Mantido o max-width do padrão trainning-container */
   margin: $margin-medium auto; /* 24px auto */
-  background-color: $white; /* Fundo branco para o container principal */
+  background-color: $white; /* Fundo branco para o container principal, como exercise-list-container */
   border-radius: $spacing-unit; /* 8px */
   box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
               0 2px 2px 0 rgba(0, 0, 0, 0.14),
@@ -61,7 +61,7 @@ $margin-medium: $spacing-unit * 3; // 24px
   .title-section {
     h2 {
       margin: 0;
-      font-size: 2em; /* Mantido para corresponder ao padrão das outras listas */
+      font-size: 2em; /* Mantido para corresponder ao padrão do exercise-list */
       color: $text-color;
     }
 
@@ -76,7 +76,7 @@ $margin-medium: $spacing-unit * 3; // 24px
     padding: $spacing-unit $padding-small; /* 8px 16px */
     font-weight: 500;
 
-    mat-icon { /* Usado mat-icon em vez de .mat-icon */
+    mat-icon {
       margin-right: $spacing-unit; /* 8px */
     }
   }
@@ -142,14 +142,14 @@ $margin-medium: $spacing-unit * 3; // 24px
     ion-label {
       flex-grow: 1; /* Permite que a label ocupe o espaço restante */
 
-      h3 { /* Alterado de h3.exercise-name para h3 */
+      h3 {
         font-size: 1.1em;
         color: $text-color;
         margin: 0 0 math.div($spacing-unit, 2) 0; /* 4px Espaçamento abaixo do nome */
         font-weight: 500;
       }
 
-      p.personal-info { /* Alterado para personal-info */
+      p.personal-info {
         font-size: 0.9em;
         color: $light-text-color;
         margin: 0 0 math.div($spacing-unit, 2) 0; /* 4px Espaçamento entre parágrafos */
@@ -187,7 +187,7 @@ $margin-medium: $spacing-unit * 3; // 24px
         border-radius: 50%;
         transition: background-color 0.2s ease, transform 0.2s ease;
 
-        mat-icon { /* Usado mat-icon em vez de .mat-icon */
+        mat-icon {
           font-size: 28px; /* Tamanho maior para todos os dispositivos */
           width: 28px;
           height: 28px;

@@ -1,82 +1,74 @@
 <div class="personal-list-container">
+  <!-- Cabeçalho -->
   <div class="header">
     <div class="title-section">
-      <h2>Lista de Profissionais</h2>
-      <p class="subtitle">Gerencie todos os profissionais cadastrados no sistema.</p>
+      <h2>Lista de Personal Trainers</h2>
+      <p class="subtitle">Gerencie todos os personal trainers cadastrados no sistema</p>
     </div>
     <button mat-raised-button color="primary" class="new-personal-btn" (click)="addNewPersonal()">
       <mat-icon>add</mat-icon>
-      <span>Novo Profissional</span>
+      <span>Novo Personal</span>
     </button>
   </div>
 
+  <!-- Seção de Busca -->
   <div class="search-section">
     <mat-form-field appearance="outline" class="search-input">
-      <mat-label>Buscar Profissional</mat-label>
-      <input matInput [formControl]="searchControl" placeholder="Digite nome, email, registro ou especialidade">
+      <mat-label>Buscar Personal Trainer</mat-label>
+      <input matInput [formControl]="searchControl" placeholder="Digite nome, especialidade, registro ou email">
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
   </div>
 
-  @if (isLoading$ | async) {
-    <div class="loading-indicator">
-      <mat-spinner diameter="50"></mat-spinner>
-      <p>Carregando profissionais...</p>
+  <!-- Indicador de carregamento -->
+  <div *ngIf="isLoading$ | async" class="loading-indicator">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Carregando personal trainers...</p>
+  </div>
+
+  <!-- Lista de Personal Trainers (estilo Ionic/Material) -->
+  <ng-container *ngIf="!(isLoading$ | async)">
+    <ion-list *ngIf="(personalList$ | async)?.length" class="personal-ionic-list mat-elevation-z2">
+      <ion-item *ngFor="let personal of personalList$ | async" button class="personal-item" (click)="viewPersonal(personal.id)">
+        <ion-label>
+          <h3>{{ personal.name }}</h3>
+          <p class="personal-info">
+            <mat-icon>email</mat-icon>
+            {{ personal.email }}
+          </p>
+          <p class="personal-info">
+            <mat-icon>sports</mat-icon>
+            {{ personal.specialty }}
+          </p>
+          <p class="personal-info">
+            <mat-icon>card_membership</mat-icon>
+            {{ personal.registry }}
+          </p>
+          <p class="personal-info" *ngIf="personal.phone">
+            <mat-icon>phone</mat-icon>
+            {{ personal.phone | mask: '(00) 00000-0000' }}
+          </p>
+        </ion-label>
+        <div class="action-buttons" slot="end">
+          <button mat-icon-button color="primary" (click)="viewPersonal(personal.id); $event.stopPropagation()" matTooltip="Visualizar">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button color="accent" (click)="editPersonal(personal.id); $event.stopPropagation()" matTooltip="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deletePersonal(personal.id); $event.stopPropagation()" matTooltip="Excluir">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </ion-item>
+    </ion-list>
+
+    <!-- Mensagem quando não há dados -->
+    <div *ngIf="(personalList$ | async)?.length === 0" class="no-data-content">
+      <mat-icon>fitness_center</mat-icon>
+      <p *ngIf="searchControl.value">Nenhum personal trainer encontrado com o filtro aplicado.</p>
+      <p *ngIf="!searchControl.value">Nenhum personal trainer cadastrado ainda.</p>
+      <button mat-button color="primary" (click)="loadPersonal()">Recarregar</button>
     </div>
-  } @else {
-    @if ((personalList$ | async)?.length) {
-      <ion-list class="personal-ionic-list mat-elevation-z2">
-        @for (personal of personalList$ | async; track personal.id) {
-          <ion-item button (click)="editPersonal(personal.id)" class="personal-item">
-            <ion-label>
-              <h3>{{ personal.name }}</h3>
-              <p class="personal-info">
-                <mat-icon>email</mat-icon>
-                {{ personal.email }}
-              </p>
-              <p class="personal-info">
-                <mat-icon>badge</mat-icon>
-                Registro: {{ personal.registry }}
-              </p>
-              <p class="personal-info">
-                <mat-icon>work</mat-icon>
-                {{ personal.specialty }}
-              </p>
-              @if (personal.phone) {
-                <p class="personal-info">
-                  <mat-icon>phone</mat-icon>
-                  {{ personal.phone }}
-                </p>
-              }
-              @if (personal.clientId) {
-                <p class="personal-info">
-                  <mat-icon>corporate_fare</mat-icon>
-                  Cliente ID: {{ personal.clientId }}
-                </p>
-              }
-            </ion-label>
-            <div class="action-buttons" slot="end">
-              <button mat-icon-button color="accent" (click)="$event.stopPropagation(); editPersonal(personal.id)"
-                matTooltip="Editar">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button mat-icon-button color="warn" (click)="$event.stopPropagation(); deletePersonal(personal.id)"
-                matTooltip="Excluir">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </div>
-          </ion-item>
-        }
-      </ion-list>
-    } @else {
-      <div class="no-data-content">
-        <mat-icon>people_outline</mat-icon>
-        @if (searchControl.value) {
-          <p>Nenhum profissional encontrado com os critérios de busca.</p>
-        } @else {
-          <p>Ainda não há profissionais cadastrados.</p>
-          }
-      </div>
-    }
-  }
+  </ng-container>
 </div>

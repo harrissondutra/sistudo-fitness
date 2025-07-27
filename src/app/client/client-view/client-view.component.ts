@@ -123,9 +123,30 @@ export class ClientViewComponent implements OnInit {
     });
 
     // Carregar personals associados
-    this.personalService.getPersonalByClientId(Number(clientId)).subscribe({ // Corrigido para o nome correto do método
-      next: (personals: Personal[]) => this.associatedPersonals = personals,
-      error: (err) => console.error('Erro ao carregar personals associados:', err)
+    this.personalService.getPersonalByClientId(Number(clientId)).subscribe({
+      next: (response: Personal | Personal[]) => {
+        console.log('Personals associados recebidos:', response);
+
+        // Verifica se a resposta é um objeto único ou um array
+        if (Array.isArray(response)) {
+          this.associatedPersonals = response;
+        } else if (response) {
+          // Se for um objeto único, coloca-o em um array
+          this.associatedPersonals = [response];
+        } else {
+          this.associatedPersonals = [];
+        }
+      },
+      error: (err) => {
+        // Verifica se é o erro específico de "Personal não cadastrado para o cliente"
+        if (err && err.message && err.message.includes('Personal não cadastrado para o cliente')) {
+          console.log('Nenhum personal associado a este cliente - tratando como array vazio');
+          this.associatedPersonals = []; // Define como array vazio em vez de mostrar erro
+        } else {
+          console.error('Erro ao carregar personals associados:', err);
+          this.snackBar.open('Erro ao carregar personals associados.', 'Fechar', { duration: 3000 });
+        }
+      }
     });
 
     // Carregar nutricionistas associados
@@ -212,10 +233,15 @@ export class ClientViewComponent implements OnInit {
       this.snackBar.open('Não é possível adicionar personal: ID do cliente não disponível.', 'Fechar', { duration: 3000 });
       return;
     }
+
     // Carrega todos os personals disponíveis no sistema
     this.personalService.getAllPersonal().subscribe({
       next: (personals: Personal[]) => {
-        this.associatedPersonals = personals;
+        this.availablePersonals = personals; // CORRIGIDO: atribui à availablePersonals e não à associatedPersonals
+
+        // Pré-seleciona os personals já associados
+        this.selectedPersonalIds = new Set(this.associatedPersonals.map(p => p.id!.toString()));
+
         this.showAddPersonalDialog = true; // Abre o diálogo após carregar os dados
       },
       error: (error) => {
@@ -233,7 +259,11 @@ export class ClientViewComponent implements OnInit {
     // Carrega todos os nutricionistas disponíveis no sistema
     this.nutritionistService.getAllNutritionists().subscribe({
       next: (nutritionists: any[]) => {
-        this.associatedNutritionists = nutritionists;
+        this.availableNutritionists = nutritionists; // CORRIGIDO: era associatedNutritionists
+
+        // Pré-seleciona os nutricionistas já associados
+        this.selectedNutritionistIds = new Set(this.associatedNutritionists.map(n => n.id?.toString() || ''));
+
         this.showAddNutritionistDialog = true; // Abre o diálogo após carregar os dados
       },
       error: (error) => {
@@ -325,11 +355,33 @@ export class ClientViewComponent implements OnInit {
   }
 
   saveSelectedPersonals(): void {
-    // Implement your logic to save selected personals here
-    // For example, you might emit an event, call a service, or update the client
-    // This is a placeholder implementation:
-    // Example: this.clientService.addPersonalsToClient(this.client.id, this.selectedPersonalIds);
-    this.closeAddPersonalDialog();
+    if (!this.client?.id) {
+      this.snackBar.open('ID do cliente não disponível para salvar personals.', 'Fechar', { duration: 3000 });
+      return;
+    }
+
+    // Verificar se há personals selecionados
+    if (this.selectedPersonalIds.size === 0) {
+      this.snackBar.open('Nenhum personal trainer selecionado.', 'Fechar', { duration: 3000 });
+      return;
+    }
+
+    // Converte os IDs dos personals selecionados para números
+    const selectedPersonalIds = Array.from(this.selectedPersonalIds).map(id => Number(id));
+
+    this.personalService.associatePersonalToClient(this.client.id, selectedPersonalIds)
+      .subscribe({
+        next: (updatedClient) => {
+          this.snackBar.open('Personal trainers associados com sucesso!', 'Fechar', { duration: 3000 });
+          this.client = updatedClient;
+          this.closeAddPersonalDialog();
+          this.loadAssociatedProfessionals(updatedClient.id!.toString());
+        },
+        error: (error) => {
+          console.error('Erro ao associar personal trainers:', error);
+          this.snackBar.open('Erro ao associar personal trainers.', 'Fechar', { duration: 3000 });
+        }
+      });
   }
 
   closeAddNutritionistDialog(): void {
