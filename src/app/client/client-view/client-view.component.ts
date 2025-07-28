@@ -15,6 +15,7 @@ import { Personal } from '../../models/personal';
 import { PersonalService } from '../../services/personal/personal.service';
 import { NutritionistService } from '../../services/nutritionist/nutritionist.service';
 import { MatCheckboxModule } from '@angular/material/checkbox'; // Usar MatCheckboxModule
+import { Nutritionist } from '../../models/nutritionist';
 
 @Component({
   selector: 'app-client-view',
@@ -150,10 +151,26 @@ export class ClientViewComponent implements OnInit {
     });
 
     // Carregar nutricionistas associados
-    this.nutritionistService.getNutritionistByClientId(Number(clientId)).subscribe({ // Corrigido para o nome correto do método
-      next: (nutritionists: any[]) => this.associatedNutritionists = nutritionists,
-      error: (err) => console.error('Erro ao carregar nutricionistas associados:', err)
-    });
+  this.nutritionistService.getNutritionistByClientId(Number(clientId)).subscribe({
+    next: (response: any) => {
+      console.log('Nutricionistas associados recebidos:', response);
+
+      // Verifica se a resposta é um objeto único ou um array
+      if (Array.isArray(response)) {
+        this.associatedNutritionists = response;
+      } else if (response) {
+        // Se for um objeto único, coloca-o em um array
+        this.associatedNutritionists = [response];
+      } else {
+        this.associatedNutritionists = [];
+      }
+    },
+    error: (err) => {
+      console.error('Erro ao carregar nutricionistas associados:', err);
+      // Define como array vazio em caso de erro
+      this.associatedNutritionists = [];
+    }
+  });
   }
 
 
@@ -252,26 +269,41 @@ export class ClientViewComponent implements OnInit {
   }
 
   openAddNutritionistDialog(): void {
-    if (!this.client?.id) {
-      this.snackBar.open('Não é possível adicionar nutricionista: ID do cliente não disponível.', 'Fechar', { duration: 3000 });
-      return;
-    }
-    // Carrega todos os nutricionistas disponíveis no sistema
-    this.nutritionistService.getAllNutritionists().subscribe({
-      next: (nutritionists: any[]) => {
-        this.availableNutritionists = nutritionists; // CORRIGIDO: era associatedNutritionists
-
-        // Pré-seleciona os nutricionistas já associados
-        this.selectedNutritionistIds = new Set(this.associatedNutritionists.map(n => n.id?.toString() || ''));
-
-        this.showAddNutritionistDialog = true; // Abre o diálogo após carregar os dados
-      },
-      error: (error) => {
-        console.error('Erro ao carregar nutricionistas disponíveis:', error);
-        this.snackBar.open('Erro ao carregar nutricionistas disponíveis.', 'Fechar', { duration: 3000 });
-      }
-    });
+  if (!this.client?.id) {
+    this.snackBar.open('Não é possível adicionar nutricionista: ID do cliente não disponível.', 'Fechar', { duration: 3000 });
+    return;
   }
+
+  // Carrega todos os nutricionistas disponíveis no sistema
+  this.nutritionistService.getAllNutritionists().subscribe({
+    next: (nutritionists: Nutritionist[]) => {
+      console.log('Nutricionistas disponíveis:', nutritionists);
+
+      // Verificar detalhadamente o primeiro nutricionista
+      if (nutritionists && nutritionists.length > 0) {
+        console.log('Primeiro nutricionista:', nutritionists[0]);
+        console.log('Tipo do ID:', typeof nutritionists[0].id);
+        console.log('Valor do ID:', nutritionists[0].id);
+        console.log('Propriedades disponíveis:', Object.keys(nutritionists[0]));
+      }
+
+      this.availableNutritionists = nutritionists;
+
+      // Pré-seleciona os nutricionistas já associados com segurança
+      this.selectedNutritionistIds = new Set(
+        this.associatedNutritionists
+          .filter(n => n && n.id) // Garante que só nutricionistas com ID serão considerados
+          .map(n => n.id?.toString() || '')
+      );
+
+      this.showAddNutritionistDialog = true;
+    },
+    error: (error) => {
+      console.error('Erro ao carregar nutricionistas disponíveis:', error);
+      this.snackBar.open('Erro ao carregar nutricionistas disponíveis.', 'Fechar', { duration: 3000 });
+    }
+  });
+}
 
   closeAddDoctorDialog(): void {
     this.showAddDoctorDialog = false;
@@ -336,11 +368,62 @@ export class ClientViewComponent implements OnInit {
     this.router.navigate(['/personal-create', clientId]);
   }
 
-  addNutritionistToClient(clientId: string): void {
-    console.log('Adicionando nutricionista ao cliente com ID:', clientId);
-    // Lógica para abrir diálogo de seleção de nutricionista ou navegar para criação
-    this.router.navigate(['/nutritionist-create', clientId]);
+  saveSelectedNutritionists(): void {
+  if (!this.client?.id) {
+    this.snackBar.open('ID do cliente não disponível para salvar nutricionistas.', 'Fechar', { duration: 3000 });
+    return;
   }
+
+  console.log('Conteúdo do Set selectedNutritionistIds:', Array.from(this.selectedNutritionistIds));
+
+  // Verificar se há nutricionistas selecionados
+  if (this.selectedNutritionistIds.size === 0) {
+    this.snackBar.open('Nenhum nutricionista selecionado.', 'Fechar', { duration: 3000 });
+    return;
+  }
+
+  // Filtrar IDs inválidos e convertê-los para números
+  const selectedNutritionistIds = Array.from(this.selectedNutritionistIds)
+    .filter(id => {
+      const isValid = id && id.trim() !== '' && id !== '0';
+      if (!isValid) console.log(`Removendo ID inválido: "${id}"`);
+      return isValid;
+    })
+    .map(id => {
+      const numId = Number(id);
+      console.log(`Convertendo ID "${id}" para número: ${numId}`);
+      return numId;
+    })
+    .filter(numId => {
+      const isValid = !isNaN(numId) && numId > 0;
+      if (!isValid) console.log(`Removendo número inválido: ${numId}`);
+      return isValid;
+    });
+
+  console.log('IDs de nutricionistas após filtragem:', selectedNutritionistIds);
+
+  // Verificar se ainda há IDs válidos após a filtragem
+  if (selectedNutritionistIds.length === 0) {
+    this.snackBar.open('Nenhum ID de nutricionista válido foi selecionado.', 'Fechar', { duration: 3000 });
+    return;
+  }
+
+  // Chama o serviço para associar os nutricionistas ao cliente
+  this.nutritionistService.associateNutritionistToClient(this.client.id, selectedNutritionistIds)
+    .subscribe({
+      next: (updatedClient) => {
+        this.snackBar.open('Nutricionistas associados com sucesso!', 'Fechar', { duration: 3000 });
+        this.client = updatedClient;
+        this.closeAddNutritionistDialog();
+        this.loadAssociatedProfessionals(updatedClient.id!.toString());
+      },
+      error: (error) => {
+        console.error('Erro ao associar nutricionistas:', error);
+        const errorMsg = error.error?.message || error.message || 'Erro desconhecido';
+        this.snackBar.open(`Erro ao associar nutricionistas: ${errorMsg}`, 'Fechar', { duration: 5000 });
+      }
+    });
+}
 
   togglePersonalSelection(personalId: string): void {
     if (this.selectedPersonalIds.has(personalId)) {
@@ -389,24 +472,29 @@ export class ClientViewComponent implements OnInit {
   }
 
   toggleNutritionistSelection(nutritionistId: string): void {
-    if (this.selectedNutritionistIds.has(nutritionistId)) {
-      this.selectedNutritionistIds.delete(nutritionistId);
-    } else {
-      this.selectedNutritionistIds.add(nutritionistId);
-    }
+  console.log(`Toggle nutricionista ID: "${nutritionistId}"`);
+
+  // Valida o ID antes de qualquer operação
+  if (!nutritionistId || nutritionistId === 'null' || nutritionistId === 'undefined' || nutritionistId === '0') {
+    console.error('Tentativa de selecionar ID inválido:', nutritionistId);
+    this.snackBar.open('ID de nutricionista inválido', 'Fechar', { duration: 3000 });
+    return;
   }
+
+  if (this.selectedNutritionistIds.has(nutritionistId)) {
+    this.selectedNutritionistIds.delete(nutritionistId);
+    console.log(`Removido nutricionista ID ${nutritionistId}, Total: ${this.selectedNutritionistIds.size}`);
+  } else {
+    this.selectedNutritionistIds.add(nutritionistId);
+    console.log(`Adicionado nutricionista ID ${nutritionistId}, Total: ${this.selectedNutritionistIds.size}`);
+  }
+}
 
   isNutritionistSelected(nutritionistId: string): boolean {
     return this.selectedNutritionistIds.has(nutritionistId);
   }
 
-  saveSelectedNutritionists(): void {
-    // Implement your logic to save selected nutritionists here
-    // For example, you might emit an event, call a service, or update the client object
-    // Example placeholder:
-    // this.clientService.addNutritionistsToClient(this.client.id, this.selectedNutritionistIds).subscribe(...);
-    this.closeAddNutritionistDialog();
-  }
+
 
   trackByDoctorId(index: number, doctor: any): any {
     return doctor?.id;
@@ -416,9 +504,9 @@ export class ClientViewComponent implements OnInit {
     return personal && personal.id != null ? personal.id : index;
   }
 
-  trackByNutritionistId(index: number, nutritionist: any): string | number {
-    return nutritionist && nutritionist.id != null ? nutritionist.id : index;
-  }
+ trackByNutritionistId(index: number, nutritionist: any): any {
+  return nutritionist?.id || index;
+}
 
   // Assumindo que você tem métodos para buscar os profissionais associados por client ID
   // e um método para buscar TODOS os profissionais em seus respectivos services.

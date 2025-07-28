@@ -53,13 +53,21 @@ export class NutritionistListComponent implements OnInit {
     this.isLoading = true;
     this.nutritionistService.getAllNutritionists().pipe(
       tap(nutritionists => {
+        console.log('Nutricionistas carregados:', nutritionists);
+
+        // Verificar a estrutura do primeiro objeto para diagnóstico
+        if (nutritionists && nutritionists.length > 0) {
+          console.log('Exemplo do primeiro nutricionista:', JSON.stringify(nutritionists[0]));
+          console.log('Propriedades disponíveis:', Object.keys(nutritionists[0]));
+        }
+
         this.allNutritionists = nutritionists;
-        this.filteredNutritionists = nutritionists; // Initialize filtered list
+        this.filteredNutritionists = nutritionists;
       }),
       catchError(error => {
         console.error('Error loading nutritionists:', error);
         this.snackBar.open('Erro ao carregar nutricionistas', 'Fechar', { duration: 3000 });
-        return of([]); // Return an empty array on error
+        return of([]);
       }),
       finalize(() => this.isLoading = false)
     ).subscribe();
@@ -70,14 +78,33 @@ export class NutritionistListComponent implements OnInit {
     this.filteredNutritionists = this.allNutritionists.filter(nutritionist =>
       nutritionist.name?.toLowerCase().includes(searchTerm) ||
       nutritionist.specialty?.toLowerCase().includes(searchTerm) ||
-      nutritionist.crn?.toLowerCase().includes(searchTerm) ||
+      nutritionist.registry?.toLowerCase().includes(searchTerm) || // Corrigido: registry em vez de crn
       nutritionist.email?.toLowerCase().includes(searchTerm)
     );
   }
 
   onViewNutritionist(nutritionist: any): void {
-    this.router.navigate(['/nutritionist-view', nutritionist.id]);
+  console.log('Tentando visualizar nutricionista:', nutritionist);
+
+  // Verificar se o nutricionista existe
+  if (!nutritionist) {
+    this.snackBar.open('Erro: dados do nutricionista não disponíveis', 'Fechar', { duration: 3000 });
+    return;
   }
+
+  // Tentar diferentes propriedades de ID que podem estar presentes
+  const nutritionistId = nutritionist.id || nutritionist._id || nutritionist.nutritionistId;
+
+  if (nutritionistId === undefined || nutritionistId === null) {
+    console.error('Erro: ID do nutricionista não encontrado:', nutritionist);
+    console.log('Propriedades disponíveis:', Object.keys(nutritionist));
+    this.snackBar.open('Erro: ID do nutricionista não encontrado', 'Fechar', { duration: 3000 });
+    return;
+  }
+
+  console.log('Navegando para nutricionista ID:', nutritionistId);
+  this.router.navigate(['/nutritionist-view', nutritionistId]);
+}
 
   onEditNutritionist(nutritionist: any): void {
     this.router.navigate(['/nutritionist-update', nutritionist.id]);
@@ -109,31 +136,33 @@ export class NutritionistListComponent implements OnInit {
     const lowerCaseFilter = filterValue.trim().toLowerCase();
 
     if (!lowerCaseFilter) {
-      this.filteredNutritionists = [...this.allNutritionists]; // If no filter, show all nutritionists
+      this.filteredNutritionists = [...this.allNutritionists];
       return;
     }
 
     this.filteredNutritionists = this.allNutritionists.filter(nutritionist =>
       nutritionist.name?.toLowerCase().includes(lowerCaseFilter) ||
       nutritionist.specialty?.toLowerCase().includes(lowerCaseFilter) ||
-      nutritionist.crn?.toLowerCase().includes(lowerCaseFilter) ||
+      nutritionist.registry?.toLowerCase().includes(lowerCaseFilter) || // Corrigido: registry em vez de crn
       nutritionist.email?.toLowerCase().includes(lowerCaseFilter)
     );
   }
 
   ngAfterViewInit(): void {
-    this.loadAllNutritionists();
+
     this.searchControl.valueChanges.pipe(
       debounceTime(300),
       distinctUntilChanged()
     ).subscribe(() => this.onSearch());
   }
 
+  ngOnInit(): void {
+    this.loadAllNutritionists();  // ✅ Mantenha apenas esta chamada
+  }
+
   onCreateNutritionist(): void {
     this.router.navigate(['/nutritionist-create']);
   }
 
-  ngOnInit(): void {
-    this.loadAllNutritionists();
-  }
+
 }
