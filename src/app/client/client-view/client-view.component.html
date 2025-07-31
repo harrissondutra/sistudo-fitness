@@ -275,7 +275,8 @@
           <p><strong>Nome do Treino:</strong> {{ currentClientTraining.name }}</p>
           <p><strong>Período:</strong>
             <span class="training-date">
-              Início: {{ parseDate(currentClientTraining.startDate) | date:'dd/MM/yyyy' }}
+              Início: {{ currentClientTraining.startDate ? (parseDate(currentClientTraining.startDate) |
+              date:'dd/MM/yyyy') : 'Não definida' }}
             </span>
             <span class="training-date" *ngIf="currentClientTraining.endDate">
               Fim: {{ parseDate(currentClientTraining.endDate) | date:'dd/MM/yyyy' }}

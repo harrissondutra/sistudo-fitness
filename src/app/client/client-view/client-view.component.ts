@@ -854,30 +854,28 @@ setAsCurrentTraining(training: any): void {
 parseDate(dateValue: any): Date | null {
   if (!dateValue) return null;
 
-  // Se for uma string com valores separados por vírgula (como o erro reportado)
-  if (typeof dateValue === 'string' && dateValue.includes(',')) {
-    try {
-      // Converter array-like string para Date
-      const parts = dateValue.split(',').map(part => parseInt(part.trim()));
-      // Cria um novo objeto Date (mês é 0-indexed em JavaScript)
-      return new Date(parts[0], parts[1]-1, parts[2], parts[3] || 0, parts[4] || 0);
-    } catch (e) {
-      console.error('Erro ao converter string para data:', e);
-      return null;
-    }
-  }
-
-  // Já é um objeto Date
-  if (dateValue instanceof Date) {
-    return dateValue;
-  }
-
-  // Outros formatos (timestamp, ISO string)
   try {
-    const date = new Date(dateValue);
-    return !isNaN(date.getTime()) ? date : null;
+    // Para array como [2025, 7, 31, 3, 0]
+    if (Array.isArray(dateValue)) {
+      const [year, month, day, hour = 0, minute = 0] = dateValue;
+      return new Date(year, month-1, day, hour, minute);
+    }
+
+    // Para string com formato "2025,7,31,3,0"
+    if (typeof dateValue === 'string' && dateValue.includes(',')) {
+      const parts = dateValue.split(',').map(part => parseInt(part.trim()));
+      return new Date(parts[0], parts[1]-1, parts[2], parts[3] || 0, parts[4] || 0);
+    }
+
+    // Se já for um objeto Date
+    if (dateValue instanceof Date) {
+      return dateValue;
+    }
+
+    // Para outros formatos de string
+    return new Date(dateValue);
   } catch (e) {
-    console.error('Erro ao converter para data:', e);
+    console.error('Erro ao converter data:', e, dateValue);
     return null;
   }
 }

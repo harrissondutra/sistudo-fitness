@@ -3,6 +3,7 @@ import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Client } from '../../models/client';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -23,13 +24,13 @@ export class ClientService {
     return this.http.post<Client>(`${this.baseUrl}/create`, client);
   }
 
-  /**
-   * Retrieves a client by their ID.
-   * @param id The ID of the client to retrieve.
-   * @returns An Observable of the client.
-   */
-  getClientById(id: string): Observable<Client> {
-    return this.http.get<Client>(`${this.baseUrl}/getById/${id}`);
+
+
+  // No client.service.ts
+  getClientById(id: number | string): Observable<Client> {
+    // Converter para number dentro do método
+    const numericId = typeof id === 'string' ? Number(id) : id;
+    return this.http.get<Client>(`${this.baseUrl}/getById/${numericId}`);
   }
 
   /**
