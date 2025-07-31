@@ -204,7 +204,8 @@
               <span class="label">CREF:</span>
               <span class="value">{{ personal.registry || personal.registry || '-' }}</span>
               <div class="action-container">
-                <button mat-button class="remove-button" (click)="removePersonal(personal)" matTooltip="Desassociar personal">
+                <button mat-button class="remove-button" (click)="removePersonal(personal)"
+                  matTooltip="Desassociar personal">
                   <mat-icon>link_off</mat-icon>
                   <span>Desassociar</span>
                 </button>
@@ -241,7 +242,8 @@
               <span class="label">Especialidade:</span>
               <span class="value">{{ nutritionist.specialty || '-' }}</span>
               <div class="action-container">
-                <button mat-button class="remove-button" (click)="removeNutritionist(nutritionist)" matTooltip="Desassociar nutricionista">
+                <button mat-button class="remove-button" (click)="removeNutritionist(nutritionist)"
+                  matTooltip="Desassociar nutricionista">
                   <mat-icon>link_off</mat-icon>
                   <span>Desassociar</span>
                 </button>
@@ -263,21 +265,43 @@
         <h2>
           <mat-icon>assignment</mat-icon>
           Treino Atual
+          <button mat-icon-button color="primary" (click)="assignNewTraining()" matTooltip="Atribuir novo treino">
+            <mat-icon>add_circle_outline</mat-icon>
+          </button>
         </h2>
+
         @if (currentClientTraining) {
         <div class="current-training-details">
           <p><strong>Nome do Treino:</strong> {{ currentClientTraining.name }}</p>
-          <p><strong>Período:</strong> {{ currentClientTraining.startDate | date:'dd/MM/yyyy' }} - {{
-            currentClientTraining.endDate | date:'dd/MM/yyyy' }}</p>
-          <p><strong>Objetivo:</strong> {{ currentClientTraining.objective }}</p>
-          <p><strong>Frequência Semanal:</strong> {{ currentClientTraining.weeklyFrequency }}</p>
+          <p><strong>Período:</strong>
+            <span class="training-date">
+              Início: {{ parseDate(currentClientTraining.startDate) | date:'dd/MM/yyyy' }}
+            </span>
+            <span class="training-date" *ngIf="currentClientTraining.endDate">
+              Fim: {{ parseDate(currentClientTraining.endDate) | date:'dd/MM/yyyy' }}
+            </span>
+          </p>
+          <p><strong>Categoria:</strong> {{
+            (currentClientTraining.categories && currentClientTraining.categories.length > 0 ?
+            currentClientTraining.categories[0].name :
+            (currentClientTraining.category || '-'))
+            }}</p>
+          <p><strong>Frequência Semanal:</strong> {{ currentClientTraining.weeklyFrequency || '-' }}</p>
+
           <h3>Exercícios:</h3>
-          @if (currentClientTraining.exercises && currentClientTraining.exercises.length > 0) {
-          <ul>
+          @if (currentClientTraining.exercises?.length) {
+          <div class="exercises-list">
             @for (exercise of currentClientTraining.exercises; track exercise.id) {
-            <li>{{ exercise.name }} (Séries: {{ exercise.sets }}, Repetições: {{ exercise.reps }})</li>
+            <div class="exercise-item">
+              <h4>{{ exercise.name }}</h4>
+              <p>
+                <span class="exercise-detail">Séries: {{ exercise.sets || '-' }}</span>
+                <span class="exercise-detail">Repetições: {{ exercise.reps || '-' }}</span>
+                <span class="exercise-detail">Carga: {{ exercise.weight ? (exercise.weight + ' kg') : '-' }}</span>
+              </p>
+            </div>
             }
-          </ul>
+          </div>
           } @else {
           <p>Nenhum exercício cadastrado para este treino.</p>
           }
@@ -299,41 +323,48 @@
           Histórico de Treinos
         </h2>
         <div class="training-history-table-wrapper">
-          <!-- Wrapper para responsividade da tabela -->
-          <ng-container *ngIf="(client?.trainings?.length ?? 0) > 0; else noTrainingHistory">
-            <table class="training-table">
-              <thead>
-                <tr>
-                  <th>Nome do Treino</th>
-                  <th>Início</th>
-                  <th>Fim</th>
-                  <th>Status</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let training of client?.trainings || []; trackBy: trackByTrainingId">
-                  <td>{{ training.name }}</td>
-                  <td>{{ training.startDate | date:'dd/MM/yyyy' }}</td>
-                  <td>{{ training.endDate | date:'dd/MM/yyyy' }}</td>
-                  <td>-</td>
-                  <td>
-                    <button mat-icon-button color="primary" (click)="viewTrainingDetails(training.id ?? '')">
-                      <mat-icon>visibility</mat-icon>
-                    </button>
-                    <button mat-icon-button color="warn" (click)="deleteTraining(training.id?.toString() ?? '')">
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </ng-container>
-          <ng-template #noTrainingHistory>
-            <div class="no-data-row">
-              <p>Nenhum histórico de treino encontrado para este cliente.</p>
-            </div>
-          </ng-template>
+          @if ((client?.trainings?.length ?? 0) > 0) {
+          <table class="training-table">
+            <thead>
+              <tr>
+                <th>Nome do Treino</th>
+                <th>Início</th>
+                <th>Fim</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (training of client?.trainings ?? []; track training.id) {
+              <tr [class.active-training]="currentClientTraining?.id === training.id">
+                <td>{{ training.name || 'Sem nome' }}</td>
+                <td>{{ isValidDate(training.startDate) ? (training.startDate | date:'dd/MM/yyyy') : '-' }}</td>
+                <td>{{ isValidDate(training.endDate) ? (training.endDate | date:'dd/MM/yyyy') : '-' }}</td>
+                <td>Ativo</td>
+                <td>
+                  <button mat-icon-button color="primary" (click)="viewTrainingDetails(training)"
+                    matTooltip="Ver detalhes">
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                  <button mat-icon-button color="accent" (click)="setAsCurrentTraining(training)"
+                    matTooltip="Definir como treino atual">
+                    <mat-icon>check_circle</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn"
+                    (click)="deleteTraining(training.id != null ? training.id.toString() : '')"
+                    matTooltip="Excluir treino">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+          } @else {
+          <div class="no-data-row">
+            <p>Nenhum histórico de treino encontrado para este cliente.</p>
+          </div>
+          }
         </div>
       </div>
     </div>

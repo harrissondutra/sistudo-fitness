@@ -2,6 +2,11 @@ import { ExerciseDto } from './exercise';
 import { ClientDto } from './client';
 import { TrainningCategoryDto } from './trainning-category'; // Nova importação
 
+// Defina o tipo WeekDay como uma enumeração ou tipo de string
+export type WeekDay = 'Segunda' | 'Terça' | 'Quarta' | 'Quinta' | 'Sexta' | 'Sábado' | 'Domingo';
+
+// Atualização para o modelo Trainning
+// Em models/trainning.ts
 export interface Trainning {
   id?: number;
   name: string;
@@ -9,10 +14,10 @@ export interface Trainning {
   exercises: ExerciseDto[];
   client: ClientDto;
   active: boolean;
-  categories: TrainningCategoryDto[]; // Ajustado para lista de TrainningCategoryDto
-  // Removendo startDate e endDate daqui, pois não estão no DTO do backend
-  // Se forem adicionados ao backend no futuro, inclua-os novamente aqui.
-  startDate?: Date; // Opcional, se necessário
-  endDate?: Date; // Opcional, se necessário
+  categories: TrainningCategoryDto[];
+  // Atualizado para aceitar arrays
+  startDate?: Date | null;
+  endDate?: Date | null;
+  weekFrequency?: WeekDay[];
 }
 

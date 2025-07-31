@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { Trainning } from '../../models/trainning'; // <--- Mantenha 'Trainning' (com 'a') se o seu modelo em models/trainning.ts ainda for assim
 import { environment } from '../../../environments/environment';
 
@@ -20,8 +20,28 @@ export class TrainningService { // <--- Mantenha o nome da classe 'TrainingServi
   }
 
   // 2. getTrainningById: Rota do backend é "/getById/{id}"
+
+
+  // Adicione este método ao TrainningService
+  // Atualize o método em trainning.service.ts
   getTrainningById(id: number): Observable<Trainning> {
-    return this.http.get<Trainning>(`${this.baseUrl}/getById/${id}`);
+    return this.http.get<any>(`${this.baseUrl}/getById/${id}`).pipe(
+      map(response => {
+        // Converter startDate de array para Date
+        if (Array.isArray(response.startDate)) {
+          const [year, month, day, hour = 0, minute = 0] = response.startDate;
+          response.startDate = new Date(year, month - 1, day, hour, minute);
+        }
+
+        // Converter endDate de array para Date
+        if (Array.isArray(response.endDate)) {
+          const [year, month, day, hour = 0, minute = 0] = response.endDate;
+          response.endDate = new Date(year, month - 1, day, hour, minute);
+        }
+
+        return response as Trainning;
+      })
+    );
   }
 
   // 3. getTrainningByName: Rota do backend é "/getByTrainningName/{name}"

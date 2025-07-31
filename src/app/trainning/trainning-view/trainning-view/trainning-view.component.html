@@ -40,9 +40,9 @@
           <span class="label">Cliente:</span>
           <span class="value">
             @if (trainning.client) {
-              {{ trainning.client.name }} (ID: {{ trainning.client.id }})
+            {{ trainning.client.name }} (ID: {{ trainning.client.id }})
             } @else {
-              N/A
+            N/A
             }
           </span>
         </div>
@@ -51,9 +51,9 @@
           <span class="label">Início:</span>
           <span class="value">
             @if (trainning.startDate) {
-              {{ trainning.startDate | date:'dd/MM/yyyy' }}
+            {{ formatDate(trainning.startDate) }}
             } @else {
-              N/A
+            Não definida
             }
           </span>
         </div>
@@ -62,9 +62,9 @@
           <span class="label">Fim:</span>
           <span class="value">
             @if (trainning.endDate) {
-              {{ trainning.endDate | date:'dd/MM/yyyy' }}
+            {{ formatDate(trainning.endDate) }}
             } @else {
-              N/A
+            Não definida
             }
           </span>
         </div>
@@ -93,7 +93,7 @@
           <div class="exercise-details">
             <h3>{{ exercise.name }}</h3>
             <p>{{ exercise.description }}</p>
-            </div>
+          </div>
         </div>
         }
       </div>

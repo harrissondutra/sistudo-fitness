@@ -18,6 +18,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox'; // Usar MatCheck
 import { Nutritionist } from '../../models/nutritionist';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component'; // Ajuste o caminho conforme necessário
+import { TrainningService } from '../../services/trainning/trainning.service';
 
 @Component({
   selector: 'app-client-view',
@@ -40,6 +41,7 @@ export class ClientViewComponent implements OnInit {
   isLoading = false;
 
   currentClientTraining: any = null;
+  clientTrainings: any[] = []; // Array para armazenar todos os treinos
   associatedDoctors: Doctor[] = [];
   associatedPersonals: Personal[] = [];
   associatedNutritionists: any[] = []; // Ajuste o tipo conforme necessário
@@ -65,7 +67,8 @@ export class ClientViewComponent implements OnInit {
     private doctorService: DoctorService, // Renomeado para seguir convenção
     private personalService: PersonalService,
     private nutritionistService: NutritionistService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private trainningService: TrainningService
   ) { }
 
   ngOnInit(): void {
@@ -73,6 +76,7 @@ export class ClientViewComponent implements OnInit {
     if (clientId) {
       this.loadClient(clientId);
       this.loadAssociatedProfessionals(clientId);
+      this.loadClientTrainings(clientId);
     } else {
       console.warn('ID do cliente não fornecido na URL.');
       this.snackBar.open('ID do cliente não encontrado.', 'Fechar', { duration: 3000 });
@@ -211,10 +215,7 @@ export class ClientViewComponent implements OnInit {
     return training.id || index.toString();
   }
 
-  viewTrainingDetails(trainingId: string | number): void {
-    console.log('View training details for training ID:', trainingId);
-    // this.router.navigate(['/trainning-view', trainingId]);
-  }
+  // Removed duplicate implementation of viewTrainingDetails
 
   deleteTraining(trainingId: string): void {
     console.log('Deleting training with ID:', trainingId);
@@ -781,5 +782,104 @@ removeSelectedNutritionists(): void {
   });
 }
 
+private loadClientTrainings(clientId: string): void {
+  this.trainningService.getTrainningByClientId(Number(clientId)).subscribe({
+    next: (trainings) => {
+      console.log('Treinos do cliente carregados:', trainings);
+      this.clientTrainings = trainings || [];
+
+      // Se houver treinos, define o primeiro como atual (ou outro critério)
+      this.currentClientTraining = this.clientTrainings.length > 0 ?
+        this.clientTrainings[0] : null;
+    },
+    error: (error) => {
+      console.error('Erro ao carregar treinos do cliente:', error);
+      this.clientTrainings = [];
+      this.currentClientTraining = null;
+      this.snackBar.open('Erro ao carregar treinos do cliente.', 'Fechar', { duration: 3000 });
+    }
+  });
+}
+
+setCurrentTraining(training: any): void {
+  this.currentClientTraining = training;
+  console.log('Treino selecionado:', training);
+}
+
+// Adicione console.logs para debugging
+isValidDate(dateValue: any): boolean {
+  return this.parseDate(dateValue) !== null;
+}
+
+// Método para visualizar detalhes do treino
+viewTrainingDetails(training: any): void {
+  if (!training) return;
+
+  // Cria uma cópia do treino
+  const trainingCopy = { ...training };
+
+  // Converte as datas se necessário
+  if (trainingCopy.startDate) {
+    const parsedDate = this.parseDate(trainingCopy.startDate);
+    if (parsedDate) {
+      trainingCopy.startDate = parsedDate;
+    }
+  }
+
+  if (trainingCopy.endDate) {
+    const parsedDate = this.parseDate(trainingCopy.endDate);
+    if (parsedDate) {
+      trainingCopy.endDate = parsedDate;
+    }
+  }
+
+  this.currentClientTraining = trainingCopy;
+
+  // Scroll para a seção
+  setTimeout(() => {
+    document.querySelector('.current-training-section')?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+  }, 100);
+}
+
+// Método para definir um treino como o atual
+setAsCurrentTraining(training: any): void {
+  this.currentClientTraining = training;
+  this.snackBar.open(`"${training.name}" definido como treino atual`, 'Fechar', { duration: 3000 });
+}
+
+// Adicione ao client-view.component.ts
+parseDate(dateValue: any): Date | null {
+  if (!dateValue) return null;
+
+  // Se for uma string com valores separados por vírgula (como o erro reportado)
+  if (typeof dateValue === 'string' && dateValue.includes(',')) {
+    try {
+      // Converter array-like string para Date
+      const parts = dateValue.split(',').map(part => parseInt(part.trim()));
+      // Cria um novo objeto Date (mês é 0-indexed em JavaScript)
+      return new Date(parts[0], parts[1]-1, parts[2], parts[3] || 0, parts[4] || 0);
+    } catch (e) {
+      console.error('Erro ao converter string para data:', e);
+      return null;
+    }
+  }
+
+  // Já é um objeto Date
+  if (dateValue instanceof Date) {
+    return dateValue;
+  }
+
+  // Outros formatos (timestamp, ISO string)
+  try {
+    const date = new Date(dateValue);
+    return !isNaN(date.getTime()) ? date : null;
+  } catch (e) {
+    console.error('Erro ao converter para data:', e);
+    return null;
+  }
+}
 
 }
