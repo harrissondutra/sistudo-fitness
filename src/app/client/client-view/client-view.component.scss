@@ -209,28 +209,71 @@ body {
 .info-item {
   background: $info-item-background;
   border-radius: $spacing-unit;
-  transition: background-color 0.2s ease;
+  padding: $spacing-unit * 1.5;
+  position: relative;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
 
   &:hover {
     background: $info-item-hover-background;
+    border-color: rgba($primary-color, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
   }
 
+  // Título e dados do profissional
   .label {
     display: block;
     font-size: 14px;
     color: $light-text-color;
     font-weight: 500;
-    word-break: break-word;
-    padding-top: $spacing-unit ; // 4px
+    margin-bottom: $spacing-unit * 0.5;
   }
 
   .value {
     font-size: 16px;
     color: $text-color;
     font-weight: 500;
+    margin-bottom: $spacing-unit;
     word-break: break-word;
-    margin-top: 20; // 4px
+  }
 
+  // Container de ações separado no final do card
+  .action-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: $spacing-unit * 1.5;
+    padding-top: $spacing-unit;
+    border-top: 1px dashed rgba($border-color, 0.8);
+  }
+
+  // Estilos específicos para o botão de desassociação
+  .remove-button {
+    display: flex;
+    align-items: center;
+    padding: $spacing-unit $spacing-unit * 1.5;
+    border-radius: $spacing-unit * 0.5;
+    background-color: rgba($warn-color, 0.08);
+    color: $warn-color;
+    transition: all 0.2s ease;
+    font-weight: 500;
+
+    &:hover {
+      background-color: $warn-color;
+      color: white;
+      box-shadow: 0 2px 4px rgba($warn-color, 0.4);
+      transform: translateY(-1px);
+    }
+
+    mat-icon {
+      margin-right: $spacing-unit;
+      font-size: 18px;
+    }
+
+    span {
+      font-size: 14px;
+      letter-spacing: 0.3px;
+    }
   }
 }
 

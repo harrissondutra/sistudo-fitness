@@ -169,6 +169,12 @@
               <span class="value">{{ doctor.specialty || '-' }}</span>
               <span class="label">CRM:</span>
               <span class="value">{{ doctor.crm || '-' }}</span>
+              <div class="action-container">
+                <button mat-button class="remove-button" (click)="removeDoctor(doctor)" matTooltip="Desassociar médico">
+                  <mat-icon>link_off</mat-icon>
+                  <span>Desassociar</span>
+                </button>
+              </div>
             </div>
           </div>
         </ng-container>
@@ -197,6 +203,12 @@
               <span class="value">{{ personal.email || '-' }}</span>
               <span class="label">CREF:</span>
               <span class="value">{{ personal.registry || personal.registry || '-' }}</span>
+              <div class="action-container">
+                <button mat-button class="remove-button" (click)="removePersonal(personal)" matTooltip="Desassociar personal">
+                  <mat-icon>link_off</mat-icon>
+                  <span>Desassociar</span>
+                </button>
+              </div>
             </div>
           </div>
         </ng-container>
@@ -329,38 +341,38 @@
 
   <!-- Doctor Selection Dialog -->
   <div class="doctor-selection-dialog-overlay" *ngIf="showAddDoctorDialog" style="
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  ">
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+">
     <div class="doctor-selection-dialog" style="
-      background-color: #fff;
-      padding: 24px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      max-width: 500px;
-      width: 90%;
-      max-height: 90%;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-    ">
+    background-color: #fff;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 90%;
+    max-height: 90%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  ">
       <div class="dialog-header" style="
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 16px;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 8px;
-      ">
-        <h3 style="margin: 0; color: #3f51b5;">Selecionar Médico(s)</h3>
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 8px;
+    ">
+        <h3 style="margin: 0; color: #3f51b5;">Gerenciar Médico(s)</h3>
         <button mat-icon-button (click)="closeAddDoctorDialog()">
           <mat-icon>close</mat-icon>
         </button>
@@ -369,10 +381,10 @@
         <p *ngIf="availableDoctors.length === 0" style="text-align: center; color: #757575;">Nenhum médico disponível no
           sistema.</p>
         <div class="available-doctors-list" style="
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        ">
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      ">
           <mat-checkbox *ngFor="let doctor of availableDoctors || []; trackBy: trackByDoctorId"
             [checked]="isDoctorSelected(doctor.id != null ? doctor.id.toString() : '')"
             (change)="toggleDoctorSelection(doctor.id != null ? doctor.id.toString() : '')"
@@ -382,15 +394,31 @@
         </div>
       </div>
       <div class="dialog-actions" style="
-        display: flex;
-        justify-content: flex-end;
-        gap: 8px;
-        margin-top: 16px;
-        padding-top: 16px;
-        border-top: 1px solid #eee;
-      ">
-        <button mat-button (click)="closeAddDoctorDialog()">Cancelar</button>
-        <button mat-raised-button color="primary" (click)="saveSelectedDoctors()">Adicionar Selecionados</button>
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #eee;
+    ">
+        <div>
+          <button mat-button (click)="closeAddDoctorDialog()">
+            <mat-icon>cancel</mat-icon>
+            Cancelar
+          </button>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button mat-raised-button color="warn" [disabled]="selectedDoctorIds.size === 0"
+            (click)="removeSelectedDoctors()">
+            <mat-icon>link_off</mat-icon>
+            Desassociar
+          </button>
+          <button mat-raised-button color="primary" [disabled]="selectedDoctorIds.size === 0"
+            (click)="saveSelectedDoctors()">
+            <mat-icon>link</mat-icon>
+            Associar
+          </button>
+        </div>
       </div>
     </div>
   </div>

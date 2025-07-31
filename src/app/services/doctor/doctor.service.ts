@@ -38,4 +38,8 @@ export class DoctorService {
     return this.http.post<Client>(`${this.baseUrl}/associateDoctor/${clientId}`, doctorIds);
   }
 
+  disassociateDoctorsFromClient(clientId: number, doctorIds: number[]): Observable<Client> {
+    return this.http.post<Client>(`${this.baseUrl}/disassociateDoctors/${clientId}`, doctorIds);
+  }
+
 }
