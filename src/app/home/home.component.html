@@ -1,8 +1,5 @@
 <mat-sidenav-container class="sidenav-container">
-  <mat-sidenav
-    #sidenav
-    [mode]="(isHandset$ | async) ? 'over' : 'side'"
-    [opened]="!(isHandset$ | async)">
+  <mat-sidenav #sidenav [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="!(isHandset$ | async)">
     <app-sidenav (linkClicked)="onSidenavLinkClicked()"></app-sidenav>
   </mat-sidenav>
   <mat-sidenav-content>
@@ -14,7 +11,8 @@
           <!-- Seção de Métricas -->
           <div class="dashboard-section metrics">
             <div class="cards-grid">
-              <mat-card class="dashboard-card metric-card users-card" [routerLink]="'/clients-list'" style="cursor: pointer;">
+              <mat-card class="dashboard-card metric-card users-card" [routerLink]="'/clients-list'"
+                style="cursor: pointer;">
                 <div class="card-glow"></div>
                 <mat-card-content style="display: flex; justify-content: space-between; align-items: center;">
                   <div class="metric-info">
@@ -30,7 +28,8 @@
                 </mat-card-content>
               </mat-card>
 
-              <mat-card class="dashboard-card metric-card trainings-card" [routerLink]="'/trainnings'" style="cursor: pointer;">
+              <mat-card class="dashboard-card metric-card trainings-card" [routerLink]="'/trainnings'"
+                style="cursor: pointer;">
                 <div class="card-glow"></div>
                 <mat-card-content style="display: flex; justify-content: space-between; align-items: center;">
                   <div class="metric-info">
@@ -38,15 +37,15 @@
                       <mat-icon>assignment</mat-icon>
                     </div>
                     <h4>Total de Treinos</h4>
-                    <p class="metric-value">{{ totalTrainingsCount }}</p>
+                    <p class="metric-value">{{ totalTrainingsCount ?? 0 }}</p>
                     <span class="metric-label">Treinos criados</span>
                   </div>
-                  <!-- Adicionado ícone de seta para indicar clicabilidade -->
                   <mat-icon class="action-arrow">arrow_forward</mat-icon>
                 </mat-card-content>
               </mat-card>
 
-              <mat-card class="dashboard-card metric-card active-card" [routerLink]="'/inactive-trainning'" style="cursor: pointer;">
+              <mat-card class="dashboard-card metric-card active-card" [routerLink]="'/inactive-trainning'"
+                style="cursor: pointer;">
                 <div class="card-glow"></div>
                 <mat-card-content style="display: flex; justify-content: space-between; align-items: center;">
                   <div class="metric-info">
@@ -54,10 +53,9 @@
                       <mat-icon>fitness_center</mat-icon>
                     </div>
                     <h4>Treinos Inativos</h4>
-                    <p class="metric-value">{{totalTrainingsInactiveCount}}</p>
+                    <p class="metric-value">{{ totalTrainingsInactiveCount ?? 0 }}</p>
                     <span class="metric-label">Em andamento</span>
                   </div>
-                  <!-- Adicionado ícone de seta para indicar clicabilidade -->
                   <mat-icon class="action-arrow">arrow_forward</mat-icon>
                 </mat-card-content>
               </mat-card>
@@ -81,7 +79,7 @@
                 </mat-card-content>
               </mat-card>
 
-              <mat-card class="dashboard-card action-card" routerLink="/trainning-create">
+              <mat-card class="dashboard-card action-card" routerLink="/trainning-create/:id">
                 <mat-card-content>
                   <div class="action-icon">
                     <mat-icon>add_box</mat-icon>

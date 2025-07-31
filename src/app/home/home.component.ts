@@ -112,34 +112,37 @@ export class HomeComponent implements OnInit {
   }
 
   loadTotalTrainingsCount(): void {
-    this.trainningService.listAllActiveTrainnings().pipe(
-      tap((trainings: Trainning[]) => {
-        this.totalTrainingsCount = trainings.length;
-        this.loading = false;
-      }),
-      catchError(error => {
-        console.error('Erro ao carregar a contagem total de treinos:', error);
-        this.totalTrainingsCount = 0;
-        this.loading = false;
-        return of([]);
-      })
-    ).subscribe();
-  }
+  this.trainningService.listAllActiveTrainnings().subscribe({
+    next: (trainings: Trainning[]) => {
+      this.totalTrainingsCount = trainings ? trainings.length : 0;
+      console.log('Total de treinos ativos carregados:', this.totalTrainingsCount);
+    },
+    error: (error) => {
+      console.error('Erro ao carregar a contagem total de treinos:', error);
+      this.totalTrainingsCount = 0;
+    },
+    complete: () => {
+      this.loading = false;
+    }
+  });
+}
 
-  loadTotalTrainingsInactiveCount(): void {
-    this.trainningService.listAllTrainningsInactive().pipe(
-      tap((trainings: Trainning[]) => {
-        this.totalTrainingsInactiveCount = trainings.length;
-        this.loading = false;
-      }),
-      catchError(error => {
-        console.error('Erro ao carregar a contagem de treinos inativos:', error);
-        this.totalTrainingsInactiveCount = 0;
-        this.loading = false;
-        return of([]);
-      })
-    ).subscribe();
-  }
+loadTotalTrainingsInactiveCount(): void {
+  // Corrigir o nome do método para coincidir com a API do serviço
+  this.trainningService.listAllTrainningsInactive().subscribe({
+    next: (trainings: Trainning[]) => {
+      this.totalTrainingsInactiveCount = trainings ? trainings.length : 0;
+      console.log('Total de treinos inativos carregados:', this.totalTrainingsInactiveCount);
+    },
+    error: (error) => {
+      console.error('Erro ao carregar a contagem de treinos inativos:', error);
+      this.totalTrainingsInactiveCount = 0;
+    },
+    complete: () => {
+      this.loading = false;
+    }
+  });
+}
 
 
   onSidenavLinkClicked(): void {
