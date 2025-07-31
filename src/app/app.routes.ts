@@ -51,7 +51,7 @@ export const routes: Routes = [
       { path: 'clients-list', component: ClientListComponent },
       { path: 'clients-edit/:id', component: ClientEditComponent },
       { path: 'edit-measures/:id', component: EditMeasuresComponent },
-      { path: 'trainning-create', component: TrainningCreateComponent },
+      { path: 'trainning-create/:id', component: TrainningCreateComponent },
       { path: 'trainning-view/:id', component: TrainningViewComponent },
       { path: 'trainning-edit/:id', component: TrainningEditComponent },
       { path: 'exercises', component: ListExerciseComponent},

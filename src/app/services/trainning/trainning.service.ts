@@ -74,6 +74,29 @@ export class TrainningService { // <--- Mantenha o nome da classe 'TrainingServi
     return this.http.get<Trainning[]>(`${this.baseUrl}/listAllTrainningsInactive`);
   }
 
+  listInactiveTrainningsByClientId(clientId: number): Observable<Trainning[]> {
+    return this.http.get<Trainning[]>(`${this.baseUrl}/listInactiveTrainningsByClientId/${clientId}`).pipe(
+      map(trainnings => {
+        // Processa as datas de cada treino na lista
+        return trainnings.map(trainning => {
+          // Converter startDate de array para Date
+          if (Array.isArray(trainning.startDate)) {
+            const [year, month, day, hour = 0, minute = 0] = trainning.startDate;
+            trainning.startDate = new Date(year, month - 1, day, hour, minute);
+          }
+
+          // Converter endDate de array para Date
+          if (Array.isArray(trainning.endDate)) {
+            const [year, month, day, hour = 0, minute = 0] = trainning.endDate;
+            trainning.endDate = new Date(year, month - 1, day, hour, minute);
+          }
+
+          return trainning;
+        });
+      })
+    );
+}
+
   // 9. deleteTrainning: Rota do backend é "/delete/{id}"
   deleteTrainning(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/delete/${id}`);

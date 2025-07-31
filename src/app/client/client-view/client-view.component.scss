@@ -828,3 +828,53 @@ body {
     font-weight: 500;
   }
 }
+
+
+.assign-training-button {
+    width: 100%; // Faz o botão ocupar toda a largura do card
+    margin-top: 0; // Remove a margem superior já que o card gerencia isso
+    padding: 12px 20px; // Aumenta o padding para um botão mais visível
+    border-radius: 4px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; // Aumenta o espaço entre o ícone e o texto
+    transition: all 0.2s ease; // Adiciona transição suave
+    box-shadow: 0 2px 8px rgba(63, 81, 181, 0.2); // Sombra sutil
+
+    &:hover {
+      transform: translateY(-2px); // Efeito de elevação ao passar o mouse
+      box-shadow: 0 4px 12px rgba(63, 81, 181, 0.3); // Sombra mais pronunciada
+    }
+
+    mat-icon {
+      margin: 0; // Remove a margem do ícone (o gap já cuida do espaçamento)
+      font-size: 20px;
+      height: 20px;
+      width: 20px;
+    }
+
+    span {
+      font-size: 15px;
+      letter-spacing: 0.3px;
+    }
+  }
+
+
+.no-training {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  text-align: center;
+
+
+
+  p {
+    margin-bottom: 16px;
+    color: #555;
+    font-size: 16px;
+  }
+}

@@ -19,6 +19,7 @@ import { Nutritionist } from '../../models/nutritionist';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component'; // Ajuste o caminho conforme necessário
 import { TrainningService } from '../../services/trainning/trainning.service';
+import { Trainning } from '../../models/trainning';
 
 @Component({
   selector: 'app-client-view',
@@ -45,6 +46,7 @@ export class ClientViewComponent implements OnInit {
   associatedDoctors: Doctor[] = [];
   associatedPersonals: Personal[] = [];
   associatedNutritionists: any[] = []; // Ajuste o tipo conforme necessário
+  inactiveTrainings: Trainning[] = [];
 
   showAddDoctorDialog: boolean = false;
   showAddPersonalDialog: boolean = false;
@@ -783,12 +785,18 @@ removeSelectedNutritionists(): void {
 }
 
 private loadClientTrainings(clientId: string): void {
+  // Carregar treinos ativos do cliente (para o treino atual)
   this.trainningService.getTrainningByClientId(Number(clientId)).subscribe({
     next: (trainings) => {
-      console.log('Treinos do cliente carregados:', trainings);
-      this.clientTrainings = trainings || [];
+      console.log('Treinos recebidos do cliente:', trainings);
 
-      // Se houver treinos, define o primeiro como atual (ou outro critério)
+      // Filtrar apenas treinos ativos para a seção de treino atual
+      const activeTrainings = trainings.filter(training => training.active === true);
+      this.clientTrainings = activeTrainings || [];
+
+      console.log('Treinos ativos filtrados:', activeTrainings);
+
+      // Se houver treinos ativos, define o primeiro como atual
       this.currentClientTraining = this.clientTrainings.length > 0 ?
         this.clientTrainings[0] : null;
     },
@@ -796,14 +804,31 @@ private loadClientTrainings(clientId: string): void {
       console.error('Erro ao carregar treinos do cliente:', error);
       this.clientTrainings = [];
       this.currentClientTraining = null;
-      this.snackBar.open('Erro ao carregar treinos do cliente.', 'Fechar', { duration: 3000 });
+    }
+  });
+
+  // Carregar treinos inativos para o histórico
+  this.trainningService.listInactiveTrainningsByClientId(Number(clientId)).subscribe({
+    next: (inactiveTrainings) => {
+      console.log('Treinos inativos do cliente carregados:', inactiveTrainings);
+      this.inactiveTrainings = inactiveTrainings || [];
+    },
+    error: (error) => {
+      console.error('Erro ao carregar treinos inativos do cliente:', error);
+      this.inactiveTrainings = [];
+      this.snackBar.open('Erro ao carregar histórico de treinos do cliente.', 'Fechar', { duration: 3000 });
     }
   });
 }
 
 setCurrentTraining(training: any): void {
+   if (!training.active) {
+    this.snackBar.open(`Não é possível definir "${training.name}" como atual pois está inativo`, 'Fechar', { duration: 3000 });
+    return;
+  }
+
   this.currentClientTraining = training;
-  console.log('Treino selecionado:', training);
+  this.snackBar.open(`"${training.name}" definido como treino atual`, 'Fechar', { duration: 3000 });
 }
 
 // Adicione console.logs para debugging
@@ -811,6 +836,7 @@ isValidDate(dateValue: any): boolean {
   return this.parseDate(dateValue) !== null;
 }
 
+// Método para visualizar detalhes do treino
 // Método para visualizar detalhes do treino
 viewTrainingDetails(training: any): void {
   if (!training) return;
@@ -833,6 +859,14 @@ viewTrainingDetails(training: any): void {
     }
   }
 
+  // Não define como "currentClientTraining" se estiver visualizando um treino inativo
+  // Em vez disso, apenas mostre os detalhes em um diálogo ou painel separado
+  if (!trainingCopy.active) {
+    // Opção 1: Exibir em um diálogo (implementação depende da sua UI)
+    this.showTrainingDetailsInDialog(trainingCopy);
+    return;
+  }
+
   this.currentClientTraining = trainingCopy;
 
   // Scroll para a seção
@@ -842,6 +876,46 @@ viewTrainingDetails(training: any): void {
       block: 'start'
     });
   }, 100);
+}
+
+// Novo método para exibir detalhes de treinos inativos
+// Substitua o método showTrainingDetailsInDialog:
+showTrainingDetailsInDialog(training: any): void {
+  const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+    width: '600px',
+    data: {
+      title: `Detalhes do Treino: ${training.name}`,
+      message: this.formatTrainingDetails(training),
+      confirmText: 'Fechar',
+      showCancel: false
+    }
+  });
+}
+
+// Adicione este método auxiliar:
+formatTrainingDetails(training: any): string {
+  let details = `
+    <strong>Nome:</strong> ${training.name || 'Não definido'}<br>
+    <strong>Data de Início:</strong> ${this.formatDate(training.startDate)}<br>
+    <strong>Data de Fim:</strong> ${this.formatDate(training.endDate)}<br>
+    <strong>Status:</strong> ${training.active ? 'Ativo' : 'Inativo'}<br>
+  `;
+
+  if (training.exercises && training.exercises.length > 0) {
+    details += '<br><strong>Exercícios:</strong><br>';
+    training.exercises.forEach((ex: any) => {
+      details += `- ${ex.name}<br>`;
+    });
+  }
+
+  return details;
+}
+
+formatDate(date: any): string {
+  const parsed = this.parseDate(date);
+  if (!parsed) return 'Não definida';
+
+  return parsed.toLocaleDateString('pt-BR');
 }
 
 // Método para definir um treino como o atual
