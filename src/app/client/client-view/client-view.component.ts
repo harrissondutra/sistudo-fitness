@@ -602,67 +602,156 @@ export class ClientViewComponent implements OnInit {
     });
   }
   // Método para desassociar um único personal
-removePersonal(personal: Personal): void {
-  if (!this.client?.id) {
-    this.snackBar.open('ID do cliente não disponível.', 'Fechar', { duration: 3000 });
-    return;
+  removePersonal(personal: Personal): void {
+    if (!this.client?.id) {
+      this.snackBar.open('ID do cliente não disponível.', 'Fechar', { duration: 3000 });
+      return;
+    }
+
+    const personalName = personal.name || 'Selecionado';
+
+    // Abre diálogo de confirmação do Material
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Confirmar Desassociação',
+        message: `Deseja realmente desassociar o personal ${personalName}?`,
+        confirmText: 'Desassociar',
+        cancelText: 'Cancelar'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (this.client?.id !== undefined && personal.id !== undefined) {
+          this.personalService.disassociatePersonalsFromClient(this.client.id, [personal.id])
+            .subscribe({
+              next: (updatedClient) => {
+                this.snackBar.open('Personal desassociado com sucesso!', 'Fechar', { duration: 3000 });
+                this.client = updatedClient;
+                this.loadAssociatedProfessionals(updatedClient.id!.toString());
+              },
+              error: (error) => {
+                console.error('Erro ao desassociar personal:', error);
+                this.snackBar.open('Erro ao desassociar personal.', 'Fechar', { duration: 3000 });
+              }
+            });
+        } else {
+          this.snackBar.open('ID do cliente ou personal inválido.', 'Fechar', { duration: 3000 });
+        }
+      }
+    });
   }
 
-  const personalName = personal.name || 'Selecionado';
-
-  // Abre diálogo de confirmação do Material
-  const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-    width: '400px',
-    data: {
-      title: 'Confirmar Desassociação',
-      message: `Deseja realmente desassociar o personal ${personalName}?`,
-      confirmText: 'Desassociar',
-      cancelText: 'Cancelar'
+  // Método para desassociar múltiplos personals selecionados
+  removeSelectedPersonals(): void {
+    if (!this.client?.id) {
+      this.snackBar.open('ID do cliente não disponível.', 'Fechar', { duration: 3000 });
+      return;
     }
-  });
 
-  dialogRef.afterClosed().subscribe(result => {
-    if (result) {
-      if (this.client?.id !== undefined && personal.id !== undefined) {
-        this.personalService.disassociatePersonalsFromClient(this.client.id, [personal.id])
+    if (this.selectedPersonalIds.size === 0) {
+      this.snackBar.open('Nenhum personal selecionado para desassociar.', 'Fechar', { duration: 3000 });
+      return;
+    }
+
+    const personalCount = this.selectedPersonalIds.size;
+
+    // Abre diálogo de confirmação do Material
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Confirmar Desassociação',
+        message: `Deseja realmente desassociar ${personalCount} personal(s)?`,
+        confirmText: 'Desassociar',
+        cancelText: 'Cancelar'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const selectedPersonalIds = Array.from(this.selectedPersonalIds).map(id => Number(id));
+
+        this.personalService.disassociatePersonalsFromClient(Number(this.client!.id), selectedPersonalIds)
           .subscribe({
             next: (updatedClient) => {
-              this.snackBar.open('Personal desassociado com sucesso!', 'Fechar', { duration: 3000 });
+              this.snackBar.open('Personals desassociados com sucesso!', 'Fechar', { duration: 3000 });
               this.client = updatedClient;
+              this.selectedPersonalIds.clear();
+              this.closeAddPersonalDialog();
               this.loadAssociatedProfessionals(updatedClient.id!.toString());
             },
             error: (error) => {
-              console.error('Erro ao desassociar personal:', error);
-              this.snackBar.open('Erro ao desassociar personal.', 'Fechar', { duration: 3000 });
+              console.error('Erro ao desassociar personals:', error);
+              this.snackBar.open('Erro ao desassociar personals.', 'Fechar', { duration: 3000 });
             }
           });
-      } else {
-        this.snackBar.open('ID do cliente ou personal inválido.', 'Fechar', { duration: 3000 });
       }
-    }
-  });
-}
+    });
+  }
 
-// Método para desassociar múltiplos personals selecionados
-removeSelectedPersonals(): void {
+  // Método para desassociar um único nutricionista
+  removeNutritionist(nutritionist: Nutritionist): void {
+    if (!this.client?.id) {
+      this.snackBar.open('ID do cliente não disponível.', 'Fechar', { duration: 3000 });
+      return;
+    }
+
+    const nutritionistName = nutritionist.name || 'Selecionado';
+
+    // Abre diálogo de confirmação do Material
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Confirmar Desassociação',
+        message: `Deseja realmente desassociar o nutricionista ${nutritionistName}?`,
+        confirmText: 'Desassociar',
+        cancelText: 'Cancelar'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (this.client?.id !== undefined && nutritionist.id !== undefined) {
+          this.nutritionistService.disassociateNutritionistsFromClient(this.client.id, [nutritionist.id])
+            .subscribe({
+              next: (updatedClient) => {
+                this.snackBar.open('Nutricionista desassociado com sucesso!', 'Fechar', { duration: 3000 });
+                this.client = updatedClient;
+                this.loadAssociatedProfessionals(updatedClient.id!.toString());
+              },
+              error: (error) => {
+                console.error('Erro ao desassociar nutricionista:', error);
+                this.snackBar.open('Erro ao desassociar nutricionista.', 'Fechar', { duration: 3000 });
+              }
+            });
+        } else {
+          this.snackBar.open('ID do cliente ou nutricionista inválido.', 'Fechar', { duration: 3000 });
+        }
+      }
+    });
+  }
+
+  // Método para desassociar múltiplos nutricionistas selecionados
+removeSelectedNutritionists(): void {
   if (!this.client?.id) {
     this.snackBar.open('ID do cliente não disponível.', 'Fechar', { duration: 3000 });
     return;
   }
 
-  if (this.selectedPersonalIds.size === 0) {
-    this.snackBar.open('Nenhum personal selecionado para desassociar.', 'Fechar', { duration: 3000 });
+  if (this.selectedNutritionistIds.size === 0) {
+    this.snackBar.open('Nenhum nutricionista selecionado para desassociar.', 'Fechar', { duration: 3000 });
     return;
   }
 
-  const personalCount = this.selectedPersonalIds.size;
+  const nutritionistCount = this.selectedNutritionistIds.size;
 
   // Abre diálogo de confirmação do Material
   const dialogRef = this.dialog.open(ConfirmDialogComponent, {
     width: '400px',
     data: {
       title: 'Confirmar Desassociação',
-      message: `Deseja realmente desassociar ${personalCount} personal(s)?`,
+      message: `Deseja realmente desassociar ${nutritionistCount} nutricionista(s)?`,
       confirmText: 'Desassociar',
       cancelText: 'Cancelar'
     }
@@ -670,20 +759,22 @@ removeSelectedPersonals(): void {
 
   dialogRef.afterClosed().subscribe(result => {
     if (result) {
-      const selectedPersonalIds = Array.from(this.selectedPersonalIds).map(id => Number(id));
+      const selectedNutritionistIds = Array.from(this.selectedNutritionistIds)
+        .filter(id => id && id !== '0')
+        .map(id => Number(id));
 
-      this.personalService.disassociatePersonalsFromClient(Number(this.client!.id), selectedPersonalIds)
+      this.nutritionistService.disassociateNutritionistsFromClient(Number(this.client!.id), selectedNutritionistIds)
         .subscribe({
           next: (updatedClient) => {
-            this.snackBar.open('Personals desassociados com sucesso!', 'Fechar', { duration: 3000 });
+            this.snackBar.open('Nutricionistas desassociados com sucesso!', 'Fechar', { duration: 3000 });
             this.client = updatedClient;
-            this.selectedPersonalIds.clear();
-            this.closeAddPersonalDialog();
+            this.selectedNutritionistIds.clear();
+            this.closeAddNutritionistDialog();
             this.loadAssociatedProfessionals(updatedClient.id!.toString());
           },
           error: (error) => {
-            console.error('Erro ao desassociar personals:', error);
-            this.snackBar.open('Erro ao desassociar personals.', 'Fechar', { duration: 3000 });
+            console.error('Erro ao desassociar nutricionistas:', error);
+            this.snackBar.open('Erro ao desassociar nutricionistas.', 'Fechar', { duration: 3000 });
           }
         });
     }

@@ -240,6 +240,12 @@
               <span class="value">{{ nutritionist.registry || '-' }}</span>
               <span class="label">Especialidade:</span>
               <span class="value">{{ nutritionist.specialty || '-' }}</span>
+              <div class="action-container">
+                <button mat-button class="remove-button" (click)="removeNutritionist(nutritionist)" matTooltip="Desassociar nutricionista">
+                  <mat-icon>link_off</mat-icon>
+                  <span>Desassociar</span>
+                </button>
+              </div>
             </div>
           </div>
         </ng-container>

@@ -45,18 +45,18 @@ export class NutritionistService {
     return this.http.delete<any>(`${this.baseUrl}/delete/${id}`);
   }
   getNutritionistByClientId(clientId: number) {
-  return this.http.get<any[]>(`${this.baseUrl}/getNutritionistByClientId/${clientId}`).pipe(
-    tap(response => console.log('Nutricionistas do cliente recebidos:', response)),
-    catchError(error => {
-      if (error.status === 404) {
-        console.log(`Nenhum nutricionista associado ao cliente ${clientId}`);
-        return of([]); // Retorna array vazio em vez de propagar o erro
-      }
-      console.error('Erro ao carregar nutricionistas:', error);
-      return throwError(() => error);
-    })
-  );
-}
+    return this.http.get<any[]>(`${this.baseUrl}/getNutritionistByClientId/${clientId}`).pipe(
+      tap(response => console.log('Nutricionistas do cliente recebidos:', response)),
+      catchError(error => {
+        if (error.status === 404) {
+          console.log(`Nenhum nutricionista associado ao cliente ${clientId}`);
+          return of([]); // Retorna array vazio em vez de propagar o erro
+        }
+        console.error('Erro ao carregar nutricionistas:', error);
+        return throwError(() => error);
+      })
+    );
+  }
   associateNutritionistToClient(clientId: number, nutritionistIds: number[]): Observable<Client> {
     console.log(`Associando nutricionistas ${nutritionistIds} ao cliente ${clientId}`);
 
@@ -78,5 +78,11 @@ export class NutritionistService {
   handleError(error: any) {
     // You can customize error handling here
     return throwError(() => error);
+  }
+
+  disassociateNutritionistsFromClient(clientId: number, nutritionistIds: number[]): Observable<Client> {
+    return this.http.post<Client>(`${this.baseUrl}/disassociateNutritionist/${clientId}`, nutritionistIds).pipe(
+      catchError(this.handleError)
+    );
   }
 }

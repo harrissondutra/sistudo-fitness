@@ -110,8 +110,8 @@ export class PersonalService {
   }
 
   disassociatePersonalsFromClient(clientId: number, personalIds: number[]): Observable<Client> {
-  return this.http.post<Client>(`${this.baseUrl}/disassociatePersonal/${clientId}`, personalIds).pipe(
-    catchError(this.handleError)
-  );
-}
+    return this.http.post<Client>(`${this.baseUrl}/disassociatePersonal/${clientId}`, personalIds).pipe(
+      catchError(this.handleError)
+    );
+  }
 }
