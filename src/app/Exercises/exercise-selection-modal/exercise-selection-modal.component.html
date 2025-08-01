@@ -1,26 +1,69 @@
-<h2 mat-dialog-title>
-  <mat-icon style="vertical-align: middle; margin-right: 8px;">add_circle_outline</mat-icon>
-  Selecionar Exercícios
-</h2>
-<mat-dialog-content class="mat-typography">
-  @if (availableExercises.length > 0) {
-  <mat-selection-list class="exercise-selection-list">
-    @for (exercise of availableExercises; track exercise.id) {
-    <mat-list-option (click)="toggleExerciseSelection(exercise)" [selected]="isExerciseSelected(exercise)">
-      <mat-icon matListItemIcon>fitness_center</mat-icon>
-      <div matListItemTitle>{{ exercise.name }}</div>
-      <div matListItemLine>{{ exercise.description || 'Sem descrição' }}</div>
-    </mat-list-option>
+<div class="exercise-selection-container">
+  <!-- Cabeçalho do modal -->
+  <h2 mat-dialog-title>
+    <mat-icon>add_circle_outline</mat-icon>
+    <span>Selecionar Exercícios</span>
+  </h2>
+
+  <!-- Container para centralização da pesquisa -->
+  <div class="search-container">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Pesquisar exercícios</mat-label>
+      <input
+        matInput
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="filterExercises()"
+        placeholder="Digite o nome do exercício"
+      >
+      <mat-icon matSuffix>search</mat-icon>
+      <button
+        *ngIf="searchTerm"
+        matSuffix
+        mat-icon-button
+        aria-label="Limpar"
+        (click)="clearSearch()"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+  </div>
+
+  <!-- Conteúdo do modal com lista de exercícios -->
+  <mat-dialog-content class="mat-typography">
+    @if (filteredExercises.length > 0) {
+      <mat-selection-list class="exercise-selection-list">
+        @for (exercise of filteredExercises; track exercise.id) {
+          <mat-list-option
+            (click)="toggleExerciseSelection(exercise)"
+            [selected]="isExerciseSelected(exercise)"
+            class="exercise-item"
+          >
+            <mat-icon matListItemIcon>fitness_center</mat-icon>
+            <div matListItemTitle>{{ exercise.name }}</div>
+            <div matListItemLine>{{ exercise.description || 'Sem descrição' }}</div>
+          </mat-list-option>
+        }
+      </mat-selection-list>
+    } @else if (searchTerm && availableExercises.length > 0) {
+      <p class="no-exercises-found">Nenhum exercício encontrado com "{{ searchTerm }}"</p>
+    } @else {
+      <p class="no-exercises-available">Nenhum exercício disponível para seleção.</p>
     }
-  </mat-selection-list>
-  } @else {
-  <p class="no-exercises-available">Nenhum exercício disponível para seleção.</p>
-  }
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button (click)="onCancel()">Cancelar</button>
-  <button mat-raised-button color="primary" (click)="onAddSelected()" [disabled]="selectedExercises.length === 0">
-    <mat-icon>add</mat-icon>
-    Adicionar Selecionados ({{ selectedExercises.length }})
-  </button>
-</mat-dialog-actions>
+  </mat-dialog-content>
+
+  <!-- Botões de ação -->
+  <mat-dialog-actions align="end" class="action-buttons">
+    <button mat-button (click)="onCancel()">Cancelar</button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onAddSelected()"
+      [disabled]="selectedExercises.length === 0"
+      class="add-button"
+    >
+      <mat-icon>add</mat-icon>
+      <span>Adicionar Selecionados ({{ selectedExercises.length }})</span>
+    </button>
+  </mat-dialog-actions>
+</div>
