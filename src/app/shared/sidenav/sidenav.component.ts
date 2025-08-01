@@ -12,6 +12,10 @@ interface MenuItem {
   links: {
     label: string;
     route: string;
+    sublinks?: {  // Nova propriedade para subníveis
+      label: string;
+      route: string;
+    }[];
   }[];
 }
 
@@ -82,7 +86,7 @@ export class SidenavComponent {
 
     {
       title: 'Treinos',
-      icon: 'fitness_center',
+      icon: 'exercise',
       links: [
         { label: 'Exibir Treinos', route: '/trainnings' },
         { label: 'Inativos', route: '/inactive-trainning' },
@@ -101,7 +105,7 @@ export class SidenavComponent {
     },
     {
       title: 'Academia',
-      icon: 'fitness_center',
+      icon: 'warehouse',
       links: [
         { label: 'Listar', route: '/gym' },
         { label: 'Profissionais', route: '/professionals' },
@@ -112,11 +116,25 @@ export class SidenavComponent {
       title: 'Administrador',
       icon: 'admin_panel_settings',
       links: [
-        { label: 'Usuários', route: '/user-list' }, // Link principal para usuários
-       // { label: 'Criar Usuário', route: '/user-create' }, // Link direto para criação
+        {
+          label: 'Usuários',
+          route: '', // Deixe vazio porque este agora é apenas um título de categoria
+          sublinks: [
+            { label: 'Listar Usuários', route: '/user-list' },
+            { label: 'Criar Novo Usuário', route: '/user-create' }
+          ]
+        },
+        {
+          label: 'Clientes',
+          route: '', // Deixe vazio porque este agora é apenas um título de categoria
+          sublinks: [
+            { label: 'Listar ', route: '/clients-list' },
+            { label: 'Criar Novo Cliente', route: '/register' }
+          ]
+        },
         { label: 'Visões', route: '/views' },
         { label: 'Cadastros Gerais', route: '/admin-register' },
-        { label: 'Criar Novo Cliente', route: '/register' },
+
         { label: 'Outros', route: '/others' },
       ]
     },

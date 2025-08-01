@@ -86,3 +86,17 @@ mat-expansion-panel.collapsed {
 ::ng-deep .mat-expansion-panel-header {
   padding: 0 16px;
 }
+// Estilo para o container de submenus
+.submenu-container {
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+// Ajustar espaço para o primeiro e último elementos
+.mat-expansion-panel-body > *:first-child {
+  margin-top: 8px;
+}
+
+.mat-expansion-panel-body > *:last-child {
+  margin-bottom: 8px;
+}

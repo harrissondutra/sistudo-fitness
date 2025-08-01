@@ -1,14 +1,12 @@
-
 <mat-nav-list [class.collapsed]="collapsed">
   <!-- Link Home direto -->
   <div class="logo">
-    <a mat-list-item >
+    <a mat-list-item>
       <img src="../../../assets/images/Logo.png" alt="Logo Sistudo" [class.hidden]="collapsed" width="200">
-      <!-- <mat-icon matListItemIcon>Sistudo</mat-icon> -->
     </a>
   </div>
 
-  <button *ngIf="collapsed" mat-icon-button (click)="expandSidenav()" style="margin: 8px;">
+  <button *ngIf="collapsed" mat-icon-button (click)="expandSidenav()" style="margin: 8px; ">
     <mat-icon>chevron_right</mat-icon>
   </button>
 
@@ -23,13 +21,35 @@
         </mat-expansion-panel-header>
         <mat-nav-list>
           @for (link of item.links; track link) {
-            <a
-              mat-list-item
-              [routerLink]="link.route"
-              (click)="onLinkClick()"
-              >
-              <span [class.hidden]="collapsed">{{ link.label }}</span>
-            </a>
+            <!-- Verifica se o link tem sublinks -->
+            @if (link.sublinks && link.sublinks.length > 0) {
+              <!-- Renderiza um painel de expansão aninhado -->
+              <div class="submenu-container">
+                <mat-expansion-panel class="nested-panel">
+                  <mat-expansion-panel-header>
+                    <mat-panel-title class="sublink-title">
+                      <span [class.hidden]="collapsed">{{ link.label }}</span>
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+                  <!-- Renderiza os sublinks -->
+                  @for (sublink of link.sublinks; track sublink) {
+                    <a mat-list-item
+                       [routerLink]="sublink.route"
+                       (click)="onLinkClick()"
+                       class="sublink-item">
+                      <span [class.hidden]="collapsed">{{ sublink.label }}</span>
+                    </a>
+                  }
+                </mat-expansion-panel>
+              </div>
+            } @else {
+              <!-- Renderiza um link normal -->
+              <a mat-list-item
+                 [routerLink]="link.route"
+                 (click)="onLinkClick()">
+                <span [class.hidden]="collapsed">{{ link.label }}</span>
+              </a>
+            }
           }
         </mat-nav-list>
       </mat-expansion-panel>
