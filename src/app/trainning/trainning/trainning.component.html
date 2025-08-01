@@ -25,26 +25,37 @@
   </div>
 
   <!-- Lista de Treinos responsiva usando Ionic com ícones Material -->
-  @if (filteredTrainnings && filteredTrainnings.length > 0) {
+ @if (filteredTrainnings && filteredTrainnings.length > 0) {
   <ion-list class="trainning-ionic-list mat-elevation-z2">
     @for (training of filteredTrainnings; track training) {
-    <ion-item button (click)="getTrainningById(training.id?.toString() ?? '')" class="trainning-view"> <ion-label>
-        <h3>{{ training.name }}</h3>
+    <ion-item button (click)="getTrainningById(training.id?.toString() ?? '')" class="trainning-view">
+      <ion-label>
+        <div class="training-header">
+          <h3>{{ training.name }}</h3>
+          <span class="client-badge" *ngIf="training.client?.name">{{ training.client?.name }}</span>
+        </div>
+        <p class="training-description">{{ training.description || 'Sem descrição' }}</p>
+        @if (training.client.name) {
+        <p class="client-name">
+          <mat-icon class="client-icon">person</mat-icon>
+          <span>{{ training.client.name || 'Sem cliente associado' }}</span>
+        </p>
+        }
       </ion-label>
       <div class="action-buttons" slot="end">
-        <button mat-icon-button color="primary" (click)="editTrainning(training.id?.toString())"
-          matTooltip="Editar Treino">
+        <button mat-icon-button color="primary"
+          (click)="editTrainning(training.id?.toString()); $event.stopPropagation();" matTooltip="Editar Treino">
           <mat-icon>edit</mat-icon>
         </button>
-        <button mat-icon-button color="warn" (click)="deleteTrainning(training.id?.toString())"
-          matTooltip="Excluir Treino">
+        <button mat-icon-button color="warn"
+          (click)="deleteTrainning(training.id?.toString()); $event.stopPropagation();" matTooltip="Excluir Treino">
           <mat-icon>delete</mat-icon>
         </button>
       </div>
     </ion-item>
     }
   </ion-list>
-  }
+}
 
   <!-- Mensagem quando não há dados -->
   @if (filteredTrainnings && filteredTrainnings.length === 0 && !isLoading) {

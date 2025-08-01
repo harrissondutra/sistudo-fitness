@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, isDevMode } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -33,6 +33,9 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./trainning-view.component.scss']
 })
 export class TrainningViewComponent implements OnInit {
+
+
+  isDevMode = isDevMode(); // Para debug
 
   // O treino será carregado com base no ID da rota
   trainning: Trainning | null = null;
@@ -100,37 +103,76 @@ export class TrainningViewComponent implements OnInit {
   }
 
   // Carrega os dados do treino a partir do serviço
- private loadTrainningById(trainningId: string): void {
+private loadTrainningById(trainningId: string): void {
   this.isLoading = true;
   this.trainningService.getTrainningById(Number(trainningId)).subscribe({
     next: (trainning: Trainning) => {
-      this.isLoading = false;
+      // Processar as datas do treino
+      this.processTrainningDates(trainning);
 
-      // O serviço já deve ter convertido as datas para objetos Date
-      // Mas vamos garantir aqui também
-      if (trainning.startDate && !(trainning.startDate instanceof Date)) {
-        console.warn('startDate não é um objeto Date após processamento do serviço');
-        // Converter para Date se ainda não for
-        if (Array.isArray(trainning.startDate)) {
-          const [year, month, day, hour = 0, minute = 0] = trainning.startDate as any;
-          trainning.startDate = new Date(year, month-1, day, hour, minute);
-        }
+      // Verificar se há exercícios no treino
+      if (!trainning.exercises || trainning.exercises.length === 0) {
+        console.log('Nenhum exercício encontrado no treino. Buscando exercícios separadamente...');
+        // Buscar exercícios separadamente se não estiverem incluídos na resposta inicial
+        this.loadTrainningExercises(Number(trainningId), trainning);
+      } else {
+        console.log(`Treino carregado com ${trainning.exercises.length} exercícios:`,
+                    trainning.exercises.map(ex => ex.name));
+        this.trainning = trainning;
+        this.isLoading = false;
       }
-
-      // Mesmo para endDate
-      if (trainning.endDate && !(trainning.endDate instanceof Date)) {
-        console.warn('endDate não é um objeto Date após processamento do serviço');
-        if (Array.isArray(trainning.endDate)) {
-          const [year, month, day, hour = 0, minute = 0] = trainning.endDate as any;
-          trainning.endDate = new Date(year, month-1, day, hour, minute);
-        }
-      }
-
-      this.trainning = trainning;
     },
     error: (error) => {
       this.isLoading = false;
       console.error('Erro ao carregar treino:', error);
+    }
+  });
+}
+
+// Método auxiliar para processar as datas do treino
+private processTrainningDates(trainning: Trainning): void {
+  // Processar startDate
+  if (trainning.startDate && !(trainning.startDate instanceof Date)) {
+    console.log('Processando startDate:', trainning.startDate);
+    if (Array.isArray(trainning.startDate)) {
+      const [year, month, day, hour = 0, minute = 0] = trainning.startDate as any;
+      trainning.startDate = new Date(year, month-1, day, hour, minute);
+    } else if (typeof trainning.startDate === 'string') {
+      trainning.startDate = new Date(trainning.startDate);
+    }
+  }
+
+  // Processar endDate
+  if (trainning.endDate && !(trainning.endDate instanceof Date)) {
+    console.log('Processando endDate:', trainning.endDate);
+    if (Array.isArray(trainning.endDate)) {
+      const [year, month, day, hour = 0, minute = 0] = trainning.endDate as any;
+      trainning.endDate = new Date(year, month-1, day, hour, minute);
+    } else if (typeof trainning.endDate === 'string') {
+      trainning.endDate = new Date(trainning.endDate);
+    }
+  }
+}
+
+// Método para buscar exercícios separadamente
+private loadTrainningExercises(trainningId: number, trainning: Trainning): void {
+  this.trainningService.getTrainningExercises(trainningId).subscribe({
+    next: (exercises) => {
+      console.log(`Exercícios carregados separadamente: ${exercises.length}`, exercises);
+      trainning.exercises = exercises
+        .filter(ex => typeof ex.id === 'number')
+        .map(ex => ({
+          ...ex,
+          id: ex.id as number // ensures id is number
+        }));
+      this.trainning = trainning;
+      this.isLoading = false;
+    },
+    error: (error) => {
+      console.error('Erro ao carregar exercícios do treino:', error);
+      // Ainda assim atribuímos o treino, mesmo sem exercícios
+      this.trainning = trainning;
+      this.isLoading = false;
     }
   });
 }

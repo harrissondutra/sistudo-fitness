@@ -4,8 +4,8 @@
 
 // Variáveis de Cores (ajuste conforme o tema do seu Material Design)
 $primary-color: #3f51b5; // Exemplo: Indigo 500
-$accent-color: #ff4081;  // Exemplo: Pink A200
-$warn-color: #f44336;    // Exemplo: Red 500
+$accent-color: #ff4081; // Exemplo: Pink A200
+$warn-color: #f44336; // Exemplo: Red 500
 $text-color: #333;
 $light-text-color: #666;
 $border-color: #e0e0e0;
@@ -14,9 +14,9 @@ $white: #fff;
 
 // Variáveis de Espaçamento
 $spacing-unit: 8px;
-$padding-small: $spacing-unit * 2;   // 16px
-$padding-medium: $spacing-unit * 3;  // 24px
-$margin-medium: $spacing-unit * 3;   // 24px
+$padding-small: $spacing-unit * 2; // 16px
+$padding-medium: $spacing-unit * 3; // 24px
+$margin-medium: $spacing-unit * 3; // 24px
 
 // Mixins para reutilização de estilos
 @mixin flex-center {
@@ -68,6 +68,7 @@ $margin-medium: $spacing-unit * 3;   // 24px
         color: var(--text-color, #333);
         font-weight: 600;
       }
+
       .subtitle {
         margin: var(--spacing-xs, 8px) 0 0;
         font-size: var(--font-size-md, 0.9em);
@@ -92,11 +93,14 @@ $margin-medium: $spacing-unit * 3;   // 24px
       }
     }
 
-    .action-buttons-top { // Nova classe para os botões da action bar
+    .action-buttons-top {
+      // Nova classe para os botões da action bar
       display: flex;
+
       button {
         padding: var(--spacing-xs, 8px) var(--spacing-lg, 24px);
         font-weight: 500;
+
         .mat-icon {
           margin-right: var(--spacing-xs, 8px);
         }
@@ -127,7 +131,8 @@ $margin-medium: $spacing-unit * 3;   // 24px
       // Adicionando padding direto para garantir, caso as variáveis não funcionem totalmente
       padding: var(--spacing-md, 16px) var(--spacing-lg, 24px) !important;
 
-      margin-bottom: var(--spacing-md, 16px); /* Espaçamento entre os cards */
+      margin-bottom: var(--spacing-md, 16px);
+      /* Espaçamento entre os cards */
       border-radius: var(--border-radius-md, 12px);
       @include card-shadow-md;
       transition: background-color 0.2s ease, box-shadow 0.2s ease;
@@ -149,16 +154,19 @@ $margin-medium: $spacing-unit * 3;   // 24px
 
       ion-label {
         flex-grow: 1;
+
         h3 {
           font-size: var(--font-size-lg, 1.1em);
           color: var(--text-color, #333);
           margin: 0 0 var(--spacing-xs, 8px) 0;
           font-weight: 500;
         }
+
         p {
           font-size: var(--font-size-sm, 0.9em);
           color: var(--text-secondary-color, #666);
           margin: 0 0 var(--spacing-xs, 8px) 0; // Espaçamento entre parágrafos
+
           &:last-child {
             margin-bottom: 0;
           }
@@ -170,7 +178,8 @@ $margin-medium: $spacing-unit * 3;   // 24px
         gap: calc(var(--spacing-xs, 8px) / 2); // 4px
         flex-shrink: 0;
         padding-left: var(--spacing-md, 16px);
-        justify-content: flex-end; /* Alinha os botões de ação à direita */
+        justify-content: flex-end;
+        /* Alinha os botões de ação à direita */
 
         .mat-icon-button {
           display: flex;
@@ -189,14 +198,23 @@ $margin-medium: $spacing-unit * 3;   // 24px
           }
 
           // Cores para os ícones Material (exemplo, use suas próprias variáveis de tema)
-          &[color="primary"] .mat-icon { color: var(--primary-color, #3f51b5); }
-          &[color="accent"] .mat-icon { color: var(--accent-color, #ff4081); }
-          &[color="warn"] .mat-icon { color: var(--warn-color, #f44336); }
+          &[color="primary"] .mat-icon {
+            color: var(--primary-color, #3f51b5);
+          }
+
+          &[color="accent"] .mat-icon {
+            color: var(--accent-color, #ff4081);
+          }
+
+          &[color="warn"] .mat-icon {
+            color: var(--warn-color, #f44336);
+          }
 
           &:hover {
             transform: scale(1.1);
             background-color: rgba(var(--primary-color-rgb, 63, 81, 181), 0.1);
           }
+
           &:active {
             background-color: rgba(var(--primary-color-rgb, 63, 81, 181), 0.2);
           }
@@ -219,6 +237,7 @@ $margin-medium: $spacing-unit * 3;   // 24px
       height: 48px;
       color: var(--border-color, #e0e0e0);
     }
+
     p {
       font-size: 1.1em;
       margin: 0;
@@ -237,8 +256,7 @@ $margin-medium: $spacing-unit * 3;   // 24px
 /* --- Media Queries --- */
 
 @media screen and (max-width: 768px) {
-  .trainning-list-container
-  .header {
+  .trainning-list-container .header {
     flex-direction: column;
     align-items: flex-start;
     margin-bottom: var(--spacing-lg, 24px);
@@ -247,11 +265,14 @@ $margin-medium: $spacing-unit * 3;   // 24px
   .action-bar {
     flex-direction: column; // Empilha search e botões
     align-items: flex-start; // Alinha à esquerda
+
     .search-input {
       max-width: 100%; // Ocupa toda a largura
     }
+
     .action-buttons-top {
       width: 100%; // Botão "Novo Treino" ocupa toda a largura
+
       button {
         width: 100%; // Botão "Novo Treino" ocupa toda a largura
         justify-content: center;
@@ -272,13 +293,16 @@ $margin-medium: $spacing-unit * 3;   // 24px
 
       ion-label {
         width: 100%;
+
         h3 {
           font-size: var(--font-size-md, 1em);
         }
+
         p {
           font-size: var(--font-size-sm, 0.8em);
         }
       }
+
       .action-buttons {
         width: 100%;
         justify-content: flex-end; // Mantém alinhamento à direita dentro do item
@@ -288,6 +312,7 @@ $margin-medium: $spacing-unit * 3;   // 24px
         .mat-icon-button {
           width: 36px;
           height: 36px;
+
           .mat-icon {
             font-size: 20px;
             width: 20px;
@@ -310,6 +335,7 @@ $margin-medium: $spacing-unit * 3;   // 24px
       h2 {
         font-size: var(--font-size-xl, 1.6em);
       }
+
       .subtitle {
         font-size: var(--font-size-sm, 0.8em);
       }
@@ -335,20 +361,82 @@ $margin-medium: $spacing-unit * 3;   // 24px
         h3 {
           font-size: var(--font-size-sm, 0.9em);
         }
+
         p {
           font-size: var(--font-size-xs, 0.75em);
         }
       }
+
       .action-buttons {
         .mat-icon-button {
           width: 32px;
           height: 32px;
+
           .mat-icon {
             font-size: 18px;
             width: 18px;
             height: 18px;
           }
         }
+      }
+    }
+  }
+}
+
+.training-view {
+  ion-label {
+    .training-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+
+      h3 {
+        margin: 0;
+        font-weight: 500;
+      }
+
+      .client-badge {
+        background-color: #e0e0ff;
+        color: #3f51b5;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        white-space: nowrap;
+      }
+    }
+
+    .training-description {
+      color: #666;
+      font-size: 14px;
+      margin: 4px 0;
+    }
+
+    .client-name {
+      display: flex;
+      align-items: center;
+      margin: 10px 0 0;
+      color: #555;
+      font-size: 13px;
+      line-height: normal; // Valor normal é mais apropriado que 0.5
+
+      .client-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        height: 16px;
+        width: 16px;
+        margin-right: 8px;
+        color: #3f51b5;
+        flex-shrink: 0;
+      }
+
+      span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-weight: 900; // Texto em negrito (semi-bold)
+        // Removi padding-top e margin-top que estavam causando desalinhamento
       }
     }
   }

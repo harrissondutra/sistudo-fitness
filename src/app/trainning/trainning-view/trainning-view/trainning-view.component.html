@@ -80,29 +80,48 @@
       </div>
     </div>
 
-    @if (trainning.exercises?.length) {
-    <div class="exercises-section">
-      <h2>
-        <mat-icon>directions_run</mat-icon>
-        Exercícios
-      </h2>
-      <div class="exercises-list">
-        @for (exercise of trainning.exercises; track exercise) {
-        <div class="exercise-item">
-          <mat-icon class="exercise-icon">walk</mat-icon>
-          <div class="exercise-details">
-            <h3>{{ exercise.name }}</h3>
-            <p>{{ exercise.description }}</p>
-          </div>
+   @if (trainning?.exercises?.length) {
+<div class="exercises-section">
+  <h2>
+    <mat-icon>directions_run</mat-icon>
+    Exercícios ({{ trainning.exercises.length }})
+  </h2>
+
+  <!-- Debug para verificar quantidade -->
+  <div class="debug-info" *ngIf="isDevMode">
+    Total de exercícios: {{ trainning.exercises.length }}
+  </div>
+
+  <div class="exercises-list">
+    @for (exercise of trainning.exercises; track exercise.id || $index) {
+    <div class="exercise-item">
+      <mat-icon class="exercise-icon">fitness_center</mat-icon>
+      <div class="exercise-details">
+        <h3>{{ exercise.name }}</h3>
+        <p>{{ exercise.description || 'Sem descrição' }}</p>
+
+        <!-- Mostrar detalhes adicionais caso estejam disponíveis -->
+        @if (exercise.sets || exercise.weight || exercise.rest) {
+        <div class="exercise-metrics">
+          @if (exercise.sets) {<span class="metric">{{ exercise.sets }} séries</span>}
+          @if (exercise.weight) {<span class="metric">{{ exercise.weight }}kg</span>}
+          @if (exercise.rest) {<span class="metric">Descanso: {{ exercise.rest }}s</span>}
         </div>
         }
       </div>
     </div>
-    } @else {
-    <div class="exercises-section">
-      <p class="no-exercises-message">Nenhum exercício adicionado a este treino.</p>
-    </div>
     }
+  </div>
+</div>
+} @else {
+<div class="exercises-section">
+  <h2>
+    <mat-icon>directions_run</mat-icon>
+    Exercícios
+  </h2>
+  <p class="no-exercises-message">Nenhum exercício adicionado a este treino.</p>
+</div>
+}
   </div>
   } @else {
   <div class="loading-spinner">

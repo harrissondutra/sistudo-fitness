@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { Trainning } from '../../models/trainning'; // <--- Mantenha 'Trainning' (com 'a') se o seu modelo em models/trainning.ts ainda for assim
+import { Exercise } from '../../models/exercise'; // <--- Adicionado import do modelo Exercise
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -109,5 +110,9 @@ export class TrainningService { // <--- Mantenha o nome da classe 'TrainingServi
     // ESTA ROTA PODE PRECISAR DE AJUSTE NO BACKEND
     return this.http.put<Trainning>(`${this.baseUrl}/update/${id}`, trainning);
   }
+
+  getTrainningExercises(trainningId: number): Observable<Exercise[]> {
+  return this.http.get<Exercise[]>(`${this.baseUrl}/trainnings/${trainningId}/exercises`);
+}
 
 }

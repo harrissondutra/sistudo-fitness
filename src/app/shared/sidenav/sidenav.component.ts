@@ -91,9 +91,9 @@ export class SidenavComponent {
       title: 'Treinos',
       icon: 'fitness_center',
       links: [
-        { label: 'Exibir Treinos', route: '/trainning' },
+        { label: 'Exibir Treinos', route: '/trainnings' },
         { label: 'Inativos', route: '/inactive-trainning' },
-        { label: 'Criar Novo Treino', route: '/trainning-create' },
+        { label: 'Criar Novo Treino', route: '/trainning-create/:id' },
         { label: 'Criar Categoria de Treino', route: '/create-category-trainning' },
       ]
     },

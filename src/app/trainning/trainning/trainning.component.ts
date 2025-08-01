@@ -128,7 +128,7 @@ export class TrainningComponent implements OnInit { // Mantido o nome `Trainning
    * Navega para a tela de criação de treino.
    */
   createTrainning(): void {
-    this.router.navigate(['/trainning-create']); // Rota para a tela de criação de treino
+    this.router.navigate(['/trainning-create/:id']); // Rota para a tela de criação de treino
   }
 
   /**
