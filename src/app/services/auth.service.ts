@@ -94,24 +94,78 @@ export class AuthService {
   }
 
   /**
+   * Alias para isAuthenticated - verifica se o usuário está logado
+   */
+  isLoggedIn(): boolean {
+    return this.isAuthenticated();
+  }
+
+  /**
+   * Recupera os dados completos do usuário, combinando informações do token e localStorage
+   */
+  getUserData(): any {
+    // Primeiro tenta obter do localStorage que tem dados mais completos
+    const storageData = this.getUserInfoFromStorage();
+
+    // Depois obtém do token que é mais seguro para autenticação
+    const tokenData = this.getUserInfo();
+
+    // Combina os dados, priorizando o token para informações de segurança
+    return {
+      ...(storageData || {}),
+      ...(tokenData || {}),
+      // Garantir que o role seja um UserRole válido
+      role: this.parseUserRole(storageData?.role || tokenData?.role)
+    };
+  }
+
+  /**
+   * Converte uma string em um UserRole válido
+   */
+  private parseUserRole(roleStr?: string): UserRole {
+    if (!roleStr) return UserRole.CLIENT;
+
+    // Verifica se o valor está entre os valores válidos do enum
+    const validRoles = Object.values(UserRole);
+    const normalizedRole = roleStr.toUpperCase() as UserRole;
+
+    return validRoles.includes(normalizedRole)
+      ? normalizedRole
+      : UserRole.CLIENT;
+  }
+
+  /**
    * Verifica se o usuário autenticado possui o papel de admin.
    */
-   isAdmin(): boolean {
+  isAdmin(): boolean {
     return this.getUserRole() === UserRole.ADMIN;
   }
 
+  /**
+   * Obtém o papel/função do usuário atual
+   */
   getUserRole(): UserRole {
-  // Trocar 'user' por 'userInfo'
-  const userStr = localStorage.getItem('userInfo');
-  if (userStr) {
+    // Verifica se o usuário está autenticado
+    if (!this.isLoggedIn()) {
+      return UserRole.CLIENT; // Valor padrão caso não esteja autenticado
+    }
+
+    // Obtém o role do usuário
     try {
-      const user = JSON.parse(userStr);
-      return user.role || UserRole.CLIENT;
-    } catch (e) {
-      console.error('Erro ao obter role do usuário:', e);
+      const userData = this.getUserData();
+      return userData?.role || UserRole.CLIENT;
+    } catch (error) {
+      console.error('Erro ao obter role do usuário:', error);
+      return UserRole.CLIENT;
     }
   }
 
-  return UserRole.CLIENT;
-}
+  /**
+   * Método auxiliar para depuração
+   */
+  logCurrentUserDetails(): void {
+    console.log('Usuário atual:', this.getUserData());
+    console.log('Role do usuário:', this.getUserRole());
+    console.log('É administrador?', this.getUserRole() === UserRole.ADMIN);
+  }
 }

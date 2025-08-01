@@ -166,32 +166,7 @@ export class AdminRegisterComponent implements OnInit {
     this.menuForm = this.createMenuForm();
   }
 
-  saveMenu(): void {
-    if (this.menuForm.invalid) {
-      this.snackBar.open('Por favor, corrija os erros no formulário antes de salvar', 'Fechar', {
-        duration: 3000
-      });
-      return;
-    }
 
-    const menuItem: MenuItem = this.menuForm.value;
-
-    if (this.editingMenuIndex !== null) {
-      // Update existing menu
-      this.menuItems[this.editingMenuIndex] = menuItem;
-      this.snackBar.open('Menu atualizado com sucesso!', 'Fechar', { duration: 2000 });
-    } else {
-      // Add new menu
-      this.menuItems.push(menuItem);
-      this.snackBar.open('Novo menu criado com sucesso!', 'Fechar', { duration: 2000 });
-    }
-
-    // Update service
-    this.menuService.updateMenuItems(this.menuItems);
-
-    // Reset form state
-    this.cancelEdit();
-  }
 
   deleteMenu(index: number): void {
     if (confirm('Tem certeza que deseja excluir este menu? Esta ação não pode ser desfeita.')) {
@@ -281,6 +256,65 @@ export class AdminRegisterComponent implements OnInit {
     } else {
       this.snackBar.open('Todos os menus parecem estar com estrutura correta', 'Fechar', { duration: 2000 });
     }
+  }
+
+  // Adicione este método ao componente
+  refreshMenusForAdmin(): void {
+    // Recarrega os menus para garantir que o administrador veja tudo
+    this.menuItems = this.menuService.getMenuItems().map(menu => ({
+      ...menu,
+      visible: true,
+      links: menu.links.map(link => ({
+        ...link,
+        visible: true,
+        sublinks: link.sublinks?.map(sublink => ({
+          ...sublink,
+          visible: true
+        }))
+      }))
+    }));
+  }
+
+  // Modifique o método saveMenu para incluir a chamada ao refreshMenusForAdmin
+  saveMenu(): void {
+    if (this.menuForm.invalid) {
+      this.snackBar.open('Por favor, corrija os erros no formulário antes de salvar', 'Fechar', {
+        duration: 3000
+      });
+      return;
+    }
+
+    const menuItem: MenuItem = this.menuForm.value;
+
+    if (this.editingMenuIndex !== null) {
+      // Update existing menu
+      this.menuItems[this.editingMenuIndex] = menuItem;
+      this.snackBar.open('Menu atualizado com sucesso!', 'Fechar', { duration: 2000 });
+    } else {
+      // Add new menu
+      this.menuItems.push(menuItem);
+      this.snackBar.open('Novo menu criado com sucesso!', 'Fechar', { duration: 2000 });
+    }
+
+    // Update service
+    this.menuService.updateMenuItems(this.menuItems);
+
+    // NOVO: Para garantir que o administrador continue vendo tudo
+    setTimeout(() => this.refreshMenusForAdmin(), 100);
+
+    // Reset form state
+    this.cancelEdit();
+  }
+
+  // Adicione este método
+  restoreAdminVisibility(): void {
+    // Força todos os menus a serem visíveis para o administrador
+    this.refreshMenusForAdmin();
+
+    // Aplica as mudanças
+    this.menuService.updateMenuItems(this.menuItems);
+
+    this.snackBar.open('Visibilidade total de administrador restaurada!', 'OK', { duration: 2000 });
   }
 
 

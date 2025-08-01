@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { UserRole } from '../../models/user_role';
+import { AuthService } from '../auth.service';
 
 export interface MenuItem {
   id: string;
@@ -144,64 +146,154 @@ export class MenuService {
   private menuItemsSource = new BehaviorSubject<MenuItem[]>(this.loadMenuItems());
   menuItems$ = this.menuItemsSource.asObservable();
 
-  constructor() {
-
-  }
+  constructor(private authService: AuthService) {}
 
 
   private saveMenuItems(menuItems: MenuItem[]): void {
-    try {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(menuItems));
-    } catch (error) {
-      console.error('Erro ao salvar menus no localStorage:', error);
+  try {
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(menuItems));
+  } catch(error) {
+    console.error('Erro ao salvar menus no localStorage:', error);
+  }
+}
+
+getMenuItems(): MenuItem[] {
+  return this.menuItemsSource.value;
+}
+
+// Método para atualizar visibilidade baseado em permissões
+updateMenuVisibilityByRole(role: string, permissions: any): void {
+  const menuItems = this.getMenuItems();
+
+  menuItems.forEach(menu => {
+    const menuPermission = permissions[menu.id];
+    if (menuPermission !== undefined) {
+      menu.visible = menuPermission.visible;
+
+      if (menu.links) {
+        menu.links.forEach(link => {
+          const linkId = link.id;
+          if (menuPermission.links && menuPermission.links[linkId]) {
+            link.visible = menuPermission.links[linkId].visible;
+
+            if (link.sublinks) {
+              link.sublinks.forEach(sublink => {
+                const sublinkId = sublink.id;
+                if (
+                  menuPermission.links[linkId].sublinks &&
+                  menuPermission.links[linkId].sublinks[sublinkId]
+                ) {
+                  sublink.visible = menuPermission.links[linkId].sublinks[sublinkId].visible;
+                }
+              });
+            }
+          }
+        });
+      }
     }
+  });
+
+  this.updateMenuItems(menuItems);
+}
+
+  private getPermissionsForRole(role: UserRole): any {
+  const key = `menu_permissions_${role}`;
+  try {
+    const storedData = localStorage.getItem(key);
+    return storedData ? JSON.parse(storedData) : null;
+  } catch (error) {
+    console.error(`Erro ao carregar permissões para ${role}:`, error);
+    return null;
+  }
+}
+
+applyUserPermissions(menuItems: MenuItem[]): MenuItem[] {
+  const currentUserRole = this.authService.getUserRole();
+
+  // Garantia crítica: administradores sempre veem tudo
+  if (currentUserRole === UserRole.ADMIN) {
+    console.log('Aplicando permissões: Usuário é ADMIN, garantindo visibilidade completa.');
+    return menuItems.map(menu => {
+      const menuCopy = { ...menu, visible: true };
+
+      if (menuCopy.links) {
+        menuCopy.links = menuCopy.links.map(link => {
+          const linkCopy = { ...link, visible: true };
+
+          if (linkCopy.sublinks) {
+            linkCopy.sublinks = linkCopy.sublinks.map(sublink => ({
+              ...sublink,
+              visible: true
+            }));
+          }
+
+          return linkCopy;
+        });
+      }
+
+      return menuCopy;
+    });
   }
 
-  getMenuItems(): MenuItem[] {
-    return this.menuItemsSource.value;
-  }
+  // Para outros perfis, tenta aplicar as permissões específicas
+  try {
+    // Obtenha permissões da role atual
+    const permissions = this.getPermissionsForRole(currentUserRole);
 
-  // Método para atualizar visibilidade baseado em permissões
-  updateMenuVisibilityByRole(role: string, permissions: any): void {
-    const menuItems = this.getMenuItems();
+    if (!permissions) {
+      console.log(`Sem permissões específicas para ${currentUserRole}, usando visibilidade padrão.`);
+      return menuItems; // Retorna os menus como estão
+    }
 
-    menuItems.forEach(menu => {
+    // Aplica as permissões aos menus
+    return menuItems.map(menu => {
+      const menuCopy = { ...menu };
       const menuPermission = permissions[menu.id];
-      if (menuPermission !== undefined) {
-        menu.visible = menuPermission.visible;
 
-        if (menu.links) {
-          menu.links.forEach(link => {
-            const linkId = link.id;
-            if (menuPermission.links && menuPermission.links[linkId]) {
-              link.visible = menuPermission.links[linkId].visible;
+      if (menuPermission) {
+        menuCopy.visible = menuPermission.visible;
 
-              if (link.sublinks) {
-                link.sublinks.forEach(sublink => {
-                  const sublinkId = sublink.id;
-                  if (
-                    menuPermission.links[linkId].sublinks &&
-                    menuPermission.links[linkId].sublinks[sublinkId]
-                  ) {
-                    sublink.visible = menuPermission.links[linkId].sublinks[sublinkId].visible;
+        if (menuCopy.links && menuPermission.links) {
+          menuCopy.links = menuCopy.links.map(link => {
+            const linkCopy = { ...link };
+            const linkPermission = menuPermission.links[link.id];
+
+            if (linkPermission) {
+              linkCopy.visible = linkPermission.visible;
+
+              if (linkCopy.sublinks && linkPermission.sublinks) {
+                linkCopy.sublinks = linkCopy.sublinks.map(sublink => {
+                  const sublinkCopy = { ...sublink };
+                  const sublinkPermission = linkPermission.sublinks[sublink.id];
+
+                  if (sublinkPermission) {
+                    sublinkCopy.visible = sublinkPermission.visible;
                   }
+
+                  return sublinkCopy;
                 });
               }
             }
+
+            return linkCopy;
           });
         }
       }
+
+      return menuCopy;
     });
-
-    this.updateMenuItems(menuItems);
+  } catch (error) {
+    console.error('Erro ao aplicar permissões:', error);
+    return menuItems; // Em caso de erro, retorna os menus originais
   }
+}
 
-  // Método para resetar para os menus padrão
-  resetToDefaultMenus(): void {
-    this.updateMenuItems(this.defaultMenuItems);
-  }
+// Método para resetar para os menus padrão
+resetToDefaultMenus(): void {
+  this.updateMenuItems(this.defaultMenuItems);
+}
 
-  // Adicione este método no MenuService
+// Adicione este método no MenuService
 normalizeMenuItems(menuItems: MenuItem[]): MenuItem[] {
   return menuItems.map(menu => ({
     ...menu,
@@ -221,8 +313,15 @@ normalizeMenuItems(menuItems: MenuItem[]): MenuItem[] {
 private loadMenuItems(): MenuItem[] {
   try {
     const storedMenus = localStorage.getItem(this.STORAGE_KEY);
-    const menus = storedMenus ? JSON.parse(storedMenus) : this.defaultMenuItems;
-    return this.normalizeMenuItems(menus);
+    let menus = storedMenus ? JSON.parse(storedMenus) : this.defaultMenuItems;
+    menus = this.normalizeMenuItems(menus);
+
+    // Aplica permissões se o AuthService estiver disponível
+    if (this.authService) {
+      return this.applyUserPermissions(menus);
+    }
+
+    return menus;
   } catch (error) {
     console.error('Erro ao carregar menus do localStorage:', error);
     return this.normalizeMenuItems(this.defaultMenuItems);
@@ -231,8 +330,23 @@ private loadMenuItems(): MenuItem[] {
 
 // Modifique updateMenuItems para normalizar também
 updateMenuItems(menuItems: MenuItem[]): void {
+  // Normaliza os menus para garantir valores booleanos corretos
   const normalizedMenus = this.normalizeMenuItems(menuItems);
+
+  // Salva no localStorage (configuração base)
   this.saveMenuItems(normalizedMenus);
-  this.menuItemsSource.next([...normalizedMenus]);
+
+  // IMPORTANTE: Para administradores, aplicamos as permissões para garantir
+  // que todos os menus sejam visíveis antes de emitir os valores
+  if (this.authService.getUserRole() === UserRole.ADMIN) {
+    console.log('Administrador editando menus - preservando visibilidade total');
+    const adminMenus = this.applyUserPermissions(normalizedMenus);
+    this.menuItemsSource.next([...adminMenus]);
+  } else {
+    // Para outros usuários, emitir normalmente
+    this.menuItemsSource.next([...normalizedMenus]);
+  }
 }
+
+
 }

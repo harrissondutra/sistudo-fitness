@@ -6,6 +6,7 @@
     </mat-card-header>
 
     <mat-card-content>
+      <!-- Seletor de perfil -->
       <div class="role-selector">
         <mat-form-field appearance="fill">
           <mat-label>Selecione o perfil de usuário</mat-label>
@@ -15,6 +16,13 @@
             }
           </mat-select>
         </mat-form-field>
+
+        <!-- Toggle para mostrar/ocultar menus escondidos -->
+        <div class="show-hidden-toggle">
+          <mat-slide-toggle [(ngModel)]="showHiddenMenus" color="primary">
+            Mostrar menus ocultos
+          </mat-slide-toggle>
+        </div>
       </div>
 
       @if (!selectedRole) {
@@ -23,14 +31,23 @@
       </div>
       } @else {
       <div class="menu-permissions">
-        <h3>Configuração de menus para: {{ roleLabels[selectedRole] }}</h3>
-        <div class="debug-actions">
-          <button mat-button color="accent" (click)="checkStoredPermissions()">
-            <mat-icon>bug_report</mat-icon> VERIFICAR ARMAZENAMENTO
-          </button>
+        <div class="permissions-header">
+          <h3>Configuração de menus para: {{ roleLabels[selectedRole] }}</h3>
+          <div class="debug-actions">
+            <button mat-stroked-button color="accent" (click)="checkStoredPermissions()">
+              <mat-icon>bug_report</mat-icon> Verificar armazenamento
+            </button>
+            <button mat-stroked-button color="accent" (click)="inspectCurrentState()">
+              <mat-icon>assessment</mat-icon> Inspecionar estado atual
+            </button>
+          </div>
         </div>
+
+        <mat-divider></mat-divider>
+
+        <!-- Lista de menus filtrados conforme a opção de exibição -->
         <div class="menu-list">
-          @for (menu of menuItems; track menu.id) {
+          @for (menu of filteredMenuItems; track menu.id) {
           <mat-expansion-panel>
             <mat-expansion-panel-header>
               <mat-panel-title>
@@ -47,34 +64,42 @@
             </mat-expansion-panel-header>
 
             <div class="menu-actions">
-              <button mat-button color="primary" (click)="enableAllLinks(menu)">Ativar todos os links</button>
-              <button mat-button color="warn" (click)="disableMenuLinks(menu)">Desativar todos os links</button>
+              <button mat-button color="primary" (click)="enableAllLinks(menu)">
+                <mat-icon>visibility</mat-icon> Ativar todos os links
+              </button>
+              <button mat-button color="warn" (click)="disableMenuLinks(menu)">
+                <mat-icon>visibility_off</mat-icon> Desativar todos os links
+              </button>
             </div>
 
             <!-- Links do menu -->
             <div class="menu-links">
               @for (link of menu.links; track link.id) {
-              <!-- Link com sublinks -->
-              @if (link.sublinks) {
-              <div class="link-with-sublinks">
+              <div class="link-item" [ngClass]="{'link-hidden': !link.visible}">
+                <!-- Link com sublinks -->
+                @if (link.sublinks && link.sublinks.length > 0) {
+                <div class="link-with-sublinks">
+                  <mat-checkbox [(ngModel)]="link.visible" (click)="$event.stopPropagation()">
+                    {{ link.label }}
+                  </mat-checkbox>
+
+                  <div class="sublinks-container">
+                    @for (sublink of link.sublinks; track sublink.id) {
+                    <div class="sublink-item" [ngClass]="{'sublink-hidden': !sublink.visible}">
+                      <mat-checkbox [(ngModel)]="sublink.visible" (click)="$event.stopPropagation()">
+                        {{ sublink.label }}
+                      </mat-checkbox>
+                    </div>
+                    }
+                  </div>
+                </div>
+                } @else {
+                <!-- Link simples -->
                 <mat-checkbox [(ngModel)]="link.visible" (click)="$event.stopPropagation()">
                   {{ link.label }}
                 </mat-checkbox>
-
-                <div class="sublinks-container">
-                  @for (sublink of link.sublinks; track sublink.id) {
-                  <mat-checkbox [(ngModel)]="sublink.visible" (click)="$event.stopPropagation()">
-                    {{ sublink.label }}
-                  </mat-checkbox>
-                  }
-                </div>
+                }
               </div>
-              } @else {
-              <!-- Link simples -->
-              <mat-checkbox [(ngModel)]="link.visible" (click)="$event.stopPropagation()">
-                {{ link.label }}
-              </mat-checkbox>
-              }
               }
             </div>
           </mat-expansion-panel>
@@ -86,10 +111,11 @@
 
     <mat-card-actions>
       <button mat-button color="warn" (click)="resetPermissions()" [disabled]="!selectedRole">
-        REDEFINIR PADRÕES
+        <mat-icon>restart_alt</mat-icon> REDEFINIR PADRÕES
       </button>
-      <button mat-raised-button color="primary" (click)="savePermissions()" [disabled]="!selectedRole">
-        SALVAR CONFIGURAÇÕES
+      <button mat-raised-button color="primary" (click)="savePermissions()"
+        [disabled]="!selectedRole || saveInProgress">
+        <mat-icon>save</mat-icon> SALVAR CONFIGURAÇÕES
       </button>
     </mat-card-actions>
   </mat-card>

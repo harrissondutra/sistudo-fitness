@@ -1,3 +1,11 @@
+// Definir cores diretamente em vez de usar funções do Angular Material
+$primary: #3f51b5;    // Indigo
+$accent: #ff4081;     // Pink accent-A200
+$warn: #f44336;       // Red
+$success: #2e7d32;    // Green
+$light-bg: #f5f5f5;   // Light gray
+$border-color: #e0e0e0;
+
 .view-container {
   max-width: 900px;
   margin: 24px auto;
@@ -6,11 +14,36 @@
 
 .role-selector {
   margin-bottom: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
 
   mat-form-field {
     width: 100%;
     max-width: 300px;
+
+    ::ng-deep .mat-mdc-form-field-focus-overlay {
+      background-color: rgba($primary, 0.04);
+    }
   }
+
+  .show-hidden-toggle {
+    margin-left: auto;
+
+    ::ng-deep .mdc-switch:enabled .mdc-switch__track::after {
+      background: $primary;
+    }
+  }
+}
+
+.permissions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .menu-permissions {
@@ -18,7 +51,7 @@
 
   h3 {
     margin-bottom: 16px;
-    color: #3f51b5;
+    color: $primary;
     font-weight: 500;
   }
 }
@@ -26,6 +59,8 @@
 /* Debug info */
 .debug-actions {
   margin-bottom: 16px;
+  display: flex;
+  gap: 8px;
 
   button {
     font-size: 0.9em;
@@ -40,6 +75,18 @@
 .menu-list {
   mat-expansion-panel {
     margin-bottom: 8px;
+
+    &:hover {
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    ::ng-deep .mat-expansion-panel-header-title {
+      color: rgba(0, 0, 0, 0.87);
+    }
+
+    ::ng-deep .mat-expansion-indicator::after {
+      color: $primary;
+    }
   }
 }
 
@@ -47,11 +94,24 @@
   display: flex;
   gap: 8px;
   margin-bottom: 12px;
+  flex-wrap: wrap;
 
   button {
     font-size: 0.8rem;
     line-height: 28px;
     min-height: 28px;
+
+    &[color="primary"] {
+      ::ng-deep .mat-mdc-button-persistent-ripple {
+        background-color: rgba($primary, 0.1);
+      }
+    }
+
+    &[color="warn"] {
+      ::ng-deep .mat-mdc-button-persistent-ripple {
+        background-color: rgba($warn, 0.1);
+      }
+    }
   }
 }
 
@@ -62,17 +122,25 @@
   gap: 16px;
 }
 
-/* Fazer checkboxes mais interativos/visíveis */
+/* Fazer checkboxes mais interativos/visíveis com cores do tema */
 mat-checkbox {
   margin-right: 16px;
   padding: 4px 8px;
 
-  ::ng-deep .mat-checkbox-inner-container {
+  ::ng-deep .mdc-checkbox {
+    .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background,
+    .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
+      border-color: $primary;
+      background-color: $primary;
+    }
+  }
+
+  ::ng-deep .mat-mdc-checkbox-touch-target {
     margin-right: 10px;
   }
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.04);
+    background-color: rgba($primary, 0.04);
     border-radius: 4px;
   }
 }
@@ -81,12 +149,24 @@ mat-checkbox {
 .link-with-sublinks {
   display: flex;
   flex-direction: column;
-  border-left: 2px dashed #e0e0e0;
+  border-left: 2px dashed $border-color;
   padding-left: 16px;
   margin: 8px 0;
 
   mat-checkbox {
     margin-bottom: 8px;
+  }
+}
+
+.link-item {
+  &.link-hidden {
+    opacity: 0.7;
+  }
+}
+
+.sublink-item {
+  &.sublink-hidden {
+    opacity: 0.7;
   }
 }
 
@@ -102,9 +182,18 @@ mat-checkbox {
   }
 
   mat-checkbox {
-    background-color: rgba(0, 0, 0, 0.01); // Leve destaque para diferenciar
+    background-color: rgba($primary, 0.01); // Leve destaque para diferenciar
     border-radius: 4px;
     margin-bottom: 4px;
+
+    // Diferente cor para checkboxes de sublinks
+    ::ng-deep .mdc-checkbox {
+      .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background,
+      .mdc-checkbox__native-control:enabled:indeterminate ~ .mdc-checkbox__background {
+        border-color: $accent;
+        background-color: $accent;
+      }
+    }
   }
 }
 
@@ -113,7 +202,7 @@ mat-checkbox {
   justify-content: center;
   align-items: center;
   height: 200px;
-  background-color: #f5f5f5;
+  background-color: $light-bg;
   border-radius: 4px;
 
   p {
@@ -130,13 +219,13 @@ mat-checkbox {
   font-weight: 500;
 
   &.visible {
-    background-color: #e8f5e9;
-    color: #2e7d32;
+    background-color: rgba($success, 0.1);
+    color: $success;
   }
 
   &.hidden {
-    background-color: #ffebee;
-    color: #c62828;
+    background-color: rgba($warn, 0.1);
+    color: $warn;
   }
 }
 
@@ -145,16 +234,41 @@ mat-card-actions {
   justify-content: flex-end;
   gap: 16px;
   padding: 16px;
+
+  button[color="primary"] {
+    background-color: $primary;
+    color: white;
+  }
+
+  button[color="warn"] {
+    background-color: $warn;
+    color: white;
+  }
 }
 
 mat-panel-description {
   display: flex;
   align-items: center;
   gap: 8px;
+
+  mat-icon {
+    color: $primary;
+  }
 }
 
 /* Responsividade */
 @media (max-width: 600px) {
+  .role-selector {
+    flex-direction: column;
+    align-items: flex-start;
+
+    mat-form-field,
+    .show-hidden-toggle {
+      width: 100%;
+      max-width: none;
+    }
+  }
+
   .menu-links {
     padding-left: 8px;
   }
@@ -165,8 +279,14 @@ mat-panel-description {
 
   mat-card-actions {
     flex-direction: column;
+
     button {
       width: 100%;
     }
+  }
+
+  .permissions-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
