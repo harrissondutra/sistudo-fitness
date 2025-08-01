@@ -33,6 +33,11 @@ import { LoginComponent } from './login/login.component';
 import { AuthGuard } from './core/auth.guard';
 import { UserListComponent } from './users/user-list/user-list.component';
 import { UserCreateComponent } from './users/user-create/user-create.component';
+import { UserEditComponent } from './users/user-edit/user-edit.component';
+import { GymComponent } from './gym/gym.component';
+import { ViewComponent } from './admin/view/view.component';
+import { GymEditComponent } from './gym/gym-edit/gym-edit.component';
+import { AdminRegisterComponent } from './admin/admin-register/admin-register.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -43,6 +48,7 @@ export const routes: Routes = [
     children: [
       { path: 'user-list', component: UserListComponent },
       { path: 'user-create', component: UserCreateComponent },
+      { path: 'user-edit/:id', component: UserEditComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'settings', component: SettingsComponent },
       { path: 'logout', component: LogoutComponent },
@@ -54,10 +60,10 @@ export const routes: Routes = [
       { path: 'trainning-create/:id', component: TrainningCreateComponent },
       { path: 'trainning-view/:id', component: TrainningViewComponent },
       { path: 'trainning-edit/:id', component: TrainningEditComponent },
-      { path: 'exercises', component: ListExerciseComponent},
-      { path: 'create-exercise', component: CreateExerciseComponent},
-      { path: 'create-category-trainning', component: TrainningCategoryComponent},
-      { path: 'category-exercise', component: CategoryExerciseComponent},
+      { path: 'exercises', component: ListExerciseComponent },
+      { path: 'create-exercise', component: CreateExerciseComponent },
+      { path: 'create-category-trainning', component: TrainningCategoryComponent },
+      { path: 'category-exercise', component: CategoryExerciseComponent },
       { path: 'trainnings', component: TrainningComponent },
       { path: 'inactive-trainning', component: InactiveTrainningComponent },
       { path: 'doctor-list', component: DoctorListComponent },
@@ -65,14 +71,18 @@ export const routes: Routes = [
       { path: 'doctor-update/:id', component: DoctorUpdateComponent },
       { path: 'doctor-create', component: DoctorCreateComponent },
       { path: 'doctor-create/:id', component: DoctorCreateComponent },
-      { path: 'nutritionist-list', component: NutritionistListComponent},
+      { path: 'nutritionist-list', component: NutritionistListComponent },
       { path: 'nutritionist-view', component: NutritionistViewComponent },
       { path: 'nutritionist-update/:id', component: NutritionistUpdateComponent },
       { path: 'nutritionist-create', component: NutritionistCreateComponent },
-      { path: 'personal-list', component: PersonalListComponent},
+      { path: 'personal-list', component: PersonalListComponent },
       { path: 'personal-view', component: PersonalViewComponent },
       { path: 'personal-update/:id', component: PersonalUpdateComponent },
       { path: 'personal-create', component: PersonalCreateComponent },
+      { path: 'gym', component: GymComponent },
+      { path: 'gym-edit', component: GymEditComponent },
+      { path: 'views', component: ViewComponent },
+      { path: 'admin-register', component: AdminRegisterComponent },
       {
         path: 'trainning',
         loadChildren: () => import('./trainning/trainning.module').then(m => m.TrainningModule)

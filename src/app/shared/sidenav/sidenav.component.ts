@@ -16,47 +16,40 @@ interface MenuItem {
 }
 
 @Component({
-    selector: 'app-sidenav',
-    standalone: true,
-    imports: [
+  selector: 'app-sidenav',
+  standalone: true,
+  imports: [
     CommonModule,
     MatListModule,
     MatIconModule,
     MatExpansionModule,
     RouterModule
-],
-    templateUrl: './sidenav.component.html',
-    styleUrls: ['./sidenav.component.scss']
+  ],
+  templateUrl: './sidenav.component.html',
+  styleUrls: ['./sidenav.component.scss']
 })
 export class SidenavComponent {
   @Output() linkClicked = new EventEmitter<void>();
   @Output() expandClicked = new EventEmitter<void>();
   @Input() collapsed = false;
 
-  constructor(public authService: AuthService) {}
+  constructor(public authService: AuthService) { }
 
   // Novo item para o link Home direto
   homeLink = { label: 'Home', route: '/', icon: 'home' };
 
   // Itens de menu que terão painéis de expansão
   expandableMenuItems: MenuItem[] = [
-    {
-      title: 'Usuários',
-      icon: 'person',
-      links: [
-        { label: 'Listar Usuários', route: '/user-list' },
-        { label: 'Criar Novo Usuário', route: '/user-create' },
-      ]
-    },
+
     {
       title: 'Clientes',
       icon: 'group',
       links: [
         { label: 'Listar Clientes', route: '/clients-list' },
-        { label: 'Criar Novo Cliente', route: '/register' },
+
       ]
     },
-     {
+    {
       title: 'Médicos',
       icon: 'stethoscope',
 
@@ -66,7 +59,7 @@ export class SidenavComponent {
         { label: 'Editar Médico', route: '/doctor-update/:id' },
       ]
     },
-     {
+    {
       title: 'Personal Trainers',
       icon: 'body_system',
 
@@ -76,7 +69,7 @@ export class SidenavComponent {
         { label: 'Editar Personal', route: '/personal-update/:id' },
       ]
     },
-     {
+    {
       title: 'Nutricionistas',
       icon: 'body_fat',
 
@@ -104,6 +97,27 @@ export class SidenavComponent {
         { label: 'Listar Exercícios', route: '/exercises' },
         { label: 'Inserir Categoria', route: '/category-exercise' },
         { label: 'Criar Novo Exercício', route: '/create-exercise' },
+      ]
+    },
+    {
+      title: 'Academia',
+      icon: 'fitness_center',
+      links: [
+        { label: 'Listar', route: '/gym' },
+        { label: 'Profissionais', route: '/professionals' },
+        { label: 'Outros', route: '/others' },
+      ]
+    },
+    {
+      title: 'Administrador',
+      icon: 'admin_panel_settings',
+      links: [
+        { label: 'Usuários', route: '/user-list' }, // Link principal para usuários
+       // { label: 'Criar Usuário', route: '/user-create' }, // Link direto para criação
+        { label: 'Visões', route: '/views' },
+        { label: 'Cadastros Gerais', route: '/admin-register' },
+        { label: 'Criar Novo Cliente', route: '/register' },
+        { label: 'Outros', route: '/others' },
       ]
     },
   ];

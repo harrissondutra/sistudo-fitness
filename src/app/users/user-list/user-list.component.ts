@@ -38,7 +38,7 @@ export class UserListComponent implements OnInit {
     private userService: UserService,
     private router: Router,
     private snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadUsers();
@@ -72,7 +72,7 @@ export class UserListComponent implements OnInit {
   }
 
   onEdit(user: any): void {
-    this.router.navigate(['/user-edit', user.id]);
+    this.router.navigate(['user-edit', user.id]);
   }
 
   onDelete(user: any): void {
