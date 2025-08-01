@@ -32,7 +32,7 @@ export interface ExerciseDto {
   sets?: number;
   repetitions?: number;
   weight?: number;
-  rest?: number; // Tempo de descanso em segundos
+  rest?: number; // Tempo de descanso em minutos
   order?: number; // Ordem no treino
   trainningId?: number; // Relacionamento com treino
 }

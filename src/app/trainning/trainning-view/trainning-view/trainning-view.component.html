@@ -99,8 +99,8 @@
             <div class="exercise-metrics">
               <span class="metric"><strong>Séries:</strong> {{ exercise.sets || 0 }}</span>
               <span class="metric"><strong>Repetições:</strong> {{ exercise.repetitions || 0 }}</span>
-              <span class="metric"><strong>Carga:</strong> {{ exercise.weight || 0 }}kg</span>
-              <span class="metric"><strong>Descanso:</strong> {{ exercise.rest || 0 }}s</span>
+              <span class="metric"><strong>Carga:</strong> {{ exercise.weight || 0 }} kg</span>
+              <span class="metric"><strong>Descanso:</strong> {{ exercise.rest || 0 }} min</span>
             </div>
             }
             <!-- Modo edição -->
@@ -123,7 +123,7 @@
                 </mat-form-field>
 
                 <mat-form-field appearance="outline">
-                  <mat-label>Descanso (s)</mat-label>
+                  <mat-label>Descanso (min)</mat-label>
                   <input matInput type="number" [(ngModel)]="editingExercise.rest" min="0">
                 </mat-form-field>
               </div>
