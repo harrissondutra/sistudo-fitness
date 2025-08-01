@@ -1,1 +1,96 @@
-<p>view works!</p>
+<div class="view-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Gerenciamento de Visibilidade de Menus</mat-card-title>
+      <mat-card-subtitle>Configure quais menus cada perfil de usuário pode visualizar</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="role-selector">
+        <mat-form-field appearance="fill">
+          <mat-label>Selecione o perfil de usuário</mat-label>
+          <mat-select [(ngModel)]="selectedRole" (selectionChange)="onRoleChange()">
+            @for (role of roles; track role) {
+            <mat-option [value]="role">{{ roleLabels[role] }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      @if (!selectedRole) {
+      <div class="no-role-selected">
+        <p>Selecione um perfil de usuário para configurar suas permissões de visualização</p>
+      </div>
+      } @else {
+      <div class="menu-permissions">
+        <h3>Configuração de menus para: {{ roleLabels[selectedRole] }}</h3>
+        <div class="debug-actions">
+          <button mat-button color="accent" (click)="checkStoredPermissions()">
+            <mat-icon>bug_report</mat-icon> VERIFICAR ARMAZENAMENTO
+          </button>
+        </div>
+        <div class="menu-list">
+          @for (menu of menuItems; track menu.id) {
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <mat-checkbox [(ngModel)]="menu.visible" (click)="$event.stopPropagation()">
+                  {{ menu.title }}
+                </mat-checkbox>
+              </mat-panel-title>
+              <mat-panel-description>
+                <mat-icon>{{ menu.icon }}</mat-icon>
+                <span class="status-badge" [ngClass]="menu.visible ? 'visible' : 'hidden'">
+                  {{ menu.visible ? 'Visível' : 'Oculto' }}
+                </span>
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div class="menu-actions">
+              <button mat-button color="primary" (click)="enableAllLinks(menu)">Ativar todos os links</button>
+              <button mat-button color="warn" (click)="disableMenuLinks(menu)">Desativar todos os links</button>
+            </div>
+
+            <!-- Links do menu -->
+            <div class="menu-links">
+              @for (link of menu.links; track link.id) {
+              <!-- Link com sublinks -->
+              @if (link.sublinks) {
+              <div class="link-with-sublinks">
+                <mat-checkbox [(ngModel)]="link.visible" (click)="$event.stopPropagation()">
+                  {{ link.label }}
+                </mat-checkbox>
+
+                <div class="sublinks-container">
+                  @for (sublink of link.sublinks; track sublink.id) {
+                  <mat-checkbox [(ngModel)]="sublink.visible" (click)="$event.stopPropagation()">
+                    {{ sublink.label }}
+                  </mat-checkbox>
+                  }
+                </div>
+              </div>
+              } @else {
+              <!-- Link simples -->
+              <mat-checkbox [(ngModel)]="link.visible" (click)="$event.stopPropagation()">
+                {{ link.label }}
+              </mat-checkbox>
+              }
+              }
+            </div>
+          </mat-expansion-panel>
+          }
+        </div>
+      </div>
+      }
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-button color="warn" (click)="resetPermissions()" [disabled]="!selectedRole">
+        REDEFINIR PADRÕES
+      </button>
+      <button mat-raised-button color="primary" (click)="savePermissions()" [disabled]="!selectedRole">
+        SALVAR CONFIGURAÇÕES
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
