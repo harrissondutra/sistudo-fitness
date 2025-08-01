@@ -9,13 +9,17 @@ import { environment } from '../../../environments/environment';
 export class UserService {
   private baseUrl = `${environment.apiUrl}/users`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /**
    * Retorna todos os usuários do sistema.
    */
   getAllUsers(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}`);
+  }
+
+  getUserById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/getById/${id}`);
   }
 
   /**
@@ -29,7 +33,7 @@ export class UserService {
    * Atualiza um usuário existente.
    */
   updateUser(id: number, user: any): Observable<any> {
-    return this.http.put<any>(`${this.baseUrl}/${id}`, user);
+    return this.http.put<any>(`${this.baseUrl}/update/${id}`, user);
   }
 
   /**

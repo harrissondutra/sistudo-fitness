@@ -1,1 +1,65 @@
-<p>user-edit works!</p>
+<div class="user-edit-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Editar Usuário</mat-card-title>
+      <mat-card-subtitle>Edite os dados do usuário</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div *ngIf="isLoading" class="loading-spinner">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Carregando dados...</p>
+      </div>
+
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading">
+        <input type="hidden" formControlName="id">
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Nome de usuário</mat-label>
+          <input matInput formControlName="username" placeholder="Nome de usuário">
+          <mat-error *ngIf="userForm.get('username')?.invalid">
+            {{ getErrorMessage('username') }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" placeholder="email@exemplo.com">
+          <mat-error *ngIf="userForm.get('email')?.invalid">
+            {{ getErrorMessage('email') }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Nova senha (deixe em branco para manter atual)</mat-label>
+          <input matInput type="password" formControlName="password" placeholder="Nova senha">
+          <mat-icon matSuffix>vpn_key</mat-icon>
+          <mat-hint>Deixe em branco para manter a senha atual</mat-hint>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Perfil de acesso</mat-label>
+          <mat-select formControlName="role">
+            <mat-option *ngFor="let role of roles" [value]="role.value">
+              {{ role.displayName }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="userForm.get('role')?.invalid">
+            {{ getErrorMessage('role') }}
+          </mat-error>
+        </mat-form-field>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <div class="form-actions">
+        <button mat-button color="warn" (click)="cancel()" [disabled]="isLoading">
+          CANCELAR
+        </button>
+        <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="isLoading || userForm.invalid">
+          SALVAR
+        </button>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+</div>

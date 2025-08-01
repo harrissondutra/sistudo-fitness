@@ -8,12 +8,15 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router, RouterModule } from '@angular/router';
 import { UserService } from '../../services/user/user.service';
+import { USER_ROLE_OPTIONS } from '../../models/user_role';
+
 
 export enum UserRole {
   ROLE_ADMIN = 'Administrador',
   ROLE_CLIENT = 'Cliente',
   ROLE_DOCTOR = 'Médico',
   ROLE_PERSONAL = 'Personal Trainer',
+  ROLE_GYM = 'Administrador de Academia',
   ROLE_NUTRITIONIST = 'Nutricionista'
 }
 
@@ -37,13 +40,7 @@ export enum UserRole {
 export class UserCreateComponent {
   userForm: FormGroup;
   isLoading = false;
-  roles = [
-    { value: 'ROLE_ADMIN', label: UserRole.ROLE_ADMIN },
-    { value: 'ROLE_CLIENT', label: UserRole.ROLE_CLIENT },
-    { value: 'ROLE_PERSONAL', label: UserRole.ROLE_PERSONAL },
-    { value: 'ROLE_NUTRITIONIST', label: UserRole.ROLE_NUTRITIONIST },
-    { value: 'ROLE_DOCTOR', label: UserRole.ROLE_DOCTOR }
-  ];
+  roles = USER_ROLE_OPTIONS;
 
   constructor(
     private fb: FormBuilder,
