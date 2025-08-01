@@ -101,28 +101,30 @@ export class TrainningComponent implements OnInit { // Mantido o nome `Trainning
       });
   }
 
-  /**
-   * Aplica o filtro de busca na lista de treinos.
-   * Filtra `allTrainnings` e atualiza `filteredTrainnings`.
-   * @param filterValue O valor a ser filtrado.
-   */
-  applyFilter(filterValue: string): void {
-    const lowerCaseFilter = filterValue.trim().toLowerCase();
+  // Versão mais robusta do método applyFilter
+applyFilter(filterValue: string): void {
+  const lowerCaseFilter = filterValue.trim().toLowerCase();
 
-    if (!lowerCaseFilter) {
-      this.filteredTrainnings = [...this.allTrainnings]; // Se não houver filtro, mostra todos os treinos
-      return;
+  if (!lowerCaseFilter) {
+    this.filteredTrainnings = [...this.allTrainnings];
+    return;
+  }
+
+  this.filteredTrainnings = this.allTrainnings.filter(trainning => {
+    // Verificação segura para o nome do treino
+    const trainingName = trainning.name || '';
+    const nameMatches = trainingName.toLowerCase().includes(lowerCaseFilter);
+
+    // Verificação segura para o cliente e nome do cliente
+    let clientNameMatches = false;
+    if (trainning.client && typeof trainning.client === 'object') {
+      const clientName = trainning.client.name || '';
+      clientNameMatches = clientName.toLowerCase().includes(lowerCaseFilter);
     }
 
-    this.filteredTrainnings = this.allTrainnings.filter(Trainning => {
-      // Adapte os campos conforme seu modelo Trainning
-      return (
-        (Trainning.name?.toLowerCase() || '').includes(lowerCaseFilter)
-        // Adicione outros campos de busca se necessário, como:
-        // (Trainning.id?.toString() || '').includes(lowerCaseFilter)
-      );
-    });
-  }
+    return nameMatches || clientNameMatches;
+  });
+}
 
   /**
    * Navega para a tela de criação de treino.

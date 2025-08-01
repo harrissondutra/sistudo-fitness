@@ -441,3 +441,25 @@ $margin-medium: $spacing-unit * 3; // 24px
     }
   }
 }
+// Adicione este novo estilo
+.search-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  max-width: 500px;
+}
+
+// Ajustar o estilo existente da dica
+.search-tip {
+  margin-top: -8px; // Menor margem negativa para ficar mais próximo do campo
+  margin-bottom: 12px;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 12px;
+  padding-left: 4px;
+}
+
+// Modificar o estilo do campo de busca
+.search-input {
+  width: 100%; // Garante que o campo ocupe toda a largura do container
+  margin-bottom: 0; // Remove margem inferior padrão
+}

@@ -6,26 +6,29 @@
       <h2>Lista de Treinos</h2>
       <p class="subtitle">Gerencie todos os treinos cadastrados no sistema</p>
     </div>
+     <div class="action-buttons-top">
+    <button mat-raised-button color="primary" (click)="createTrainning()">
+      <mat-icon>add</mat-icon>
+      Novo Treino
+    </button>
+  </div>
   </div>
 
-  <!-- Barra de Ações (com campo de busca e botão de criação) -->
-  <div class="action-bar">
+   <div class="action-bar">
+  <div class="search-container">
     <mat-form-field appearance="outline" class="search-input">
-      <mat-label>Buscar Treino</mat-label>
-      <input matInput [formControl]="searchControl" placeholder="Digite para buscar">
+      <mat-label>Buscar por Treino ou Cliente</mat-label>
+      <input matInput [formControl]="searchControl" placeholder="Digite nome do treino ou cliente">
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
-
-    <div class="action-buttons-top">
-      <button mat-raised-button color="primary" (click)="createTrainning()">
-        <mat-icon>add</mat-icon>
-        Novo Treino
-      </button>
-    </div>
+    <span class="search-tip">Dica: Use o nome do treino ou do cliente para buscar</span>
   </div>
 
+
+</div>
+
   <!-- Lista de Treinos responsiva usando Ionic com ícones Material -->
- @if (filteredTrainnings && filteredTrainnings.length > 0) {
+  @if (filteredTrainnings && filteredTrainnings.length > 0) {
   <ion-list class="trainning-ionic-list mat-elevation-z2">
     @for (training of filteredTrainnings; track training) {
     <ion-item button (click)="getTrainningById(training.id?.toString() ?? '')" class="trainning-view">
@@ -55,7 +58,7 @@
     </ion-item>
     }
   </ion-list>
-}
+  }
 
   <!-- Mensagem quando não há dados -->
   @if (filteredTrainnings && filteredTrainnings.length === 0 && !isLoading) {
