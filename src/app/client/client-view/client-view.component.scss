@@ -864,3 +864,34 @@ body {
     }
   }
 }
+
+.training-end-date {
+  margin-top: 4px;
+  padding-left: 90px; // Alinha a data de fim com a posição do "Início:"
+  position: relative;
+
+  &::before {
+    content: "Fim:";
+    position: absolute;
+    left: 0;
+    font-weight: normal;
+  }
+}
+
+.training-dates {
+  margin-left: 16px;
+
+  .training-date-row {
+    display: flex;
+    margin: 4px 0;
+  }
+
+  .date-label {
+    width: 50px; // Largura fixa para alinhar os valores
+    font-weight: normal;
+  }
+
+  .date-value {
+    flex: 1;
+  }
+}

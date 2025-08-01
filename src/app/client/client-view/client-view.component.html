@@ -261,17 +261,17 @@
 
     <!-- Linha do Dashboard Inferior: Treino Atual e Histórico de Treinos -->
     <!-- Seção de Treinos do Cliente -->
-<div class="exercises-section current-training-section">
-  <h2>
-    <mat-icon>assignment</mat-icon>
-    Treinos do Cliente
-    <button mat-icon-button color="primary" (click)="assignNewTraining()" matTooltip="Atribuir novo treino">
-      <mat-icon>add_circle_outline</mat-icon>
-    </button>
-  </h2>
+    <div class="exercises-section current-training-section">
+      <h2>
+        <mat-icon>assignment</mat-icon>
+        Treinos do Cliente
+        <button mat-icon-button color="primary" (click)="assignNewTraining()" matTooltip="Atribuir novo treino">
+          <mat-icon>add_circle_outline</mat-icon>
+        </button>
+      </h2>
 
-  @if (clientTrainings && clientTrainings.length > 0) {
-    @for (training of clientTrainings; track training.id) {
+      @if (clientTrainings && clientTrainings.length > 0) {
+      @for (training of clientTrainings; track training.id) {
       <div class="current-training-details">
         <div class="training-header">
           <h3>{{ training.name }}</h3>
@@ -280,37 +280,40 @@
           </span>
         </div>
 
-        <p><strong>Período:</strong>
-          <span class="training-date">
-            Início: {{ training.startDate ? (parseDate(training.startDate) | date:'dd/MM/yyyy') : 'Não definida' }}
-          </span>
-          <span class="training-date" *ngIf="training.endDate">
-            Fim: {{ parseDate(training.endDate) | date:'dd/MM/yyyy' }}
-          </span>
+
+        <p class="training-date-row">
+          <strong><span class="date-label">Início: </span></strong>
+          <span class="date-value">{{ training.startDate ? (parseDate(training.startDate) | date:'dd/MM/yyyy') : 'Não
+            definida' }}</span>
         </p>
+        <p *ngIf="training.endDate" class="training-date-row">
+          <strong><span class="date-label">Fim: </span></strong>
+          <span class="date-value">{{ parseDate(training.endDate) | date:'dd/MM/yyyy' }}</span>
+        </p>
+
         <p><strong>Categoria:</strong> {{
           (training.categories && training.categories.length > 0 ?
-            training.categories[0].name :
-            (training.category || '-'))
-        }}</p>
+          training.categories[0].name :
+          (training.category || '-'))
+          }}</p>
         <p><strong>Frequência Semanal:</strong> {{ training.weeklyFrequency || '-' }}</p>
 
         <h3>Exercícios:</h3>
         @if (training.exercises?.length) {
-          <div class="exercises-list">
-            @for (exercise of training.exercises; track exercise.id) {
-              <div class="exercise-item">
-                <h4>{{ exercise.name }}</h4>
-                <p>
-                  <span class="exercise-detail">Séries: {{ exercise.sets || '-' }}</span>
-                  <span class="exercise-detail">Repetições: {{ exercise.reps || '-' }}</span>
-                  <span class="exercise-detail">Carga: {{ exercise.weight ? (exercise.weight + ' kg') : '-' }}</span>
-                </p>
-              </div>
-            }
+        <div class="exercises-list">
+          @for (exercise of training.exercises; track exercise.id) {
+          <div class="exercise-item">
+            <h4>{{ exercise.name }}</h4>
+            <p>
+              <span class="exercise-detail">Séries: {{ exercise.sets || '-' }}</span>
+              <span class="exercise-detail">Repetições: {{ exercise.reps || '-' }}</span>
+              <span class="exercise-detail">Carga: {{ exercise.weight ? (exercise.weight + ' kg') : '-' }}</span>
+            </p>
           </div>
+          }
+        </div>
         } @else {
-          <p>Nenhum exercício cadastrado para este treino.</p>
+        <p>Nenhum exercício cadastrado para este treino.</p>
         }
 
         <div class="training-actions">
@@ -319,56 +322,56 @@
           </button>
         </div>
       </div>
-    }
-  } @else {
-    <div class="no-training">
-      <mat-icon>sentiment_dissatisfied</mat-icon>
-      <p>Nenhum treino atribuído a este cliente.</p>
-      <mat-card class="action-card">
-        <button mat-raised-button color="primary" class="assign-training-button" (click)="assignNewTraining()">
-          <mat-icon>add_circle_outline</mat-icon>
-          <span>Novo Treino</span>
-        </button>
-      </mat-card>
+      }
+      } @else {
+      <div class="no-training">
+        <mat-icon>sentiment_dissatisfied</mat-icon>
+        <p>Nenhum treino atribuído a este cliente.</p>
+        <mat-card class="action-card">
+          <button mat-raised-button color="primary" class="assign-training-button" (click)="assignNewTraining()">
+            <mat-icon>add_circle_outline</mat-icon>
+            <span>Novo Treino</span>
+          </button>
+        </mat-card>
+      </div>
+      }
     </div>
-  }
-</div>
 
-      <div class="exercises-section training-history-section">
-        <h2>
-          <mat-icon>history</mat-icon>
-          Histórico de Treinos
-        </h2>
-        <div class="training-history-table-wrapper">
-          @if (inactiveTrainings.length > 0) {
-          <table class="training-table">
-            <thead>
-              <tr>
-                <th>Nome do Treino</th>
-                <th>Início</th>
-                <th>Fim</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (training of inactiveTrainings; track training.id) {
-              <tr>
-                <td>{{ training.name || 'Sem nome' }}</td>
-                <td>{{ isValidDate(training.startDate) ? (parseDate(training.startDate) | date:'dd/MM/yyyy') : '-' }}
-                </td>
-                <td>{{ isValidDate(training.endDate) ? (parseDate(training.endDate) | date:'dd/MM/yyyy') : '-' }}</td>
+    <div class="exercises-section training-history-section">
+      <h2>
+        <mat-icon>history</mat-icon>
+        Histórico de Treinos
+      </h2>
+      <div class="training-history-table-wrapper">
+        @if (inactiveTrainings.length > 0) {
+        <table class="training-table">
+          <thead>
+            <tr>
+              <th>Nome do Treino</th>
+              <th>Início</th>
+              <th>Fim</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (training of inactiveTrainings; track training.id) {
+            <tr>
+              <td>{{ training.name || 'Sem nome' }}</td>
+              <td>{{ isValidDate(training.startDate) ? (parseDate(training.startDate) | date:'dd/MM/yyyy') : '-' }}
+              </td>
+              <td>{{ isValidDate(training.endDate) ? (parseDate(training.endDate) | date:'dd/MM/yyyy') : '-' }}</td>
 
-              </tr>
-              }
-            </tbody>
-          </table>
-          } @else {
-          <div class="no-data-row">
-            <p>Nenhum histórico de treino inativo encontrado para este cliente.</p>
-          </div>
-          }
+            </tr>
+            }
+          </tbody>
+        </table>
+        } @else {
+        <div class="no-data-row">
+          <p>Nenhum histórico de treino inativo encontrado para este cliente.</p>
         </div>
+        }
       </div>
     </div>
+  </div>
   } @else {
   <div class="loading-spinner">
     <mat-spinner diameter="50"></mat-spinner>
