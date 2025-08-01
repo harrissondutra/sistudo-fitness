@@ -1,7 +1,7 @@
 import { ClientService } from './../../services/client/client.service';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -34,7 +34,8 @@ import { Trainning } from '../../models/trainning';
     MatCardModule,
     MatProgressSpinnerModule,
     MatCheckboxModule,
-    MatDialogModule
+    MatDialogModule,
+    RouterModule
   ]
 })
 export class ClientViewComponent implements OnInit {

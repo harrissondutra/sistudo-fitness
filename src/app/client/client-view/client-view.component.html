@@ -260,68 +260,79 @@
     </div>
 
     <!-- Linha do Dashboard Inferior: Treino Atual e Histórico de Treinos -->
-    <div class="dashboard-row dashboard-row-bottom">
-      <div class="exercises-section current-training-section">
-        <h2>
-          <mat-icon>assignment</mat-icon>
-          Treino Atual
-          <button mat-icon-button color="primary" (click)="assignNewTraining()" matTooltip="Atribuir novo treino">
-            <mat-icon>add_circle_outline</mat-icon>
-          </button>
-        </h2>
+    <!-- Seção de Treinos do Cliente -->
+<div class="exercises-section current-training-section">
+  <h2>
+    <mat-icon>assignment</mat-icon>
+    Treinos do Cliente
+    <button mat-icon-button color="primary" (click)="assignNewTraining()" matTooltip="Atribuir novo treino">
+      <mat-icon>add_circle_outline</mat-icon>
+    </button>
+  </h2>
 
-        @if (currentClientTraining) {
-        <div class="current-training-details">
-          <p><strong>Nome do Treino:</strong> {{ currentClientTraining.name }}</p>
-          <p><strong>Período:</strong>
-            <span class="training-date">
-              Início: {{ currentClientTraining.startDate ? (parseDate(currentClientTraining.startDate) |
-              date:'dd/MM/yyyy') : 'Não definida' }}
-            </span>
-            <span class="training-date" *ngIf="currentClientTraining.endDate">
-              Fim: {{ parseDate(currentClientTraining.endDate) | date:'dd/MM/yyyy' }}
-            </span>
-          </p>
-          <p><strong>Categoria:</strong> {{
-            (currentClientTraining.categories && currentClientTraining.categories.length > 0 ?
-            currentClientTraining.categories[0].name :
-            (currentClientTraining.category || '-'))
-            }}</p>
-          <p><strong>Frequência Semanal:</strong> {{ currentClientTraining.weeklyFrequency || '-' }}</p>
+  @if (clientTrainings && clientTrainings.length > 0) {
+    @for (training of clientTrainings; track training.id) {
+      <div class="current-training-details">
+        <div class="training-header">
+          <h3>{{ training.name }}</h3>
+          <span class="training-badge" [class.active-badge]="training.active">
+            {{ training.active ? 'Ativo' : 'Inativo' }}
+          </span>
+        </div>
 
-          <h3>Exercícios:</h3>
-          @if (currentClientTraining.exercises?.length) {
+        <p><strong>Período:</strong>
+          <span class="training-date">
+            Início: {{ training.startDate ? (parseDate(training.startDate) | date:'dd/MM/yyyy') : 'Não definida' }}
+          </span>
+          <span class="training-date" *ngIf="training.endDate">
+            Fim: {{ parseDate(training.endDate) | date:'dd/MM/yyyy' }}
+          </span>
+        </p>
+        <p><strong>Categoria:</strong> {{
+          (training.categories && training.categories.length > 0 ?
+            training.categories[0].name :
+            (training.category || '-'))
+        }}</p>
+        <p><strong>Frequência Semanal:</strong> {{ training.weeklyFrequency || '-' }}</p>
+
+        <h3>Exercícios:</h3>
+        @if (training.exercises?.length) {
           <div class="exercises-list">
-            @for (exercise of currentClientTraining.exercises; track exercise.id) {
-            <div class="exercise-item">
-              <h4>{{ exercise.name }}</h4>
-              <p>
-                <span class="exercise-detail">Séries: {{ exercise.sets || '-' }}</span>
-                <span class="exercise-detail">Repetições: {{ exercise.reps || '-' }}</span>
-                <span class="exercise-detail">Carga: {{ exercise.weight ? (exercise.weight + ' kg') : '-' }}</span>
-              </p>
-            </div>
+            @for (exercise of training.exercises; track exercise.id) {
+              <div class="exercise-item">
+                <h4>{{ exercise.name }}</h4>
+                <p>
+                  <span class="exercise-detail">Séries: {{ exercise.sets || '-' }}</span>
+                  <span class="exercise-detail">Repetições: {{ exercise.reps || '-' }}</span>
+                  <span class="exercise-detail">Carga: {{ exercise.weight ? (exercise.weight + ' kg') : '-' }}</span>
+                </p>
+              </div>
             }
           </div>
-          } @else {
-          <p>Nenhum exercício cadastrado para este treino.</p>
-          }
-        </div>
         } @else {
-        <div class="no-training">
-  <mat-icon>sentiment_dissatisfied</mat-icon>
-  <p>Nenhum treino atual atribuído a este cliente.</p>
-  <mat-card class="action-card">
-
-      <button mat-raised-button color="primary" class="assign-training-button" (click)="assignNewTraining()">
-        <mat-icon>add_circle_outline</mat-icon>
-        <span>Novo Treino</span>
-      </button>
-
-  </mat-card>
-</div>
+          <p>Nenhum exercício cadastrado para este treino.</p>
         }
+
+        <div class="training-actions">
+          <button mat-button color="primary" [routerLink]="['/trainning-view', training.id]">
+            <mat-icon>visibility</mat-icon> Ver Detalhes
+          </button>
+        </div>
       </div>
+    }
+  } @else {
+    <div class="no-training">
+      <mat-icon>sentiment_dissatisfied</mat-icon>
+      <p>Nenhum treino atribuído a este cliente.</p>
+      <mat-card class="action-card">
+        <button mat-raised-button color="primary" class="assign-training-button" (click)="assignNewTraining()">
+          <mat-icon>add_circle_outline</mat-icon>
+          <span>Novo Treino</span>
+        </button>
+      </mat-card>
+    </div>
+  }
+</div>
 
       <div class="exercises-section training-history-section">
         <h2>
@@ -358,7 +369,6 @@
         </div>
       </div>
     </div>
-  </div>
   } @else {
   <div class="loading-spinner">
     <mat-spinner diameter="50"></mat-spinner>
