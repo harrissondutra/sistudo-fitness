@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { UserRole } from '../models/user_role';
 
 @Injectable({
   providedIn: 'root'
@@ -95,8 +96,22 @@ export class AuthService {
   /**
    * Verifica se o usuário autenticado possui o papel de admin.
    */
-  isAdmin(): boolean {
-    const user = this.getUserInfo();
-    return user?.role === 'ROLE_ADMIN' || user?.roles?.includes?.('ROLE_ADMIN');
+   isAdmin(): boolean {
+    return this.getUserRole() === UserRole.ADMIN;
   }
+
+  getUserRole(): UserRole {
+  // Trocar 'user' por 'userInfo'
+  const userStr = localStorage.getItem('userInfo');
+  if (userStr) {
+    try {
+      const user = JSON.parse(userStr);
+      return user.role || UserRole.CLIENT;
+    } catch (e) {
+      console.error('Erro ao obter role do usuário:', e);
+    }
+  }
+
+  return UserRole.CLIENT;
+}
 }

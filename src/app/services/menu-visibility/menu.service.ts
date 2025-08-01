@@ -1,0 +1,185 @@
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+
+export interface MenuItem {
+  id: string;
+  title: string;
+  icon: string;
+  visible: boolean;
+  links: LinkItem[];
+}
+
+export interface LinkItem {
+  id: string;
+  label: string;
+  route: string;
+  visible: boolean;
+  sublinks?: SubLinkItem[];
+}
+
+export interface SubLinkItem {
+  id: string;
+  label: string;
+  route: string;
+  visible: boolean;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class MenuService {
+  private menuItemsSource = new BehaviorSubject<MenuItem[]>([
+    {
+      id: 'clients',
+      title: 'Clientes',
+      icon: 'group',
+      visible: true,
+      links: [
+        { id: 'list-clients', label: 'Listar Clientes', route: '/clients-list', visible: true }
+      ]
+    },
+    {
+      id: 'doctors',
+      title: 'Médicos',
+      icon: 'medical_services',
+      visible: true,
+      links: [
+        { id: 'list-doctors', label: 'Listar Médicos', route: '/doctor-list', visible: true },
+        { id: 'create-doctor', label: 'Criar Novo Médico', route: '/doctor-create', visible: true },
+        { id: 'edit-doctor', label: 'Editar Médico', route: '/doctor-update/:id', visible: true }
+      ]
+    },
+    {
+      id: 'personal',
+      title: 'Personal Trainer',
+      icon: 'fitness_center',
+      visible: true,
+      links: [
+        { id: 'list-personal', label: 'Listar Personal', route: '/personal-list', visible: true },
+        { id: 'create-personal', label: 'Criar Novo Personal', route: '/personal-create', visible: true },
+        { id: 'edit-personal', label: 'Editar Personal', route: '/personal-update/:id', visible: true }
+      ]
+    },
+    {
+      id: 'nutritionists',
+      title: 'Nutricionistas',
+      icon: 'restaurant_menu',
+      visible: true,
+      links: [
+        { id: 'list-nutritionist', label: 'Listar Nutricionistas', route: '/nutritionist-list', visible: true },
+        { id: 'create-nutritionist', label: 'Criar Novo Nutricionista', route: '/nutritionist-create', visible: true },
+        { id: 'edit-nutritionist', label: 'Editar Nutricionista', route: '/nutritionist-update/:id', visible: true }
+      ]
+    },
+    {
+      id: 'trainings',
+      title: 'Treinos',
+      icon: 'fitness_center',
+      visible: true,
+      links: [
+        { id: 'list-trainings', label: 'Exibir Treinos', route: '/trainnings', visible: true },
+        { id: 'inactive-trainings', label: 'Inativos', route: '/inactive-trainning', visible: true },
+        { id: 'create-training', label: 'Criar Novo Treino', route: '/trainning-create/:id', visible: true },
+        { id: 'create-training-category', label: 'Criar Categoria de Treino', route: '/create-category-trainning', visible: true }
+      ]
+    },
+    {
+      id: 'exercises',
+      title: 'Exercícios',
+      icon: 'sports_gymnastics',
+      visible: true,
+      links: [
+        { id: 'list-exercises', label: 'Listar Exercícios', route: '/exercises', visible: true },
+        { id: 'insert-category', label: 'Inserir Categoria', route: '/category-exercise', visible: true },
+        { id: 'create-exercise', label: 'Criar Novo Exercício', route: '/create-exercise', visible: true }
+      ]
+    },
+    {
+      id: 'gym',
+      title: 'Academia',
+      icon: 'warehouse',
+      visible: true,
+      links: [
+        { id: 'list-gyms', label: 'Listar', route: '/gym', visible: true },
+        { id: 'professionals', label: 'Profissionais', route: '/professionals', visible: true },
+        { id: 'others', label: 'Outros', route: '/others', visible: true }
+      ]
+    },
+    {
+      id: 'admin',
+      title: 'Administrador',
+      icon: 'admin_panel_settings',
+      visible: true,
+      links: [
+        {
+          id: 'users',
+          label: 'Usuários',
+          route: '',
+          visible: true,
+          sublinks: [
+            { id: 'list-users', label: 'Listar Usuários', route: '/user-list', visible: true },
+            { id: 'create-user', label: 'Criar Novo Usuário', route: '/user-create', visible: true }
+          ]
+        },
+        {
+          id: 'admin-clients',
+          label: 'Clientes',
+          route: '',
+          visible: true,
+          sublinks: [
+            { id: 'admin-list-clients', label: 'Listar', route: '/clients-list', visible: true },
+            { id: 'admin-create-client', label: 'Criar Novo Cliente', route: '/register', visible: true }
+          ]
+        },
+        { id: 'views', label: 'Visões', route: '/views', visible: true },
+        { id: 'general-registers', label: 'Cadastros Gerais', route: '/admin-register', visible: true },
+        { id: 'admin-others', label: 'Outros', route: '/others', visible: true }
+      ]
+    }
+  ]);
+
+  menuItems$ = this.menuItemsSource.asObservable();
+
+  getMenuItems(): MenuItem[] {
+    return this.menuItemsSource.value;
+  }
+
+  updateMenuItems(menuItems: MenuItem[]): void {
+    this.menuItemsSource.next([...menuItems]);
+  }
+
+  // Método para atualizar visibilidade baseado em permissões
+  updateMenuVisibilityByRole(role: string, permissions: any): void {
+    const menuItems = this.getMenuItems();
+
+    menuItems.forEach(menu => {
+      const menuPermission = permissions[menu.id];
+      if (menuPermission !== undefined) {
+        menu.visible = menuPermission.visible;
+
+        if (menu.links) {
+          menu.links.forEach(link => {
+            const linkId = link.id;
+            if (menuPermission.links && menuPermission.links[linkId]) {
+              link.visible = menuPermission.links[linkId].visible;
+
+              if (link.sublinks) {
+                link.sublinks.forEach(sublink => {
+                  const sublinkId = sublink.id;
+                  if (
+                    menuPermission.links[linkId].sublinks &&
+                    menuPermission.links[linkId].sublinks[sublinkId]
+                  ) {
+                    sublink.visible = menuPermission.links[linkId].sublinks[sublinkId].visible;
+                  }
+                });
+              }
+            }
+          });
+        }
+      }
+    });
+
+    this.updateMenuItems(menuItems);
+  }
+}

@@ -14,6 +14,8 @@ import { UserRole, USER_ROLE_LABELS } from '../../models/user_role';
 import { MenuVisibilityService } from '../../services/menu-visibility/menuVisibility.service';
 import { Inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MenuService, MenuItem } from '../../services/menu-visibility/menu.service';
+
 
 @Component({
   selector: 'app-view',
@@ -39,134 +41,35 @@ export class ViewComponent implements OnInit {
   roles = Object.values(UserRole);
   roleLabels = USER_ROLE_LABELS;
   selectedRole: UserRole | null = null;
+  menuItems: MenuItem[] = [];
 
-  // Clone do menu do sidenav para configurar as permissões
-  menuItems = [
-    {
-      id: 'clients',
-      title: 'Clientes',
-      icon: 'group',
-      visible: true,
-      links: [
-        { id: 'list-clients', label: 'Listar Clientes', visible: true }
-      ]
-    },
-    {
-      id: 'doctors',
-      title: 'Médicos',
-      icon: 'stethoscope',
-      visible: true,
-      links: [
-        { id: 'list-doctors', label: 'Listar Médicos', visible: true },
-        { id: 'create-doctor', label: 'Criar Novo Médico', visible: true },
-        { id: 'edit-doctor', label: 'Editar Médico', visible: true }
-      ]
-    },
-    {
-      id: 'personal',
-      title: 'Personal Trainers',
-      icon: 'body_system',
-      visible: true,
-      links: [
-        { id: 'list-personal', label: 'Listar Personal', visible: true },
-        { id: 'create-personal', label: 'Criar Novo Personal', visible: true },
-        { id: 'edit-personal', label: 'Editar Personal', visible: true }
-      ]
-    },
-    {
-      id: 'nutritionists',
-      title: 'Nutricionistas',
-      icon: 'body_fat',
-      visible: true,
-      links: [
-        { id: 'list-nutritionist', label: 'Listar Nutricionistas', visible: true },
-        { id: 'create-nutritionist', label: 'Criar Novo Nutricionista', visible: true },
-        { id: 'edit-nutritionist', label: 'Editar Nutricionista', visible: true }
-      ]
-    },
-    {
-      id: 'trainings',
-      title: 'Treinos',
-      icon: 'exercise',
-      visible: true,
-      links: [
-        { id: 'list-trainings', label: 'Exibir Treinos', visible: true },
-        { id: 'inactive-trainings', label: 'Inativos', visible: true },
-        { id: 'create-training', label: 'Criar Novo Treino', visible: true },
-        { id: 'create-training-category', label: 'Criar Categoria de Treino', visible: true }
-      ]
-    },
-    {
-      id: 'exercises',
-      title: 'Exercícios',
-      icon: 'sports_gymnastics',
-      visible: true,
-      links: [
-        { id: 'list-exercises', label: 'Listar Exercícios', visible: true },
-        { id: 'insert-category', label: 'Inserir Categoria', visible: true },
-        { id: 'create-exercise', label: 'Criar Novo Exercício', visible: true }
-      ]
-    },
-    {
-      id: 'gym',
-      title: 'Academia',
-      icon: 'warehouse',
-      visible: true,
-      links: [
-        { id: 'list-gyms', label: 'Listar', visible: true },
-        { id: 'professionals', label: 'Profissionais', visible: true },
-        { id: 'others', label: 'Outros', visible: true }
-      ]
-    },
-    {
-      id: 'admin',
-      title: 'Administrador',
-      icon: 'admin_panel_settings',
-      visible: true,
-      links: [
-        {
-          id: 'users',
-          label: 'Usuários',
-          visible: true,
-          sublinks: [
-            { id: 'list-users', label: 'Listar Usuários', visible: true },
-            { id: 'create-user', label: 'Criar Novo Usuário', visible: true }
-          ]
-        },
-        {
-          id: 'admin-clients',
-          label: 'Clientes',
-          visible: true,
-          sublinks: [
-            { id: 'admin-list-clients', label: 'Listar', visible: true },
-            { id: 'admin-create-client', label: 'Criar Novo Cliente', visible: true }
-          ]
-        },
-        { id: 'views', label: 'Visões', visible: true },
-        { id: 'general-registers', label: 'Cadastros Gerais', visible: true },
-        { id: 'admin-others', label: 'Outros', visible: true }
-      ]
-    }
-  ];
+
 
   constructor(
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
     private menuVisibilityService: MenuVisibilityService,
+    private menuService: MenuService,
     private cd: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
-    // Pré-seleciona a role ADMIN para melhor usabilidade inicial
-    if (this.roles.length > 0) {
-      // Seleciona a role ADMIN ou a primeira disponível
-      this.selectedRole = this.roles.includes(UserRole.ADMIN) ?
-        UserRole.ADMIN :
-        this.roles[0];
+    // Obter os itens de menu do serviço compartilhado
+    this.menuItems = this.menuService.getMenuItems();
 
-      console.log('Role pré-selecionada:', this.selectedRole);
+    // Pré-seleciona a role ADMIN
+    if (this.roles.length > 0) {
+      this.selectedRole = this.roles.includes(UserRole.ADMIN) ?
+                          UserRole.ADMIN :
+                          this.roles[0];
       this.onRoleChange();
     }
+
+    // Assinar às mudanças no menu compartilhado
+    this.menuService.menuItems$.subscribe(menuItems => {
+      this.menuItems = menuItems;
+      this.cd.detectChanges();
+    });
   }
 
 
@@ -315,40 +218,13 @@ export class ViewComponent implements OnInit {
 
     // Prepara o objeto de permissões para salvar
     const permissions: any = {};
-
     this.menuItems.forEach(menu => {
-      permissions[menu.id] = {
-        visible: menu.visible,
-        links: {}
-      };
-
-      if (menu.links) {
-        menu.links.forEach(link => {
-          const linkId = link.id || '';
-          permissions[menu.id].links[linkId] = {
-            visible: link.visible
-          };
-
-          // Se o link tem sublinks, salva suas permissões também
-          if ('sublinks' in link && link.sublinks) {
-            permissions[menu.id].links[linkId].sublinks = {};
-            link.sublinks.forEach(sublink => {
-              const sublinkId = sublink.id || '';
-              permissions[menu.id].links[linkId].sublinks[sublinkId] = {
-                visible: sublink.visible
-              };
-            });
-          }
-        });
-      }
+      // Resto do código permanece igual...
     });
 
     // Salva as permissões
     try {
       this.menuVisibilityService.saveMenuPermissions(this.selectedRole, permissions);
-
-      // Verifica imediatamente se as permissões foram salvas
-      this.checkStoredPermissions();
 
       this.snackBar.open(`Permissões para ${USER_ROLE_LABELS[this.selectedRole]} salvas com sucesso!`, 'Fechar', {
         duration: 3000

@@ -1,23 +1,11 @@
-import { Component, Output, EventEmitter, Input } from '@angular/core';
+import { Component, Output, EventEmitter, Input, OnInit } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
-
-interface MenuItem {
-  title: string;
-  icon?: string;
-  links: {
-    label: string;
-    route: string;
-    sublinks?: {  // Nova propriedade para subníveis
-      label: string;
-      route: string;
-    }[];
-  }[];
-}
+import { MenuService, MenuItem } from '../../services/menu-visibility/menu.service';
 
 @Component({
   selector: 'app-sidenav',
@@ -32,121 +20,63 @@ interface MenuItem {
   templateUrl: './sidenav.component.html',
   styleUrls: ['./sidenav.component.scss']
 })
-export class SidenavComponent {
+export class SidenavComponent implements OnInit {
   @Output() linkClicked = new EventEmitter<void>();
   @Output() expandClicked = new EventEmitter<void>();
   @Input() collapsed = false;
 
-  constructor(public authService: AuthService) { }
-
   // Novo item para o link Home direto
   homeLink = { label: 'Home', route: '/', icon: 'home' };
 
-  // Itens de menu que terão painéis de expansão
-  expandableMenuItems: MenuItem[] = [
+  // Use os menus do serviço compartilhado
+  expandableMenuItems: MenuItem[] = [];
 
-    {
-      title: 'Clientes',
-      icon: 'group',
-      links: [
-        { label: 'Listar Clientes', route: '/clients-list' },
+  constructor(
+    public authService: AuthService,
+    private menuService: MenuService
+  ) {}
 
-      ]
-    },
-    {
-      title: 'Médicos',
-      icon: 'stethoscope',
+  ngOnInit(): void {
+    // Obter os menus do serviço
+    this.expandableMenuItems = this.menuService.getMenuItems();
 
-      links: [
-        { label: 'Listar Médicos', route: '/doctor-list' },
-        { label: 'Criar Novo Médico', route: '/doctor-create' },
-        { label: 'Editar Médico', route: '/doctor-update/:id' },
-      ]
-    },
-    {
-      title: 'Personal Trainers',
-      icon: 'body_system',
-
-      links: [
-        { label: 'Listar Personal', route: '/personal-list' },
-        { label: 'Criar Novo Personal', route: '/personal-create' },
-        { label: 'Editar Personal', route: '/personal-update/:id' },
-      ]
-    },
-    {
-      title: 'Nutricionistas',
-      icon: 'body_fat',
-
-      links: [
-        { label: 'Listar Nutricionistas', route: '/nutritionist-list' },
-        { label: 'Criar Novo Nutricionista', route: '/nutritionist-create' },
-        { label: 'Editar Nutricionista', route: '/nutritionist-update/:id' },
-      ]
-    },
-
-    {
-      title: 'Treinos',
-      icon: 'exercise',
-      links: [
-        { label: 'Exibir Treinos', route: '/trainnings' },
-        { label: 'Inativos', route: '/inactive-trainning' },
-        { label: 'Criar Novo Treino', route: '/trainning-create/:id' },
-        { label: 'Criar Categoria de Treino', route: '/create-category-trainning' },
-      ]
-    },
-    {
-      title: 'Exercícios',
-      icon: 'sports_gymnastics',
-      links: [
-        { label: 'Listar Exercícios', route: '/exercises' },
-        { label: 'Inserir Categoria', route: '/category-exercise' },
-        { label: 'Criar Novo Exercício', route: '/create-exercise' },
-      ]
-    },
-    {
-      title: 'Academia',
-      icon: 'warehouse',
-      links: [
-        { label: 'Listar', route: '/gym' },
-        { label: 'Profissionais', route: '/professionals' },
-        { label: 'Outros', route: '/others' },
-      ]
-    },
-    {
-      title: 'Administrador',
-      icon: 'admin_panel_settings',
-      links: [
-        {
-          label: 'Usuários',
-          route: '', // Deixe vazio porque este agora é apenas um título de categoria
-          sublinks: [
-            { label: 'Listar Usuários', route: '/user-list' },
-            { label: 'Criar Novo Usuário', route: '/user-create' }
-          ]
-        },
-        {
-          label: 'Clientes',
-          route: '', // Deixe vazio porque este agora é apenas um título de categoria
-          sublinks: [
-            { label: 'Listar ', route: '/clients-list' },
-            { label: 'Criar Novo Cliente', route: '/register' }
-          ]
-        },
-        { label: 'Visões', route: '/views' },
-        { label: 'Cadastros Gerais', route: '/admin-register' },
-
-        { label: 'Outros', route: '/others' },
-      ]
-    },
-  ];
+    // Inscrever-se para atualizações
+    this.menuService.menuItems$.subscribe(menuItems => {
+      this.expandableMenuItems = menuItems;
+    });
+  }
 
   get visibleMenuItems(): MenuItem[] {
+    const userRole = this.authService.getUserRole();
+
+    // Para admin, não filtra nada
     if (this.authService.isAdmin()) {
       return this.expandableMenuItems;
     }
-    // Aqui você pode filtrar por outras roles, se desejar
-    // Exemplo: return this.expandableMenuItems.filter(item => !item.adminOnly);
-    return this.expandableMenuItems;
+
+    // Para outros papéis, mostra apenas os itens visíveis
+    return this.expandableMenuItems
+      .filter(menu => menu.visible)
+      .map(menu => {
+        const filteredMenu = { ...menu };
+
+        // Filtra links visíveis
+        if (filteredMenu.links) {
+          filteredMenu.links = filteredMenu.links.filter(link => link.visible)
+            .map(link => {
+              // Se tem sublinks, filtra os visíveis
+              if (link.sublinks) {
+                return {
+                  ...link,
+                  sublinks: link.sublinks.filter(sublink => sublink.visible)
+                };
+              }
+              return link;
+            });
+        }
+
+        return filteredMenu;
+      });
   }
 
   toggleSidenav() {
