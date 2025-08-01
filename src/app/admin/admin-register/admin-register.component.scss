@@ -1,0 +1,526 @@
+// Variables
+$color-primary: #3f51b5;
+$color-primary-light: #e8eaf6;
+$color-accent: #ff4081;
+$color-success: #1e8e3e;
+$color-success-bg: #e6f4ea;
+$color-danger: #d93025;
+$color-danger-bg: #fce8e6;
+$color-background: #f9f9f9;
+$color-card-bg: #ffffff;
+$color-border: #e0e0e0;
+$color-text-primary: #333333;
+$color-text-secondary: #666666;
+$color-handle: #888888;
+
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 20px;
+$spacing-xl: 30px;
+
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 5px 15px rgba(0, 0, 0, 0.15);
+$shadow-drag: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+              0 8px 10px 1px rgba(0, 0, 0, 0.14),
+              0 3px 14px 2px rgba(0, 0, 0, 0.12);
+
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+
+// Mixins
+@mixin flex($direction: row, $justify: flex-start, $align: stretch, $wrap: nowrap) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+  flex-wrap: $wrap;
+}
+
+@mixin card($padding: $spacing-md, $bg-color: $color-card-bg) {
+  background-color: $bg-color;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-sm;
+  padding: $padding;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+
+  &:hover {
+    box-shadow: $shadow-md;
+  }
+}
+
+@mixin badge($bg-color, $text-color) {
+  background-color: $bg-color;
+  color: $text-color;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $border-radius-sm;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+// Container Styles
+.admin-menu-container {
+  padding: $spacing-lg;
+  max-width: 1200px;
+  margin: 0 auto;
+  color: $color-text-primary;
+
+  // Add some breathing space at the bottom
+  padding-bottom: $spacing-xl * 2;
+}
+
+// Card Components
+.main-card {
+  @include card($spacing-lg);
+  margin-bottom: $spacing-lg;
+}
+
+.form-card {
+  @include card($spacing-md, $color-background);
+  margin-bottom: $spacing-xl;
+  border: 1px solid $color-border;
+
+  &:focus-within {
+    border-color: $color-primary;
+  }
+}
+
+.menu-item {
+  @include card;
+  position: relative;
+  margin-bottom: $spacing-lg;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  .menu-drag-handle {
+    position: absolute;
+    top: $spacing-sm;
+    right: $spacing-sm;
+    cursor: move;
+    color: $color-handle;
+    z-index: 2;
+    width: 24px;
+    height: 24px;
+    @include flex(row, center, center);
+
+    &:hover {
+      color: $color-primary;
+    }
+  }
+
+  mat-card-header {
+    padding-bottom: $spacing-sm;
+
+    mat-card-title {
+      font-weight: 500;
+      margin-bottom: $spacing-xs;
+    }
+
+    mat-icon {
+      color: $color-primary;
+    }
+  }
+
+  mat-card-actions {
+    padding: $spacing-sm $spacing-md;
+    @include flex(row, flex-end, center);
+    gap: $spacing-sm;
+  }
+}
+
+// Form Layout
+.form-row {
+  @include flex(row, flex-start, flex-start, wrap);
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+
+  mat-form-field {
+    flex: 1 1 250px;
+    min-width: 0; // Prevent overflow
+  }
+
+  mat-checkbox {
+    align-self: center;
+    margin-top: $spacing-sm;
+  }
+}
+
+.section-header {
+  @include flex(row, space-between, center);
+  margin: $spacing-lg 0 $spacing-sm;
+  border-bottom: 1px solid rgba($color-border, 0.5);
+  padding-bottom: $spacing-sm;
+
+  h3, h4 {
+    margin: 0;
+    font-weight: 500;
+    color: $color-text-primary;
+  }
+
+  button {
+    transform: scale(0.9);
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(1);
+    }
+  }
+}
+
+// Links & Sublinks
+.links-container {
+  margin-bottom: $spacing-lg;
+
+  mat-expansion-panel {
+    margin-bottom: $spacing-sm;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.link-form {
+  @include flex(row, flex-start, flex-start, wrap);
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+  padding: $spacing-sm;
+  border-radius: $border-radius-sm;
+  background-color: rgba($color-primary-light, 0.3);
+
+  mat-form-field {
+    flex: 1 1 200px;
+  }
+
+  mat-checkbox {
+    align-self: center;
+    margin-top: $spacing-sm;
+  }
+
+  button {
+    align-self: center;
+    margin-top: $spacing-sm;
+  }
+}
+
+.sublinks-container {
+  margin-left: $spacing-lg;
+  margin-bottom: $spacing-md;
+  padding-left: $spacing-md;
+  border-left: 2px dashed rgba($color-primary, 0.3);
+}
+
+.sublink-form {
+  @include flex(row, flex-start, flex-start, wrap);
+  gap: $spacing-md;
+  padding: $spacing-sm;
+  border-radius: $border-radius-sm;
+  background-color: rgba($color-primary-light, 0.15);
+
+  mat-form-field {
+    flex: 1 1 180px;
+  }
+
+  mat-checkbox {
+    align-self: center;
+    margin-top: $spacing-sm;
+  }
+
+  button {
+    align-self: center;
+    margin-top: $spacing-sm;
+  }
+}
+
+.form-actions {
+  @include flex(row, flex-end, center);
+  gap: $spacing-md;
+  margin-top: $spacing-lg;
+  padding-top: $spacing-md;
+  border-top: 1px solid $color-border;
+
+  button {
+    min-width: 120px;
+
+    &[type="submit"] {
+      font-weight: 500;
+    }
+  }
+}
+
+// Menu List Section
+.menu-list-section {
+  h2 {
+    margin-bottom: $spacing-md;
+    padding-bottom: $spacing-sm;
+    border-bottom: 2px solid $color-primary-light;
+    color: $color-text-primary;
+    font-weight: 500;
+  }
+}
+
+.menu-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: $spacing-lg;
+}
+
+// Badges
+.badge-container {
+  margin: $spacing-sm 0;
+}
+
+.badge {
+  @include badge(#f1f1f1, $color-text-secondary);
+
+  &.badge-success {
+    @include badge($color-success-bg, $color-success);
+  }
+
+  &.badge-danger {
+    @include badge($color-danger-bg, $color-danger);
+  }
+}
+
+// Lists
+.links-list {
+  list-style: none;
+  padding: 0;
+  margin: $spacing-sm 0;
+
+  li {
+    padding: $spacing-sm;
+    border-radius: $border-radius-sm;
+    margin-bottom: $spacing-xs;
+    background-color: #f5f5f5;
+    @include flex(row, flex-start, center, wrap);
+    gap: $spacing-sm;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #eeeeee;
+    }
+
+    .drag-handle {
+      cursor: move;
+      color: $color-handle;
+      @include flex(row, center, center);
+
+      &:hover {
+        color: $color-primary;
+      }
+    }
+
+    strong {
+      font-weight: 500;
+    }
+
+    .badge {
+      margin-left: auto;
+    }
+  }
+}
+
+.sublinks-list {
+  list-style: none;
+  padding: $spacing-xs 0 0 $spacing-lg;
+  width: 100%;
+  margin-top: $spacing-xs;
+
+  li {
+    background-color: #eaeaea;
+    padding: $spacing-sm;
+    margin-bottom: $spacing-xs;
+    border-radius: $border-radius-sm;
+    @include flex(row, flex-start, center);
+    gap: $spacing-sm;
+    border-left: 2px solid rgba($color-primary, 0.2);
+
+    &:hover {
+      background-color: #e0e0e0;
+    }
+
+    .drag-handle {
+      cursor: move;
+      color: $color-handle;
+    }
+
+    .badge {
+      margin-left: auto;
+    }
+  }
+}
+
+// Drag and drop styling
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: $border-radius-sm;
+  box-shadow: $shadow-drag;
+  z-index: 1000;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.3;
+  background-color: rgba($color-primary-light, 0.5) !important;
+  border: 1px dashed $color-primary !important;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.menu-list.cdk-drop-list-dragging .menu-item:not(.cdk-drag-placeholder),
+.links-list.cdk-drop-list-dragging li:not(.cdk-drag-placeholder),
+.sublinks-list.cdk-drop-list-dragging li:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+// Focus states
+mat-form-field.mat-focused .mat-form-field-label {
+  color: $color-primary;
+}
+
+// Expandable panels
+mat-expansion-panel {
+  &.mat-expanded {
+    margin-bottom: $spacing-md !important;
+  }
+
+  mat-expansion-panel-header {
+    &:hover {
+      background-color: rgba($color-primary-light, 0.3) !important;
+    }
+  }
+}
+
+// Responsive layout
+@media screen and (max-width: $breakpoint-md) {
+  .admin-menu-container {
+    padding: $spacing-sm;
+  }
+
+  .form-card, .main-card {
+    padding: $spacing-sm;
+  }
+
+  .form-row, .link-form, .sublink-form {
+    flex-direction: column;
+    gap: $spacing-sm;
+
+    mat-form-field {
+      width: 100%;
+    }
+
+    mat-checkbox, button {
+      margin-top: $spacing-xs;
+    }
+  }
+
+  .menu-list {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-sm;
+
+    button {
+      align-self: flex-end;
+    }
+  }
+
+  .sublinks-container {
+    margin-left: $spacing-sm;
+    padding-left: $spacing-sm;
+  }
+}
+
+// Small mobile devices
+@media screen and (max-width: $breakpoint-sm) {
+  .menu-item {
+    mat-card-actions {
+      flex-direction: column;
+      align-items: stretch;
+
+      button {
+        margin: 0 0 $spacing-xs 0;
+      }
+    }
+  }
+
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+// Adicione este estilo ao admin-register.component.scss
+.reset-container {
+  display: flex;
+  justify-content: center;
+  margin-top: $spacing-xl;
+  padding-top: $spacing-md;
+  border-top: 1px dashed $color-border;
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+  }
+}
+// Adicione estes estilos
+.filter-options {
+  margin-bottom: $spacing-md;
+  padding: $spacing-sm;
+  background-color: rgba($color-primary-light, 0.1);
+  border-radius: $border-radius-sm;
+
+  mat-checkbox {
+    font-size: 14px;
+    color: $color-text-secondary;
+  }
+}
+
+.hidden-menu {
+  position: relative;
+  border: 1px dashed $color-danger;
+
+  &::before {
+    content: 'Menu Oculto';
+    position: absolute;
+    top: -10px;
+    right: 40px;
+    font-size: 12px;
+    padding: 2px 8px;
+    background-color: $color-danger-bg;
+    color: $color-danger;
+    border-radius: $border-radius-sm;
+    border: 1px solid $color-danger;
+  }
+}
+
+.reset-container {
+  display: flex;
+  justify-content: center;
+  margin-top: $spacing-xl;
+  padding-top: $spacing-md;
+  border-top: 1px dashed $color-border;
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+  }
+}

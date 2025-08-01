@@ -28,7 +28,10 @@ export interface SubLinkItem {
   providedIn: 'root'
 })
 export class MenuService {
-  private menuItemsSource = new BehaviorSubject<MenuItem[]>([
+  private readonly STORAGE_KEY = 'sistudo_fitness_menus';
+
+  // Adiciona a propriedade defaultMenuItems
+  private readonly defaultMenuItems: MenuItem[] = [
     {
       id: 'clients',
       title: 'Clientes',
@@ -136,16 +139,26 @@ export class MenuService {
         { id: 'admin-others', label: 'Outros', route: '/others', visible: true }
       ]
     }
-  ]);
+  ];
 
+  private menuItemsSource = new BehaviorSubject<MenuItem[]>(this.loadMenuItems());
   menuItems$ = this.menuItemsSource.asObservable();
+
+  constructor() {
+
+  }
+
+
+  private saveMenuItems(menuItems: MenuItem[]): void {
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(menuItems));
+    } catch (error) {
+      console.error('Erro ao salvar menus no localStorage:', error);
+    }
+  }
 
   getMenuItems(): MenuItem[] {
     return this.menuItemsSource.value;
-  }
-
-  updateMenuItems(menuItems: MenuItem[]): void {
-    this.menuItemsSource.next([...menuItems]);
   }
 
   // Método para atualizar visibilidade baseado em permissões
@@ -182,4 +195,44 @@ export class MenuService {
 
     this.updateMenuItems(menuItems);
   }
+
+  // Método para resetar para os menus padrão
+  resetToDefaultMenus(): void {
+    this.updateMenuItems(this.defaultMenuItems);
+  }
+
+  // Adicione este método no MenuService
+normalizeMenuItems(menuItems: MenuItem[]): MenuItem[] {
+  return menuItems.map(menu => ({
+    ...menu,
+    visible: menu.visible === true, // Força conversão para booleano
+    links: menu.links.map(link => ({
+      ...link,
+      visible: link.visible === true, // Força conversão para booleano
+      sublinks: link.sublinks?.map(sublink => ({
+        ...sublink,
+        visible: sublink.visible === true // Força conversão para booleano
+      }))
+    }))
+  }));
+}
+
+// Modifique o método loadMenuItems para usar normalizeMenuItems
+private loadMenuItems(): MenuItem[] {
+  try {
+    const storedMenus = localStorage.getItem(this.STORAGE_KEY);
+    const menus = storedMenus ? JSON.parse(storedMenus) : this.defaultMenuItems;
+    return this.normalizeMenuItems(menus);
+  } catch (error) {
+    console.error('Erro ao carregar menus do localStorage:', error);
+    return this.normalizeMenuItems(this.defaultMenuItems);
+  }
+}
+
+// Modifique updateMenuItems para normalizar também
+updateMenuItems(menuItems: MenuItem[]): void {
+  const normalizedMenus = this.normalizeMenuItems(menuItems);
+  this.saveMenuItems(normalizedMenus);
+  this.menuItemsSource.next([...normalizedMenus]);
+}
 }

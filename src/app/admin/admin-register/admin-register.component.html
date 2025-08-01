@@ -1,1 +1,229 @@
-<p>admin-register works!</p>
+<div class="admin-menu-container">
+  <mat-card class="main-card">
+    <mat-card-header>
+      <mat-card-title>Gerenciamento de Menus</mat-card-title>
+      <mat-card-subtitle>Crie, edite e organize os menus da navegação lateral</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Menu Form -->
+      <mat-card class="form-card">
+        <mat-card-header>
+          <mat-card-title>{{ editingMenuIndex !== null ? 'Editar Menu' : 'Criar Novo Menu' }}</mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+          <form [formGroup]="menuForm" (ngSubmit)="saveMenu()">
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>ID do Menu</mat-label>
+                <input matInput formControlName="id" placeholder="Ex: clients" (input)="validateIdFormat($event)">
+                <mat-hint>Use apenas letras minúsculas, números e hífens</mat-hint>
+                <mat-error *ngIf="menuForm.get('id')?.hasError('required')">ID é obrigatório</mat-error>
+                <mat-error *ngIf="menuForm.get('id')?.hasError('pattern')">Formato inválido</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Título</mat-label>
+                <input matInput formControlName="title" placeholder="Ex: Clientes">
+                <mat-error *ngIf="menuForm.get('title')?.hasError('required')">Título é obrigatório</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Ícone</mat-label>
+                <mat-select formControlName="icon">
+                  <mat-option *ngFor="let icon of commonIcons" [value]="icon">
+                    <mat-icon>{{ icon }}</mat-icon> {{ icon }}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="menuForm.get('icon')?.hasError('required')">Ícone é obrigatório</mat-error>
+              </mat-form-field>
+
+              <mat-checkbox formControlName="visible" color="primary">Visível</mat-checkbox>
+            </div>
+
+            <div class="section-header">
+              <h3>Links</h3>
+              <button type="button" mat-mini-fab color="primary" (click)="addLink()" matTooltip="Adicionar Link">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+
+            <div formArrayName="links" class="links-container">
+              <mat-accordion>
+                <mat-expansion-panel *ngFor="let link of links.controls; let i = index" [formGroupName]="i">
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      {{ link.get('label')?.value || 'Novo Link' }}
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+
+                  <div class="link-form">
+                    <mat-form-field appearance="outline">
+                      <mat-label>ID do Link</mat-label>
+                      <input matInput formControlName="id" placeholder="Ex: list-clients" (input)="validateIdFormat($event)">
+                      <mat-error *ngIf="link.get('id')?.hasError('required')">ID é obrigatório</mat-error>
+                      <mat-error *ngIf="link.get('id')?.hasError('pattern')">Formato inválido</mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                      <mat-label>Rótulo</mat-label>
+                      <input matInput formControlName="label" placeholder="Ex: Listar Clientes">
+                      <mat-error *ngIf="link.get('label')?.hasError('required')">Rótulo é obrigatório</mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                      <mat-label>Rota</mat-label>
+                      <input matInput formControlName="route" placeholder="Ex: /clients-list">
+                      <mat-hint>Deixe em branco se tiver sublinks</mat-hint>
+                    </mat-form-field>
+
+                    <mat-checkbox formControlName="visible" color="primary">Visível</mat-checkbox>
+
+                    <button type="button" mat-icon-button color="warn" matTooltip="Remover Link" (click)="removeLink(i)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
+
+                  <div class="section-header">
+                    <h4>Sublinks</h4>
+                    <button type="button" mat-mini-fab color="primary" (click)="addSublink(i)" matTooltip="Adicionar Sublink">
+                      <mat-icon>playlist_add</mat-icon>
+                    </button>
+                  </div>
+
+                  <div formArrayName="sublinks" class="sublinks-container">
+                    <mat-accordion>
+                      <mat-expansion-panel *ngFor="let sublink of getSublinks(i).controls; let j = index" [formGroupName]="j">
+                        <mat-expansion-panel-header>
+                          <mat-panel-title>
+                            {{ sublink.get('label')?.value || 'Novo Sublink' }}
+                          </mat-panel-title>
+                        </mat-expansion-panel-header>
+
+                        <div class="sublink-form">
+                          <mat-form-field appearance="outline">
+                            <mat-label>ID do Sublink</mat-label>
+                            <input matInput formControlName="id" placeholder="Ex: create-client" (input)="validateIdFormat($event)">
+                            <mat-error *ngIf="sublink.get('id')?.hasError('required')">ID é obrigatório</mat-error>
+                            <mat-error *ngIf="sublink.get('id')?.hasError('pattern')">Formato inválido</mat-error>
+                          </mat-form-field>
+
+                          <mat-form-field appearance="outline">
+                            <mat-label>Rótulo</mat-label>
+                            <input matInput formControlName="label" placeholder="Ex: Criar Cliente">
+                            <mat-error *ngIf="sublink.get('label')?.hasError('required')">Rótulo é obrigatório</mat-error>
+                          </mat-form-field>
+
+                          <mat-form-field appearance="outline">
+                            <mat-label>Rota</mat-label>
+                            <input matInput formControlName="route" placeholder="Ex: /client-create">
+                            <mat-error *ngIf="sublink.get('route')?.hasError('required')">Rota é obrigatória</mat-error>
+                          </mat-form-field>
+
+                          <mat-checkbox formControlName="visible" color="primary">Visível</mat-checkbox>
+
+                          <button type="button" mat-icon-button color="warn" matTooltip="Remover Sublink" (click)="removeSublink(i, j)">
+                            <mat-icon>delete</mat-icon>
+                          </button>
+                        </div>
+                      </mat-expansion-panel>
+                    </mat-accordion>
+                  </div>
+                </mat-expansion-panel>
+              </mat-accordion>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" mat-button (click)="cancelEdit()">Cancelar</button>
+              <button type="submit" mat-raised-button color="primary">
+                {{ editingMenuIndex !== null ? 'Atualizar Menu' : 'Criar Menu' }}
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Menu List -->
+      <div class="menu-list-section">
+        <h2>Menus Existentes</h2>
+
+        <!-- Opção para mostrar menus ocultos -->
+        <div class="filter-options">
+          <mat-checkbox [(ngModel)]="showHiddenMenus" color="primary">Mostrar menus ocultos</mat-checkbox>
+        </div>
+
+        <div class="menu-list" cdkDropList (cdkDropListDropped)="dropMenu($event)">
+          <mat-card *ngFor="let menu of filteredMenuItems; let i = index"
+                    class="menu-item"
+                    [ngClass]="{'hidden-menu': !menu.visible}"
+                    cdkDrag>
+            <div class="menu-drag-handle" cdkDragHandle>
+              <mat-icon>drag_indicator</mat-icon>
+            </div>
+
+            <mat-card-header>
+              <mat-icon mat-card-avatar>{{ menu.icon }}</mat-icon>
+              <mat-card-title>{{ menu.title }}</mat-card-title>
+              <mat-card-subtitle>ID: {{ menu.id }} | {{ menu.links.length }} links</mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              <div class="badge-container">
+                <span class="badge" [ngClass]="{'badge-success': menu.visible, 'badge-danger': !menu.visible}">
+                  {{ menu.visible ? 'Visível' : 'Oculto' }}
+                </span>
+              </div>
+
+              <mat-accordion>
+                <mat-expansion-panel>
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>Links</mat-panel-title>
+                  </mat-expansion-panel-header>
+
+                  <ul class="links-list" cdkDropList (cdkDropListDropped)="dropLink(i, $event)">
+                    <li *ngFor="let link of menu.links" cdkDrag>
+                      <div class="drag-handle" cdkDragHandle>
+                        <mat-icon>drag_handle</mat-icon>
+                      </div>
+                      <strong>{{ link.label }}</strong> - {{ link.route || 'Sem rota' }}
+                      <span class="badge" [ngClass]="{'badge-success': link.visible, 'badge-danger': !link.visible}">
+                        {{ link.visible ? 'Visível' : 'Oculto' }}
+                      </span>
+
+                      <ul class="sublinks-list" *ngIf="link.sublinks && link.sublinks.length > 0"
+                          cdkDropList (cdkDropListDropped)="dropSublink(i, menu.links.indexOf(link), $event)">
+                        <li *ngFor="let sublink of link.sublinks" cdkDrag>
+                          <div class="drag-handle" cdkDragHandle>
+                            <mat-icon>drag_handle</mat-icon>
+                          </div>
+                          <span>{{ sublink.label }}</span> - {{ sublink.route }}
+                          <span class="badge" [ngClass]="{'badge-success': sublink.visible, 'badge-danger': !sublink.visible}">
+                            {{ sublink.visible ? 'Visível' : 'Oculto' }}
+                          </span>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                </mat-expansion-panel>
+              </mat-accordion>
+            </mat-card-content>
+
+            <mat-card-actions>
+              <button mat-button color="primary" (click)="editMenu(menu, i)">EDITAR</button>
+              <button mat-button color="warn" (click)="deleteMenu(i)">REMOVER</button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+
+        <!-- Botão para restaurar menus padrão -->
+        <div class="reset-container">
+          <button mat-stroked-button color="warn" (click)="resetMenus()">
+            <mat-icon>restore</mat-icon>
+            Restaurar Menus Padrão
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

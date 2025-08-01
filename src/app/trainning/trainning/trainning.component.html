@@ -6,16 +6,14 @@
       <h2>Lista de Treinos</h2>
       <p class="subtitle">Gerencie todos os treinos cadastrados no sistema</p>
     </div>
-     <div class="action-buttons-top">
     <button mat-raised-button color="primary" (click)="createTrainning()">
       <mat-icon>add</mat-icon>
       Novo Treino
     </button>
   </div>
-  </div>
 
-   <div class="action-bar">
-  <div class="search-container">
+  <!-- Seção de Busca -->
+  <div class="search-section">
     <mat-form-field appearance="outline" class="search-input">
       <mat-label>Buscar por Treino ou Cliente</mat-label>
       <input matInput [formControl]="searchControl" placeholder="Digite nome do treino ou cliente">
@@ -23,9 +21,6 @@
     </mat-form-field>
     <span class="search-tip">Dica: Use o nome do treino ou do cliente para buscar</span>
   </div>
-
-
-</div>
 
   <!-- Lista de Treinos responsiva usando Ionic com ícones Material -->
   @if (filteredTrainnings && filteredTrainnings.length > 0) {
@@ -75,4 +70,4 @@
     <p>Carregando treinos...</p>
   </div>
   }
-</div>
+</div><!-- Fechamento correto do container principal -->

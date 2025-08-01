@@ -5,7 +5,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
-import { MenuService, MenuItem } from '../../services/menu-visibility/menu.service';
+import { MenuService, MenuItem, LinkItem, SubLinkItem } from '../../services/menu-visibility/menu.service';
 
 @Component({
   selector: 'app-sidenav',
@@ -34,7 +34,7 @@ export class SidenavComponent implements OnInit {
   constructor(
     public authService: AuthService,
     private menuService: MenuService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Obter os menus do serviço
@@ -47,37 +47,32 @@ export class SidenavComponent implements OnInit {
   }
 
   get visibleMenuItems(): MenuItem[] {
-    const userRole = this.authService.getUserRole();
+  console.log('Menus disponíveis:', this.expandableMenuItems);
 
-    // Para admin, não filtra nada
-    if (this.authService.isAdmin()) {
-      return this.expandableMenuItems;
-    }
+  // Simplificando a lógica para garantir que itens visíveis sejam mostrados
+  return this.expandableMenuItems
+    .filter(menu => menu.visible)
+    .map(menu => {
+      // Criar uma cópia profunda para evitar modificação dos objetos originais
+      const filteredMenu = JSON.parse(JSON.stringify(menu)) as MenuItem;
 
-    // Para outros papéis, mostra apenas os itens visíveis
-    return this.expandableMenuItems
-      .filter(menu => menu.visible)
-      .map(menu => {
-        const filteredMenu = { ...menu };
+      // Filtrar apenas links visíveis
+      if (filteredMenu.links) {
+        filteredMenu.links = filteredMenu.links
+          .filter((link: LinkItem) => link.visible === true)
+          .map((link: LinkItem) => {
+            // Tratar sublinks se existirem
+            if (link.sublinks && link.sublinks.length > 0) {
+              link.sublinks = link.sublinks.filter((sublink: SubLinkItem) => sublink.visible === true);
+            }
+            return link;
+          });
+      }
 
-        // Filtra links visíveis
-        if (filteredMenu.links) {
-          filteredMenu.links = filteredMenu.links.filter(link => link.visible)
-            .map(link => {
-              // Se tem sublinks, filtra os visíveis
-              if (link.sublinks) {
-                return {
-                  ...link,
-                  sublinks: link.sublinks.filter(sublink => sublink.visible)
-                };
-              }
-              return link;
-            });
-        }
-
-        return filteredMenu;
-      });
-  }
+      return filteredMenu;
+    })
+    .filter(menu => menu.links && menu.links.length > 0);
+}
 
   toggleSidenav() {
     this.collapsed = !this.collapsed;

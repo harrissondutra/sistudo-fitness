@@ -60,8 +60,8 @@ export class ViewComponent implements OnInit {
     // Pré-seleciona a role ADMIN
     if (this.roles.length > 0) {
       this.selectedRole = this.roles.includes(UserRole.ADMIN) ?
-                          UserRole.ADMIN :
-                          this.roles[0];
+        UserRole.ADMIN :
+        this.roles[0];
       this.onRoleChange();
     }
 
@@ -76,6 +76,18 @@ export class ViewComponent implements OnInit {
   onRoleChange(): void {
     if (this.selectedRole) {
       this.loadMenuPermissions(this.selectedRole);
+    }
+  }
+
+  // Adicione estas propriedades na classe
+  showHiddenMenus: boolean = true; // Por padrão, mostra todos os menus
+
+  // Adicione este getter para filtrar os menus
+  get filteredMenuItems(): MenuItem[] {
+    if (this.showHiddenMenus) {
+      return this.menuItems; // Retorna todos, incluindo ocultos
+    } else {
+      return this.menuItems.filter(menu => menu.visible);
     }
   }
 
@@ -189,22 +201,22 @@ export class ViewComponent implements OnInit {
 
   // Alterna a visibilidade de um menu principal
   toggleMenu(menu: any): void {
-  menu.visible = !menu.visible;
-  // Não altera links automaticamente
-}
+    menu.visible = !menu.visible;
+    // Não altera links automaticamente
+  }
 
   // Alterna a visibilidade de um link
   // Alterna a visibilidade de um link
   toggleLink(link: any): void {
-  link.visible = !link.visible;
-  // Não altera o menu pai ou sublinks automaticamente
-}
+    link.visible = !link.visible;
+    // Não altera o menu pai ou sublinks automaticamente
+  }
 
   // Alterna a visibilidade de um sublink
   toggleSublink(sublink: any): void {
-  sublink.visible = !sublink.visible;
-  // Não altera links pais ou menu automaticamente
-}
+    sublink.visible = !sublink.visible;
+    // Não altera links pais ou menu automaticamente
+  }
 
   // Salva as configurações de visibilidade
   // Salva as configurações de visibilidade
