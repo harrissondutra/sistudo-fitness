@@ -96,7 +96,7 @@ export class TrainningService { // <--- Mantenha o nome da classe 'TrainingServi
         });
       })
     );
-}
+  }
 
   // 9. deleteTrainning: Rota do backend é "/delete/{id}"
   deleteTrainning(id: number): Observable<void> {
@@ -112,7 +112,13 @@ export class TrainningService { // <--- Mantenha o nome da classe 'TrainingServi
   }
 
   getTrainningExercises(trainningId: number): Observable<Exercise[]> {
-  return this.http.get<Exercise[]>(`${this.baseUrl}/trainnings/${trainningId}/exercises`);
-}
+    return this.http.get<Exercise[]>(`${this.baseUrl}/trainnings/${trainningId}/exercises`);
+  }
+  updateExerciseDetails(trainningId: number, exerciseId: number, details: any): Observable<any> {
+    return this.http.patch(
+      `${this.baseUrl}/${trainningId}/exercises/${exerciseId}`,
+      details
+    );
+  }
 
 }

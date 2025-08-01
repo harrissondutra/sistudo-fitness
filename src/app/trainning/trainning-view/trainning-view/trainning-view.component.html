@@ -9,6 +9,7 @@
 
   @if (trainning) {
   <div class="content">
+    <!-- Informações do treino - sem alterações -->
     <div class="info-section">
       <h2>
         <mat-icon>info</mat-icon>
@@ -23,105 +24,130 @@
           <span class="label">Nome:</span>
           <span class="value">{{ trainning.name }}</span>
         </div>
-
         <div class="info-item">
           <span class="label">Descrição:</span>
-          <span class="value">{{ trainning.description || 'N/A' }}</span>
+          <span class="value">{{ trainning.description || 'Sem descrição' }}</span>
         </div>
-
-        <div class="info-item">
-          <span class="label">Categorias:</span>
-          <span class="value">
-            {{ getCategoryNames(trainning) }}
-          </span>
-        </div>
-
         <div class="info-item">
           <span class="label">Cliente:</span>
           <span class="value">
-            @if (trainning.client) {
-            {{ trainning.client.name }} (ID: {{ trainning.client.id }})
+            @if (trainning.client?.name) {
+              {{ trainning.client.name }}
             } @else {
-            N/A
+              Sem cliente associado
             }
           </span>
         </div>
-
         <div class="info-item">
-          <span class="label">Início:</span>
+          <span class="label">Data Inicial:</span>
           <span class="value">
             @if (trainning.startDate) {
-            {{ formatDate(trainning.startDate) }}
+              {{ formatDate(trainning.startDate) }}
             } @else {
-            Não definida
+              Não definida
             }
           </span>
         </div>
-
         <div class="info-item">
-          <span class="label">Fim:</span>
+          <span class="label">Data Final:</span>
           <span class="value">
             @if (trainning.endDate) {
-            {{ formatDate(trainning.endDate) }}
+              {{ formatDate(trainning.endDate) }}
             } @else {
-            Não definida
+              Não definida
             }
           </span>
         </div>
-
         <div class="info-item">
-          <span class="label">Ativo:</span>
+          <span class="label">Status:</span>
           <span class="value">
             <mat-icon [color]="trainning.active ? 'primary' : 'warn'">
-              {{ trainning.active ? 'check_circle_outline' : 'cancel' }}
+              {{ trainning.active ? 'check_circle' : 'cancel' }}
             </mat-icon>
+            {{ trainning.active ? 'Ativo' : 'Inativo' }}
           </span>
         </div>
       </div>
     </div>
 
-   @if (trainning?.exercises?.length) {
-<div class="exercises-section">
-  <h2>
-    <mat-icon>directions_run</mat-icon>
-    Exercícios ({{ trainning.exercises.length }})
-  </h2>
+    <!-- Seção de exercícios com edição -->
+    @if (trainning?.exercises?.length) {
+    <div class="exercises-section">
+      <h2>
+        <mat-icon>directions_run</mat-icon>
+        Exercícios ({{ trainning.exercises.length }})
+      </h2>
 
-  <!-- Debug para verificar quantidade -->
-  <div class="debug-info" *ngIf="isDevMode">
-    Total de exercícios: {{ trainning.exercises.length }}
-  </div>
+      <div class="exercises-list">
+        @for (exercise of trainning.exercises; track exercise.id || $index) {
+        <div class="exercise-item" [class.editing]="editingExercise?.id === exercise.id">
+          <div class="exercise-header">
+            <mat-icon class="exercise-icon">fitness_center</mat-icon>
+            <div class="exercise-title">
+              <h3>{{ exercise.name }}</h3>
+              <p>{{ exercise.description || 'Sem descrição' }}</p>
+            </div>
+            <button mat-icon-button color="primary" (click)="toggleExerciseEdit(exercise)" class="edit-button"
+                    matTooltip="{{ editingExercise?.id === exercise.id ? 'Salvar alterações' : 'Editar detalhes' }}">
+              <mat-icon>{{ editingExercise?.id === exercise.id ? 'check' : 'edit' }}</mat-icon>
+            </button>
+          </div>
 
-  <div class="exercises-list">
-    @for (exercise of trainning.exercises; track exercise.id || $index) {
-    <div class="exercise-item">
-      <mat-icon class="exercise-icon">fitness_center</mat-icon>
-      <div class="exercise-details">
-        <h3>{{ exercise.name }}</h3>
-        <p>{{ exercise.description || 'Sem descrição' }}</p>
+          <div class="exercise-metrics-container">
+            <!-- Modo visualização -->
+            @if (editingExercise?.id !== exercise.id) {
+            <div class="exercise-metrics">
+              <span class="metric"><strong>Séries:</strong> {{ exercise.sets || 0 }}</span>
+              <span class="metric"><strong>Repetições:</strong> {{ exercise.repetitions || 0 }}</span>
+              <span class="metric"><strong>Carga:</strong> {{ exercise.weight || 0 }}kg</span>
+              <span class="metric"><strong>Descanso:</strong> {{ exercise.rest || 0 }}s</span>
+            </div>
+            }
+            <!-- Modo edição -->
+            @else {
+            <div class="exercise-edit-form">
+              <div class="form-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>Séries</mat-label>
+                  <input matInput type="number" [(ngModel)]="editingExercise.sets" min="0">
+                </mat-form-field>
 
-        <!-- Mostrar detalhes adicionais caso estejam disponíveis -->
-        @if (exercise.sets || exercise.weight || exercise.rest) {
-        <div class="exercise-metrics">
-          @if (exercise.sets) {<span class="metric">{{ exercise.sets }} séries</span>}
-          @if (exercise.weight) {<span class="metric">{{ exercise.weight }}kg</span>}
-          @if (exercise.rest) {<span class="metric">Descanso: {{ exercise.rest }}s</span>}
+                <mat-form-field appearance="outline">
+                  <mat-label>Repetições</mat-label>
+                  <input matInput type="number" [(ngModel)]="editingExercise.repetitions" min="0">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Carga (kg)</mat-label>
+                  <input matInput type="number" [(ngModel)]="editingExercise.weight" min="0">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Descanso (s)</mat-label>
+                  <input matInput type="number" [(ngModel)]="editingExercise.rest" min="0">
+                </mat-form-field>
+              </div>
+
+              <div class="action-buttons">
+                <button mat-button color="warn" (click)="cancelExerciseEdit()">Cancelar</button>
+                <button mat-raised-button color="primary" (click)="saveExerciseChanges()">Salvar</button>
+              </div>
+            </div>
+            }
+          </div>
         </div>
         }
       </div>
     </div>
+    } @else {
+    <div class="exercises-section">
+      <h2>
+        <mat-icon>directions_run</mat-icon>
+        Exercícios
+      </h2>
+      <p class="no-exercises-message">Nenhum exercício adicionado a este treino.</p>
+    </div>
     }
-  </div>
-</div>
-} @else {
-<div class="exercises-section">
-  <h2>
-    <mat-icon>directions_run</mat-icon>
-    Exercícios
-  </h2>
-  <p class="no-exercises-message">Nenhum exercício adicionado a este treino.</p>
-</div>
-}
   </div>
   } @else {
   <div class="loading-spinner">
@@ -130,6 +156,7 @@
   </div>
   }
 
+  <!-- Botões de ação principais -->
   <div class="actions">
     <button mat-raised-button color="primary" [disabled]="!trainning"
       (click)="trainning && editTrainningById(trainning)">

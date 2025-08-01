@@ -14,6 +14,11 @@ import { IonicModule } from '@ionic/angular';
 import { Trainning } from '../../../models/trainning';
 import { IonCard } from '@ionic/angular';
 import { Subscription } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-trainning-view',
@@ -27,6 +32,10 @@ import { Subscription } from 'rxjs';
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatDialogModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatTooltipModule
   ],
   providers: [],
   templateUrl: './trainning-view.component.html',
@@ -36,6 +45,7 @@ export class TrainningViewComponent implements OnInit {
 
 
   isDevMode = isDevMode(); // Para debug
+  editingExercise: any = null;
 
   // O treino será carregado com base no ID da rota
   trainning: Trainning | null = null;
@@ -45,7 +55,8 @@ export class TrainningViewComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute, // Injeta ActivatedRoute para acessar os parâmetros da URL
-    private trainningService: TrainningService
+    private trainningService: TrainningService,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
@@ -283,6 +294,56 @@ isStartDateArrayWithThreeElements(date: any): boolean {
     } catch (e) {
       console.error('Erro ao analisar data:', e);
       return null;
+    }
+  }
+   toggleExerciseEdit(exercise: any): void {
+    if (this.editingExercise?.id === exercise.id) {
+      this.saveExerciseChanges();
+    } else {
+      // Cria uma cópia para evitar alterações diretas
+      this.editingExercise = { ...exercise };
+    }
+  }
+
+  // Cancelar edição
+  cancelExerciseEdit(): void {
+    this.editingExercise = null;
+  }
+
+   saveExerciseChanges(): void {
+    if (!this.editingExercise || !this.trainning) return;
+
+    const index = this.trainning.exercises.findIndex(e => e.id === this.editingExercise.id);
+    if (index !== -1) {
+      // Atualiza o exercício no array local
+      this.trainning.exercises[index] = {
+        ...this.trainning.exercises[index],
+        sets: this.editingExercise.sets,
+        repetitions: this.editingExercise.repetitions,
+        weight: this.editingExercise.weight,
+        rest: this.editingExercise.rest
+      };
+
+      // Chamada ao serviço para persistir mudanças no backend
+      this.trainningService.updateExerciseDetails(
+        this.trainning.id as number,
+        this.editingExercise.id as number,
+        {
+          sets: this.editingExercise.sets,
+          repetitions: this.editingExercise.repetitions,
+          weight: this.editingExercise.weight,
+          rest: this.editingExercise.rest
+        }
+      ).subscribe({
+        next: () => {
+          this.snackBar.open('Detalhes do exercício atualizados com sucesso!', 'Fechar', { duration: 3000 });
+          this.editingExercise = null;
+        },
+        error: (error) => {
+          console.error('Erro ao atualizar exercício:', error);
+          this.snackBar.open('Erro ao atualizar exercício', 'Fechar', { duration: 3000 });
+        }
+      });
     }
   }
 }

@@ -150,7 +150,6 @@
   }
 }
 
-
 .exercises-list {
   display: flex;
   flex-direction: column;
@@ -158,47 +157,96 @@
 }
 
 .exercise-item {
-  background: #f8f9fa;
-  padding: 16px;
-  border-radius: 8px;
   display: flex;
-  align-items: flex-start; /* Alinha o ícone e o texto no topo */
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); /* Sombra mais sutil para itens individuais */
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  flex-direction: column;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 
   &:hover {
     background: #e8eaf6;
     transform: translateY(-1px);
   }
 
-  .exercise-icon {
-    font-size: 28px; /* Tamanho do ícone do exercício */
-    width: 28px;
-    height: 28px;
-    margin-right: 16px;
-    color: #3f51b5; /* Cor do ícone */
-    flex-shrink: 0; /* Impede o encolhimento do ícone */
+  &.editing {
+    background-color: #e8eaf6;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
-  .exercise-details {
-    flex-grow: 1; /* Permite que os detalhes do exercício ocupem o espaço restante */
-    h3 {
-      font-size: 1.2rem;
-      font-weight: 600;
-      margin: 0 0 4px;
-      color: #1a237e;
-    }
-    p {
-      font-size: 0.95rem;
-      margin: 0 0 4px;
-      color: #555;
+  .exercise-header {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
 
-      &:last-child {
-        margin-bottom: 0;
+    .exercise-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+      margin-right: 16px;
+      color: #3f51b5;
+      flex-shrink: 0;
+    }
+
+    .exercise-title {
+      flex: 1;
+
+      h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin: 0 0 4px;
+        color: #1a237e;
       }
-      strong {
-        color: #333;
+
+      p {
+        font-size: 0.95rem;
+        margin: 0 0 4px;
+        color: #555;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        strong {
+          color: #333;
+        }
       }
+    }
+  }
+
+  .exercise-metrics-container {
+    margin-top: 12px;
+    padding-left: 36px;
+  }
+
+  .exercise-metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    .metric {
+      background: #e8eaf6;
+      color: #3f51b5;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+  }
+
+  .exercise-edit-form {
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 16px;
+    }
+
+    .action-buttons {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 8px;
+      gap: 8px;
     }
   }
 }
@@ -267,22 +315,8 @@
     gap: 12px;
   }
 
-  .exercise-item {
-    padding: 12px;
-    .exercise-icon {
-      font-size: 24px;
-      width: 24px;
-      height: 24px;
-      margin-right: 12px;
-    }
-    .exercise-details {
-      h3 {
-        font-size: 1rem;
-      }
-      p {
-        font-size: 0.9rem;
-      }
-    }
+  .exercise-edit-form .form-row {
+    grid-template-columns: 1fr 1fr;
   }
 
   .actions {
@@ -292,5 +326,11 @@
     button {
       width: 100%;
     }
+  }
+}
+
+@media (max-width: 600px) {
+  .exercise-edit-form .form-row {
+    grid-template-columns: 1fr;
   }
 }
