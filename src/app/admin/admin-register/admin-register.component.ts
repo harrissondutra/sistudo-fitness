@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MenuService, MenuItem, LinkItem, SubLinkItem } from '../../services/menu-visibility/menu.service';
+import { MenuService, MenuItem } from '../../services/menu-visibility/menu.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,6 +14,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
+import { AuthService } from '../../services/auth.service'; // Ajuste o caminho conforme necessário
+import { LinkItem, SubLinkItem } from '../../models/linkItem'; // Ajuste o caminho conforme necessário
 
 @Component({
   selector: 'app-admin-register',
@@ -48,17 +50,46 @@ export class AdminRegisterComponent implements OnInit {
     'restaurant_menu', 'medical_services', 'sports_gymnastics', 'warehouse', 'menu_book',
     'dashboard', 'assignment', 'shopping_cart', 'store', 'event', 'mail'
   ];
+  currentUserId: number | null = null;
 
   constructor(
     private fb: FormBuilder,
     private menuService: MenuService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private authService: AuthService
+
   ) {
     this.menuForm = this.createMenuForm();
   }
 
   ngOnInit(): void {
     this.loadMenuItems();
+    this.getCurrentUserId();
+  }
+
+  getCurrentUserId(): void {
+    this.authService.getCurrentUserId().subscribe(id => {
+      this.currentUserId = id;
+    });
+  }
+
+  // Adicione este método ao componente
+  createDynamicLink(linkForm: FormGroup): void {
+    const route = linkForm.get('route')?.value;
+
+    if (route === 'client/:id' || route === '/client/:id') {
+      // Se o usuário está tentando criar um link para client/:id
+      if (this.currentUserId !== null) {  // Explicit null check here
+        // Cria um objeto com informações para o link dinâmico
+        linkForm.get('isDynamic')?.setValue(true);
+        linkForm.get('dynamicType')?.setValue('currentUser');
+
+        // Mostra uma mensagem explicando a funcionalidade
+        this.snackBar.open('Link dinâmico criado! Será substituído pelo ID do usuário logado.', 'OK', { duration: 3000 });
+      } else {
+        this.snackBar.open('Não foi possível obter o ID do usuário atual.', 'Fechar', { duration: 3000 });
+      }
+    }
   }
 
   loadMenuItems(): void {
@@ -83,31 +114,35 @@ export class AdminRegisterComponent implements OnInit {
     return this.fb.group({
       id: ['', [Validators.required, Validators.pattern('[a-z0-9-]+')]],
       label: ['', Validators.required],
-      route: ['', Validators.required],
+      route: [''],
       visible: [true],
+      isDynamic: [false],
       sublinks: this.fb.array([])
     });
   }
+
 
   getSublinks(linkIndex: number): FormArray {
     return this.links.at(linkIndex).get('sublinks') as FormArray;
   }
 
-  createSublinkForm(): FormGroup {
+  createSubLinkForm(): FormGroup {
     return this.fb.group({
       id: ['', [Validators.required, Validators.pattern('[a-z0-9-]+')]],
       label: ['', Validators.required],
       route: ['', Validators.required],
-      visible: [true]
+      visible: [true],
+      isDynamic: [false]
     });
   }
+
 
   addLink(): void {
     this.links.push(this.createLinkForm());
   }
 
   addSublink(linkIndex: number): void {
-    this.getSublinks(linkIndex).push(this.createSublinkForm());
+    this.getSublinks(linkIndex).push(this.createSubLinkForm());
   }
 
   removeLink(index: number): void {
@@ -138,8 +173,9 @@ export class AdminRegisterComponent implements OnInit {
       const linkFormGroup = this.fb.group({
         id: [link.id, [Validators.required, Validators.pattern('[a-z0-9-]+')]],
         label: [link.label, Validators.required],
-        route: [link.route, Validators.required],
+        route: [link.route],
         visible: [link.visible],
+        isDynamic: [link.isDynamic || false], // Adicionar propriedade isDynamic
         sublinks: this.fb.array([])
       });
 
@@ -150,7 +186,8 @@ export class AdminRegisterComponent implements OnInit {
             id: [sublink.id, [Validators.required, Validators.pattern('[a-z0-9-]+')]],
             label: [sublink.label, Validators.required],
             route: [sublink.route, Validators.required],
-            visible: [sublink.visible]
+            visible: [sublink.visible],
+            isDynamic: [sublink.isDynamic || false] // Adicionar propriedade isDynamic
           });
           (linkFormGroup.get('sublinks') as FormArray).push(sublinkFormGroup);
         });
@@ -276,6 +313,7 @@ export class AdminRegisterComponent implements OnInit {
   }
 
   // Modifique o método saveMenu para incluir a chamada ao refreshMenusForAdmin
+  // Adicione este método para verificar se as propriedades dinâmicas estão sendo preservadas
   saveMenu(): void {
     if (this.menuForm.invalid) {
       this.snackBar.open('Por favor, corrija os erros no formulário antes de salvar', 'Fechar', {
@@ -285,6 +323,22 @@ export class AdminRegisterComponent implements OnInit {
     }
 
     const menuItem: MenuItem = this.menuForm.value;
+
+    // Debug: verifica links dinâmicos
+    console.log('Salvando menu:', JSON.stringify(menuItem));
+
+    // Verificar se links dinâmicos estão marcados corretamente
+    menuItem.links.forEach(link => {
+      if (link.isDynamic) {
+        console.log(`Link dinâmico encontrado: ${link.label}, rota: ${link.route}`);
+
+        // Garantir que a rota tenha o formato correto
+        if (link.route && !link.route.includes(':id')) {
+          link.route = link.route + '/:id';
+          console.log(`Corrigido formato da rota dinâmica para: ${link.route}`);
+        }
+      }
+    });
 
     if (this.editingMenuIndex !== null) {
       // Update existing menu
@@ -299,8 +353,8 @@ export class AdminRegisterComponent implements OnInit {
     // Update service
     this.menuService.updateMenuItems(this.menuItems);
 
-    // NOVO: Para garantir que o administrador continue vendo tudo
-    setTimeout(() => this.refreshMenusForAdmin(), 100);
+    // IMPORTANTE: Faça o serviço processar o menu imediatamente para ver se as rotas dinâmicas funcionam
+    this.menuService.debugMenuItems();
 
     // Reset form state
     this.cancelEdit();
@@ -315,6 +369,77 @@ export class AdminRegisterComponent implements OnInit {
     this.menuService.updateMenuItems(this.menuItems);
 
     this.snackBar.open('Visibilidade total de administrador restaurada!', 'OK', { duration: 2000 });
+  }
+
+  // Método para alternar entre rota estática e dinâmica para links
+  // Modifique este método no AdminRegisterComponent
+  toggleDynamicRoute(link: FormGroup): void {
+    if (!link) return;
+
+    const isDynamicControl = link.get('isDynamic');
+    if (!isDynamicControl) return;
+
+    const isDynamic = !isDynamicControl.value;
+    isDynamicControl.setValue(isDynamic);
+
+    const routeControl = link.get('route');
+    if (!routeControl) return;
+
+    // Se está tornando dinâmico
+    if (isDynamic) {
+      const currentRoute = routeControl.value || '';
+      // Vamos garantir que o formato tenha exatamente /client/:id
+      if (!currentRoute.includes(':id')) {
+        // Garante que a URL tenha o formato exato
+        const baseRoute = currentRoute.replace(/\/client\/.*$/, '').replace(/\/client$/, '');
+        routeControl.setValue(baseRoute + '/client/:id');
+      }
+      this.snackBar.open('Rota dinâmica ativada! O ID do usuário será inserido automaticamente.', 'OK', { duration: 3000 });
+
+      // Garante que o objeto de dados tem a propriedade isDynamic marcada
+      console.log('Link marcado como dinâmico:', routeControl.value);
+    } else {
+      // Se está tornando estático, podemos remover o :id
+      const currentRoute = routeControl.value || '';
+      if (currentRoute.includes(':id')) {
+        routeControl.setValue(currentRoute.replace(':id', ''));
+      }
+      this.snackBar.open('Rota estática restaurada.', 'OK', { duration: 3000 });
+    }
+  }
+
+  // Método para alternar entre rota estática e dinâmica para sublinks
+  toggleDynamicSubRoute(linkIndex: number, sublinkIndex: number): void {
+    const sublinks = this.getSublinks(linkIndex);
+    const sublinkForm = sublinks.at(sublinkIndex) as FormGroup;
+
+    const isDynamicControl = sublinkForm.get('isDynamic');
+    if (!isDynamicControl) return;
+
+    const isDynamic = !isDynamicControl.value;
+    isDynamicControl.setValue(isDynamic);
+
+    const routeControl = sublinkForm.get('route');
+    if (!routeControl) return;
+
+    // Se está tornando dinâmico
+    if (isDynamic) {
+      const currentRoute = routeControl.value || '';
+      if (currentRoute.includes(':id')) {
+        // A rota já tem um parâmetro :id, não precisamos alterar
+      } else {
+        // Definimos um valor padrão para a rota dinâmica
+        routeControl.setValue('/client/:id');
+      }
+      this.snackBar.open('Rota dinâmica ativada! O ID do usuário será inserido automaticamente.', 'OK', { duration: 3000 });
+    } else {
+      // Se está tornando estático, podemos remover o :id
+      const currentRoute = routeControl.value || '';
+      if (currentRoute.includes(':id')) {
+        routeControl.setValue(currentRoute.replace(':id', ''));
+      }
+      this.snackBar.open('Rota estática restaurada.', 'OK', { duration: 3000 });
+    }
   }
 
 

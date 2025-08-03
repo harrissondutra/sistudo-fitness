@@ -11,6 +11,7 @@ export interface Client {
   email: string;
   cpf: string;
   dateOfBirth?: Date | string; // LocalDateTime no backend -> string no frontend (ISO 8601)
+  phone?: string; // Telefone do cliente
   weight?: number;
   height?: number;
   measure?: Measure; // Objeto Measure completo (ManyToOne no backend)

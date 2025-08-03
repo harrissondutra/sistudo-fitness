@@ -14,7 +14,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { UserRole, USER_ROLE_LABELS } from '../../models/user_role';
 import { MenuVisibilityService } from '../../services/menu-visibility/menuVisibility.service';
 import { FormsModule } from '@angular/forms';
-import { MenuService, MenuItem, LinkItem, SubLinkItem } from '../../services/menu-visibility/menu.service';
+import { MenuService, MenuItem } from '../../services/menu-visibility/menu.service';
+import {LinkItem, SubLinkItem } from '../../models/linkItem';
 
 @Component({
   selector: 'app-view',

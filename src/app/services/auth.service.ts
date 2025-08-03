@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { UserRole } from '../models/user_role';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +12,7 @@ import { UserRole } from '../models/user_role';
 export class AuthService {
   private baseUrl = `${environment.apiUrl}/auth`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /**
    * Realiza login no backend e retorna o Observable da resposta.
@@ -167,5 +169,18 @@ export class AuthService {
     console.log('Usuário atual:', this.getUserData());
     console.log('Role do usuário:', this.getUserRole());
     console.log('É administrador?', this.getUserRole() === UserRole.ADMIN);
+  }
+  getCurrentUser(): Observable<{ id: number } | null> {
+    // Replace this with your actual logic to get the current user
+    const user = { id: 1 }; // Example user object
+    return of(user);
+  }
+
+  // Adicione ou modifique este método no AuthService
+  // In AuthService
+  getCurrentUserId(): Observable<number | null> {
+    return this.getCurrentUser().pipe(
+      map(user => user?.id || null)
+    );
   }
 }

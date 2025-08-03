@@ -524,3 +524,22 @@ mat-expansion-panel {
     gap: $spacing-sm;
   }
 }
+
+/* Adicione ao arquivo admin-register.component.scss */
+.dynamic-route-hint {
+  display: flex;
+  align-items: center;
+  color: #3f51b5;
+}
+
+.dynamic-route-hint mat-icon {
+  font-size: 16px;
+  height: 16px;
+  width: 16px;
+  margin-right: 4px;
+}
+
+.dynamic-checkbox {
+  margin-left: 8px;
+  color: #3f51b5;
+}

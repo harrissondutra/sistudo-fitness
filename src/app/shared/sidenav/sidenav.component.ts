@@ -5,7 +5,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
-import { MenuService, MenuItem, LinkItem, SubLinkItem } from '../../services/menu-visibility/menu.service';
+import { MenuService, MenuItem } from '../../services/menu-visibility/menu.service';
+import { LinkItem, SubLinkItem } from '../../models/linkItem';
 
 @Component({
   selector: 'app-sidenav',
@@ -30,6 +31,7 @@ export class SidenavComponent implements OnInit {
 
   // Use os menus do serviço compartilhado
   expandableMenuItems: MenuItem[] = [];
+  menuItems: MenuItem[] = [];
   private _visibleMenuItems: MenuItem[] = [];
 
   constructor(
@@ -38,7 +40,13 @@ export class SidenavComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) { }
 
+  loadMenus() {
+  this.menuItems = this.menuService.getMenuItems();
+  // Os menus já vêm processados com rotas dinâmicas substituídas pelo ID do usuário
+}
+
   ngOnInit(): void {
+
     // Obter os menus do serviço inicialmente como array vazio
     this.expandableMenuItems = [];
 
@@ -55,10 +63,23 @@ export class SidenavComponent implements OnInit {
     this.expandableMenuItems = this.menuService.getMenuItems() || [];
     // Pré-calcular os menus visíveis
     this.updateVisibleMenuItems();
+
+    this.loadMenus();
+
+    // Escutar por atualizações de menu
+    window.addEventListener('menu-updated', () => {
+      this.loadMenus();
+    });
   }
 
+  ngOnDestroy() {
+  // Remover listener quando o componente é destruído
+  window.removeEventListener('menu-updated', () => {
+    this.loadMenus();
+  });
+}
 
-   get visibleMenuItems(): MenuItem[] {
+  get visibleMenuItems(): MenuItem[] {
     return this._visibleMenuItems;
   }
 

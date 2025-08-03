@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Client } from '../../models/client';
+import { Measure } from '../../models/measure';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -46,8 +47,8 @@ export class ClientService {
    * @param client The client object with updated information.
    * @returns An Observable of the updated client.
    */
-  updateClient(client: Client): Observable<Client> {
-    return this.http.put<Client>(`${this.baseUrl}/update/${client.id}`, client);
+  updateClient(clientId: number, clientData: any): Observable<Client> {
+    return this.http.patch<Client>(`${this.baseUrl}/update/${clientId}`, clientData);
   }
 
   /**
@@ -65,8 +66,12 @@ export class ClientService {
   getDoctorByClientId(id: string): Observable<any> {
     return this.http.get(`${this.baseUrl}/getDoctorByClientId/${id}`);
   }
+  updateMeasure(clientId: number, measure: Measure): Observable<any> {
+    const url = `${this.baseUrl}/createMeasureToClient/${clientId}/`;
 
+    // Remover o campo 'data' que não existe no backend
+    const { data, ...backendMeasure } = measure;
 
-
-
+    return this.http.post<any>(url, backendMeasure);
+  }
 }

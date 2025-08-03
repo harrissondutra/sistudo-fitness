@@ -1,25 +1,49 @@
-import { ClientService } from './../../services/client/client.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { Client } from '../../models/client'; // Importa a interface Client atualizada
-import { Measure } from '../../models/measure'; // Importa a interface Measure
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Doctor } from '../../models/doctor';
-import { DoctorService } from '../../services/doctor/doctor.service'; // Importa o serviço de médico
-import { Personal } from '../../models/personal';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { FormsModule } from '@angular/forms';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { Subject, takeUntil, finalize, catchError, of } from 'rxjs';
+
+// Services
+import { ClientService } from './../../services/client/client.service';
+import { DoctorService } from '../../services/doctor/doctor.service';
 import { PersonalService } from '../../services/personal/personal.service';
 import { NutritionistService } from '../../services/nutritionist/nutritionist.service';
-import { MatCheckboxModule } from '@angular/material/checkbox'; // Usar MatCheckboxModule
-import { Nutritionist } from '../../models/nutritionist';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component'; // Ajuste o caminho conforme necessário
 import { TrainningService } from '../../services/trainning/trainning.service';
+import { MeasureService } from '../../services/measure/measure.service';
+
+// Models
+import { Client } from '../../models/client';
+import { Measure } from '../../models/measure';
+import { Doctor } from '../../models/doctor';
+import { Personal } from '../../models/personal';
+import { Nutritionist } from '../../models/nutritionist';
 import { Trainning } from '../../models/trainning';
+
+// Components
+import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
+
+interface PanelState {
+  measures: boolean;
+  doctors: boolean;
+  personals: boolean;
+  nutritionists: boolean;
+  trainings: boolean;
+  history: boolean;
+}
 
 @Component({
   selector: 'app-client-view',
@@ -35,290 +59,759 @@ import { Trainning } from '../../models/trainning';
     MatProgressSpinnerModule,
     MatCheckboxModule,
     MatDialogModule,
-    RouterModule
+    RouterModule,
+    FormsModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatTooltipModule,
+    MatExpansionModule
   ]
 })
-export class ClientViewComponent implements OnInit {
+export class ClientViewComponent implements OnInit, OnDestroy {
+  // Client data
   client: Client | null = null;
-  isLoading = false;
+  editingClient = false;
+  editableClient: Partial<Client> = {};
 
-  currentClientTraining: any = null;
-  clientTrainings: any[] = []; // Array para armazenar todos os treinos
+  // Measures data
+  editingMeasures = false;
+  editableMeasures: Partial<Measure> = {};
+
+  // Training data
+  currentClientTraining: Trainning | null = null;
+  clientTrainings: Trainning[] = [];
+  inactiveTrainings: Trainning[] = [];
+  expandedExercisesMap = new Map<string, boolean>();
+
+  // Associated professionals
   associatedDoctors: Doctor[] = [];
   associatedPersonals: Personal[] = [];
-  associatedNutritionists: any[] = []; // Ajuste o tipo conforme necessário
-  inactiveTrainings: Trainning[] = [];
+  associatedNutritionists: Nutritionist[] = [];
 
-  showAddDoctorDialog: boolean = false;
-  showAddPersonalDialog: boolean = false;
-  showAddNutritionistDialog: boolean = false;
-  availableDoctors: Doctor[] = []; // Lista de todos os médicos disponíveis no sistema
-  availablePersonals: any[] = [];
-  availableNutritionists: any[] = []; // Lista de todos os nutricionistas disponíveis no sistema
-  selectedPersonalIds: Set<string> = new Set(); // IDs dos personals selecionados no diálogo
-  selectedClientForPersonal?: string; // Adiciona a propriedade para armazenar o clientId selecionado para o personal
-  selectedClientForNutritionist?: string; // Adiciona a propriedade para armazenar o clientId selecionado para o nutricionista
-  selectedNutritionistIds: Set<string> = new Set(); // IDs dos nutricionistas
-  selectedDoctorIds: Set<string> = new Set(); // IDs dos médicos selecionados no diálogo
-  selectedClientIdForDoctor?: string; // Adiciona a propriedade para armazenar o clientId selecionado para o médico
+  // Selection dialogs
+  showAddDoctorDialog = false;
+  showAddPersonalDialog = false;
+  showAddNutritionistDialog = false;
+
+  // Available professionals for selection
+  availableDoctors: Doctor[] = [];
+  availablePersonals: Personal[] = [];
+  availableNutritionists: Nutritionist[] = [];
+
+  // Selected professional IDs
+  selectedDoctorIds = new Set<string>();
+  selectedPersonalIds = new Set<string>();
+  selectedNutritionistIds = new Set<string>();
+
+  // UI state
+  isLoading = false;
+  panelOpenState: PanelState = {
+    measures: false,
+    doctors: false,
+    personals: false,
+    nutritionists: false,
+    trainings: false,
+    history: false
+  };
+
+  private createEmptyMeasure(): Partial<Measure> {
+    return {
+      // Utilizando os nomes de propriedades do backend
+      ombro: undefined,
+      cintura: undefined,
+      quadril: undefined,
+      panturrilha_direita: undefined,
+      panturrilha_esquerda: undefined,
+      braco_direito: undefined,  // Usando o formato do backend
+      braco_esquerdo: undefined, // Usando o formato do backend
+      coxa_direita: undefined,
+      coxa_esquerda: undefined,
+      peitoral: undefined,
+      abdomem: undefined,
+      abdominal: undefined,
+      suprailiaca: undefined,
+      subescapular: undefined,
+      triceps: undefined,
+      axilar: undefined,
+      torax: undefined,
+      // Campo adicional para data da medição
+      data: new Date()
+    };
+  }
+
+  // Subscription cleanup
+  private destroy$ = new Subject<void>();
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private clientService: ClientService,
     private snackBar: MatSnackBar,
-    private doctorService: DoctorService, // Renomeado para seguir convenção
+    private doctorService: DoctorService,
     private personalService: PersonalService,
     private nutritionistService: NutritionistService,
     private dialog: MatDialog,
-    private trainningService: TrainningService
+    private trainningService: TrainningService,
+    private measureService: MeasureService
   ) { }
 
   ngOnInit(): void {
     const clientId = this.route.snapshot.paramMap.get('id');
     if (clientId) {
-      this.loadClient(clientId);
-      this.loadAssociatedProfessionals(clientId);
-      this.loadClientTrainings(clientId);
+      this.initializeClient(clientId);
     } else {
-      console.warn('ID do cliente não fornecido na URL.');
-      this.snackBar.open('ID do cliente não encontrado.', 'Fechar', { duration: 3000 });
-      this.router.navigate(['/clients-list']);
+      this.handleError('ID do cliente não fornecido na URL.');
+      this.navigateToClientsList();
     }
   }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  // ============== Client Initialization Methods ==============
+
+  private initializeClient(clientId: string): void {
+    this.loadClient(clientId);
+    this.loadAssociatedProfessionals(clientId);
+    this.loadClientTrainings(clientId);
+  }
+
   private loadClient(id: string): void {
     this.isLoading = true;
-    this.clientService.getClientById(id).subscribe({
-      next: (clientData: Client) => {
-        console.log('Cliente recebido:', clientData);
-        console.log('Data de nascimento (tipo):', typeof clientData.dateOfBirth);
-        console.log('Data de nascimento (valor):', clientData.dateOfBirth);
-
-        this.client = clientData;
-
-        // Tratar dateOfBirth quando é um array (como está chegando do backend)
-        if (this.client?.dateOfBirth && Array.isArray(this.client.dateOfBirth)) {
-          try {
-            const [year, month, day, hour = 0, minute = 0] = this.client.dateOfBirth as any[];
-            this.client.dateOfBirth = new Date(year, month - 1, day, hour, minute);
-            console.log('Data convertida de array:', this.client.dateOfBirth);
-          } catch (error) {
-            console.error('Erro ao converter data de array:', error);
-            this.client.dateOfBirth = undefined;
-          }
+    this.clientService.getClientById(id)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => this.isLoading = false),
+        catchError(error => {
+          this.handleError('Erro ao carregar dados do cliente.', error);
+          return of(null);
+        })
+      )
+      .subscribe(clientData => {
+        if (clientData) {
+          this.client = clientData;
+          this.processClientData();
+          this.loadClientMeasures(id);
         }
-        // Código existente - tratar quando é string
-        else if (this.client?.dateOfBirth && typeof this.client.dateOfBirth === 'string') {
-          // Seu código atual para processar strings...
-        }
+      });
+  }
 
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Erro ao carregar cliente:', error);
-        this.isLoading = false;
-        this.snackBar.open('Erro ao carregar dados do cliente.', 'Fechar', { duration: 3000 });
+  private processClientData(): void {
+    if (!this.client?.dateOfBirth) return;
+
+    // Handle dateOfBirth as array format
+    if (Array.isArray(this.client.dateOfBirth)) {
+      try {
+        const [year, month, day, hour = 0, minute = 0] = this.client.dateOfBirth as any[];
+        this.client.dateOfBirth = new Date(year, month - 1, day, hour, minute);
+      } catch (error) {
+        console.error('Error converting date from array:', error);
+        this.client.dateOfBirth = undefined;
       }
-    });
+    }
+    // Handle dateOfBirth as string format
+    else if (typeof this.client.dateOfBirth === 'string') {
+      const parsedDate = this.parseDate(this.client.dateOfBirth);
+      this.client.dateOfBirth = parsedDate !== null ? parsedDate : undefined;
+    }
+  }
+
+  private loadClientMeasures(clientId: string): void {
+    this.isLoading = true;
+    this.measureService.getMeasureByClientId(Number(clientId))
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => this.isLoading = false),
+        catchError(error => {
+          this.handleError('Erro ao carregar medidas do cliente.', error);
+          return of(null);
+        })
+      )
+      .subscribe(measureData => {
+        if (this.client && measureData) {
+          this.client.measure = measureData;
+        }
+      });
   }
 
   private loadAssociatedProfessionals(clientId: string): void {
-    console.log(`Carregando profissionais para o cliente ID: ${clientId}`);
+    this.loadAssociatedDoctors(clientId);
+    this.loadAssociatedPersonals(clientId);
+    this.loadAssociatedNutritionists(clientId);
+  }
 
-    // Carregar médicos associados (este é o método correto para buscar médicos ASSOCIADOS)
-    this.doctorService.getDoctorByClientId(Number(clientId)).subscribe({
-      next: (doctors: Doctor[]) => {
-        console.log('Médicos associados recebidos:', doctors);
-        this.associatedDoctors = doctors;
-      },
-      error: (err) => console.error('Erro ao carregar médicos associados:', err)
-    });
+  private loadAssociatedDoctors(clientId: string): void {
+    this.doctorService.getDoctorByClientId(Number(clientId))
+      .pipe(
+        takeUntil(this.destroy$),
+        catchError(error => {
+          console.error('Error loading associated doctors:', error);
+          return of([]);
+        })
+      )
+      .subscribe(doctors => {
+        this.associatedDoctors = doctors || [];
+      });
+  }
 
-    // Carregar personals associados
-    this.personalService.getPersonalByClientId(Number(clientId)).subscribe({
-      next: (response: Personal | Personal[]) => {
-        console.log('Personals associados recebidos:', response);
-
-        // Verifica se a resposta é um objeto único ou um array
+  private loadAssociatedPersonals(clientId: string): void {
+    this.personalService.getPersonalByClientId(Number(clientId))
+      .pipe(
+        takeUntil(this.destroy$),
+        catchError(() => {
+          return of([]);
+        })
+      )
+      .subscribe(response => {
         if (Array.isArray(response)) {
           this.associatedPersonals = response;
         } else if (response) {
-          // Se for um objeto único, coloca-o em um array
           this.associatedPersonals = [response];
         } else {
           this.associatedPersonals = [];
         }
-      },
-      error: (err) => {
-        // Verifica se é o erro específico de "Personal não cadastrado para o cliente"
-        if (err && err.message && err.message.includes('Personal não cadastrado para o cliente')) {
-          console.log('Nenhum personal associado a este cliente - tratando como array vazio');
-          this.associatedPersonals = []; // Define como array vazio em vez de mostrar erro
-        } else {
-          console.error('Erro ao carregar personals associados:', err);
-          this.snackBar.open('Erro ao carregar personals associados.', 'Fechar', { duration: 3000 });
-        }
-      }
-    });
+      });
+  }
 
-    // Carregar nutricionistas associados
-    this.nutritionistService.getNutritionistByClientId(Number(clientId)).subscribe({
-      next: (response: any) => {
-        console.log('Nutricionistas associados recebidos:', response);
-
-        // Verifica se a resposta é um objeto único ou um array
+  private loadAssociatedNutritionists(clientId: string): void {
+    this.nutritionistService.getNutritionistByClientId(Number(clientId))
+      .pipe(
+        takeUntil(this.destroy$),
+        catchError(() => {
+          return of([]);
+        })
+      )
+      .subscribe(response => {
         if (Array.isArray(response)) {
           this.associatedNutritionists = response;
         } else if (response) {
-          // Se for um objeto único, coloca-o em um array
           this.associatedNutritionists = [response];
         } else {
           this.associatedNutritionists = [];
         }
-      },
-      error: (err) => {
-        console.error('Erro ao carregar nutricionistas associados:', err);
-        // Define como array vazio em caso de erro
-        this.associatedNutritionists = [];
+      });
+  }
+
+  private loadClientTrainings(clientId: string): void {
+    this.loadActiveTrainings(clientId);
+    this.loadInactiveTrainings(clientId);
+  }
+
+  private loadActiveTrainings(clientId: string): void {
+    this.trainningService.getTrainningByClientId(Number(clientId))
+      .pipe(
+        takeUntil(this.destroy$),
+        catchError(error => {
+          this.handleError('Erro ao carregar treinos do cliente.', error);
+          return of([]);
+        })
+      )
+      .subscribe(trainings => {
+        const activeTrainings = trainings.filter(t => t.active === true);
+        this.clientTrainings = activeTrainings;
+
+        // Initialize expanded state for all trainings
+        this.clientTrainings.forEach(training => {
+          if (training.id !== undefined && training.id !== null) {
+            this.expandedExercisesMap.set(training.id.toString(), false);
+          }
+        });
+
+        // Set first active training as current
+        if (this.clientTrainings.length > 0) {
+          this.currentClientTraining = this.clientTrainings[0];
+        }
+      });
+  }
+
+  private loadInactiveTrainings(clientId: string): void {
+    this.trainningService.listInactiveTrainningsByClientId(Number(clientId))
+      .pipe(
+        takeUntil(this.destroy$),
+        catchError(error => {
+          this.handleError('Erro ao carregar histórico de treinos.', error);
+          return of([]);
+        })
+      )
+      .subscribe(inactiveTrainings => {
+        this.inactiveTrainings = inactiveTrainings || [];
+      });
+  }
+
+  // ============== Client Edit Methods ==============
+
+  toggleEditClient(): void {
+    if (!this.editingClient) {
+      this.startEditingClient();
+    } else {
+      this.saveEditedClient();
+    }
+  }
+
+  private startEditingClient(): void {
+    if (!this.client) return;
+
+    this.editableClient = {
+      id: this.client.id,
+      name: this.client.name,
+      email: this.client.email,
+      phone: this.client.phone,    // Adicionado telefone
+      cpf: this.client.cpf,        // Adicionado CPF
+      dateOfBirth: this.client.dateOfBirth ? new Date(this.client.dateOfBirth) : undefined,
+      height: this.client.height,
+      weight: this.client.weight
+    };
+
+    this.editingClient = true;
+  }
+
+  saveEditedClient(): void {
+    if (!this.client?.id) {
+      this.showSnackBar('Erro: ID do cliente não encontrado.');
+      return;
+    }
+
+    this.isLoading = true;
+    this.clientService.updateClient(this.client.id, this.editableClient)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => this.isLoading = false),
+        catchError(error => {
+          this.handleError('Erro ao atualizar informações do cliente.', error);
+          return of(null);
+        })
+      )
+      .subscribe(updatedClient => {
+        if (updatedClient && this.client) {
+          // Update only editable fields
+          this.client.email = this.editableClient.email ?? this.client.email;
+          this.client.phone = this.editableClient.phone ?? this.client.phone;  // Adicionado telefone
+          this.client.cpf = this.editableClient.cpf ?? this.client.cpf;        // Adicionado CPF
+          this.client.dateOfBirth = this.editableClient.dateOfBirth;
+          this.client.height = this.editableClient.height;
+          this.client.weight = this.editableClient.weight;
+
+          this.editingClient = false;
+          this.showSnackBar('Informações atualizadas com sucesso!');
+        }
+      });
+  }
+
+  cancelEditClient(): void {
+    this.editingClient = false;
+    this.editableClient = {};
+  }
+
+  /**
+ * Calcula a idade com base na data de nascimento
+ */
+  calculateAge(dateOfBirth: Date | string | undefined): number | null {
+    if (!dateOfBirth) {
+      return null;
+    }
+
+    const birthDate = new Date(dateOfBirth);
+    if (isNaN(birthDate.getTime())) {
+      return null; // Data inválida
+    }
+
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+
+    // Ajuste para caso o aniversário ainda não tenha ocorrido no ano atual
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+
+    return age;
+  }
+
+
+  // ============== Measures Edit Methods ==============
+
+  toggleEditMeasures(): void {
+    if (this.editingMeasures) {
+      // Se já está editando, salva as alterações
+      if (!this.client?.id) {
+        this.showSnackBar('Erro: ID do cliente não disponível.');
+        return;
       }
-    });
-  }
 
+      // IMPORTANTE: Envie diretamente o objeto editableMeasures, sem aninhamento
+      // NÃO envie { measure: this.editableMeasures }
 
-  formatMeasure(value: number | null | undefined): string {
-    if (value === null || value === undefined) {
-      return '-';
-    }
-    return value.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-  }
-
-  onBack(): void {
-    this.router.navigate(['/clients-list']);
-  }
-
-  editClientDetails(clientId: string | undefined): void {
-    if (clientId) {
-      this.router.navigate(['/clients-edit', clientId]);
+      this.isLoading = true;
+      this.clientService.updateMeasure(this.client.id, this.editableMeasures)
+        .pipe(
+          finalize(() => this.isLoading = false),
+          catchError(error => {
+            this.showSnackBar('Erro ao atualizar medidas do cliente.');
+            console.error('Erro ao atualizar medidas:', error);
+            return of(null);
+          })
+        )
+        .subscribe(response => {
+          if (response) {
+            // Atualiza o cliente local com os novos dados
+            if (this.client) {
+              this.client = {
+                ...this.client,
+                measure: this.editableMeasures
+              };
+            }
+            this.showSnackBar('Medidas atualizadas com sucesso!');
+          }
+          this.editingMeasures = false;
+        });
     } else {
-      this.snackBar.open('Não é possível editar: ID do Cliente não carregado.', 'Fechar', { duration: 3000 });
-      console.warn('Não é possível editar: ID do Cliente não carregado.');
+      // Inicia a edição, copiando valores atuais para o editável
+      this.editableMeasures = this.client?.measure
+        ? { ...this.client.measure }
+        : this.createEmptyMeasure();
+
+      // Se não existir data de medição, define como hoje
+      if (!this.editableMeasures.data) {
+        this.editableMeasures.data = new Date();
+      }
+
+      this.editingMeasures = true;
     }
   }
 
-  editMeasures(clientId: string | undefined): void {
-    if (clientId) {
-      this.router.navigate(['/edit-measures', clientId]);
-    } else {
-      this.snackBar.open('Não é possível editar medidas: ID do Cliente não carregado.', 'Fechar', { duration: 3000 });
-      console.warn('Não é possível editar medidas: ID do Cliente não carregado.');
+  private startEditingMeasures(): void {
+    this.editableMeasures = { ...(this.client?.measure ?? {}) };
+    this.editingMeasures = true;
+  }
+
+  saveEditedMeasures(): void {
+    if (!this.client?.id) {
+      this.showSnackBar('Erro: ID do cliente não encontrado.');
+      return;
     }
+
+    this.isLoading = true;
+    const measureToUpdate = {
+      ...this.editableMeasures,
+      id: this.client.measure?.id
+    };
+
+    this.measureService.updateMeasure(this.client.id, measureToUpdate)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => this.isLoading = false),
+        catchError(error => {
+          this.handleError('Erro ao atualizar medidas.', error);
+          return of(null);
+        })
+      )
+      .subscribe(updatedMeasures => {
+        if (updatedMeasures && this.client) {
+          this.client.measure = updatedMeasures;
+          this.editingMeasures = false;
+          this.showSnackBar('Medidas atualizadas com sucesso!');
+        }
+      });
   }
 
-  trackByTrainingId(index: number, training: any): string {
-    return training.id || index.toString();
+  cancelEditMeasures(): void {
+    this.editingMeasures = false;
+    this.editableMeasures = {};
   }
 
-  // Removed duplicate implementation of viewTrainingDetails
+  // ============== Training Management Methods ==============
 
-  deleteTraining(trainingId: string): void {
-    console.log('Deleting training with ID:', trainingId);
-    // Implemente a lógica para deletar um treino.
+  toggleExerciseVisibility(trainingId: string): void {
+    const currentState = this.expandedExercisesMap.get(trainingId) || false;
+    this.expandedExercisesMap.set(trainingId, !currentState);
+  }
+
+  isExerciseListVisible(trainingId: string): boolean {
+    return this.expandedExercisesMap.get(trainingId) || false;
+  }
+
+  setAsCurrentTraining(training: Trainning): void {
+    if (!training.active) {
+      this.showSnackBar(`Não é possível definir "${training.name}" como atual pois está inativo`);
+      return;
+    }
+
+    this.currentClientTraining = training;
+    this.showSnackBar(`"${training.name}" definido como treino atual`);
   }
 
   assignNewTraining(): void {
-    console.log('Assigning new training.');
-    this.router.navigate(['/trainning-create', this.client?.id]); // Passa o ID do cliente para a criação do treino
+    if (!this.client?.id) {
+      this.showSnackBar('ID do cliente não disponível para criar treino.');
+      return;
+    }
+
+    this.router.navigate(['/trainning-create', this.client.id]);
   }
 
-  // ============== Lógica para Adicionar/Selecionar Médico ==============
+  viewTrainingDetails(training: Trainning): void {
+    if (!training) return;
+
+    const trainingCopy = { ...training };
+
+    // Convert dates if needed
+    trainingCopy.startDate = this.parseDate(trainingCopy.startDate);
+    trainingCopy.endDate = this.parseDate(trainingCopy.endDate);
+
+    // For inactive trainings, just show details in dialog
+    if (!trainingCopy.active) {
+      this.showTrainingDetailsInDialog(trainingCopy);
+      return;
+    }
+
+    this.currentClientTraining = trainingCopy;
+
+    // Scroll to section
+    setTimeout(() => {
+      document.querySelector('.current-training-section')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }, 100);
+  }
+
+  showTrainingDetailsInDialog(training: Trainning): void {
+    this.dialog.open(ConfirmDialogComponent, {
+      width: '600px',
+      data: {
+        title: `Detalhes do Treino: ${training.name}`,
+        message: this.formatTrainingDetails(training),
+        confirmText: 'Fechar',
+        showCancel: false
+      }
+    });
+  }
+
+  formatTrainingDetails(training: Trainning): string {
+    let details = `
+      <strong>Nome:</strong> ${training.name || 'Não definido'}<br>
+      <strong>Data de Início:</strong> ${this.formatDate(training.startDate)}<br>
+      <strong>Data de Fim:</strong> ${this.formatDate(training.endDate)}<br>
+      <strong>Status:</strong> ${training.active ? 'Ativo' : 'Inativo'}<br>
+    `;
+
+    if (training.exercises && training.exercises.length > 0) {
+      details += '<br><strong>Exercícios:</strong><br>';
+      training.exercises.forEach(ex => {
+        details += `- ${ex.name}<br>`;
+      });
+    }
+
+    return details;
+  }
+
+  restoreTraining(training: Trainning): void {
+    if (!this.client?.id || !training.id) {
+      this.showSnackBar('Erro: ID do cliente ou do treino não disponível.');
+      return;
+    }
+
+    // Confirmação antes de restaurar o treino
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Restaurar Treino',
+        message: `Deseja realmente restaurar o treino "${training.name}" e torná-lo ativo novamente?`,
+        confirmText: 'Restaurar',
+        cancelText: 'Cancelar'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.isLoading = true;
+
+        // Preparar o objeto de treino para restauração
+        const trainingToRestore = {
+          ...training,
+          active: true,
+          endDate: null // Remove a data de término
+        };
+
+        // Atualizar status do treino para ativo
+        this.trainningService.updateTrainning(training.id!, trainingToRestore)
+          .pipe(
+            takeUntil(this.destroy$),
+            finalize(() => this.isLoading = false),
+            catchError(error => {
+              this.handleError('Erro ao restaurar treino.', error);
+              return of(null);
+            })
+          )
+          .subscribe(updatedTraining => {
+            if (updatedTraining) {
+              // Remover da lista de treinos inativos
+              this.inactiveTrainings = this.inactiveTrainings.filter(t => t.id !== training.id);
+
+              // Adicionar à lista de treinos ativos
+              const restoredTraining = {
+                ...updatedTraining,
+                active: true,
+                // Garantir que as datas sejam objetos Date
+                startDate: this.parseDate(updatedTraining.startDate),
+                endDate: null // Já definido como null
+              };
+              this.clientTrainings = [...this.clientTrainings, restoredTraining];
+
+              // Inicializar o estado expandido para este treino
+              if (restoredTraining.id) {
+                this.expandedExercisesMap.set(restoredTraining.id.toString(), false);
+              }
+
+              // Atualizar painel para exibir treinos ativos
+              this.panelOpenState.trainings = true;
+              this.panelOpenState.history = false;
+
+              // Mostrar mensagem de sucesso
+              this.showSnackBar(`Treino "${restoredTraining.name}" restaurado com sucesso!`);
+
+              // Opcionalmente, perguntar se deseja definir como treino atual
+              this.askSetAsCurrentTraining(restoredTraining);
+
+              // Rolar para a seção de treinos ativos após um curto delay
+              setTimeout(() => {
+                const trainingsSection = document.querySelector('.trainings-container');
+                if (trainingsSection) {
+                  trainingsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }, 300);
+            }
+          });
+      }
+    });
+  }
+
+  deactivateTraining(training: Trainning): void {
+    if (!this.client?.id || !training.id) {
+      this.showSnackBar('Erro: ID do cliente ou do treino não disponível.');
+      return;
+    }
+
+    // Confirmação antes de inativar o treino
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Inativar Treino',
+        message: `Deseja realmente inativar o treino "${training.name}"?`,
+        confirmText: 'Inativar',
+        cancelText: 'Cancelar'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.isLoading = true;
+
+        // Preparar o objeto de treino para inativação
+        const trainingToDeactivate = {
+          ...training,
+          active: false,
+          endDate: new Date() // Define a data de término como a data atual
+        };
+
+        // Atualizar status do treino para inativo
+        this.trainningService.updateTrainning(training.id!, trainingToDeactivate)
+          .pipe(
+            takeUntil(this.destroy$),
+            finalize(() => this.isLoading = false),
+            catchError(error => {
+              this.handleError('Erro ao inativar treino.', error);
+              return of(null);
+            })
+          )
+          .subscribe(updatedTraining => {
+            if (updatedTraining) {
+              // Remover da lista de treinos ativos
+              this.clientTrainings = this.clientTrainings.filter(t => t.id !== training.id);
+
+              // Se era o treino atual, atualizar a referência
+              if (this.currentClientTraining?.id === training.id) {
+                this.currentClientTraining = this.clientTrainings.length > 0 ? this.clientTrainings[0] : null;
+              }
+
+              // Adicionar à lista de treinos inativos
+              const inactivatedTraining = {
+                ...updatedTraining,
+                active: false,
+                // Garantir que as datas sejam objetos Date
+                startDate: this.parseDate(updatedTraining.startDate),
+                endDate: this.parseDate(updatedTraining.endDate)
+              }; this.inactiveTrainings = [inactivatedTraining, ...this.inactiveTrainings];
+
+              // Atualizar painel para exibir histórico de treinos
+              this.panelOpenState.history = true;
+
+              // Mostrar mensagem de sucesso
+              this.showSnackBar(`Treino "${inactivatedTraining.name}" inativado com sucesso!`);
+
+              // Rolar para a seção de histórico após um curto delay
+              setTimeout(() => {
+                const historySection = document.querySelector('.training-history-table-wrapper');
+                if (historySection) {
+                  historySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }, 300);
+            }
+          });
+      }
+    });
+  }
+
+  // Método auxiliar para perguntar se deseja definir como treino atual
+  private askSetAsCurrentTraining(training: Trainning): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Definir como Atual',
+        message: `Deseja definir "${training.name}" como treino atual?`,
+        confirmText: 'Sim',
+        cancelText: 'Não'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.setAsCurrentTraining(training);
+      }
+    });
+  }
+
+  // ============== Doctor Management Methods ==============
 
   openAddDoctorDialog(): void {
     if (!this.client?.id) {
-      this.snackBar.open('Não é possível adicionar médico: ID do cliente não disponível.', 'Fechar', { duration: 3000 });
+      this.showSnackBar('Não é possível adicionar médico: ID do cliente não disponível.');
       return;
     }
 
-    // Carrega todos os médicos disponíveis no sistema
-    this.doctorService.getAllDoctors().subscribe({
-      next: (doctors: Doctor[]) => {
+    this.doctorService.getAllDoctors()
+      .pipe(
+        takeUntil(this.destroy$),
+        catchError(error => {
+          this.handleError('Erro ao carregar médicos disponíveis.', error);
+          return of([]);
+        })
+      )
+      .subscribe(doctors => {
         this.availableDoctors = doctors;
-        // Pré-seleciona os médicos já associados
-        this.selectedDoctorIds = new Set(this.associatedDoctors.map(d => d.id!.toString()));
-        this.showAddDoctorDialog = true;
-      },
-      error: (error) => {
-        console.error('Erro ao carregar médicos disponíveis:', error);
-        this.snackBar.open('Erro ao carregar médicos disponíveis.', 'Fechar', { duration: 3000 });
-      }
-    });
-  }
-
-  openAddPersonalDialog(): void {
-    if (!this.client?.id) {
-      this.snackBar.open('Não é possível adicionar personal: ID do cliente não disponível.', 'Fechar', { duration: 3000 });
-      return;
-    }
-
-    // Carrega todos os personals disponíveis no sistema
-    this.personalService.getAllPersonal().subscribe({
-      next: (personals: Personal[]) => {
-        this.availablePersonals = personals; // CORRIGIDO: atribui à availablePersonals e não à associatedPersonals
-
-        // Pré-seleciona os personals já associados
-        this.selectedPersonalIds = new Set(this.associatedPersonals.map(p => p.id!.toString()));
-
-        this.showAddPersonalDialog = true; // Abre o diálogo após carregar os dados
-      },
-      error: (error) => {
-        console.error('Erro ao carregar personals disponíveis:', error);
-        this.snackBar.open('Erro ao carregar personals disponíveis.', 'Fechar', { duration: 3000 });
-      }
-    });
-  }
-
-  openAddNutritionistDialog(): void {
-    if (!this.client?.id) {
-      this.snackBar.open('Não é possível adicionar nutricionista: ID do cliente não disponível.', 'Fechar', { duration: 3000 });
-      return;
-    }
-
-    // Carrega todos os nutricionistas disponíveis no sistema
-    this.nutritionistService.getAllNutritionists().subscribe({
-      next: (nutritionists: Nutritionist[]) => {
-        console.log('Nutricionistas disponíveis:', nutritionists);
-
-        // Verificar detalhadamente o primeiro nutricionista
-        if (nutritionists && nutritionists.length > 0) {
-          console.log('Primeiro nutricionista:', nutritionists[0]);
-          console.log('Tipo do ID:', typeof nutritionists[0].id);
-          console.log('Valor do ID:', nutritionists[0].id);
-          console.log('Propriedades disponíveis:', Object.keys(nutritionists[0]));
-        }
-
-        this.availableNutritionists = nutritionists;
-
-        // Pré-seleciona os nutricionistas já associados com segurança
-        this.selectedNutritionistIds = new Set(
-          this.associatedNutritionists
-            .filter(n => n && n.id) // Garante que só nutricionistas com ID serão considerados
-            .map(n => n.id?.toString() || '')
+        this.selectedDoctorIds = new Set(
+          this.associatedDoctors.map(d => d.id?.toString() || '')
         );
-
-        this.showAddNutritionistDialog = true;
-      },
-      error: (error) => {
-        console.error('Erro ao carregar nutricionistas disponíveis:', error);
-        this.snackBar.open('Erro ao carregar nutricionistas disponíveis.', 'Fechar', { duration: 3000 });
-      }
-    });
+        this.showAddDoctorDialog = true;
+      });
   }
 
   closeAddDoctorDialog(): void {
     this.showAddDoctorDialog = false;
-  }
-
-  closeAddPersonalDialog(): void {
-    this.showAddPersonalDialog = false;
   }
 
   isDoctorSelected(doctorId: string): boolean {
@@ -326,152 +819,194 @@ export class ClientViewComponent implements OnInit {
   }
 
   toggleDoctorSelection(doctorId: string): void {
-    if (this.selectedDoctorIds.has(doctorId)) {
-      this.selectedDoctorIds.delete(doctorId);
-    } else {
-      this.selectedDoctorIds.add(doctorId);
-    }
+    this.toggleSelection(doctorId, this.selectedDoctorIds);
   }
 
   saveSelectedDoctors(): void {
     if (!this.client?.id) {
-      this.snackBar.open('ID do cliente não disponível para salvar médicos.', 'Fechar', { duration: 3000 });
+      this.showSnackBar('ID do cliente não disponível para salvar médicos.');
       return;
     }
 
-    // Verificar se há médicos selecionados
     if (this.selectedDoctorIds.size === 0) {
-      this.snackBar.open('Nenhum médico selecionado.', 'Fechar', { duration: 3000 });
+      this.showSnackBar('Nenhum médico selecionado.');
       return;
     }
 
-    // No saveSelectedDoctors()
-    const selectedDoctorIds = Array.from(this.selectedDoctorIds).map(id => Number(id));
+    const selectedDoctorIds = Array.from(this.selectedDoctorIds)
+      .map(id => Number(id))
+      .filter(id => !isNaN(id) && id > 0);
 
     this.doctorService.associateDoctorToClient(this.client.id, selectedDoctorIds)
-      .subscribe({
-        next: (updatedClient) => {
-          this.snackBar.open('Médicos associados com sucesso!', 'Fechar', { duration: 3000 });
+      .pipe(
+        takeUntil(this.destroy$),
+        catchError(error => {
+          this.handleError('Erro ao associar médicos.', error);
+          return of(null);
+        })
+      )
+      .subscribe(updatedClient => {
+        if (updatedClient) {
           this.client = updatedClient;
           this.closeAddDoctorDialog();
           this.loadAssociatedProfessionals(updatedClient.id!.toString());
-        },
-        error: (error) => {
-          console.error('Erro ao associar médicos:', error);
-          this.snackBar.open('Erro ao associar médicos.', 'Fechar', { duration: 3000 });
+          this.showSnackBar('Médicos associados com sucesso!');
         }
       });
   }
-  addDoctorToClient(clientId: string): void {
-    // Implement your logic here, e.g., open a dialog or set a flag
-    this.showAddDoctorDialog = true;
-    // Optionally store the clientId if needed
-    this.selectedClientIdForDoctor = clientId;
+
+  removeDoctor(doctor: Doctor): void {
+    this.confirmRemoveProfessional(
+      'médico',
+      doctor.name || 'Selecionado',
+      () => {
+        if (!this.client?.id || !doctor.id) {
+          this.showSnackBar('ID do cliente ou médico inválido.');
+          return;
+        }
+
+        this.doctorService.disassociateDoctorsFromClient(this.client.id, [doctor.id])
+          .pipe(
+            takeUntil(this.destroy$),
+            catchError(error => {
+              this.handleError('Erro ao desassociar médico.', error);
+              return of(null);
+            })
+          )
+          .subscribe(updatedClient => {
+            if (updatedClient) {
+              this.client = updatedClient;
+              this.loadAssociatedProfessionals(updatedClient.id!.toString());
+              this.showSnackBar('Médico desassociado com sucesso!');
+            }
+          });
+      }
+    );
   }
 
-  // Métodos para Personal e Nutricionista (a serem expandidos com lógica de diálogo/seleção)
-  addPersonalToClient(clientId: string): void {
-    console.log('Adicionando personal ao cliente com ID:', clientId);
-    // Lógica para abrir diálogo de seleção de personal ou navegar para criação
-    this.router.navigate(['/personal-create', clientId]);
-  }
+  // ============== Personal Trainer Management Methods ==============
 
-  saveSelectedNutritionists(): void {
+  openAddPersonalDialog(): void {
     if (!this.client?.id) {
-      this.snackBar.open('ID do cliente não disponível para salvar nutricionistas.', 'Fechar', { duration: 3000 });
+      this.showSnackBar('Não é possível adicionar personal: ID do cliente não disponível.');
       return;
     }
 
-    console.log('Conteúdo do Set selectedNutritionistIds:', Array.from(this.selectedNutritionistIds));
-
-    // Verificar se há nutricionistas selecionados
-    if (this.selectedNutritionistIds.size === 0) {
-      this.snackBar.open('Nenhum nutricionista selecionado.', 'Fechar', { duration: 3000 });
-      return;
-    }
-
-    // Filtrar IDs inválidos e convertê-los para números
-    const selectedNutritionistIds = Array.from(this.selectedNutritionistIds)
-      .filter(id => {
-        const isValid = id && id.trim() !== '' && id !== '0';
-        if (!isValid) console.log(`Removendo ID inválido: "${id}"`);
-        return isValid;
-      })
-      .map(id => {
-        const numId = Number(id);
-        console.log(`Convertendo ID "${id}" para número: ${numId}`);
-        return numId;
-      })
-      .filter(numId => {
-        const isValid = !isNaN(numId) && numId > 0;
-        if (!isValid) console.log(`Removendo número inválido: ${numId}`);
-        return isValid;
-      });
-
-    console.log('IDs de nutricionistas após filtragem:', selectedNutritionistIds);
-
-    // Verificar se ainda há IDs válidos após a filtragem
-    if (selectedNutritionistIds.length === 0) {
-      this.snackBar.open('Nenhum ID de nutricionista válido foi selecionado.', 'Fechar', { duration: 3000 });
-      return;
-    }
-
-    // Chama o serviço para associar os nutricionistas ao cliente
-    this.nutritionistService.associateNutritionistToClient(this.client.id, selectedNutritionistIds)
-      .subscribe({
-        next: (updatedClient) => {
-          this.snackBar.open('Nutricionistas associados com sucesso!', 'Fechar', { duration: 3000 });
-          this.client = updatedClient;
-          this.closeAddNutritionistDialog();
-          this.loadAssociatedProfessionals(updatedClient.id!.toString());
-        },
-        error: (error) => {
-          console.error('Erro ao associar nutricionistas:', error);
-          const errorMsg = error.error?.message || error.message || 'Erro desconhecido';
-          this.snackBar.open(`Erro ao associar nutricionistas: ${errorMsg}`, 'Fechar', { duration: 5000 });
-        }
+    this.personalService.getAllPersonal()
+      .pipe(
+        takeUntil(this.destroy$),
+        catchError(error => {
+          this.handleError('Erro ao carregar personals disponíveis.', error);
+          return of([]);
+        })
+      )
+      .subscribe(personals => {
+        this.availablePersonals = personals;
+        this.selectedPersonalIds = new Set(
+          this.associatedPersonals.map(p => p.id?.toString() || '')
+        );
+        this.showAddPersonalDialog = true;
       });
   }
 
-  togglePersonalSelection(personalId: string): void {
-    if (this.selectedPersonalIds.has(personalId)) {
-      this.selectedPersonalIds.delete(personalId);
-    } else {
-      this.selectedPersonalIds.add(personalId);
-    }
+  closeAddPersonalDialog(): void {
+    this.showAddPersonalDialog = false;
   }
 
   isPersonalSelected(personalId: string): boolean {
     return this.selectedPersonalIds.has(personalId);
   }
 
+  togglePersonalSelection(personalId: string): void {
+    this.toggleSelection(personalId, this.selectedPersonalIds);
+  }
+
   saveSelectedPersonals(): void {
     if (!this.client?.id) {
-      this.snackBar.open('ID do cliente não disponível para salvar personals.', 'Fechar', { duration: 3000 });
+      this.showSnackBar('ID do cliente não disponível para salvar personals.');
       return;
     }
 
-    // Verificar se há personals selecionados
     if (this.selectedPersonalIds.size === 0) {
-      this.snackBar.open('Nenhum personal trainer selecionado.', 'Fechar', { duration: 3000 });
+      this.showSnackBar('Nenhum personal trainer selecionado.');
       return;
     }
 
-    // Converte os IDs dos personals selecionados para números
-    const selectedPersonalIds = Array.from(this.selectedPersonalIds).map(id => Number(id));
+    const selectedPersonalIds = Array.from(this.selectedPersonalIds)
+      .map(id => Number(id))
+      .filter(id => !isNaN(id) && id > 0);
 
     this.personalService.associatePersonalToClient(this.client.id, selectedPersonalIds)
-      .subscribe({
-        next: (updatedClient) => {
-          this.snackBar.open('Personal trainers associados com sucesso!', 'Fechar', { duration: 3000 });
+      .pipe(
+        takeUntil(this.destroy$),
+        catchError(error => {
+          this.handleError('Erro ao associar personal trainers.', error);
+          return of(null);
+        })
+      )
+      .subscribe(updatedClient => {
+        if (updatedClient) {
           this.client = updatedClient;
           this.closeAddPersonalDialog();
           this.loadAssociatedProfessionals(updatedClient.id!.toString());
-        },
-        error: (error) => {
-          console.error('Erro ao associar personal trainers:', error);
-          this.snackBar.open('Erro ao associar personal trainers.', 'Fechar', { duration: 3000 });
+          this.showSnackBar('Personal trainers associados com sucesso!');
         }
+      });
+  }
+
+  removePersonal(personal: Personal): void {
+    this.confirmRemoveProfessional(
+      'personal',
+      personal.name || 'Selecionado',
+      () => {
+        if (!this.client?.id || !personal.id) {
+          this.showSnackBar('ID do cliente ou personal inválido.');
+          return;
+        }
+
+        this.personalService.disassociatePersonalsFromClient(this.client.id, [personal.id])
+          .pipe(
+            takeUntil(this.destroy$),
+            catchError(error => {
+              this.handleError('Erro ao desassociar personal.', error);
+              return of(null);
+            })
+          )
+          .subscribe(updatedClient => {
+            if (updatedClient) {
+              this.client = updatedClient;
+              this.loadAssociatedProfessionals(updatedClient.id!.toString());
+              this.showSnackBar('Personal desassociado com sucesso!');
+            }
+          });
+      }
+    );
+  }
+
+  // ============== Nutritionist Management Methods ==============
+
+  openAddNutritionistDialog(): void {
+    if (!this.client?.id) {
+      this.showSnackBar('Não é possível adicionar nutricionista: ID do cliente não disponível.');
+      return;
+    }
+
+    this.nutritionistService.getAllNutritionists()
+      .pipe(
+        takeUntil(this.destroy$),
+        catchError(error => {
+          this.handleError('Erro ao carregar nutricionistas disponíveis.', error);
+          return of([]);
+        })
+      )
+      .subscribe(nutritionists => {
+        this.availableNutritionists = nutritionists;
+        this.selectedNutritionistIds = new Set(
+          this.associatedNutritionists
+            .filter(n => n && n.id)
+            .map(n => n.id?.toString() || '')
+        );
+        this.showAddNutritionistDialog = true;
       });
   }
 
@@ -479,58 +1014,226 @@ export class ClientViewComponent implements OnInit {
     this.showAddNutritionistDialog = false;
   }
 
-  toggleNutritionistSelection(nutritionistId: string): void {
-    console.log(`Toggle nutricionista ID: "${nutritionistId}"`);
-
-    // Valida o ID antes de qualquer operação
-    if (!nutritionistId || nutritionistId === 'null' || nutritionistId === 'undefined' || nutritionistId === '0') {
-      console.error('Tentativa de selecionar ID inválido:', nutritionistId);
-      this.snackBar.open('ID de nutricionista inválido', 'Fechar', { duration: 3000 });
-      return;
-    }
-
-    if (this.selectedNutritionistIds.has(nutritionistId)) {
-      this.selectedNutritionistIds.delete(nutritionistId);
-      console.log(`Removido nutricionista ID ${nutritionistId}, Total: ${this.selectedNutritionistIds.size}`);
-    } else {
-      this.selectedNutritionistIds.add(nutritionistId);
-      console.log(`Adicionado nutricionista ID ${nutritionistId}, Total: ${this.selectedNutritionistIds.size}`);
-    }
-  }
-
   isNutritionistSelected(nutritionistId: string): boolean {
     return this.selectedNutritionistIds.has(nutritionistId);
   }
 
+  toggleNutritionistSelection(nutritionistId: string): void {
+    if (!nutritionistId || nutritionistId === 'null' || nutritionistId === 'undefined' || nutritionistId === '0') {
+      this.showSnackBar('ID de nutricionista inválido');
+      return;
+    }
 
+    this.toggleSelection(nutritionistId, this.selectedNutritionistIds);
+  }
+
+  saveSelectedNutritionists(): void {
+    if (!this.client?.id) {
+      this.showSnackBar('ID do cliente não disponível para salvar nutricionistas.');
+      return;
+    }
+
+    if (this.selectedNutritionistIds.size === 0) {
+      this.showSnackBar('Nenhum nutricionista selecionado.');
+      return;
+    }
+
+    const selectedNutritionistIds = Array.from(this.selectedNutritionistIds)
+      .filter(id => id && id.trim() !== '' && id !== '0')
+      .map(id => Number(id))
+      .filter(id => !isNaN(id) && id > 0);
+
+    if (selectedNutritionistIds.length === 0) {
+      this.showSnackBar('Nenhum ID de nutricionista válido foi selecionado.');
+      return;
+    }
+
+    this.nutritionistService.associateNutritionistToClient(this.client.id, selectedNutritionistIds)
+      .pipe(
+        takeUntil(this.destroy$),
+        catchError(error => {
+          const errorMsg = error.error?.message || error.message || 'Erro desconhecido';
+          this.showSnackBar(`Erro ao associar nutricionistas: ${errorMsg}`);
+          return of(null);
+        })
+      )
+      .subscribe(updatedClient => {
+        if (updatedClient) {
+          this.client = updatedClient;
+          this.closeAddNutritionistDialog();
+          this.loadAssociatedProfessionals(updatedClient.id!.toString());
+          this.showSnackBar('Nutricionistas associados com sucesso!');
+        }
+      });
+  }
+
+  removeNutritionist(nutritionist: Nutritionist): void {
+    this.confirmRemoveProfessional(
+      'nutricionista',
+      nutritionist.name || 'Selecionado',
+      () => {
+        if (!this.client?.id || !nutritionist.id) {
+          this.showSnackBar('ID do cliente ou nutricionista inválido.');
+          return;
+        }
+
+        this.nutritionistService.disassociateNutritionistsFromClient(this.client.id, [nutritionist.id])
+          .pipe(
+            takeUntil(this.destroy$),
+            catchError(error => {
+              this.handleError('Erro ao desassociar nutricionista.', error);
+              return of(null);
+            })
+          )
+          .subscribe(updatedClient => {
+            if (updatedClient) {
+              this.client = updatedClient;
+              this.loadAssociatedProfessionals(updatedClient.id!.toString());
+              this.showSnackBar('Nutricionista desassociado com sucesso!');
+            }
+          });
+      }
+    );
+  }
+
+  // ============== Panel State Methods ==============
+
+  expandAllPanels(): void {
+    Object.keys(this.panelOpenState).forEach(key => {
+      this.panelOpenState[key as keyof PanelState] = true;
+    });
+  }
+
+  collapseAllPanels(): void {
+    Object.keys(this.panelOpenState).forEach(key => {
+      this.panelOpenState[key as keyof PanelState] = false;
+    });
+  }
+
+  // ============== Utility Methods ==============
+
+  formatMeasure(value: number | null | undefined, unit: string = 'cm'): string {
+    if (value === null || value === undefined || isNaN(value)) {
+      return '-';
+    }
+
+    const formattedValue = value.toLocaleString('pt-BR', {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1
+    });
+
+    return `${formattedValue} ${unit}`;
+  }
+
+  formatDate(date: any): string {
+    const parsed = this.parseDate(date);
+    if (!parsed) return 'Não definida';
+    return parsed.toLocaleDateString('pt-BR');
+  }
+
+  parseDate(dateValue: any): Date | null {
+    if (!dateValue) return null;
+
+    try {
+      // Array format [2025, 7, 31, 3, 0]
+      if (Array.isArray(dateValue)) {
+        const [year, month, day, hour = 0, minute = 0] = dateValue;
+        return new Date(year, month - 1, day, hour, minute);
+      }
+
+      // String format "2025,7,31,3,0"
+      if (typeof dateValue === 'string' && dateValue.includes(',')) {
+        const parts = dateValue.split(',').map(part => parseInt(part.trim()));
+        return new Date(parts[0], parts[1] - 1, parts[2], parts[3] || 0, parts[4] || 0);
+      }
+
+      // Date object
+      if (dateValue instanceof Date) {
+        return dateValue;
+      }
+
+      // Other string formats
+      return new Date(dateValue);
+    } catch (e) {
+      console.error('Error converting date:', e, dateValue);
+      return null;
+    }
+  }
+
+  isValidDate(dateValue: any): boolean {
+    return this.parseDate(dateValue) !== null;
+  }
+
+  navigateToClientsList(): void {
+    this.router.navigate(['/clients-list']);
+  }
+
+  onBack(): void {
+    this.navigateToClientsList();
+  }
+
+  editClientDetails(clientId: number | undefined): void {
+    if (clientId) {
+      this.router.navigate(['/clients-edit', clientId.toString()]);
+    } else {
+      this.showSnackBar('Não é possível editar: ID do Cliente não carregado.');
+    }
+  }
+
+  editMeasures(clientId: string | undefined): void {
+    if (clientId) {
+      this.router.navigate(['/edit-measures', clientId]);
+    } else {
+      this.showSnackBar('Não é possível editar medidas: ID do Cliente não carregado.');
+    }
+  }
+
+  // Track By methods for ngFor performance
+  trackByTrainingId(index: number, training: any): string {
+    return training.id || index.toString();
+  }
 
   trackByDoctorId(index: number, doctor: any): any {
-    return doctor?.id;
+    return doctor?.id || index;
   }
 
   trackByPersonalId(index: number, personal: any): string | number {
-    return personal && personal.id != null ? personal.id : index;
+    return personal?.id != null ? personal.id : index;
   }
 
   trackByNutritionistId(index: number, nutritionist: any): any {
     return nutritionist?.id || index;
   }
 
-  // Método para desassociar um único médico
-  removeDoctor(doctor: Doctor): void {
-    if (!this.client?.id) {
-      this.snackBar.open('ID do cliente não disponível.', 'Fechar', { duration: 3000 });
-      return;
+  // ============== Helper Methods ==============
+
+  private showSnackBar(message: string, duration: number = 3000): void {
+    this.snackBar.open(message, 'Fechar', { duration });
+  }
+
+  private handleError(message: string, error?: any): void {
+    console.error(message, error);
+    this.showSnackBar(message);
+  }
+
+  private toggleSelection(id: string, selectionSet: Set<string>): void {
+    if (selectionSet.has(id)) {
+      selectionSet.delete(id);
+    } else {
+      selectionSet.add(id);
     }
+  }
 
-    const doctorName = doctor.name || 'Selecionado';
-
-    // Abre diálogo de confirmação do Material
+  private confirmRemoveProfessional(
+    type: string,
+    name: string,
+    onConfirm: () => void
+  ): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '400px',
       data: {
         title: 'Confirmar Desassociação',
-        message: `Deseja realmente desassociar o médico ${doctorName}?`,
+        message: `Deseja realmente desassociar o ${type} ${name}?`,
         confirmText: 'Desassociar',
         cancelText: 'Cancelar'
       }
@@ -538,421 +1241,8 @@ export class ClientViewComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (this.client?.id !== undefined && doctor.id !== undefined) {
-          this.doctorService.disassociateDoctorsFromClient(this.client.id, [doctor.id])
-            .subscribe({
-              next: (updatedClient) => {
-                this.snackBar.open('Médico desassociado com sucesso!', 'Fechar', { duration: 3000 });
-                this.client = updatedClient;
-                this.loadAssociatedProfessionals(updatedClient.id!.toString());
-              },
-              error: (error) => {
-                console.error('Erro ao desassociar médico:', error);
-                this.snackBar.open('Erro ao desassociar médico.', 'Fechar', { duration: 3000 });
-              }
-            });
-        } else {
-          this.snackBar.open('ID do cliente ou médico inválido.', 'Fechar', { duration: 3000 });
-        }
+        onConfirm();
       }
     });
   }
-
-  // Método para desassociar múltiplos médicos selecionados
-  // Método para desassociar múltiplos médicos selecionados
-  removeSelectedDoctors(): void {
-    if (!this.client?.id) {
-      this.snackBar.open('ID do cliente não disponível.', 'Fechar', { duration: 3000 });
-      return;
-    }
-
-    if (this.selectedDoctorIds.size === 0) {
-      this.snackBar.open('Nenhum médico selecionado para desassociar.', 'Fechar', { duration: 3000 });
-      return;
-    }
-
-    const doctorCount = this.selectedDoctorIds.size;
-
-    // Abre diálogo de confirmação do Material
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '400px',
-      data: {
-        title: 'Confirmar Desassociação',
-        message: `Deseja realmente desassociar ${doctorCount} médico(s)?`,
-        confirmText: 'Desassociar',
-        cancelText: 'Cancelar'
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        const selectedDoctorIds = Array.from(this.selectedDoctorIds).map(id => Number(id));
-
-        this.doctorService.disassociateDoctorsFromClient(Number(this.client!.id), selectedDoctorIds)
-          .subscribe({
-            next: (updatedClient) => {
-              this.snackBar.open('Médicos desassociados com sucesso!', 'Fechar', { duration: 3000 });
-              this.client = updatedClient;
-              this.selectedDoctorIds.clear();
-              this.closeAddDoctorDialog();
-              this.loadAssociatedProfessionals(updatedClient.id!.toString());
-            },
-            error: (error) => {
-              console.error('Erro ao desassociar médicos:', error);
-              this.snackBar.open('Erro ao desassociar médicos.', 'Fechar', { duration: 3000 });
-            }
-          });
-      }
-    });
-  }
-  // Método para desassociar um único personal
-  removePersonal(personal: Personal): void {
-    if (!this.client?.id) {
-      this.snackBar.open('ID do cliente não disponível.', 'Fechar', { duration: 3000 });
-      return;
-    }
-
-    const personalName = personal.name || 'Selecionado';
-
-    // Abre diálogo de confirmação do Material
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '400px',
-      data: {
-        title: 'Confirmar Desassociação',
-        message: `Deseja realmente desassociar o personal ${personalName}?`,
-        confirmText: 'Desassociar',
-        cancelText: 'Cancelar'
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        if (this.client?.id !== undefined && personal.id !== undefined) {
-          this.personalService.disassociatePersonalsFromClient(this.client.id, [personal.id])
-            .subscribe({
-              next: (updatedClient) => {
-                this.snackBar.open('Personal desassociado com sucesso!', 'Fechar', { duration: 3000 });
-                this.client = updatedClient;
-                this.loadAssociatedProfessionals(updatedClient.id!.toString());
-              },
-              error: (error) => {
-                console.error('Erro ao desassociar personal:', error);
-                this.snackBar.open('Erro ao desassociar personal.', 'Fechar', { duration: 3000 });
-              }
-            });
-        } else {
-          this.snackBar.open('ID do cliente ou personal inválido.', 'Fechar', { duration: 3000 });
-        }
-      }
-    });
-  }
-
-  // Método para desassociar múltiplos personals selecionados
-  removeSelectedPersonals(): void {
-    if (!this.client?.id) {
-      this.snackBar.open('ID do cliente não disponível.', 'Fechar', { duration: 3000 });
-      return;
-    }
-
-    if (this.selectedPersonalIds.size === 0) {
-      this.snackBar.open('Nenhum personal selecionado para desassociar.', 'Fechar', { duration: 3000 });
-      return;
-    }
-
-    const personalCount = this.selectedPersonalIds.size;
-
-    // Abre diálogo de confirmação do Material
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '400px',
-      data: {
-        title: 'Confirmar Desassociação',
-        message: `Deseja realmente desassociar ${personalCount} personal(s)?`,
-        confirmText: 'Desassociar',
-        cancelText: 'Cancelar'
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        const selectedPersonalIds = Array.from(this.selectedPersonalIds).map(id => Number(id));
-
-        this.personalService.disassociatePersonalsFromClient(Number(this.client!.id), selectedPersonalIds)
-          .subscribe({
-            next: (updatedClient) => {
-              this.snackBar.open('Personals desassociados com sucesso!', 'Fechar', { duration: 3000 });
-              this.client = updatedClient;
-              this.selectedPersonalIds.clear();
-              this.closeAddPersonalDialog();
-              this.loadAssociatedProfessionals(updatedClient.id!.toString());
-            },
-            error: (error) => {
-              console.error('Erro ao desassociar personals:', error);
-              this.snackBar.open('Erro ao desassociar personals.', 'Fechar', { duration: 3000 });
-            }
-          });
-      }
-    });
-  }
-
-  // Método para desassociar um único nutricionista
-  removeNutritionist(nutritionist: Nutritionist): void {
-    if (!this.client?.id) {
-      this.snackBar.open('ID do cliente não disponível.', 'Fechar', { duration: 3000 });
-      return;
-    }
-
-    const nutritionistName = nutritionist.name || 'Selecionado';
-
-    // Abre diálogo de confirmação do Material
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '400px',
-      data: {
-        title: 'Confirmar Desassociação',
-        message: `Deseja realmente desassociar o nutricionista ${nutritionistName}?`,
-        confirmText: 'Desassociar',
-        cancelText: 'Cancelar'
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        if (this.client?.id !== undefined && nutritionist.id !== undefined) {
-          this.nutritionistService.disassociateNutritionistsFromClient(this.client.id, [nutritionist.id])
-            .subscribe({
-              next: (updatedClient) => {
-                this.snackBar.open('Nutricionista desassociado com sucesso!', 'Fechar', { duration: 3000 });
-                this.client = updatedClient;
-                this.loadAssociatedProfessionals(updatedClient.id!.toString());
-              },
-              error: (error) => {
-                console.error('Erro ao desassociar nutricionista:', error);
-                this.snackBar.open('Erro ao desassociar nutricionista.', 'Fechar', { duration: 3000 });
-              }
-            });
-        } else {
-          this.snackBar.open('ID do cliente ou nutricionista inválido.', 'Fechar', { duration: 3000 });
-        }
-      }
-    });
-  }
-
-  // Método para desassociar múltiplos nutricionistas selecionados
-removeSelectedNutritionists(): void {
-  if (!this.client?.id) {
-    this.snackBar.open('ID do cliente não disponível.', 'Fechar', { duration: 3000 });
-    return;
-  }
-
-  if (this.selectedNutritionistIds.size === 0) {
-    this.snackBar.open('Nenhum nutricionista selecionado para desassociar.', 'Fechar', { duration: 3000 });
-    return;
-  }
-
-  const nutritionistCount = this.selectedNutritionistIds.size;
-
-  // Abre diálogo de confirmação do Material
-  const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-    width: '400px',
-    data: {
-      title: 'Confirmar Desassociação',
-      message: `Deseja realmente desassociar ${nutritionistCount} nutricionista(s)?`,
-      confirmText: 'Desassociar',
-      cancelText: 'Cancelar'
-    }
-  });
-
-  dialogRef.afterClosed().subscribe(result => {
-    if (result) {
-      const selectedNutritionistIds = Array.from(this.selectedNutritionistIds)
-        .filter(id => id && id !== '0')
-        .map(id => Number(id));
-
-      this.nutritionistService.disassociateNutritionistsFromClient(Number(this.client!.id), selectedNutritionistIds)
-        .subscribe({
-          next: (updatedClient) => {
-            this.snackBar.open('Nutricionistas desassociados com sucesso!', 'Fechar', { duration: 3000 });
-            this.client = updatedClient;
-            this.selectedNutritionistIds.clear();
-            this.closeAddNutritionistDialog();
-            this.loadAssociatedProfessionals(updatedClient.id!.toString());
-          },
-          error: (error) => {
-            console.error('Erro ao desassociar nutricionistas:', error);
-            this.snackBar.open('Erro ao desassociar nutricionistas.', 'Fechar', { duration: 3000 });
-          }
-        });
-    }
-  });
-}
-
-private loadClientTrainings(clientId: string): void {
-  // Carregar treinos ativos do cliente (para o treino atual)
-  this.trainningService.getTrainningByClientId(Number(clientId)).subscribe({
-    next: (trainings) => {
-      console.log('Treinos recebidos do cliente:', trainings);
-
-      // Filtrar apenas treinos ativos para a seção de treino atual
-      const activeTrainings = trainings.filter(training => training.active === true);
-      this.clientTrainings = activeTrainings || [];
-
-      console.log('Treinos ativos filtrados:', activeTrainings);
-
-      // Se houver treinos ativos, define o primeiro como atual
-      this.currentClientTraining = this.clientTrainings.length > 0 ?
-        this.clientTrainings[0] : null;
-    },
-    error: (error) => {
-      console.error('Erro ao carregar treinos do cliente:', error);
-      this.clientTrainings = [];
-      this.currentClientTraining = null;
-    }
-  });
-
-  // Carregar treinos inativos para o histórico
-  this.trainningService.listInactiveTrainningsByClientId(Number(clientId)).subscribe({
-    next: (inactiveTrainings) => {
-      console.log('Treinos inativos do cliente carregados:', inactiveTrainings);
-      this.inactiveTrainings = inactiveTrainings || [];
-    },
-    error: (error) => {
-      console.error('Erro ao carregar treinos inativos do cliente:', error);
-      this.inactiveTrainings = [];
-      this.snackBar.open('Erro ao carregar histórico de treinos do cliente.', 'Fechar', { duration: 3000 });
-    }
-  });
-}
-
-setCurrentTraining(training: any): void {
-   if (!training.active) {
-    this.snackBar.open(`Não é possível definir "${training.name}" como atual pois está inativo`, 'Fechar', { duration: 3000 });
-    return;
-  }
-
-  this.currentClientTraining = training;
-  this.snackBar.open(`"${training.name}" definido como treino atual`, 'Fechar', { duration: 3000 });
-}
-
-// Adicione console.logs para debugging
-isValidDate(dateValue: any): boolean {
-  return this.parseDate(dateValue) !== null;
-}
-
-// Método para visualizar detalhes do treino
-// Método para visualizar detalhes do treino
-viewTrainingDetails(training: any): void {
-  if (!training) return;
-
-  // Cria uma cópia do treino
-  const trainingCopy = { ...training };
-
-  // Converte as datas se necessário
-  if (trainingCopy.startDate) {
-    const parsedDate = this.parseDate(trainingCopy.startDate);
-    if (parsedDate) {
-      trainingCopy.startDate = parsedDate;
-    }
-  }
-
-  if (trainingCopy.endDate) {
-    const parsedDate = this.parseDate(trainingCopy.endDate);
-    if (parsedDate) {
-      trainingCopy.endDate = parsedDate;
-    }
-  }
-
-  // Não define como "currentClientTraining" se estiver visualizando um treino inativo
-  // Em vez disso, apenas mostre os detalhes em um diálogo ou painel separado
-  if (!trainingCopy.active) {
-    // Opção 1: Exibir em um diálogo (implementação depende da sua UI)
-    this.showTrainingDetailsInDialog(trainingCopy);
-    return;
-  }
-
-  this.currentClientTraining = trainingCopy;
-
-  // Scroll para a seção
-  setTimeout(() => {
-    document.querySelector('.current-training-section')?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start'
-    });
-  }, 100);
-}
-
-// Novo método para exibir detalhes de treinos inativos
-// Substitua o método showTrainingDetailsInDialog:
-showTrainingDetailsInDialog(training: any): void {
-  const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-    width: '600px',
-    data: {
-      title: `Detalhes do Treino: ${training.name}`,
-      message: this.formatTrainingDetails(training),
-      confirmText: 'Fechar',
-      showCancel: false
-    }
-  });
-}
-
-// Adicione este método auxiliar:
-formatTrainingDetails(training: any): string {
-  let details = `
-    <strong>Nome:</strong> ${training.name || 'Não definido'}<br>
-    <strong>Data de Início:</strong> ${this.formatDate(training.startDate)}<br>
-    <strong>Data de Fim:</strong> ${this.formatDate(training.endDate)}<br>
-    <strong>Status:</strong> ${training.active ? 'Ativo' : 'Inativo'}<br>
-  `;
-
-  if (training.exercises && training.exercises.length > 0) {
-    details += '<br><strong>Exercícios:</strong><br>';
-    training.exercises.forEach((ex: any) => {
-      details += `- ${ex.name}<br>`;
-    });
-  }
-
-  return details;
-}
-
-formatDate(date: any): string {
-  const parsed = this.parseDate(date);
-  if (!parsed) return 'Não definida';
-
-  return parsed.toLocaleDateString('pt-BR');
-}
-
-// Método para definir um treino como o atual
-setAsCurrentTraining(training: any): void {
-  this.currentClientTraining = training;
-  this.snackBar.open(`"${training.name}" definido como treino atual`, 'Fechar', { duration: 3000 });
-}
-
-// Adicione ao client-view.component.ts
-parseDate(dateValue: any): Date | null {
-  if (!dateValue) return null;
-
-  try {
-    // Para array como [2025, 7, 31, 3, 0]
-    if (Array.isArray(dateValue)) {
-      const [year, month, day, hour = 0, minute = 0] = dateValue;
-      return new Date(year, month-1, day, hour, minute);
-    }
-
-    // Para string com formato "2025,7,31,3,0"
-    if (typeof dateValue === 'string' && dateValue.includes(',')) {
-      const parts = dateValue.split(',').map(part => parseInt(part.trim()));
-      return new Date(parts[0], parts[1]-1, parts[2], parts[3] || 0, parts[4] || 0);
-    }
-
-    // Se já for um objeto Date
-    if (dateValue instanceof Date) {
-      return dateValue;
-    }
-
-    // Para outros formatos de string
-    return new Date(dateValue);
-  } catch (e) {
-    console.error('Erro ao converter data:', e, dateValue);
-    return null;
-  }
-}
-
 }

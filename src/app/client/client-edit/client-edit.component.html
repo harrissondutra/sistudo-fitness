@@ -2,218 +2,252 @@
 <div class="client-edit-container">
   <!-- Cabeçalho da Página -->
   <div class="header">
-    <mat-icon>person</mat-icon>
     <div class="header-content">
-      <h1>{{ isNewClient ? 'Novo Cliente' : 'Editar Cliente' }}</h1>
-      @if (isNewClient) {
+      <mat-icon>person</mat-icon>
+      <div class="text-content">
+        <h1>{{ isNewClient ? 'Novo Cliente' : 'Editar Cliente' }}</h1>
+        @if (isNewClient) {
         <p class="subtitle">Adicione um novo Cliente ao sistema</p>
-      }
-      @if (!isNewClient && clientForm.get('name')?.value) {
+        }
+        @if (!isNewClient && clientForm.get('name')?.value) {
         <div class="client-name-display">
           <p class="subtitle">Editando informações de:</p>
           <h2>{{ clientForm.get('name')?.value }}</h2>
         </div>
-      }
+        }
+      </div>
     </div>
   </div>
 
   <!-- Conteúdo Principal do Formulário -->
-  <div class="content">
-    <form [formGroup]="clientForm" (ngSubmit)="onSubmit()" class="form-container">
-      <!-- Wrapper para as Seções do Formulário para melhor controle de layout -->
-      <div class="form-sections-wrapper">
-
-        <!-- Seção: Informações Pessoais -->
-        <div class="form-section personal-info-section">
-          <h2>
-            <mat-icon>info</mat-icon>
-            Informações Pessoais
-          </h2>
-          <div class="form-grid"> <!-- Usando form-grid para layout responsivo -->
-            <mat-form-field appearance="outline">
-              <mat-label>Nome</mat-label>
-              <input matInput formControlName="name" placeholder="Nome completo">
-              @if (clientForm.get('name')?.hasError('required')) {
-                <mat-error>Nome é obrigatório</mat-error>
-              }
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>E-mail</mat-label>
-              <input matInput formControlName="email" placeholder="E-mail" type="email">
-              @if (clientForm.get('email')?.hasError('required')) {
-                <mat-error>E-mail é obrigatório</mat-error>
-              }
-              @if (clientForm.get('email')?.hasError('email')) {
-                <mat-error>E-mail inválido</mat-error>
-              }
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>CPF</mat-label>
-              <input matInput formControlName="cpf" placeholder="000.000.000-00" mask="000.000.000-00">
-              @if (clientForm.get('cpf')?.hasError('required')) {
-                <mat-error>CPF é obrigatório</mat-error>
-              }
-              @if (clientForm.get('cpf')?.hasError('pattern')) {
-                <mat-error>CPF inválido</mat-error>
-              }
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Data de Nascimento</mat-label>
-              <input matInput [matDatepicker]="picker" formControlName="dateOfBirth">
-              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-              <mat-datepicker #picker></mat-datepicker>
-              @if (clientForm.get('dateOfBirth')?.hasError('required')) {
-                <mat-error>Data de nascimento é obrigatória</mat-error>
-              }
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Telefone</mat-label>
-              <input matInput formControlName="phone" placeholder="(XX) XXXXX-XXXX" mask="(00) 00000-0000">
-            </mat-form-field>
-          </div>
-
-          <div class="assistance-checkboxes">
-            <mat-checkbox formControlName="hasDoctorAssistance" color="primary">
-              Possui Assistência Médica
-            </mat-checkbox>
-            <mat-checkbox formControlName="hasPersonalAssistance" color="primary">
-              Possui Assistência de Personal Trainer
-            </mat-checkbox>
-            <mat-checkbox formControlName="hasNutritionistAssistance" color="primary">
-              Possui Assistência de Nutricionista
-            </mat-checkbox>
-          </div>
-        </div>
-
-        <!-- Seção: Medidas Atuais (Exibição apenas, edição via botão) -->
-        <div class="form-section measures-section-display">
-          <div class="section-header">
-            <div class="title">
-              <mat-icon>fitness_center</mat-icon>
-              <h2>Medidas Atuais</h2>
-            </div>
-            <button mat-raised-button color="primary" (click)="editMeasures()">
-              <mat-icon>edit</mat-icon>
-              Editar Medidas
-            </button>
-          </div>
-          <div class="measures-grid-display" *ngIf="client && client.measure; else noMeasuresData">
-            <div class="measure-item">
-              <span class="label">Ombro:</span>
-              <span class="value">{{ formatMeasure(client.measure.ombro ?? null) }} cm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Peitoral:</span>
-              <span class="value">{{ formatMeasure(client.measure.peitoral ?? null) }} cm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Cintura:</span>
-              <span class="value">{{ formatMeasure(client.measure.cintura ?? null) }} cm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Quadril:</span>
-              <span class="value">{{ formatMeasure(client.measure.quadril ?? null) }} cm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Abdômen:</span>
-              <span class="value">{{ formatMeasure(client.measure.abdomem ?? null) }} cm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Tórax:</span>
-              <span class="value">{{ formatMeasure(client.measure.torax ?? null) }} cm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Braço Direito:</span>
-              <span class="value">{{ formatMeasure(client.measure.bracoDireito ?? null) }} cm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Braço Esquerdo:</span>
-              <span class="value">{{ formatMeasure(client.measure.bracoEsquerdo ?? null) }} cm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Coxa Direita:</span>
-              <span class="value">{{ formatMeasure(client.measure.coxaDireita ?? null) }} cm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Coxa Esquerda:</span>
-              <span class="value">{{ formatMeasure(client.measure.coxaEsquerda ?? null) }} cm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Panturrilha Direita:</span>
-              <span class="value">{{ formatMeasure(client.measure.panturrilhaDireita ?? null) }} cm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Panturrilha Esquerda:</span>
-              <span class="value">{{ formatMeasure(client.measure.panturrilhaEsquerda ?? null) }} cm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Abdominal (DC):</span>
-              <span class="value">{{ formatMeasure(client.measure.abdominal ?? null) }} mm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Suprailíaca:</span>
-              <span class="value">{{ formatMeasure(client.measure.suprailiaca ?? null) }} mm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Subescapular:</span>
-              <span class="value">{{ formatMeasure(client.measure.subescapular ?? null) }} mm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Tríceps:</span>
-              <span class="value">{{ formatMeasure(client.measure.triceps ?? null) }} mm</span>
-            </div>
-            <div class="measure-item">
-              <span class="label">Axilar Média:</span>
-              <span class="value">{{ formatMeasure(client.measure.axilar ?? null) }} mm</span>
-            </div>
-          </div>
-          <ng-template #noMeasuresData>
-            <div class="no-measures-data">
-              <mat-icon>info</mat-icon>
-              <p>Nenhuma medida cadastrada para este cliente.</p>
-            </div>
-          </ng-template>
-        </div>
-
-        <!-- Seção: Fotos de Evolução -->
-        <div class="form-section evolution-photos-section">
-          <h2>
-            <mat-icon>photo_camera</mat-icon>
-            Fotos de Evolução
-          </h2>
-          <div class="photos-grid">
-            @for (photo of evolutionPhotos; track photo.id) {
-              <div class="photo-card">
-                <img [src]="photo.url" [alt]="photo.description">
-                <div class="photo-info">
-                  <span>{{ photo.date | date:'dd/MM/yyyy' }}</span>
-                  <button mat-icon-button color="warn" (click)="removePhoto(photo)">
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                </div>
-              </div>
+  <div class="form-container">
+    <form [formGroup]="clientForm" (ngSubmit)="onSubmit()">
+      <!-- Seção: Informações Pessoais -->
+      <div class="form-section personal-info-section">
+        <h2>
+          <mat-icon>info</mat-icon>
+          Informações Pessoais
+        </h2>
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Nome</mat-label>
+            <input matInput formControlName="name" placeholder="Nome completo">
+            @if (clientForm.get('name')?.hasError('required')) {
+            <mat-error>Nome é obrigatório</mat-error>
             }
-            <div class="photo-upload">
-              <button mat-raised-button color="primary" (click)="uploadPhoto()">
-                <mat-icon>add_photo_alternate</mat-icon>
-                Adicionar Foto
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>E-mail</mat-label>
+            <input matInput formControlName="email" placeholder="E-mail" type="email">
+            @if (clientForm.get('email')?.hasError('required')) {
+            <mat-error>E-mail é obrigatório</mat-error>
+            }
+            @if (clientForm.get('email')?.hasError('email')) {
+            <mat-error>E-mail inválido</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>CPF</mat-label>
+            <input matInput formControlName="cpf" placeholder="000.000.000-00" mask="000.000.000-00">
+            @if (clientForm.get('cpf')?.hasError('required')) {
+            <mat-error>CPF é obrigatório</mat-error>
+            }
+            @if (clientForm.get('cpf')?.hasError('pattern')) {
+            <mat-error>CPF inválido</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Telefone</mat-label>
+            <input matInput formControlName="phone" placeholder="(XX) XXXXX-XXXX" mask="(00) 00000-0000">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Data de Nascimento</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="dateOfBirth">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Peso (kg)</mat-label>
+            <input matInput formControlName="weight" placeholder="70.5" type="number">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Altura (cm)</mat-label>
+            <input matInput formControlName="height" placeholder="175" type="number">
+          </mat-form-field>
+        </div>
+
+        <div class="assistance-checkboxes">
+          <mat-checkbox formControlName="hasDoctorAssistance" color="primary">
+            Possui Assistência Médica
+          </mat-checkbox>
+          <mat-checkbox formControlName="hasPersonalAssistance" color="primary">
+            Possui Assistência de Personal Trainer
+          </mat-checkbox>
+          <mat-checkbox formControlName="hasNutritionistAssistance" color="primary">
+            Possui Assistência de Nutricionista
+          </mat-checkbox>
+        </div>
+      </div>
+
+      <!-- Seção: Medidas Atuais -->
+      <div class="form-section measures-section-display">
+        <div class="section-header">
+          <div class="title">
+            <mat-icon>fitness_center</mat-icon>
+            <h2>Medidas Atuais</h2>
+          </div>
+          <button mat-raised-button color="primary" (click)="editMeasures()">
+            <mat-icon>edit</mat-icon>
+            Editar Medidas
+          </button>
+        </div>
+
+        <div class="measures-container" *ngIf="client && client.measure; else noMeasuresData">
+          <!-- Grupo 1: Circunferências -->
+          <div class="measure-group">
+            <h3>Circunferências (cm)</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="label">Ombro:</span>
+                <span class="value">{{ formatMeasure(client.measure.ombro, 'cm') }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Peitoral:</span>
+                <span class="value">{{ formatMeasure(client.measure.peitoral, 'cm') }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Cintura:</span>
+                <span class="value">{{ formatMeasure(client.measure.cintura, 'cm') }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Quadril:</span>
+                <span class="value">{{ formatMeasure(client.measure.quadril, 'cm') }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Abdômen:</span>
+                <span class="value">{{ formatMeasure(client.measure.abdomem, 'cm') }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Tórax:</span>
+                <span class="value">{{ formatMeasure(client.measure.torax, 'cm') }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grupo 2: Membros -->
+          <div class="measure-group">
+            <h3>Membros (cm)</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="label">Braço Direito:</span>
+                <span class="value">{{ formatMeasure(client.measure.braco_direito, 'cm') }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Braço Esquerdo:</span>
+                <span class="value">{{ formatMeasure(client.measure.braco_esquerdo, 'cm') }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Coxa Direita:</span>
+                <span class="value">{{ formatMeasure(client.measure.coxa_direita, 'cm') }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Coxa Esquerda:</span>
+                <span class="value">{{ formatMeasure(client.measure.coxa_esquerda, 'cm') }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Panturrilha Direita:</span>
+                <span class="value">{{ formatMeasure(client.measure.panturrilha_direita, 'cm') }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Panturrilha Esquerda:</span>
+                <span class="value">{{ formatMeasure(client.measure.panturrilha_esquerda, 'cm') }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grupo 3: Dobras Cutâneas -->
+          <div class="measure-group">
+            <h3>Dobras Cutâneas (mm)</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="label">Abdominal:</span>
+                <span class="value">{{ formatMeasure(client.measure.abdominal, 'mm') }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Suprailíaca:</span>
+                <span class="value">{{ formatMeasure(client.measure.suprailiaca, 'mm') }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Subescapular:</span>
+                <span class="value">{{ formatMeasure(client.measure.subescapular, 'mm') }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Tríceps:</span>
+                <span class="value">{{ formatMeasure(client.measure.triceps, 'mm') }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Axilar Média:</span>
+                <span class="value">{{ formatMeasure(client.measure.axilar, 'mm') }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Data da medição -->
+          <div class="measure-date" *ngIf="client?.measure?.data">
+            <span class="label">Data da medição:</span>
+            <span class="value">{{ client?.measure?.data | date:'dd/MM/yyyy' }}</span>
+          </div>
+        </div>
+
+        <ng-template #noMeasuresData>
+          <div class="no-measures-data">
+            <mat-icon>fitness_center</mat-icon>
+            <p>Nenhuma medida cadastrada para este cliente.</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- Seção: Fotos de Evolução -->
+      <div class="form-section evolution-photos-section">
+        <h2>
+          <mat-icon>photo_camera</mat-icon>
+          Fotos de Evolução
+        </h2>
+        <div class="photos-grid">
+          @for (photo of evolutionPhotos; track photo.id) {
+          <div class="photo-card">
+            <img [src]="photo.url" [alt]="photo.description">
+            <div class="photo-info">
+              <span>{{ photo.date | date:'dd/MM/yyyy' }}</span>
+              <button mat-icon-button color="warn" (click)="removePhoto(photo)">
+                <mat-icon>delete</mat-icon>
               </button>
             </div>
           </div>
+          }
+          <div class="photo-upload">
+            <button mat-raised-button color="primary" (click)="uploadPhoto()">
+              <mat-icon>add_photo_alternate</mat-icon>
+              Adicionar Foto
+            </button>
+          </div>
         </div>
-
       </div>
 
       <!-- Ações do Formulário (Salvar/Cancelar) -->
       <div class="actions">
-        <button mat-raised-button color="accent" type="button" (click)="goBack()">
+        <button mat-button type="button" (click)="goBack()">
+          <mat-icon>arrow_back</mat-icon>
           Cancelar
         </button>
-        <button mat-raised-button color="primary" type="submit" [disabled]="clientForm.invalid">
+        <button mat-raised-button color="primary" type="submit" [disabled]="clientForm.invalid" (click)="onSubmit()">
+          <mat-icon>save</mat-icon>
           {{ isNewClient ? 'Adicionar Cliente' : 'Salvar Alterações' }}
         </button>
       </div>

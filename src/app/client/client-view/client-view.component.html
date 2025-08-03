@@ -1,604 +1,938 @@
 <!-- Container Principal -->
 <div class="trainning-container">
   <!-- Cabeçalho -->
-  <div class="header">
-    <ng-container *ngIf="client && client.evolutionPhotos && client.evolutionPhotos.length > 0; else noAvatar">
-      <img [src]="client.evolutionPhotos[0]" alt="Client Avatar" class="client-avatar">
+  <div class="header" role="banner">
+    <ng-container *ngIf="client?.evolutionPhotos?.length; else noAvatar">
+      <img [src]="client?.evolutionPhotos?.[0]" [alt]="(client?.name || 'Cliente') + ' - Foto'" class="client-avatar">
     </ng-container>
     <ng-template #noAvatar>
-      <div class="client-avatar">
+      <div class="client-avatar" aria-hidden="true">
         <mat-icon>fitness_center</mat-icon>
       </div>
     </ng-template>
     <div class="header-content">
-      <h1>{{ client?.name || 'Cliente' }}</h1>
+      <h1>
+        {{ client?.name || 'Cliente' }}
+        <span class="client-age" *ngIf="calculateAge(client?.dateOfBirth)">
+          ({{ calculateAge(client?.dateOfBirth) }} anos)
+        </span>
+      </h1>
       <p class="subtitle">Detalhes do Cliente e Treinos</p>
     </div>
+
+    <!-- Botão de voltar -->
+    <button mat-icon-button color="primary" class="back-button" (click)="onBack()"
+      matTooltip="Voltar para lista de clientes" aria-label="Voltar">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
   </div>
 
   @if (client) {
-  <div class="content">
-    <!-- Linha para Informações Pessoais -->
+  <!-- Controles globais para expandir/recolher todos os painéis -->
+  <div class="expansion-controls">
+    <button mat-button color="primary" (click)="expandAllPanels()" aria-label="Expandir todos os painéis">
+      <mat-icon>unfold_more</mat-icon>
+      <span>Expandir Todos</span>
+    </button>
+    <button mat-button color="primary" (click)="collapseAllPanels()" aria-label="Recolher todos os painéis">
+      <mat-icon>unfold_less</mat-icon>
+      <span>Recolher Todos</span>
+    </button>
+  </div>
+
+  <div class="content" role="main">
+    <!-- Informações Pessoais -->
     <div class="dashboard-row dashboard-row-personal-info">
-      <!-- Seção de Informações Pessoais -->
-      <div class="info-section personal-info-section">
-        <h2>
+      <section class="info-section personal-info-section" aria-labelledby="personal-info-title">
+        <h2 id="personal-info-title">
           <mat-icon>info</mat-icon>
           Informações Pessoais
-          <button mat-icon-button color="primary" (click)="editClientDetails(client.id?.toString())"
-            matTooltip="Editar Informações Pessoais">
-            <mat-icon>edit</mat-icon>
-          </button>
+          <div class="action-buttons">
+            <button mat-icon-button color="primary" (click)="toggleEditClient()"
+              [attr.aria-label]="editingClient ? 'Salvar informações' : 'Editar informações pessoais'"
+              [matTooltip]="editingClient ? 'Salvar Informações' : 'Editar Informações Pessoais'">
+              <mat-icon>{{ editingClient ? 'check' : 'edit' }}</mat-icon>
+            </button>
+            @if (editingClient) {
+            <button mat-icon-button color="warn" (click)="cancelEditClient()" matTooltip="Cancelar edição"
+              aria-label="Cancelar edição">
+              <mat-icon>cancel</mat-icon>
+            </button>
+            }
+          </div>
         </h2>
+
         <div class="info-grid">
           <div class="info-item">
             <span class="label">E-mail:</span>
-            <span class="value">{{ client.email }}</span>
+            @if (!editingClient) {
+            <span class="value">{{ client.email || '-' }}</span>
+            } @else {
+            <mat-form-field appearance="outline" class="client-input">
+              <input matInput type="email" [(ngModel)]="editableClient.email" aria-label="Email do cliente"
+                placeholder="Email">
+            </mat-form-field>
+            }
           </div>
+
+          <!-- Novo campo: Telefone -->
+          <div class="info-item">
+            <span class="label">Telefone:</span>
+            @if (!editingClient) {
+            <span class="value">{{ client.phone || '-' }}</span>
+            } @else {
+            <mat-form-field appearance="outline" class="client-input">
+              <input matInput [(ngModel)]="editableClient.phone" aria-label="Telefone do cliente" placeholder="Telefone"
+                mask="(00) 00000-0000">
+            </mat-form-field>
+            }
+          </div>
+
+          <!-- Novo campo: CPF -->
+          <div class="info-item">
+            <span class="label">CPF:</span>
+            @if (!editingClient) {
+            <span class="value">{{ client.cpf || '-' }}</span>
+            } @else {
+            <mat-form-field appearance="outline" class="client-input">
+              <input matInput [(ngModel)]="editableClient.cpf" aria-label="CPF do cliente" placeholder="CPF"
+                mask="000.000.000-00">
+            </mat-form-field>
+            }
+          </div>
+
           <div class="info-item">
             <span class="label">Nascimento:</span>
-            <span class="value">
-              {{ client.dateOfBirth ? (client.dateOfBirth | date:'dd/MM/yyyy') : '-' }}
-            </span>
+            @if (!editingClient) {
+            <span class="value">{{ client.dateOfBirth ? (client.dateOfBirth | date:'dd/MM/yyyy') : '-' }}</span>
+            } @else {
+            <mat-form-field appearance="outline" class="client-input">
+              <input matInput [matDatepicker]="dobPicker" [(ngModel)]="editableClient.dateOfBirth"
+                aria-label="Data de nascimento" placeholder="Data de nascimento">
+              <mat-datepicker-toggle matSuffix [for]="dobPicker"></mat-datepicker-toggle>
+              <mat-datepicker #dobPicker></mat-datepicker>
+            </mat-form-field>
+            }
           </div>
+
           <div class="info-item">
             <span class="label">Altura:</span>
+            @if (!editingClient) {
             <span class="value">{{ client.height != null ? client.height + ' cm' : '-' }}</span>
+            } @else {
+            <mat-form-field appearance="outline" class="client-input">
+              <input matInput type="number" [(ngModel)]="editableClient.height" step="0.1" min="0"
+                aria-label="Altura em centímetros" placeholder="Altura">
+              <span matSuffix>cm</span>
+            </mat-form-field>
+            }
           </div>
+
           <div class="info-item">
             <span class="label">Peso:</span>
+            @if (!editingClient) {
             <span class="value">{{ client.weight != null ? client.weight + ' kg' : '-' }}</span>
+            } @else {
+            <mat-form-field appearance="outline" class="client-input">
+              <input matInput type="number" [(ngModel)]="editableClient.weight" step="0.1" min="0"
+                aria-label="Peso em quilogramas" placeholder="Peso">
+              <span matSuffix>kg</span>
+            </mat-form-field>
+            }
           </div>
+
+
+
+
         </div>
-      </div>
+      </section>
     </div>
 
-    <!-- Linha para Medidas Atuais (ocupando 3/3) -->
-    <div class="dashboard-row dashboard-row-measures">
-      <!-- Seção de Medidas Atuais -->
-      <div class="info-section measures-section">
-        <h2>
-          <mat-icon>fitness_center</mat-icon>
-          Medidas Atuais
-          <button mat-icon-button color="primary" (click)="editMeasures(client.id?.toString())"
-            matTooltip="Editar Medidas Atuais">
-            <mat-icon>edit</mat-icon>
-          </button>
-        </h2>
-        <div class="info-grid">
-          <div class="info-item">
-            <span class="label">Ombro:</span>
-            <span class="value">{{ client?.measure?.ombro != null ? client?.measure?.ombro + ' cm' : '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Peitoral:</span>
-            <span class="value">{{ client?.measure?.peitoral != null ? client?.measure?.peitoral + ' cm' : '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Cintura:</span>
-            <span class="value">{{ client?.measure?.cintura != null ? client?.measure?.cintura + ' cm' : '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Quadril:</span>
-            <span class="value">{{ client?.measure?.quadril != null ? client?.measure?.quadril + ' cm' : '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Abdômen:</span>
-            <span class="value">{{ client?.measure?.abdomem != null ? client?.measure?.abdomem + ' cm' : '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Tórax:</span>
-            <span class="value">{{ client?.measure?.torax != null ? client?.measure?.torax + ' cm' : '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Braço Direito:</span>
-            <span class="value">{{ client?.measure?.bracoDireito != null ? client?.measure?.bracoDireito + ' cm' : '-'
-              }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Braço Esquerdo:</span>
-            <span class="value">{{ client?.measure?.bracoEsquerdo != null ? client?.measure?.bracoEsquerdo + ' cm' :
-              '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Coxa Direita:</span>
-            <span class="value">{{ client?.measure?.coxaDireita != null ? client?.measure?.coxaDireita + ' cm' : '-'
-              }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Coxa Esquerda:</span>
-            <span class="value">{{ client?.measure?.coxaEsquerda != null ? client?.measure?.coxaEsquerda + ' cm' :
-              '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Panturrilha Direita:</span>
-            <span class="value">{{ client?.measure?.panturrilhaDireita != null ? client?.measure?.panturrilhaDireita + '
-              cm' : '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Panturrilha Esquerda:</span>
-            <span class="value">{{ client?.measure?.panturrilhaEsquerda != null ? client?.measure?.panturrilhaEsquerda
-              + ' cm' : '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Abdominal:</span>
-            <span class="value">{{ client?.measure?.abdominal != null ? client?.measure?.abdominal + ' mm' : '-'
-              }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Suprailíaca:</span>
-            <span class="value">{{ client?.measure?.suprailiaca != null ? client?.measure?.suprailiaca + ' mm' : '-'
-              }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Subescapular:</span>
-            <span class="value">{{ client?.measure?.subescapular != null ? client?.measure?.subescapular + ' mm' : '-'
-              }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Tríceps:</span>
-            <span class="value">{{ client?.measure?.triceps != null ? client?.measure?.triceps + ' mm' : '-' }}</span>
-          </div>
-          <div class="info-item">
-            <span class="label">Axilar Média:</span>
-            <span class="value">{{ client?.measure?.axilar != null ? client?.measure?.axilar + ' mm' : '-' }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Seções em Accordion -->
+    <mat-accordion multi="true" displayMode="flat" class="dashboard-accordion">
+      <!-- Painel de Medidas Atuais -->
+      <mat-expansion-panel [expanded]="panelOpenState.measures" (opened)="panelOpenState.measures = true"
+        (closed)="panelOpenState.measures = false" class="dashboard-panel">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>fitness_center</mat-icon>
+            <span>Medidas Atuais</span>
+          </mat-panel-title>
+          <mat-panel-description>
+            <div class="expansion-actions">
+              <button mat-icon-button color="primary" (click)="toggleEditMeasures(); $event.stopPropagation()"
+                [matTooltip]="editingMeasures ? 'Salvar Medidas' : 'Editar Medidas Atuais'"
+                [attr.aria-label]="editingMeasures ? 'Salvar medidas' : 'Editar medidas atuais'">
+                <mat-icon>{{ editingMeasures ? 'check' : 'edit' }}</mat-icon>
+              </button>
+              @if (editingMeasures) {
+              <button mat-icon-button color="warn" (click)="cancelEditMeasures(); $event.stopPropagation()"
+                matTooltip="Cancelar edição" aria-label="Cancelar edição">
+                <mat-icon>cancel</mat-icon>
+              </button>
+              }
+            </div>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
 
-    <!-- Nova linha para profissionais associados -->
-    <div class="dashboard-row dashboard-row-professionals">
-      <!-- Seção de Médico(s) Associado(s) -->
-      <div class="info-section associated-professionals-section">
-        <h2>
-          <mat-icon>local_hospital</mat-icon>
-          Médico(s) Associado(s)
-          <button mat-icon-button color="primary" (click)="openAddDoctorDialog()" matTooltip="Adicionar Médico">
-            <mat-icon>add_circle_outline</mat-icon>
-          </button>
-        </h2>
-        <ng-container *ngIf="associatedDoctors.length > 0; else noAssociatedDoctors">
-          <div class="info-grid">
-            <div class="info-item" *ngFor="let doctor of associatedDoctors">
-              <span class="label">Nome:</span>
-              <span class="value">{{ doctor.name }}</span>
-              <span class="label">Email:</span>
-              <span class="value">{{ doctor.email || '-' }}</span>
-              <span class="label">Especialidade:</span>
-              <span class="value">{{ doctor.specialty || '-' }}</span>
-              <span class="label">CRM:</span>
-              <span class="value">{{ doctor.crm || '-' }}</span>
-              <div class="action-container">
-                <button mat-button class="remove-button" (click)="removeDoctor(doctor)" matTooltip="Desassociar médico">
-                  <mat-icon>link_off</mat-icon>
-                  <span>Desassociar</span>
-                </button>
+        <div class="measures-container">
+          <!-- Grupo 1: Circunferências -->
+          <div class="measure-group">
+            <h3>Circunferências (cm)</h3>
+            <div class="info-grid">
+              <!-- Ombro -->
+              <div class="info-item">
+                <span class="label">Ombro:</span>
+                @if (!editingMeasures) {
+                <span class="value">{{ formatMeasure(client?.measure?.ombro, 'cm') }}</span>
+                } @else {
+                <mat-form-field appearance="outline" class="measure-input">
+                  <input matInput type="number" [(ngModel)]="editableMeasures.ombro" step="0.1" min="0"
+                    aria-label="Medida do ombro">
+                  <span matSuffix>cm</span>
+                </mat-form-field>
+                }
+              </div>
+
+              <!-- Peitoral -->
+              <div class="info-item">
+                <span class="label">Peitoral:</span>
+                @if (!editingMeasures) {
+                <span class="value">{{ formatMeasure(client?.measure?.peitoral, 'cm') }}</span>
+                } @else {
+                <mat-form-field appearance="outline" class="measure-input">
+                  <input matInput type="number" [(ngModel)]="editableMeasures.peitoral" step="0.1" min="0"
+                    aria-label="Medida do peitoral">
+                  <span matSuffix>cm</span>
+                </mat-form-field>
+                }
+              </div>
+
+              <!-- Braço Direito -->
+              <div class="info-item">
+                <span class="label">Braço Direito:</span>
+                @if (!editingMeasures) {
+                <span class="value">{{ formatMeasure(client?.measure?.braco_direito, 'cm') }}</span>
+                } @else {
+                <mat-form-field appearance="outline" class="measure-input">
+                  <input matInput type="number" [(ngModel)]="editableMeasures.braco_direito" step="0.1" min="0"
+                    aria-label="Medida do braço direito">
+                  <span matSuffix>cm</span>
+                </mat-form-field>
+                }
+              </div>
+
+              <!-- Braço Esquerdo -->
+              <div class="info-item">
+                <span class="label">Braço Esquerdo:</span>
+                @if (!editingMeasures) {
+                <span class="value">{{ formatMeasure(client?.measure?.braco_esquerdo, 'cm') }}</span>
+                } @else {
+                <mat-form-field appearance="outline" class="measure-input">
+                  <input matInput type="number" [(ngModel)]="editableMeasures.braco_esquerdo" step="0.1" min="0"
+                    aria-label="Medida do braço esquerdo">
+                  <span matSuffix>cm</span>
+                </mat-form-field>
+                }
+              </div>
+
+              <!-- Cintura -->
+              <div class="info-item">
+                <span class="label">Cintura:</span>
+                @if (!editingMeasures) {
+                <span class="value">{{ formatMeasure(client?.measure?.cintura, 'cm') }}</span>
+                } @else {
+                <mat-form-field appearance="outline" class="measure-input">
+                  <input matInput type="number" [(ngModel)]="editableMeasures.cintura" step="0.1" min="0"
+                    aria-label="Medida da cintura">
+                  <span matSuffix>cm</span>
+                </mat-form-field>
+                }
+              </div>
+
+              <!-- Quadril -->
+              <div class="info-item">
+                <span class="label">Quadril:</span>
+                @if (!editingMeasures) {
+                <span class="value">{{ formatMeasure(client?.measure?.quadril, 'cm') }}</span>
+                } @else {
+                <mat-form-field appearance="outline" class="measure-input">
+                  <input matInput type="number" [(ngModel)]="editableMeasures.quadril" step="0.1" min="0"
+                    aria-label="Medida do quadril">
+                  <span matSuffix>cm</span>
+                </mat-form-field>
+                }
               </div>
             </div>
           </div>
-        </ng-container>
-        <ng-template #noAssociatedDoctors>
-          <div class="no-data-row">
-            <p>Nenhum médico associado a este cliente.</p>
-          </div>
-        </ng-template>
-      </div>
 
-      <!-- Seção de Personal(is) Associado(s) -->
-      <div class="info-section associated-professionals-section">
-        <h2>
-          <mat-icon>person</mat-icon>
-          Personal(is) Associado(s)
-          <button mat-icon-button color="primary" (click)="openAddPersonalDialog()" matTooltip="Adicionar Personal">
-            <mat-icon>add_circle_outline</mat-icon>
-          </button>
-        </h2>
-        <ng-container *ngIf="associatedPersonals.length > 0; else noAssociatedPersonals">
-          <div class="info-grid">
-            <div class="info-item" *ngFor="let personal of associatedPersonals">
-              <span class="label">Nome:</span>
-              <span class="value">{{ personal.name }}</span>
-              <span class="label">Email:</span>
-              <span class="value">{{ personal.email || '-' }}</span>
-              <span class="label">CREF:</span>
-              <span class="value">{{ personal.registry || personal.registry || '-' }}</span>
-              <div class="action-container">
-                <button mat-button class="remove-button" (click)="removePersonal(personal)"
-                  matTooltip="Desassociar personal">
-                  <mat-icon>link_off</mat-icon>
-                  <span>Desassociar</span>
-                </button>
+          <!-- Grupo 2: Membros -->
+          <div class="measure-group">
+            <h3>Membros (cm)</h3>
+            <div class="info-grid">
+              <!-- Coxa Direita -->
+              <div class="info-item">
+                <span class="label">Coxa Direita:</span>
+                @if (!editingMeasures) {
+                <span class="value">{{ formatMeasure(client?.measure?.coxa_direita, 'cm') }}</span>
+                } @else {
+                <mat-form-field appearance="outline" class="measure-input">
+                  <input matInput type="number" [(ngModel)]="editableMeasures.coxa_direita" step="0.1" min="0"
+                    aria-label="Medida da coxa direita">
+                  <span matSuffix>cm</span>
+                </mat-form-field>
+                }
+              </div>
+
+              <!-- Coxa Esquerda -->
+              <div class="info-item">
+                <span class="label">Coxa Esquerda:</span>
+                @if (!editingMeasures) {
+                <span class="value">{{ formatMeasure(client?.measure?.coxa_esquerda, 'cm') }}</span>
+                } @else {
+                <mat-form-field appearance="outline" class="measure-input">
+                  <input matInput type="number" [(ngModel)]="editableMeasures.coxa_esquerda" step="0.1" min="0"
+                    aria-label="Medida da coxa esquerda">
+                  <span matSuffix>cm</span>
+                </mat-form-field>
+                }
+              </div>
+
+              <!-- Panturrilha Direita -->
+              <div class="info-item">
+                <span class="label">Panturrilha Direita:</span>
+                @if (!editingMeasures) {
+                <span class="value">{{ formatMeasure(client?.measure?.panturrilha_direita, 'cm') }}</span>
+                } @else {
+                <mat-form-field appearance="outline" class="measure-input">
+                  <input matInput type="number" [(ngModel)]="editableMeasures.panturrilha_direita" step="0.1" min="0"
+                    aria-label="Medida da panturrilha direita">
+                  <span matSuffix>cm</span>
+                </mat-form-field>
+                }
+              </div>
+
+              <!-- Panturrilha Esquerda -->
+              <div class="info-item">
+                <span class="label">Panturrilha Esquerda:</span>
+                @if (!editingMeasures) {
+                <span class="value">{{ formatMeasure(client?.measure?.panturrilha_esquerda, 'cm') }}</span>
+                } @else {
+                <mat-form-field appearance="outline" class="measure-input">
+                  <input matInput type="number" [(ngModel)]="editableMeasures.panturrilha_esquerda" step="0.1" min="0"
+                    aria-label="Medida da panturrilha esquerda">
+                  <span matSuffix>cm</span>
+                </mat-form-field>
+                }
               </div>
             </div>
           </div>
-        </ng-container>
-        <ng-template #noAssociatedPersonals>
-          <div class="no-data-row">
-            <p>Nenhum personal associado a este cliente.</p>
-          </div>
-        </ng-template>
-      </div>
 
-      <!-- Seção de Nutricionista(s) Associado(s) -->
-      <div class="info-section associated-professionals-section">
-        <h2>
-          <mat-icon>restaurant</mat-icon>
-          Nutricionista(s) Associado(s)
-          <button mat-icon-button color="primary" (click)="openAddNutritionistDialog()"
-            matTooltip="Adicionar Nutricionista">
-            <mat-icon>add_circle_outline</mat-icon>
-          </button>
-        </h2>
-        <ng-container *ngIf="associatedNutritionists.length > 0; else noAssociatedNutritionists">
-          <div class="info-grid">
-            <div class="info-item" *ngFor="let nutritionist of associatedNutritionists">
-              <span class="label">Nome:</span>
-              <span class="value">{{ nutritionist.name }}</span>
-              <span class="label">Email:</span>
-              <span class="value">{{ nutritionist.email || '-' }}</span>
-              <span class="label">CRN:</span>
-              <span class="value">{{ nutritionist.registry || '-' }}</span>
-              <span class="label">Especialidade:</span>
-              <span class="value">{{ nutritionist.specialty || '-' }}</span>
-              <div class="action-container">
-                <button mat-button class="remove-button" (click)="removeNutritionist(nutritionist)"
-                  matTooltip="Desassociar nutricionista">
-                  <mat-icon>link_off</mat-icon>
-                  <span>Desassociar</span>
-                </button>
+          <!-- Grupo 3: Dobras Cutâneas -->
+          <div class="measure-group">
+            <h3>Dobras Cutâneas (mm)</h3>
+            <div class="info-grid">
+              <!-- Subescapular -->
+              <div class="info-item">
+                <span class="label">Subescapular:</span>
+                @if (!editingMeasures) {
+                <span class="value">{{ formatMeasure(client?.measure?.subescapular, 'mm') }}</span>
+                } @else {
+                <mat-form-field appearance="outline" class="measure-input">
+                  <input matInput type="number" [(ngModel)]="editableMeasures.subescapular" step="0.1" min="0"
+                    aria-label="Medida da dobra subescapular">
+                  <span matSuffix>mm</span>
+                </mat-form-field>
+                }
+              </div>
+
+              <!-- Tríceps -->
+              <div class="info-item">
+                <span class="label">Tríceps:</span>
+                @if (!editingMeasures) {
+                <span class="value">{{ formatMeasure(client?.measure?.triceps, 'mm') }}</span>
+                } @else {
+                <mat-form-field appearance="outline" class="measure-input">
+                  <input matInput type="number" [(ngModel)]="editableMeasures.triceps" step="0.1" min="0"
+                    aria-label="Medida da dobra do tríceps">
+                  <span matSuffix>mm</span>
+                </mat-form-field>
+                }
+              </div>
+
+              <!-- Abdominal -->
+              <div class="info-item">
+                <span class="label">Abdominal:</span>
+                @if (!editingMeasures) {
+                <span class="value">{{ formatMeasure(client?.measure?.abdominal, 'mm') }}</span>
+                } @else {
+                <mat-form-field appearance="outline" class="measure-input">
+                  <input matInput type="number" [(ngModel)]="editableMeasures.abdominal" step="0.1" min="0"
+                    aria-label="Medida da dobra abdominal">
+                  <span matSuffix>mm</span>
+                </mat-form-field>
+                }
               </div>
             </div>
           </div>
-        </ng-container>
-        <ng-template #noAssociatedNutritionists>
-          <div class="no-data-row">
-            <p>Nenhum nutricionista associado a este cliente.</p>
-          </div>
-        </ng-template>
-      </div>
-    </div>
-
-    <!-- Linha do Dashboard Inferior: Treino Atual e Histórico de Treinos -->
-    <!-- Seção de Treinos do Cliente -->
-    <div class="exercises-section current-training-section">
-      <h2>
-        <mat-icon>assignment</mat-icon>
-        Treinos do Cliente
-        <button mat-icon-button color="primary" (click)="assignNewTraining()" matTooltip="Atribuir novo treino">
-          <mat-icon>add_circle_outline</mat-icon>
-        </button>
-      </h2>
-
-      @if (clientTrainings && clientTrainings.length > 0) {
-      @for (training of clientTrainings; track training.id) {
-      <div class="current-training-details">
-        <div class="training-header">
-          <h3>{{ training.name }}</h3>
-          <span class="training-badge" [class.active-badge]="training.active">
-            {{ training.active ? 'Ativo' : 'Inativo' }}
-          </span>
         </div>
 
+        <!-- Data da medição -->
+        @if (client?.measure?.data && !editingMeasures) {
+        <div class="measure-date">
+          <span class="label">Data da medição:</span>
+          <span class="value">{{ client?.measure?.data | date:'dd/MM/yyyy' }}</span>
+        </div>
+        }
 
-        <p class="training-date-row">
-          <strong><span class="date-label">Início: </span></strong>
-          <span class="date-value">{{ training.startDate ? (parseDate(training.startDate) | date:'dd/MM/yyyy') : 'Não
-            definida' }}</span>
-        </p>
-        <p *ngIf="training.endDate" class="training-date-row">
-          <strong><span class="date-label">Fim: </span></strong>
-          <span class="date-value">{{ parseDate(training.endDate) | date:'dd/MM/yyyy' }}</span>
-        </p>
+        <!-- Edição da data -->
+        @if (editingMeasures) {
+        <div class="measure-date">
+          <span class="label">Data da medição:</span>
+          <mat-form-field appearance="outline" class="date-input">
+            <input matInput [matDatepicker]="picker" [(ngModel)]="editableMeasures.data" aria-label="Data da medição">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        </div>
+        }
+      </mat-expansion-panel>
 
-        <p><strong>Categoria:</strong> {{
-          (training.categories && training.categories.length > 0 ?
-          training.categories[0].name :
-          (training.category || '-'))
-          }}</p>
-        <p><strong>Frequência Semanal:</strong> {{ training.weeklyFrequency || '-' }}</p>
+      <!-- Painel de Médico(s) Associado(s) -->
+      <mat-expansion-panel [expanded]="panelOpenState.doctors" (opened)="panelOpenState.doctors = true"
+        (closed)="panelOpenState.doctors = false" class="dashboard-panel">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>local_hospital</mat-icon>
+            <span>Médico(s) Associado(s)</span>
+          </mat-panel-title>
+          <mat-panel-description>
+            <div class="expansion-actions">
+              <button mat-icon-button color="primary" (click)="openAddDoctorDialog(); $event.stopPropagation()"
+                matTooltip="Adicionar Médico" aria-label="Adicionar médico">
+                <mat-icon>add_circle_outline</mat-icon>
+              </button>
+            </div>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
 
-        <h3>Exercícios:</h3>
-        @if (training.exercises?.length) {
-        <div class="exercises-list">
-          @for (exercise of training.exercises; track exercise.id) {
-          <div class="exercise-item">
-            <h4>{{ exercise.name }}</h4>
-            <p>
-              <span class="exercise-detail">Séries: {{ exercise.sets || '-' }}</span>
-              <span class="exercise-detail">Repetições: {{ exercise.reps || '-' }}</span>
-              <span class="exercise-detail">Carga: {{ exercise.weight ? (exercise.weight + ' kg') : '-' }}</span>
-            </p>
-          </div>
+        <!-- Conteúdo do painel - Médicos -->
+        @if (associatedDoctors.length > 0) {
+        <div class="professionals-grid" role="list">
+          @for (doctor of associatedDoctors; track trackByDoctorId($index, doctor)) {
+          <mat-card class="professional-card doctor-card" role="listitem">
+            <mat-card-header>
+              <div mat-card-avatar class="professional-avatar doctor-avatar">
+                <mat-icon aria-hidden="true">local_hospital</mat-icon>
+              </div>
+              <mat-card-title>{{doctor.name}}</mat-card-title>
+              <mat-card-subtitle>
+                <span>{{doctor.specialty || 'Médico'}}</span>
+              </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="professional-details">
+                @if (doctor.email) {
+                <div class="detail-row">
+                  <mat-icon class="detail-icon" aria-hidden="true">email</mat-icon>
+                  <span class="detail-text">{{doctor.email}}</span>
+                </div>
+                }
+                @if (doctor.crm) {
+                <div class="detail-row">
+                  <mat-icon class="detail-icon" aria-hidden="true">badge</mat-icon>
+                  <span class="detail-text">CRM: {{doctor.crm}}</span>
+                </div>
+                }
+              </div>
+            </mat-card-content>
+            <mat-card-actions align="end">
+              <button mat-button color="warn" (click)="removeDoctor(doctor)" aria-label="Desassociar médico">
+                <mat-icon>link_off</mat-icon>
+                <span>Desassociar</span>
+              </button>
+            </mat-card-actions>
+          </mat-card>
           }
         </div>
         } @else {
-        <p>Nenhum exercício cadastrado para este treino.</p>
-        }
-
-        <div class="training-actions">
-          <button mat-button color="primary" [routerLink]="['/trainning-view', training.id]">
-            <mat-icon>visibility</mat-icon> Ver Detalhes
+        <div class="no-professionals-container">
+          <mat-icon class="doctor-icon" aria-hidden="true">medical_services</mat-icon>
+          <p>Nenhum médico associado a este cliente.</p>
+          <button mat-stroked-button color="primary" (click)="openAddDoctorDialog()" aria-label="Adicionar médico">
+            <mat-icon>add_circle</mat-icon>
+            Adicionar Médico
           </button>
         </div>
-      </div>
-      }
-      } @else {
-      <div class="no-training">
-        <mat-icon>sentiment_dissatisfied</mat-icon>
-        <p>Nenhum treino atribuído a este cliente.</p>
-        <mat-card class="action-card">
-          <button mat-raised-button color="primary" class="assign-training-button" (click)="assignNewTraining()">
-            <mat-icon>add_circle_outline</mat-icon>
-            <span>Novo Treino</span>
-          </button>
-        </mat-card>
-      </div>
-      }
-    </div>
+        }
+      </mat-expansion-panel>
 
-    <div class="exercises-section training-history-section">
-      <h2>
-        <mat-icon>history</mat-icon>
-        Histórico de Treinos
-      </h2>
-      <div class="training-history-table-wrapper">
-        @if (inactiveTrainings.length > 0) {
-        <table class="training-table">
-          <thead>
-            <tr>
-              <th>Nome do Treino</th>
-              <th>Início</th>
-              <th>Fim</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (training of inactiveTrainings; track training.id) {
-            <tr>
-              <td>{{ training.name || 'Sem nome' }}</td>
-              <td>{{ isValidDate(training.startDate) ? (parseDate(training.startDate) | date:'dd/MM/yyyy') : '-' }}
-              </td>
-              <td>{{ isValidDate(training.endDate) ? (parseDate(training.endDate) | date:'dd/MM/yyyy') : '-' }}</td>
+      <!-- Painel de Personal(is) -->
+      <mat-expansion-panel [expanded]="panelOpenState.personals" (opened)="panelOpenState.personals = true"
+        (closed)="panelOpenState.personals = false" class="dashboard-panel">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>fitness_center</mat-icon>
+            <span>Personal(is) Associado(s)</span>
+          </mat-panel-title>
+          <mat-panel-description>
+            <div class="expansion-actions">
+              <button mat-icon-button color="primary" (click)="openAddPersonalDialog(); $event.stopPropagation()"
+                matTooltip="Adicionar Personal" aria-label="Adicionar personal trainer">
+                <mat-icon>add_circle_outline</mat-icon>
+              </button>
+            </div>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
 
-            </tr>
-            }
-          </tbody>
-        </table>
+        <!-- Conteúdo do painel - Personals -->
+        @if (associatedPersonals.length > 0) {
+        <div class="professionals-grid" role="list">
+          @for (personal of associatedPersonals; track trackByPersonalId($index, personal)) {
+          <mat-card class="professional-card personal-card" role="listitem">
+            <mat-card-header>
+              <div mat-card-avatar class="professional-avatar personal-avatar">
+                <mat-icon aria-hidden="true">fitness_center</mat-icon>
+              </div>
+              <mat-card-title>{{personal.name}}</mat-card-title>
+              <mat-card-subtitle>Personal Trainer</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="professional-details">
+                @if (personal.email) {
+                <div class="detail-row">
+                  <mat-icon class="detail-icon" aria-hidden="true">email</mat-icon>
+                  <span class="detail-text">{{personal.email}}</span>
+                </div>
+                }
+                @if (personal.registry) {
+                <div class="detail-row">
+                  <mat-icon class="detail-icon" aria-hidden="true">badge</mat-icon>
+                  <span class="detail-text">CREF: {{personal.registry}}</span>
+                </div>
+                }
+              </div>
+            </mat-card-content>
+            <mat-card-actions align="end">
+              <button mat-button color="warn" (click)="removePersonal(personal)"
+                aria-label="Desassociar personal trainer">
+                <mat-icon>link_off</mat-icon>
+                <span>Desassociar</span>
+              </button>
+            </mat-card-actions>
+          </mat-card>
+          }
+        </div>
         } @else {
-        <div class="no-data-row">
-          <p>Nenhum histórico de treino inativo encontrado para este cliente.</p>
+        <div class="no-professionals-container">
+          <mat-icon class="personal-icon" aria-hidden="true">sports</mat-icon>
+          <p>Nenhum personal trainer associado a este cliente.</p>
+          <button mat-stroked-button color="primary" (click)="openAddPersonalDialog()"
+            aria-label="Adicionar personal trainer">
+            <mat-icon>add_circle</mat-icon>
+            Adicionar Personal
+          </button>
         </div>
         }
-      </div>
-    </div>
+      </mat-expansion-panel>
+
+      <!-- Painel de Nutricionista(s) -->
+      <mat-expansion-panel [expanded]="panelOpenState.nutritionists" (opened)="panelOpenState.nutritionists = true"
+        (closed)="panelOpenState.nutritionists = false" class="dashboard-panel">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>restaurant</mat-icon>
+            <span>Nutricionista(s) Associado(s)</span>
+          </mat-panel-title>
+          <mat-panel-description>
+            <div class="expansion-actions">
+              <button mat-icon-button color="primary" (click)="openAddNutritionistDialog(); $event.stopPropagation()"
+                matTooltip="Adicionar Nutricionista" aria-label="Adicionar nutricionista">
+                <mat-icon>add_circle_outline</mat-icon>
+              </button>
+            </div>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <!-- Conteúdo do painel - Nutricionistas -->
+        @if (associatedNutritionists.length > 0) {
+        <div class="professionals-grid" role="list">
+          @for (nutritionist of associatedNutritionists; track trackByNutritionistId($index, nutritionist)) {
+          <mat-card class="professional-card nutritionist-card" role="listitem">
+            <mat-card-header>
+              <div mat-card-avatar class="professional-avatar nutritionist-avatar">
+                <mat-icon aria-hidden="true">restaurant</mat-icon>
+              </div>
+              <mat-card-title>{{nutritionist.name}}</mat-card-title>
+              <mat-card-subtitle>Nutricionista</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="professional-details">
+                @if (nutritionist.email) {
+                <div class="detail-row">
+                  <mat-icon class="detail-icon" aria-hidden="true">email</mat-icon>
+                  <span class="detail-text">{{nutritionist.email}}</span>
+                </div>
+                }
+                @if (nutritionist.registry) {
+                <div class="detail-row">
+                  <mat-icon class="detail-icon" aria-hidden="true">badge</mat-icon>
+                  <span class="detail-text">CRN: {{nutritionist.registry}}</span>
+                </div>
+                }
+              </div>
+            </mat-card-content>
+            <mat-card-actions align="end">
+              <button mat-button color="warn" (click)="removeNutritionist(nutritionist)"
+                aria-label="Desassociar nutricionista">
+                <mat-icon>link_off</mat-icon>
+                <span>Desassociar</span>
+              </button>
+            </mat-card-actions>
+          </mat-card>
+          }
+        </div>
+        } @else {
+        <div class="no-professionals-container">
+          <mat-icon class="nutritionist-icon" aria-hidden="true">restaurant_menu</mat-icon>
+          <p>Nenhum nutricionista associado a este cliente.</p>
+          <button mat-stroked-button color="primary" (click)="openAddNutritionistDialog()"
+            aria-label="Adicionar nutricionista">
+            <mat-icon>add_circle</mat-icon>
+            Adicionar Nutricionista
+          </button>
+        </div>
+        }
+      </mat-expansion-panel>
+
+      <!-- Painel de Treinos -->
+      <mat-expansion-panel [expanded]="panelOpenState.trainings" (opened)="panelOpenState.trainings = true"
+        (closed)="panelOpenState.trainings = false" class="dashboard-panel">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>assignment</mat-icon>
+            <span>Treinos do Cliente</span>
+          </mat-panel-title>
+          <mat-panel-description>
+            <div class="expansion-actions">
+              <button mat-icon-button color="primary" (click)="assignNewTraining(); $event.stopPropagation()"
+                matTooltip="Atribuir novo treino" aria-label="Atribuir novo treino">
+                <mat-icon>add_circle_outline</mat-icon>
+              </button>
+            </div>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <!-- Conteúdo do painel - Treinos -->
+        <div class="trainings-container">
+          @if (clientTrainings && clientTrainings.length > 0) {
+          <div class="trainings-grid" role="list">
+            @for (training of clientTrainings; track trackByTrainingId($index, training)) {
+            <mat-card class="training-card" [class.active-training]="currentClientTraining?.id === training.id"
+              role="listitem">
+              <mat-card-header>
+                <div mat-card-avatar class="training-avatar" aria-hidden="true">
+                  <mat-icon>fitness_center</mat-icon>
+                </div>
+                <mat-card-title>{{ training.name }}</mat-card-title>
+                <mat-card-subtitle>
+                  <div class="training-dates-info">
+                    <span class="training-date">
+                      <mat-icon class="date-icon" aria-hidden="true">calendar_today</mat-icon>
+                      Início:
+                      <ng-container *ngIf="isValidDate(training.startDate); else noStartDate">
+                        {{ parseDate(training.startDate) | date:'dd/MM/yyyy' }}
+                      </ng-container>
+                      <ng-template #noStartDate>Não definida</ng-template>
+                    </span>
+                    @if (training.endDate) {
+                    <span class="training-date" *ngIf="training.endDate">
+                      <mat-icon class="date-icon" aria-hidden="true">event_busy</mat-icon>
+                      Término:
+                      <ng-container *ngIf="isValidDate(training.endDate); else noEndDate">
+                        {{ parseDate(training.endDate) | date:'dd/MM/yyyy' }}
+                      </ng-container>
+                      <ng-template #noEndDate>Não definida</ng-template>
+                    </span>
+                    }
+                  </div>
+                </mat-card-subtitle>
+
+                @if (currentClientTraining?.id === training.id) {
+                <div class="current-training-badge" aria-label="Treino atual">
+                  <mat-icon aria-hidden="true">star</mat-icon>
+                  <span>Atual</span>
+                </div>
+                }
+              </mat-card-header>
+
+              <!-- Seção de exercícios recolhível melhorada -->
+              <mat-card-content>
+                @if (training.exercises && training.exercises.length > 0) {
+                <div class="exercises-section">
+                  <div class="exercises-header" (click)="toggleExerciseVisibility((training.id?.toString() ?? ''))"
+                    role="button" [attr.aria-expanded]="isExerciseListVisible((training.id?.toString() ?? ''))"
+                    [attr.aria-label]="isExerciseListVisible((training.id?.toString() ?? '')) ? 'Recolher exercícios' : 'Expandir exercícios'">
+                    <h3 class="exercises-title">
+                      <mat-icon aria-hidden="true">list</mat-icon>
+                      <span>Exercícios ({{training.exercises.length}})</span>
+                    </h3>
+                    <button mat-icon-button class="toggle-button" aria-hidden="true">
+                      <mat-icon>{{ isExerciseListVisible((training.id?.toString() ?? '')) ? 'expand_less' :
+                        'expand_more' }}</mat-icon>
+                    </button>
+                  </div>
+
+                  <div class="exercises-list" *ngIf="isExerciseListVisible((training.id?.toString() ?? ''))"
+                    role="list">
+                    @for (exercise of training.exercises; track $index) {
+                    <div class="exercise-item" role="listitem">
+                      <div class="exercise-header">
+                        <h4 class="exercise-name">{{exercise.name}}</h4>
+                        @if (exercise.categoryName) {
+                        <span class="muscle-group">{{exercise.categoryName}}</span>
+                        }
+                      </div>
+
+                      @if (exercise.description) {
+                      <p class="exercise-description">{{exercise.description}}</p>
+                      }
+
+                      <div class="exercise-details">
+                        @if (exercise.sets) {
+                        <span class="detail-item">
+                          <mat-icon class="detail-icon" aria-hidden="true">repeat</mat-icon>
+                          {{exercise.sets}} séries
+                        </span>
+                        }
+                        @if (exercise.repetitions) {
+                        <span class="detail-item">
+                          <mat-icon class="detail-icon" aria-hidden="true">autorenew</mat-icon>
+                          {{exercise.repetitions}} reps
+                        </span>
+                        }
+                        @if (exercise.rest) {
+                        <span class="detail-item">
+                          <mat-icon class="detail-icon" aria-hidden="true">timer</mat-icon>
+                          {{exercise.rest}}s
+                        </span>
+                        }
+                        @if (exercise.weight) {
+                        <span class="detail-item">
+                          <mat-icon class="detail-icon" aria-hidden="true">fitness_center</mat-icon>
+                          {{exercise.weight}}kg
+                        </span>
+                        }
+                      </div>
+                    </div>
+                    }
+                  </div>
+                </div>
+                } @else {
+                <div class="no-exercises">
+                  <mat-icon aria-hidden="true">info</mat-icon>
+                  <p>Nenhum exercício registrado para este treino.</p>
+                </div>
+                }
+              </mat-card-content>
+
+              <mat-card-actions align="end">
+                <a mat-button color="primary" [routerLink]="['/trainning-edit', training.id]"
+                  aria-label="Editar treino">
+                  <mat-icon>edit</mat-icon>
+                  EDITAR
+                </a>
+                <button mat-button color="accent" (click)="setAsCurrentTraining(training)"
+                  [disabled]="currentClientTraining?.id === training.id"
+                  [attr.aria-label]="currentClientTraining?.id === training.id ? 'Este treino já é o atual' : 'Definir como treino atual'">
+                  <mat-icon>star</mat-icon>
+                  DEFINIR COMO ATUAL
+                </button>
+                <button mat-button color="warn" (click)="deactivateTraining(training)" aria-label="Inativar treino">
+                  <mat-icon>archive</mat-icon>
+                  INATIVAR
+                </button>
+              </mat-card-actions>
+            </mat-card>
+            }
+          </div>
+          } @else {
+          <div class="no-training">
+            <mat-icon aria-hidden="true">sentiment_dissatisfied</mat-icon>
+            <p>Nenhum treino atribuído a este cliente.</p>
+            <button mat-raised-button color="primary" class="assign-training-button" (click)="assignNewTraining()"
+              aria-label="Criar novo treino">
+              <mat-icon>add_circle_outline</mat-icon>
+              <span>Novo Treino</span>
+            </button>
+          </div>
+          }
+        </div>
+      </mat-expansion-panel>
+
+      <!-- Painel de Histórico -->
+      <mat-expansion-panel [expanded]="panelOpenState.history" (opened)="panelOpenState.history = true"
+        (closed)="panelOpenState.history = false" class="dashboard-panel">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>history</mat-icon>
+            <span>Histórico de Treinos</span>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <!-- Conteúdo do painel - Histórico -->
+        <div class="training-history-table-wrapper">
+          @if (inactiveTrainings.length > 0) {
+          <table class="training-table" aria-label="Histórico de treinos">
+            <thead>
+              <tr>
+                <th scope="col">Nome do Treino</th>
+                <th scope="col">Data de Início</th>
+                <th scope="col">Data de Término</th>
+                <th scope="col">Ver</th>
+                <th scope="col">Restaurar</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (training of inactiveTrainings; track $index) {
+              <tr>
+                <td>{{ training.name }}</td>
+                <td>{{ training.startDate | date:'dd/MM/yyyy' }}</td>
+                <td>{{ training.endDate | date:'dd/MM/yyyy' }}</td>
+                <td>
+                  <button mat-icon-button (click)="viewTrainingDetails(training)" matTooltip="Ver detalhes"
+                    aria-label="Ver detalhes do treino">
+                    <mat-icon>visibility</mat-icon>
+                  </button>
+                </td>
+                <td>
+                  <button mat-icon-button color="primary" (click)="restoreTraining(training); $event.stopPropagation()"
+                    matTooltip="Restaurar treino" aria-label="Restaurar treino">
+                    <mat-icon>restore</mat-icon>
+                  </button>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+          } @else {
+          <div class="no-data-row">
+            <p>Nenhum histórico de treino inativo encontrado para este cliente.</p>
+          </div>
+          }
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
   </div>
   } @else {
-  <div class="loading-spinner">
+  <div class="loading-spinner" role="status" aria-live="polite">
     <mat-spinner diameter="50"></mat-spinner>
-    <p>Carregando cliente ou cliente não encontrado...</p>
+    <p>Carregando cliente...</p>
   </div>
   }
 
-  <!-- Doctor Selection Dialog -->
-  <div class="doctor-selection-dialog-overlay" *ngIf="showAddDoctorDialog" style="
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-">
-    <div class="doctor-selection-dialog" style="
-    background-color: #fff;
-    padding: 24px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    max-width: 500px;
-    width: 90%;
-    max-height: 90%;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-  ">
-      <div class="dialog-header" style="
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 8px;
-    ">
-        <h3 style="margin: 0; color: #3f51b5;">Gerenciar Médico(s)</h3>
-        <button mat-icon-button (click)="closeAddDoctorDialog()">
+  <!-- Diálogos de seleção -->
+
+  <!-- Diálogo de Médicos -->
+  <div class="doctor-selection-dialog-overlay" *ngIf="showAddDoctorDialog" role="dialog"
+    aria-labelledby="doctor-dialog-title">
+    <div class="doctor-selection-dialog">
+      <div class="dialog-header">
+        <h3 id="doctor-dialog-title">Adicionar Médico(s) ao Cliente</h3>
+        <button mat-icon-button (click)="closeAddDoctorDialog()" aria-label="Fechar">
           <mat-icon>close</mat-icon>
         </button>
       </div>
-      <div class="dialog-content" style="flex-grow: 1; overflow-y: auto;">
-        <p *ngIf="availableDoctors.length === 0" style="text-align: center; color: #757575;">Nenhum médico disponível no
-          sistema.</p>
-        <div class="available-doctors-list" style="
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      ">
-          <mat-checkbox *ngFor="let doctor of availableDoctors || []; trackBy: trackByDoctorId"
-            [checked]="isDoctorSelected(doctor.id != null ? doctor.id.toString() : '')"
-            (change)="toggleDoctorSelection(doctor.id != null ? doctor.id.toString() : '')"
-            style="padding: 8px; background-color: #f9f9f9; border-radius: 4px; transition: background-color 0.2s;">
-            {{ doctor.name }} (CRM: {{ doctor.crm || 'N/A' }})
+      <div class="dialog-content">
+        @if (availableDoctors?.length) {
+        <div class="available-doctors-list" role="group" aria-label="Médicos disponíveis">
+          @for (doctor of availableDoctors; track trackByDoctorId($index, doctor)) {
+          <mat-checkbox [checked]="isDoctorSelected(doctor.id!.toString())"
+            (change)="toggleDoctorSelection(doctor.id!.toString())" [attr.aria-label]="'Selecionar ' + doctor.name">
+            <span>{{ doctor.name }} (CRM: {{ doctor.crm || 'N/A' }})</span>
           </mat-checkbox>
+          }
         </div>
+        } @else {
+        <p>Nenhum médico disponível para associação.</p>
+        }
       </div>
-      <div class="dialog-actions" style="
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px solid #eee;
-    ">
-        <div>
-          <button mat-button (click)="closeAddDoctorDialog()">
-            <mat-icon>cancel</mat-icon>
-            Cancelar
-          </button>
-        </div>
-        <div style="display: flex; gap: 8px;">
-          <button mat-raised-button color="warn" [disabled]="selectedDoctorIds.size === 0"
-            (click)="removeSelectedDoctors()">
-            <mat-icon>link_off</mat-icon>
-            Desassociar
-          </button>
-          <button mat-raised-button color="primary" [disabled]="selectedDoctorIds.size === 0"
-            (click)="saveSelectedDoctors()">
-            <mat-icon>link</mat-icon>
-            Associar
-          </button>
-        </div>
+      <div class="dialog-actions">
+        <button mat-button (click)="closeAddDoctorDialog()">Cancelar</button>
+        <button mat-raised-button color="primary" (click)="saveSelectedDoctors()"
+          [disabled]="selectedDoctorIds.size === 0">
+          Salvar
+        </button>
       </div>
     </div>
   </div>
 
-
-  <!-- Personal Selection Dialog -->
-  <div class="personal-selection-dialog-overlay" *ngIf="showAddPersonalDialog" style="
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-">
-    <div class="personal-selection-dialog" style="
-    background-color: #fff;
-    padding: 24px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    max-width: 500px;
-    width: 90%;
-    max-height: 90%;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-  ">
-      <div class="dialog-header" style="
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 8px;
-    ">
-        <h3 style="margin: 0; color: #3f51b5;">Selecionar Personal(s)</h3>
-        <button mat-icon-button (click)="closeAddPersonalDialog()">
+  <!-- Diálogo de Personals -->
+  <div class="personal-selection-dialog-overlay" *ngIf="showAddPersonalDialog" role="dialog"
+    aria-labelledby="personal-dialog-title">
+    <div class="personal-selection-dialog">
+      <div class="dialog-header">
+        <h3 id="personal-dialog-title">Adicionar Personal Trainer(s) ao Cliente</h3>
+        <button mat-icon-button (click)="closeAddPersonalDialog()" aria-label="Fechar">
           <mat-icon>close</mat-icon>
         </button>
       </div>
-      <div class="dialog-content" style="flex-grow: 1; overflow-y: auto;">
-        <p *ngIf="!availablePersonals || availablePersonals.length === 0" style="text-align: center; color: #757575;">
-          Nenhum personal
-          disponível no sistema.</p>
-        <div *ngIf="availablePersonals && availablePersonals.length > 0" class="available-personals-list" style="
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      ">
-          <mat-checkbox *ngFor="let personal of availablePersonals; trackBy: trackByPersonalId"
-            [checked]="isPersonalSelected(personal?.id?.toString() || '')"
-            (change)="togglePersonalSelection(personal?.id?.toString() || '')"
-            style="padding: 8px; background-color: #f9f9f9; border-radius: 4px; transition: background-color 0.2s;">
-            {{ personal?.name || 'Sem nome' }} (CREF: {{ personal?.registry || 'N/A' }})
+      <div class="dialog-content">
+        @if (availablePersonals?.length) {
+        <div class="available-personals-list" role="group" aria-label="Personal trainers disponíveis">
+          @for (personal of availablePersonals; track trackByPersonalId($index, personal)) {
+          <mat-checkbox [checked]="isPersonalSelected(personal.id!.toString())"
+            (change)="togglePersonalSelection(personal.id!.toString())"
+            [attr.aria-label]="'Selecionar ' + personal.name">
+            <span>{{ personal.name }} (CREF: {{ personal.registry || 'N/A' }})</span>
           </mat-checkbox>
+          }
         </div>
+        } @else {
+        <p>Nenhum personal trainer disponível para associação.</p>
+        }
       </div>
-      <div class="dialog-actions" style="
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px solid #eee;
-    ">
+      <div class="dialog-actions">
         <button mat-button (click)="closeAddPersonalDialog()">Cancelar</button>
-        <button mat-raised-button color="primary" (click)="saveSelectedPersonals()">Adicionar Selecionados</button>
+        <button mat-raised-button color="primary" (click)="saveSelectedPersonals()"
+          [disabled]="selectedPersonalIds.size === 0">
+          Salvar
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Nutritionist Selection Dialog -->
-  <div class="nutritionist-selection-dialog-overlay" *ngIf="showAddNutritionistDialog" style="
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  ">
-    <div class="nutritionist-selection-dialog" style="
-      background-color: #fff;
-      padding: 24px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-      max-width: 500px;
-      width: 90%;
-      max-height: 90%;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-    ">
-      <div class="dialog-header" style="
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 16px;
-        border-bottom: 1px solid #eee;
-        padding-bottom: 8px;
-      ">
-        <h3 style="margin: 0; color: #3f51b5;">Selecionar Nutricionista(s)</h3>
-        <button mat-icon-button (click)="closeAddNutritionistDialog()">
+  <!-- Diálogo de Nutricionistas -->
+  <div class="nutritionist-selection-dialog-overlay" *ngIf="showAddNutritionistDialog" role="dialog"
+    aria-labelledby="nutritionist-dialog-title">
+    <div class="nutritionist-selection-dialog">
+      <div class="dialog-header">
+        <h3 id="nutritionist-dialog-title">Adicionar Nutricionista(s) ao Cliente</h3>
+        <button mat-icon-button (click)="closeAddNutritionistDialog()" aria-label="Fechar">
           <mat-icon>close</mat-icon>
         </button>
       </div>
-      <div class="dialog-content" style="flex-grow: 1; overflow-y: auto;">
-        <p *ngIf="availableNutritionists.length === 0" style="text-align: center; color: #757575;">Nenhum nutricionista
-          disponível no sistema.</p>
-        <div class="available-nutritionists-list" style="
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        ">
-          <!-- Dentro do diálogo de seleção de nutricionistas -->
-          <mat-checkbox *ngFor="let nutritionist of availableNutritionists || []; trackBy: trackByNutritionistId"
-            [checked]="isNutritionistSelected(nutritionist.id?.toString())"
-            (change)="toggleNutritionistSelection(nutritionist.id?.toString())"
-            style="padding: 8px; background-color: #f9f9f9; border-radius: 4px; transition: background-color 0.2s;">
-            {{ nutritionist.name || 'Sem nome' }}
-            (CRN: {{ nutritionist.registry || 'N/A' }}) - ID: {{ nutritionist.id }}
+      <div class="dialog-content">
+        @if (availableNutritionists?.length) {
+        <div class="available-nutritionists-list" role="group" aria-label="Nutricionistas disponíveis">
+          @for (nutritionist of availableNutritionists; track trackByNutritionistId($index, nutritionist)) {
+          <mat-checkbox [checked]="isNutritionistSelected(nutritionist.id!.toString())"
+            (change)="toggleNutritionistSelection(nutritionist.id!.toString())"
+            [attr.aria-label]="'Selecionar ' + nutritionist.name">
+            <span>{{ nutritionist.name }} (CRN: {{ nutritionist.registry || 'N/A' }})</span>
           </mat-checkbox>
+          }
         </div>
+        } @else {
+        <p>Nenhum nutricionista disponível para associação.</p>
+        }
       </div>
-      <div class="dialog-actions" style="
-        display: flex;
-        justify-content: flex-end;
-        gap: 8px;
-        margin-top: 16px;
-        padding-top: 16px;
-        border-top: 1px solid #eee;
-      ">
+      <div class="dialog-actions">
         <button mat-button (click)="closeAddNutritionistDialog()">Cancelar</button>
-        <button mat-raised-button color="primary" (click)="saveSelectedNutritionists()">Adicionar Selecionados</button>
+        <button mat-raised-button color="primary" (click)="saveSelectedNutritionists()"
+          [disabled]="selectedNutritionistIds.size === 0">
+          Salvar
+        </button>
       </div>
     </div>
   </div>

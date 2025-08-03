@@ -7,31 +7,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-
-interface Measure {
-  ombro: number | null;
-  peitoral: number | null;
-  cintura: number | null;
-  quadril: number | null;
-  abdomem: number | null;
-  torax: number | null;
-  bracoDireito: number | null;
-  bracoEsquerdo: number | null;
-  coxaDireita: number | null;
-  coxaEsquerda: number | null;
-  panturrilhaDireita: number | null;
-  panturrilhaEsquerda: number | null;
-  abdominal: number | null;
-  suprailiaca: number | null;
-  subescapular: number | null;
-  triceps: number | null;
-  axilar: number | null;
-}
+import { Measure } from '../models/measure';
+import { MeasureService } from '../services/measure/measure.service';
 
 @Component({
     selector: 'app-edit-measures',
     templateUrl: './edit-measures.component.html',
     styleUrls: ['./edit-measures.component.scss'],
+    standalone: true,
     imports: [
     ReactiveFormsModule,
     MatFormFieldModule,
@@ -44,31 +27,36 @@ interface Measure {
 })
 export class EditMeasuresComponent implements OnInit {
   measuresForm: FormGroup;
+  clientId?: number;
 
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<EditMeasuresComponent>,
     private snackBar: MatSnackBar,
-    @Inject(MAT_DIALOG_DATA) public data: Measure
+    private measureService: MeasureService,
+    @Inject(MAT_DIALOG_DATA) public data: { measure: Measure, clientId?: number }
   ) {
+    this.clientId = data.clientId;
+
+    // Inicializa o formulário com valores do modelo, usando operador de coalescência nula para tratar valores indefinidos
     this.measuresForm = this.fb.group({
-      ombro: [data.ombro, [Validators.min(0), Validators.max(200)]],
-      peitoral: [data.peitoral, [Validators.min(0), Validators.max(200)]],
-      cintura: [data.cintura, [Validators.min(0), Validators.max(200)]],
-      quadril: [data.quadril, [Validators.min(0), Validators.max(200)]],
-      abdomem: [data.abdomem, [Validators.min(0), Validators.max(200)]],
-      torax: [data.torax, [Validators.min(0), Validators.max(200)]],
-      bracoDireito: [data.bracoDireito, [Validators.min(0), Validators.max(100)]],
-      bracoEsquerdo: [data.bracoEsquerdo, [Validators.min(0), Validators.max(100)]],
-      coxaDireita: [data.coxaDireita, [Validators.min(0), Validators.max(100)]],
-      coxaEsquerda: [data.coxaEsquerda, [Validators.min(0), Validators.max(100)]],
-      panturrilhaDireita: [data.panturrilhaDireita, [Validators.min(0), Validators.max(100)]],
-      panturrilhaEsquerda: [data.panturrilhaEsquerda, [Validators.min(0), Validators.max(100)]],
-      abdominal: [data.abdominal, [Validators.min(0), Validators.max(100)]],
-      suprailiaca: [data.suprailiaca, [Validators.min(0), Validators.max(100)]],
-      subescapular: [data.subescapular, [Validators.min(0), Validators.max(100)]],
-      triceps: [data.triceps, [Validators.min(0), Validators.max(100)]],
-      axilar: [data.axilar, [Validators.min(0), Validators.max(100)]]
+      ombro: [data.measure?.ombro ?? null, [Validators.min(0), Validators.max(200)]],
+      peitoral: [data.measure?.peitoral ?? null, [Validators.min(0), Validators.max(200)]],
+      cintura: [data.measure?.cintura ?? null, [Validators.min(0), Validators.max(200)]],
+      quadril: [data.measure?.quadril ?? null, [Validators.min(0), Validators.max(200)]],
+      abdomem: [data.measure?.abdomem ?? null, [Validators.min(0), Validators.max(200)]],
+      torax: [data.measure?.torax ?? null, [Validators.min(0), Validators.max(200)]],
+      bracoDireito: [data.measure?.braco_direito ?? null, [Validators.min(0), Validators.max(100)]],
+      bracoEsquerdo: [data.measure?.braco_esquerdo ?? null, [Validators.min(0), Validators.max(100)]],
+      coxaDireita: [data.measure?.coxa_direita ?? null, [Validators.min(0), Validators.max(100)]],
+      coxaEsquerda: [data.measure?.coxa_esquerda ?? null, [Validators.min(0), Validators.max(100)]],
+      panturrilhaDireita: [data.measure?.panturrilha_direita ?? null, [Validators.min(0), Validators.max(100)]],
+      panturrilhaEsquerda: [data.measure?.panturrilha_esquerda ?? null, [Validators.min(0), Validators.max(100)]],
+      abdominal: [data.measure?.abdominal ?? null, [Validators.min(0), Validators.max(100)]],
+      suprailiaca: [data.measure?.suprailiaca ?? null, [Validators.min(0), Validators.max(100)]],
+      subescapular: [data.measure?.subescapular ?? null, [Validators.min(0), Validators.max(100)]],
+      triceps: [data.measure?.triceps ?? null, [Validators.min(0), Validators.max(100)]],
+      axilar: [data.measure?.axilar ?? null, [Validators.min(0), Validators.max(100)]]
     });
   }
 
@@ -78,8 +66,66 @@ export class EditMeasuresComponent implements OnInit {
 
   onSubmit(): void {
     if (this.measuresForm.valid) {
-      this.dialogRef.close(this.measuresForm.value);
+      const measureData: Measure = this.measuresForm.value;
+
+      // Se temos um id de medida existente, incluí-lo nos dados para atualização
+      if (this.data.measure?.id) {
+        measureData.id = this.data.measure.id;
+      }
+
+      // Inclui a data atual se for uma nova medida
+      if (!measureData.data) {
+        measureData.data = new Date();
+      }
+
+      // Verifica se está no fluxo de criação para um cliente específico
+      if (this.clientId) {
+        this.measureService.createMeasure(this.clientId, measureData)
+          .subscribe({
+            next: (result) => {
+              this.snackBar.open('Medidas salvas com sucesso!', 'Fechar', {
+                duration: 3000
+              });
+              this.dialogRef.close(result);
+            },
+            error: (error) => {
+              console.error('Erro ao salvar medidas:', error);
+              this.snackBar.open('Erro ao salvar medidas. Por favor, tente novamente.', 'Fechar', {
+                duration: 5000
+              });
+            }
+          });
+      } else if (measureData.id) {
+        // Está atualizando uma medida existente
+        if (typeof this.clientId === 'number') {
+          this.measureService.updateMeasure(this.clientId, measureData)
+            .subscribe({
+              next: (result) => {
+                this.snackBar.open('Medidas atualizadas com sucesso!', 'Fechar', {
+                  duration: 3000
+                });
+                this.dialogRef.close(result);
+              },
+              error: (error) => {
+                console.error('Erro ao atualizar medidas:', error);
+                this.snackBar.open('Erro ao atualizar medidas. Por favor, tente novamente.', 'Fechar', {
+                  duration: 5000
+                });
+              }
+            });
+        } else {
+          this.snackBar.open('Não foi possível identificar o cliente para atualizar as medidas', 'Fechar', {
+            duration: 3000
+          });
+        }
+      } else {
+        // Não temos informações suficientes
+        this.snackBar.open('Não foi possível identificar o cliente para salvar as medidas', 'Fechar', {
+          duration: 3000
+        });
+      }
     } else {
+      // Formulário inválido
       this.snackBar.open('Por favor, corrija os erros no formulário', 'Fechar', {
         duration: 3000
       });
@@ -89,4 +135,4 @@ export class EditMeasuresComponent implements OnInit {
   onCancel(): void {
     this.dialogRef.close();
   }
-} 
+}

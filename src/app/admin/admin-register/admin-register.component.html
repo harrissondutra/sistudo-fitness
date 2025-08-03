@@ -14,6 +14,7 @@
 
         <mat-card-content>
           <form [formGroup]="menuForm" (ngSubmit)="saveMenu()">
+            <!-- Campos do Menu Principal -->
             <div class="form-row">
               <mat-form-field appearance="outline">
                 <mat-label>ID do Menu</mat-label>
@@ -49,6 +50,7 @@
               </button>
             </div>
 
+            <!-- Seção de Links - com suporte para links dinâmicos -->
             <div formArrayName="links" class="links-container">
               <mat-accordion>
                 <mat-expansion-panel *ngFor="let link of links.controls; let i = index" [formGroupName]="i">
@@ -72,19 +74,42 @@
                       <mat-error *ngIf="link.get('label')?.hasError('required')">Rótulo é obrigatório</mat-error>
                     </mat-form-field>
 
+                    <!-- Campo de Rota com suporte para rotas dinâmicas -->
                     <mat-form-field appearance="outline">
                       <mat-label>Rota</mat-label>
                       <input matInput formControlName="route" placeholder="Ex: /clients-list">
-                      <mat-hint>Deixe em branco se tiver sublinks</mat-hint>
+                      <mat-hint>
+                        <ng-container *ngIf="!link.get('isDynamic')?.value">
+                          Deixe em branco se tiver sublinks
+                        </ng-container>
+                        <ng-container *ngIf="link.get('isDynamic')?.value">
+                          <span class="dynamic-route-hint">
+                            <mat-icon color="accent">autorenew</mat-icon>
+                            Rota dinâmica: ID do usuário será inserido automaticamente
+                          </span>
+                        </ng-container>
+                      </mat-hint>
+
+                      <!-- Botão para tornar a rota dinâmica -->
+                      <button mat-icon-button matSuffix type="button"
+                              (click)="toggleDynamicRoute($any(link))"
+                              [matTooltip]="link.get('isDynamic')?.value ? 'Tornar rota estática' : 'Usar ID do usuário logado'"
+                              [color]="link.get('isDynamic')?.value ? 'accent' : ''">
+                        <mat-icon>{{ link.get('isDynamic')?.value ? 'link_off' : 'link' }}</mat-icon>
+                      </button>
                     </mat-form-field>
 
                     <mat-checkbox formControlName="visible" color="primary">Visível</mat-checkbox>
+                    <mat-checkbox formControlName="isDynamic" color="accent" class="dynamic-checkbox">
+                      Rota dinâmica (ID do usuário)
+                    </mat-checkbox>
 
                     <button type="button" mat-icon-button color="warn" matTooltip="Remover Link" (click)="removeLink(i)">
                       <mat-icon>delete</mat-icon>
                     </button>
                   </div>
 
+                  <!-- Seção de Sublinks -->
                   <div class="section-header">
                     <h4>Sublinks</h4>
                     <button type="button" mat-mini-fab color="primary" (click)="addSublink(i)" matTooltip="Adicionar Sublink">
@@ -92,6 +117,7 @@
                     </button>
                   </div>
 
+                  <!-- Seção de Sublinks - com suporte para links dinâmicos -->
                   <div formArrayName="sublinks" class="sublinks-container">
                     <mat-accordion>
                       <mat-expansion-panel *ngFor="let sublink of getSublinks(i).controls; let j = index" [formGroupName]="j">
@@ -115,13 +141,34 @@
                             <mat-error *ngIf="sublink.get('label')?.hasError('required')">Rótulo é obrigatório</mat-error>
                           </mat-form-field>
 
+                          <!-- Campo de Rota com suporte para rotas dinâmicas -->
                           <mat-form-field appearance="outline">
                             <mat-label>Rota</mat-label>
                             <input matInput formControlName="route" placeholder="Ex: /client-create">
+                            <mat-hint>
+                              <ng-container *ngIf="!sublink.get('isDynamic')?.value"></ng-container>
+                              <ng-container *ngIf="sublink.get('isDynamic')?.value">
+                                <span class="dynamic-route-hint">
+                                  <mat-icon color="accent">autorenew</mat-icon>
+                                  Rota dinâmica: ID do usuário será inserido automaticamente
+                                </span>
+                              </ng-container>
+                            </mat-hint>
                             <mat-error *ngIf="sublink.get('route')?.hasError('required')">Rota é obrigatória</mat-error>
+
+                            <!-- Botão para tornar a rota dinâmica -->
+                            <button mat-icon-button matSuffix type="button"
+                                    (click)="toggleDynamicSubRoute(i, j)"
+                                    [matTooltip]="sublink.get('isDynamic')?.value ? 'Tornar rota estática' : 'Usar ID do usuário logado'"
+                                    [color]="sublink.get('isDynamic')?.value ? 'accent' : ''">
+                              <mat-icon>{{ sublink.get('isDynamic')?.value ? 'link_off' : 'link' }}</mat-icon>
+                            </button>
                           </mat-form-field>
 
                           <mat-checkbox formControlName="visible" color="primary">Visível</mat-checkbox>
+                          <mat-checkbox formControlName="isDynamic" color="accent" class="dynamic-checkbox">
+                            Rota dinâmica (ID do usuário)
+                          </mat-checkbox>
 
                           <button type="button" mat-icon-button color="warn" matTooltip="Remover Sublink" (click)="removeSublink(i, j)">
                             <mat-icon>delete</mat-icon>
@@ -144,7 +191,7 @@
         </mat-card-content>
       </mat-card>
 
-      <!-- Menu List -->
+      <!-- Menu List - RESTAURADO -->
       <div class="menu-list-section">
         <h2>Menus Existentes</h2>
 
@@ -155,9 +202,9 @@
 
         <div class="menu-list" cdkDropList (cdkDropListDropped)="dropMenu($event)">
           <mat-card *ngFor="let menu of filteredMenuItems; let i = index"
-                    class="menu-item"
-                    [ngClass]="{'hidden-menu': !menu.visible}"
-                    cdkDrag>
+                   class="menu-item"
+                   [ngClass]="{'hidden-menu': !menu.visible}"
+                   cdkDrag>
             <div class="menu-drag-handle" cdkDragHandle>
               <mat-icon>drag_indicator</mat-icon>
             </div>
@@ -191,8 +238,13 @@
                         {{ link.visible ? 'Visível' : 'Oculto' }}
                       </span>
 
+                      <!-- Indicador de rota dinâmica -->
+                      <span *ngIf="link.isDynamic" class="badge badge-info">
+                        <mat-icon>autorenew</mat-icon> Dinâmico
+                      </span>
+
                       <ul class="sublinks-list" *ngIf="link.sublinks && link.sublinks.length > 0"
-                          cdkDropList (cdkDropListDropped)="dropSublink(i, menu.links.indexOf(link), $event)">
+                         cdkDropList (cdkDropListDropped)="dropSublink(i, menu.links.indexOf(link), $event)">
                         <li *ngFor="let sublink of link.sublinks" cdkDrag>
                           <div class="drag-handle" cdkDragHandle>
                             <mat-icon>drag_handle</mat-icon>
@@ -200,6 +252,11 @@
                           <span>{{ sublink.label }}</span> - {{ sublink.route }}
                           <span class="badge" [ngClass]="{'badge-success': sublink.visible, 'badge-danger': !sublink.visible}">
                             {{ sublink.visible ? 'Visível' : 'Oculto' }}
+                          </span>
+
+                          <!-- Indicador de sublink dinâmico -->
+                          <span *ngIf="sublink.isDynamic" class="badge badge-info">
+                            <mat-icon>autorenew</mat-icon> Dinâmico
                           </span>
                         </li>
                       </ul>
@@ -216,11 +273,21 @@
           </mat-card>
         </div>
 
-        <!-- Botão para restaurar menus padrão -->
-        <div class="reset-container">
+        <!-- Botões de administração -->
+        <div class="admin-actions">
           <button mat-stroked-button color="warn" (click)="resetMenus()">
             <mat-icon>restore</mat-icon>
             Restaurar Menus Padrão
+          </button>
+
+          <button mat-stroked-button color="primary" (click)="debugMenus()">
+            <mat-icon>bug_report</mat-icon>
+            Verificar Problemas
+          </button>
+
+          <button mat-stroked-button color="accent" (click)="restoreAdminVisibility()">
+            <mat-icon>visibility</mat-icon>
+            Restaurar Visibilidade Admin
           </button>
         </div>
       </div>
