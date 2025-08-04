@@ -159,10 +159,23 @@ export class ClientViewComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const clientId = this.route.snapshot.paramMap.get('id');
+    console.log('🔍 ClientViewComponent - ID bruto da rota:', clientId);
+    console.log('🔍 ClientViewComponent - Tipo do ID:', typeof clientId);
+    console.log('🔍 ClientViewComponent - URL completa:', this.router.url);
+    console.log('🔍 ClientViewComponent - Parâmetros da rota:', this.route.snapshot.paramMap);
+    
+    // Testa conversão para número
     if (clientId) {
+      console.log('🔍 ClientViewComponent - Number(clientId):', Number(clientId));
+      console.log('🔍 ClientViewComponent - isNaN(Number(clientId)):', isNaN(Number(clientId)));
+      console.log('🔍 ClientViewComponent - clientId !== "NaN":', clientId !== 'NaN');
+    }
+    
+    if (clientId && clientId !== 'NaN' && !isNaN(Number(clientId))) {
       this.initializeClient(clientId);
     } else {
-      this.handleError('ID do cliente não fornecido na URL.');
+      console.error('❌ ID do cliente inválido:', clientId);
+      this.handleError('ID do cliente não fornecido ou inválido na URL.');
       this.navigateToClientsList();
     }
   }
@@ -176,8 +189,9 @@ export class ClientViewComponent implements OnInit, OnDestroy {
 
   private initializeClient(clientId: string): void {
     this.loadClient(clientId);
-    this.loadAssociatedProfessionals(clientId);
-    this.loadClientTrainings(clientId);
+    // Carrega dados associados de forma independente, sem bloquear a tela
+    this.loadAssociatedProfessionalsAsync(clientId);
+    this.loadClientTrainingsAsync(clientId);
   }
 
   private loadClient(id: string): void {
@@ -185,9 +199,12 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     this.clientService.getClientById(id)
       .pipe(
         takeUntil(this.destroy$),
-        finalize(() => this.isLoading = false),
+        finalize(() => {
+          this.isLoading = false;
+        }),
         catchError(error => {
           this.handleError('Erro ao carregar dados do cliente.', error);
+          this.isLoading = false;
           return of(null);
         })
       )
@@ -195,7 +212,10 @@ export class ClientViewComponent implements OnInit, OnDestroy {
         if (clientData) {
           this.client = clientData;
           this.processClientData();
+          // Carrega medidas de forma assíncrona e independente
           this.loadClientMeasures(id);
+        } else {
+          this.navigateToClientsList();
         }
       });
   }
@@ -221,13 +241,12 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   }
 
   private loadClientMeasures(clientId: string): void {
-    this.isLoading = true;
+    // Não define isLoading aqui para não bloquear a interface
     this.measureService.getMeasureByClientId(Number(clientId))
       .pipe(
         takeUntil(this.destroy$),
-        finalize(() => this.isLoading = false),
         catchError(error => {
-          this.handleError('Erro ao carregar medidas do cliente.', error);
+          console.warn('Nenhuma medida encontrada para o cliente ou erro ao carregar:', error);
           return of(null);
         })
       )
@@ -244,6 +263,18 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     this.loadAssociatedNutritionists(clientId);
   }
 
+  // Método assíncrono que não bloqueia o carregamento principal
+  private loadAssociatedProfessionalsAsync(clientId: string): void {
+    // Executa em paralelo sem bloquear a interface
+    Promise.all([
+      this.loadAssociatedDoctorsAsync(clientId),
+      this.loadAssociatedPersonalsAsync(clientId),
+      this.loadAssociatedNutritionistsAsync(clientId)
+    ]).catch(error => {
+      console.warn('Alguns dados de profissionais não puderam ser carregados:', error);
+    });
+  }
+
   private loadAssociatedDoctors(clientId: string): void {
     this.doctorService.getDoctorByClientId(Number(clientId))
       .pipe(
@@ -256,6 +287,17 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       .subscribe(doctors => {
         this.associatedDoctors = doctors || [];
       });
+  }
+
+  // Método assíncrono para carregar médicos
+  private async loadAssociatedDoctorsAsync(clientId: string): Promise<void> {
+    try {
+      const doctors = await this.doctorService.getDoctorByClientId(Number(clientId)).toPromise();
+      this.associatedDoctors = doctors || [];
+    } catch (error) {
+      console.warn('Nenhum médico associado encontrado ou erro ao carregar:', error);
+      this.associatedDoctors = [];
+    }
   }
 
   private loadAssociatedPersonals(clientId: string): void {
@@ -277,6 +319,23 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       });
   }
 
+  // Método assíncrono para carregar personal trainers
+  private async loadAssociatedPersonalsAsync(clientId: string): Promise<void> {
+    try {
+      const response = await this.personalService.getPersonalByClientId(Number(clientId)).toPromise();
+      if (Array.isArray(response)) {
+        this.associatedPersonals = response;
+      } else if (response) {
+        this.associatedPersonals = [response];
+      } else {
+        this.associatedPersonals = [];
+      }
+    } catch (error) {
+      console.warn('Nenhum personal trainer associado encontrado ou erro ao carregar:', error);
+      this.associatedPersonals = [];
+    }
+  }
+
   private loadAssociatedNutritionists(clientId: string): void {
     this.nutritionistService.getNutritionistByClientId(Number(clientId))
       .pipe(
@@ -296,9 +355,39 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       });
   }
 
+  // Método assíncrono para carregar nutricionistas
+  private async loadAssociatedNutritionistsAsync(clientId: string): Promise<void> {
+    try {
+      const response = await this.nutritionistService.getNutritionistByClientId(Number(clientId)).toPromise();
+      if (Array.isArray(response)) {
+        this.associatedNutritionists = response;
+      } else if (response) {
+        this.associatedNutritionists = [response];
+      } else {
+        this.associatedNutritionists = [];
+      }
+    } catch (error) {
+      console.warn('Nenhum nutricionista associado encontrado ou erro ao carregar:', error);
+      this.associatedNutritionists = [];
+    }
+  }
+
   private loadClientTrainings(clientId: string): void {
     this.loadActiveTrainings(clientId);
     this.loadInactiveTrainings(clientId);
+  }
+
+  // Método assíncrono para carregar treinos
+  private async loadClientTrainingsAsync(clientId: string): Promise<void> {
+    try {
+      // Executa em paralelo
+      await Promise.all([
+        this.loadActiveTrainingsAsync(clientId),
+        this.loadInactiveTrainingsAsync(clientId)
+      ]);
+    } catch (error) {
+      console.warn('Alguns dados de treinos não puderam ser carregados:', error);
+    }
   }
 
   private loadActiveTrainings(clientId: string): void {
@@ -328,6 +417,30 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       });
   }
 
+  // Método assíncrono para carregar treinos ativos
+  private async loadActiveTrainingsAsync(clientId: string): Promise<void> {
+    try {
+      const trainings = await this.trainningService.getTrainningByClientId(Number(clientId)).toPromise();
+      const activeTrainings = (trainings || []).filter(t => t.active === true);
+      this.clientTrainings = activeTrainings;
+
+      // Initialize expanded state for all trainings
+      this.clientTrainings.forEach(training => {
+        if (training.id !== undefined && training.id !== null) {
+          this.expandedExercisesMap.set(training.id.toString(), false);
+        }
+      });
+
+      // Set first active training as current
+      if (this.clientTrainings.length > 0) {
+        this.currentClientTraining = this.clientTrainings[0];
+      }
+    } catch (error) {
+      console.warn('Nenhum treino ativo encontrado ou erro ao carregar:', error);
+      this.clientTrainings = [];
+    }
+  }
+
   private loadInactiveTrainings(clientId: string): void {
     this.trainningService.listInactiveTrainningsByClientId(Number(clientId))
       .pipe(
@@ -340,6 +453,17 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       .subscribe(inactiveTrainings => {
         this.inactiveTrainings = inactiveTrainings || [];
       });
+  }
+
+  // Método assíncrono para carregar treinos inativos
+  private async loadInactiveTrainingsAsync(clientId: string): Promise<void> {
+    try {
+      const inactiveTrainings = await this.trainningService.listInactiveTrainningsByClientId(Number(clientId)).toPromise();
+      this.inactiveTrainings = inactiveTrainings || [];
+    } catch (error) {
+      console.warn('Nenhum treino inativo encontrado ou erro ao carregar:', error);
+      this.inactiveTrainings = [];
+    }
   }
 
   // ============== Client Edit Methods ==============

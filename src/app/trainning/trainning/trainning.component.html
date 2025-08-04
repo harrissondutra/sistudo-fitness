@@ -12,13 +12,33 @@
     </button>
   </div>
 
-  <!-- Seção de Busca -->
+  <!-- Seção de Busca e Controles -->
   <div class="search-section">
-    <mat-form-field appearance="outline" class="search-input">
-      <mat-label>Buscar por Treino ou Cliente</mat-label>
-      <input matInput [formControl]="searchControl" placeholder="Digite nome do treino ou cliente">
-      <mat-icon matSuffix>search</mat-icon>
-    </mat-form-field>
+    <div class="search-controls">
+      <mat-form-field appearance="outline" class="search-input">
+        <mat-label>Buscar por Treino ou Cliente</mat-label>
+        <input matInput [formControl]="searchControl" placeholder="Digite nome do treino ou cliente">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      
+      <!-- Controles de Cache -->
+      <div class="cache-controls">
+        <button mat-icon-button 
+                (click)="refreshData()" 
+                [disabled]="isRefreshing"
+                matTooltip="Atualizar dados"
+                color="primary">
+          <mat-icon [class.spinning]="isRefreshing">refresh</mat-icon>
+        </button>
+        
+        @if (lastUpdateTime) {
+          <span class="last-update">
+            Última atualização: {{ lastUpdateTime | date:'HH:mm:ss' }}
+          </span>
+        }
+      </div>
+    </div>
+    
     <span class="search-tip">Dica: Use o nome do treino ou do cliente para buscar</span>
   </div>
 
@@ -30,7 +50,9 @@
       <ion-label>
         <div class="training-header">
           <h3>{{ training.name }}</h3>
-          <span class="client-badge" *ngIf="training.client?.name">{{ training.client?.name }}</span>
+          @if (training.client.name) {
+            <span class="client-badge">{{ training.client.name }}</span>
+          }
         </div>
         <p class="training-description">{{ training.description || 'Sem descrição' }}</p>
         @if (training.client.name) {

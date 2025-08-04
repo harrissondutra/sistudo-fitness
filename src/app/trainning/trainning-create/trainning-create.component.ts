@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,11 +29,11 @@ import { finalize, catchError } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-// Importe o ExerciseSelectionModalComponent se ainda não estiver
 import { ExerciseSelectionModalComponent } from '../../Exercises/exercise-selection-modal/exercise-selection-modal.component';
-import { MatDialog } from '@angular/material/dialog'; // Certifique-se de importar MatDialog
+import { MatDialog } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
 import { inject } from '@angular/core';
+import { DataCacheService } from '../../services/cache/data-cache.service';
 
 
 @Component({
@@ -80,8 +80,10 @@ export class TrainningCreateComponent implements OnInit {
     private clientService: ClientService,
     private trainningCategoryService: TrainningCategoryService,
     private router: Router,
+    private route: ActivatedRoute,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog // Injetado MatDialog para o modal
+    private dialog: MatDialog,
+    private cacheService: DataCacheService
   ) {
     this.initForm();
   }
@@ -141,12 +143,35 @@ export class TrainningCreateComponent implements OnInit {
           this.exercises = (results.exercises as ExerciseDto[]).filter(ex => typeof ex.id === 'number');
           this.clients = (results.clients as ClientDto[]).filter(client => typeof client.id === 'number');
           this.trainningCategories = (results.categories as TrainningCategoryDto[]).filter(cat => typeof cat.id === 'number');
+          
+          // Verificar se há um clientId na rota para pré-selecionar
+          this.preselectClientFromRoute();
         },
         error: (error) => {
           console.error('Erro geral no forkJoin de dados iniciais:', error);
           this.showMessage('Erro ao carregar dados essenciais para o formulário. Tente recarregar.', 'error');
         }
       });
+  }
+
+  /**
+   * Verifica se há um clientId na rota e pré-seleciona o cliente no formulário
+   */
+  private preselectClientFromRoute(): void {
+    const clientId = this.route.snapshot.paramMap.get('clientId');
+    if (clientId) {
+      const clientIdNumber = Number(clientId);
+      const selectedClient = this.clients.find(client => client.id === clientIdNumber);
+      
+      if (selectedClient) {
+        this.trainningForm.patchValue({
+          client: selectedClient
+        });
+        console.log('Cliente pré-selecionado:', selectedClient.name);
+      } else {
+        console.warn('Cliente com ID', clientId, 'não encontrado na lista de clientes');
+      }
+    }
   }
 
   /**
@@ -211,6 +236,8 @@ export class TrainningCreateComponent implements OnInit {
       .subscribe({
         next: (response: Trainning) => {
           this.showMessage('Treino criado com sucesso!', 'success');
+          // Invalida caches relacionados para forçar refresh
+          this.trainningService.refreshAllTrainningsCache();
           this.router.navigate(['/trainnings']);
         },
         error: (error: HttpErrorResponse) => {

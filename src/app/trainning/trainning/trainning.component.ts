@@ -1,30 +1,22 @@
-import { Component, OnInit } from '@angular/core';
-import { DatePipe } from '@angular/common'; // Adicionado DatePipe
-// Removido: MatTableDataSource, MatTableModule, MatPaginator, MatPaginatorModule, MatSort, MatSortModule
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule, Router } from '@angular/router';
-import { TrainningService } from '../../services/trainning/trainning.service'; // Ajuste o caminho e o nome do serviço (TrainningService)
-import { Trainning } from '../../models/trainning'; // Ajuste o caminho e o nome do modelo (Trainning)
-import { Observable, catchError, tap, of } from 'rxjs';
+import { TrainningService } from '../../services/trainning/trainning.service';
+import { Trainning } from '../../models/trainning';
+import { Observable, catchError, tap, of, Subject } from 'rxjs';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { debounceTime, distinctUntilChanged, finalize } from 'rxjs/operators';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar'; // Para mensagens
-import { MatDialog, MatDialogModule } from '@angular/material/dialog'; // Para diálogos de confirmação
-// import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component'; // Ajuste o caminho
-
-// TODO: Ajuste o caminho abaixo para onde ConfirmDialogComponent realmente está localizado
-// Exemplo:
-// import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // Para o spinner de carregamento
-import {} from '@angular/common/http'; // Para permitir injeção do HttpClient no serviço
-
-// Módulo Ionic (necessário para ion-list, ion-item, ion-button)
+import { debounceTime, distinctUntilChanged, finalize, takeUntil } from 'rxjs/operators';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { IonicModule } from '@ionic/angular';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
+import { DataCacheService } from '../../services/cache/data-cache.service';
 
 
 @Component({
@@ -47,53 +39,65 @@ import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dial
     styleUrls: ['./trainning.component.scss'],
     providers: [DatePipe]
 })
-export class TrainningComponent implements OnInit { // Mantido o nome `TrainningComponent` conforme o componente original
-
+export class TrainningComponent implements OnInit, OnDestroy {
   // Lista original de todos os treinos
   allTrainnings: Trainning[] = [];
   // Lista de treinos filtrados (exibida no HTML)
   filteredTrainnings: Trainning[] = [];
 
-  isLoading = false; // Para controlar o indicador de carregamento
+  isLoading = false;
+  isRefreshing = false; // Para indicar refresh em background
+  lastUpdateTime: Date | null = null;
 
   searchControl = new FormControl('');
+  private destroy$ = new Subject<void>();
 
   constructor(
-    private TrainningService: TrainningService,
+    private trainningService: TrainningService,
     private router: Router,
-    private snackBar: MatSnackBar, // Injetado MatSnackBar
-    private dialog: MatDialog // Injetado MatDialog
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog,
+    private cacheService: DataCacheService
   ) { }
 
   ngOnInit(): void {
-    this.loadTrainnings(); // Chamada para carregar os treinos
-
-    // Adiciona um listener para o campo de busca
-    this.searchControl.valueChanges
-      .pipe(
-        debounceTime(300), // Espera 300ms após a última digitação
-        distinctUntilChanged() // Garante que só emite se o valor for diferente do anterior
-      )
-      .subscribe(value => {
-        this.applyFilter(value || ''); // Aplica o filtro
-      });
+    this.loadTrainnings();
+    this.setupSearch();
+    this.setupCacheUpdates();
   }
 
-  // Removido ngAfterViewInit pois MatTableDataSource, MatPaginator e MatSort não são mais usados.
-  // Removido setupFilterPredicate pois a filtragem agora é manual.
-  // Removido setupSearch pois a lógica foi movida para ngOnInit.
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   /**
-   * Carrega a lista de treinos do serviço e aplica o filtro atual (se houver).
+   * Carrega a lista de treinos com cache otimizado
    */
-  private loadTrainnings(): void {
-    this.isLoading = true;
-    this.TrainningService.listAllActiveTrainnings() // Assumindo que seu TrainningService tem um método getTrainnings()
-      .pipe(finalize(() => this.isLoading = false))
+  private loadTrainnings(forceRefresh: boolean = false): void {
+    if (forceRefresh) {
+      this.isRefreshing = true;
+    } else {
+      this.isLoading = true;
+    }
+
+    this.trainningService.listAllActiveTrainnings(forceRefresh)
+      .pipe(
+        finalize(() => {
+          this.isLoading = false;
+          this.isRefreshing = false;
+        }),
+        takeUntil(this.destroy$)
+      )
       .subscribe({
-        next: (Trainnings: Trainning[]) => {
-          this.allTrainnings = Trainnings; // Armazena todos os treinos
-          this.applyFilter(this.searchControl.value || ''); // Aplica o filtro inicial ou o filtro atual
+        next: (trainnings: Trainning[]) => {
+          this.allTrainnings = trainnings;
+          this.applyFilter(this.searchControl.value || '');
+          this.lastUpdateTime = new Date();
+          
+          if (forceRefresh) {
+            this.showMessage('Dados atualizados com sucesso!', 'success');
+          }
         },
         error: (error: HttpErrorResponse) => {
           this.handleError(error.error?.message);
@@ -101,9 +105,48 @@ export class TrainningComponent implements OnInit { // Mantido o nome `Trainning
       });
   }
 
-  // Versão mais robusta do método applyFilter
-applyFilter(filterValue: string): void {
-  const lowerCaseFilter = filterValue.trim().toLowerCase();
+  /**
+   * Força refresh dos dados
+   */
+  refreshData(): void {
+    this.loadTrainnings(true);
+  }
+
+  /**
+   * Configura a busca com debounce
+   */
+  private setupSearch(): void {
+    this.searchControl.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(value => {
+        this.applyFilter(value || '');
+      });
+  }
+
+  /**
+   * Escuta atualizações do cache para refresh automático
+   */
+  private setupCacheUpdates(): void {
+    this.cacheService.getCacheUpdates()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((update: { key: string; data: any } | null) => {
+        if (update && update.key.includes('trainnings_active')) {
+          // Atualiza a lista sem mostrar loading
+          this.allTrainnings = update.data;
+          this.applyFilter(this.searchControl.value || '');
+        }
+      });
+  }
+
+  /**
+   * Aplica filtro na lista de treinos
+   */
+  applyFilter(filterValue: string): void {
+    const lowerCaseFilter = filterValue.trim().toLowerCase();
 
   if (!lowerCaseFilter) {
     this.filteredTrainnings = [...this.allTrainnings];
@@ -168,7 +211,7 @@ applyFilter(filterValue: string): void {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.isLoading = true;
-        this.TrainningService.deleteTrainning(Number(id)) // Assumindo que seu TrainningService tem um método deleteTrainning(id: string)
+        this.trainningService.deleteTrainning(Number(id)) // Assumindo que seu TrainningService tem um método deleteTrainning(id: string)
           .pipe(finalize(() => this.isLoading = false))
           .subscribe({
             next: () => {

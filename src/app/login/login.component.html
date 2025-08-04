@@ -18,7 +18,7 @@
       <div *ngIf="error" class="error-message">{{ error }}</div>
     </form>
     <div class="login-footer">
-      <a href="#" class="forgot">Esqueceu a senha?</a>
+      <a [routerLink]="['/forgot-password']" class="forgot">Esqueceu a senha?</a>
     </div>
   </div>
 </div>

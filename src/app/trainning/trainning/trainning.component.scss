@@ -85,13 +85,35 @@ $margin-medium: $spacing-unit * 3; // 24px
 .search-section {
   margin-bottom: $padding-medium; // 24px
 
-  .search-input {
-    width: 100%;
+  .search-controls {
+    @include flex-between-center;
+    gap: $spacing-unit * 2; // 16px
+    margin-bottom: $spacing-unit; // 8px
 
-    // Ajuste para remover padding extra do MatFormField
-    ::ng-deep {
-      .mat-form-field-wrapper {
-        padding-bottom: 0;
+    .search-input {
+      flex: 1;
+      max-width: 400px;
+
+      // Ajuste para remover padding extra do MatFormField
+      ::ng-deep {
+        .mat-form-field-wrapper {
+          padding-bottom: 0;
+        }
+      }
+    }
+
+    .cache-controls {
+      @include flex-center;
+      gap: $spacing-unit; // 8px
+
+      .last-update {
+        font-size: 12px;
+        color: $light-text-color;
+        white-space: nowrap;
+      }
+
+      .spinning {
+        animation: spin 1s linear infinite;
       }
     }
   }
@@ -102,6 +124,16 @@ $margin-medium: $spacing-unit * 3; // 24px
     font-size: 12px;
     color: $light-text-color;
     padding-left: 4px;
+  }
+}
+
+// Animação de rotação para o ícone de refresh
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 

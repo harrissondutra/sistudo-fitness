@@ -1,32 +1,59 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
-import { Trainning } from '../../models/trainning'; // <--- Mantenha 'Trainning' (com 'a') se o seu modelo em models/trainning.ts ainda for assim
-import { Exercise } from '../../models/exercise'; // <--- Adicionado import do modelo Exercise
+import { Trainning } from '../../models/trainning';
+import { Exercise } from '../../models/exercise';
 import { environment } from '../../../environments/environment';
+import { DataCacheService } from '../cache/data-cache.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TrainningService { // <--- Mantenha o nome da classe 'TrainingService' (com 'i') no frontend
+export class TrainningService {
 
-  // BASE URL DO BACKEND: DEVE SER '/trainning' (com 'a' e singular)
-  private baseUrl = `${environment.apiUrl}/trainning`; // <--- AJUSTADO AQUI para 'trainning'
+  private baseUrl = `${environment.apiUrl}/trainning`;
 
-  constructor(private http: HttpClient) { }
+  // Configurações de cache para diferentes tipos de dados
+  private readonly CACHE_CONFIG = {
+    TRAINNINGS_LIST: { maxAge: 3 * 60 * 1000 }, // 3 minutos para listas
+    TRAINNING_DETAIL: { maxAge: 5 * 60 * 1000 }, // 5 minutos para detalhes
+    TRAINNING_BY_CLIENT: { maxAge: 2 * 60 * 1000 }, // 2 minutos para dados por cliente
+    EXERCISES: { maxAge: 10 * 60 * 1000 } // 10 minutos para exercícios (mudam menos)
+  };
 
-  // 1. getTrainningByClientId: Rota do backend é "/trainningByClientId/{clientId}"
-  getTrainningByClientId(clientId: number): Observable<Trainning[]> { // <--- Renomeado 'userId' para 'clientId' no parâmetro
-    return this.http.get<Trainning[]>(`${this.baseUrl}/trainningByClientId/${clientId}`); // <--- AJUSTADO ROTA
+  constructor(
+    private http: HttpClient,
+    private cacheService: DataCacheService
+  ) { }
+
+  // 1. getTrainningByClientId com cache
+  getTrainningByClientId(clientId: number, forceRefresh: boolean = false): Observable<Trainning[]> {
+    const cacheKey = `trainning_by_client_${clientId}`;
+    
+    const fetchFn = () => this.http.get<Trainning[]>(`${this.baseUrl}/trainningByClientId/${clientId}`, {
+      headers: new HttpHeaders({
+        'X-Cache': 'true',
+        'X-Cache-Key': cacheKey
+      })
+    });
+
+    if (forceRefresh) {
+      return this.cacheService.refresh(cacheKey, fetchFn, this.CACHE_CONFIG.TRAINNING_BY_CLIENT);
+    }
+
+    return this.cacheService.get(cacheKey, fetchFn, this.CACHE_CONFIG.TRAINNING_BY_CLIENT);
   }
 
-  // 2. getTrainningById: Rota do backend é "/getById/{id}"
-
-
-  // Adicione este método ao TrainningService
-  // Atualize o método em trainning.service.ts
-  getTrainningById(id: number): Observable<Trainning> {
-    return this.http.get<any>(`${this.baseUrl}/getById/${id}`).pipe(
+  // 2. getTrainningById com cache e processamento de datas
+  getTrainningById(id: number, forceRefresh: boolean = false): Observable<Trainning> {
+    const cacheKey = `trainning_detail_${id}`;
+    
+    const fetchFn = () => this.http.get<any>(`${this.baseUrl}/getById/${id}`, {
+      headers: new HttpHeaders({
+        'X-Cache': 'true',
+        'X-Cache-Key': cacheKey
+      })
+    }).pipe(
       map(response => {
         // Converter startDate de array para Date
         if (Array.isArray(response.startDate)) {
@@ -43,40 +70,118 @@ export class TrainningService { // <--- Mantenha o nome da classe 'TrainingServi
         return response as Trainning;
       })
     );
+
+    if (forceRefresh) {
+      return this.cacheService.refresh(cacheKey, fetchFn, this.CACHE_CONFIG.TRAINNING_DETAIL);
+    }
+
+    return this.cacheService.get(cacheKey, fetchFn, this.CACHE_CONFIG.TRAINNING_DETAIL);
   }
 
-  // 3. getTrainningByName: Rota do backend é "/getByTrainningName/{name}"
-  getTrainningByName(name: string): Observable<Trainning> {
-    return this.http.get<Trainning>(`${this.baseUrl}/getByTrainningName/${name}`);
+  // 3. getTrainningByName com cache
+  getTrainningByName(name: string, forceRefresh: boolean = false): Observable<Trainning> {
+    const cacheKey = `trainning_by_name_${name}`;
+    
+    const fetchFn = () => this.http.get<Trainning>(`${this.baseUrl}/getByTrainningName/${name}`, {
+      headers: new HttpHeaders({
+        'X-Cache': 'true',
+        'X-Cache-Key': cacheKey
+      })
+    });
+
+    if (forceRefresh) {
+      return this.cacheService.refresh(cacheKey, fetchFn, this.CACHE_CONFIG.TRAINNING_DETAIL);
+    }
+
+    return this.cacheService.get(cacheKey, fetchFn, this.CACHE_CONFIG.TRAINNING_DETAIL);
   }
 
-  // 4. createTrainning: Rota do backend é "/create"
+  // 4. createTrainning - Invalida cache após criação
   createTrainning(trainning: Trainning): Observable<Trainning> {
-    return this.http.post<Trainning>(`${this.baseUrl}/create`, trainning);
+    return this.http.post<Trainning>(`${this.baseUrl}/create`, trainning).pipe(
+      map(response => {
+        // Invalida caches relacionados
+        this.invalidateTrainningCaches();
+        return response;
+      })
+    );
   }
 
-  // 5. createTrainningByClientId: Rota do backend é "/createByClientId/{clientId}"
-  createTrainningByClientId(clientId: number, trainning: Trainning): Observable<Trainning> { // <--- Renomeado 'userId' para 'clientId' no parâmetro
-    return this.http.post<Trainning>(`${this.baseUrl}/createByClientId/${clientId}`, trainning);
+  // 5. createTrainningByClientId - Invalida cache após criação
+  createTrainningByClientId(clientId: number, trainning: Trainning): Observable<Trainning> {
+    return this.http.post<Trainning>(`${this.baseUrl}/createByClientId/${clientId}`, trainning).pipe(
+      map(response => {
+        // Invalida caches relacionados
+        this.invalidateTrainningCaches();
+        this.cacheService.invalidatePattern(`trainning_by_client_${clientId}`);
+        return response;
+      })
+    );
   }
 
-  // 6. listAllTrainnings: Rota do backend é "/listAll"
-  listAllTrainnings(): Observable<Trainning[]> { // <--- Mantido o nome do método com 'nn' para consistência com a URL
-    return this.http.get<Trainning[]>(`${this.baseUrl}/listAll`);
+  // 6. listAllTrainnings com cache otimizado
+  listAllTrainnings(forceRefresh: boolean = false): Observable<Trainning[]> {
+    const cacheKey = 'trainnings_all';
+    
+    const fetchFn = () => this.http.get<Trainning[]>(`${this.baseUrl}/listAll`, {
+      headers: new HttpHeaders({
+        'X-Cache': 'true',
+        'X-Cache-Key': cacheKey
+      })
+    });
+
+    if (forceRefresh) {
+      return this.cacheService.refresh(cacheKey, fetchFn, this.CACHE_CONFIG.TRAINNINGS_LIST);
+    }
+
+    return this.cacheService.get(cacheKey, fetchFn, this.CACHE_CONFIG.TRAINNINGS_LIST);
   }
 
-  // 7. listAllActiveTrainnings: Rota do backend é "/listAllActive"
-  listAllActiveTrainnings(): Observable<Trainning[]> { // <--- Renomeado para consistência com o backend
-    return this.http.get<Trainning[]>(`${this.baseUrl}/listAllActive`);
+  // 7. listAllActiveTrainnings com cache otimizado
+  listAllActiveTrainnings(forceRefresh: boolean = false): Observable<Trainning[]> {
+    const cacheKey = 'trainnings_active';
+    
+    const fetchFn = () => this.http.get<Trainning[]>(`${this.baseUrl}/listAllActive`, {
+      headers: new HttpHeaders({
+        'X-Cache': 'true',
+        'X-Cache-Key': cacheKey
+      })
+    });
+
+    if (forceRefresh) {
+      return this.cacheService.refresh(cacheKey, fetchFn, this.CACHE_CONFIG.TRAINNINGS_LIST);
+    }
+
+    return this.cacheService.get(cacheKey, fetchFn, this.CACHE_CONFIG.TRAINNINGS_LIST);
   }
 
-  // 8. listAllTrainningsInactive: Rota do backend é "/listAllTrainningsInactive"
-  listAllTrainningsInactive(): Observable<Trainning[]> { // <--- Renomeado para 'Trainnings' (plural com 'nn') e 'Inactive'
-    return this.http.get<Trainning[]>(`${this.baseUrl}/listAllTrainningsInactive`);
+  // 8. listAllTrainningsInactive com cache
+  listAllTrainningsInactive(forceRefresh: boolean = false): Observable<Trainning[]> {
+    const cacheKey = 'trainnings_inactive';
+    
+    const fetchFn = () => this.http.get<Trainning[]>(`${this.baseUrl}/listAllTrainningsInactive`, {
+      headers: new HttpHeaders({
+        'X-Cache': 'true',
+        'X-Cache-Key': cacheKey
+      })
+    });
+
+    if (forceRefresh) {
+      return this.cacheService.refresh(cacheKey, fetchFn, this.CACHE_CONFIG.TRAINNINGS_LIST);
+    }
+
+    return this.cacheService.get(cacheKey, fetchFn, this.CACHE_CONFIG.TRAINNINGS_LIST);
   }
 
-  listInactiveTrainningsByClientId(clientId: number): Observable<Trainning[]> {
-    return this.http.get<Trainning[]>(`${this.baseUrl}/listInactiveTrainningsByClientId/${clientId}`).pipe(
+  listInactiveTrainningsByClientId(clientId: number, forceRefresh: boolean = false): Observable<Trainning[]> {
+    const cacheKey = `trainning_inactive_by_client_${clientId}`;
+    
+    const fetchFn = () => this.http.get<Trainning[]>(`${this.baseUrl}/listInactiveTrainningsByClientId/${clientId}`, {
+      headers: new HttpHeaders({
+        'X-Cache': 'true',
+        'X-Cache-Key': cacheKey
+      })
+    }).pipe(
       map(trainnings => {
         // Processa as datas de cada treino na lista
         return trainnings.map(trainning => {
@@ -96,29 +201,97 @@ export class TrainningService { // <--- Mantenha o nome da classe 'TrainingServi
         });
       })
     );
+
+    if (forceRefresh) {
+      return this.cacheService.refresh(cacheKey, fetchFn, this.CACHE_CONFIG.TRAINNING_BY_CLIENT);
+    }
+
+    return this.cacheService.get(cacheKey, fetchFn, this.CACHE_CONFIG.TRAINNING_BY_CLIENT);
   }
 
-  // 9. deleteTrainning: Rota do backend é "/delete/{id}"
+  // 9. deleteTrainning - Invalida cache após deleção
   deleteTrainning(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/delete/${id}`);
+    return this.http.delete<void>(`${this.baseUrl}/delete/${id}`).pipe(
+      map(response => {
+        // Invalida caches relacionados
+        this.invalidateTrainningCaches();
+        this.cacheService.invalidate(`trainning_detail_${id}`);
+        return response;
+      })
+    );
   }
 
-  // 10. updateTrainning: O backend FORNECIDO NÃO TEM um endpoint @PutMapping para "/update/{id}"
-  // Se você tiver este método no frontend, mas não no backend, ele causará um 404 ou 405.
-  // Você precisará adicionar um @PutMapping no seu TranningController do Spring Boot para isso.
+  // 10. updateTrainning - Invalida cache após atualização
   updateTrainning(id: number, trainning: Trainning): Observable<Trainning> {
-    // ESTA ROTA PODE PRECISAR DE AJUSTE NO BACKEND
-    return this.http.put<Trainning>(`${this.baseUrl}/update/${id}`, trainning);
+    return this.http.put<Trainning>(`${this.baseUrl}/update/${id}`, trainning).pipe(
+      map(response => {
+        // Invalida caches relacionados
+        this.invalidateTrainningCaches();
+        this.cacheService.invalidate(`trainning_detail_${id}`);
+        if (trainning.client?.id) {
+          this.cacheService.invalidatePattern(`trainning_by_client_${trainning.client.id}`);
+        }
+        return response;
+      })
+    );
   }
 
   getTrainningExercises(trainningId: number): Observable<Exercise[]> {
-    return this.http.get<Exercise[]>(`${this.baseUrl}/trainnings/${trainningId}/exercises`);
+    const cacheKey = `trainning_exercises_${trainningId}`;
+    
+    const fetchFn = () => this.http.get<Exercise[]>(`${this.baseUrl}/trainnings/${trainningId}/exercises`, {
+      headers: new HttpHeaders({
+        'X-Cache': 'true',
+        'X-Cache-Key': cacheKey
+      })
+    });
+
+    return this.cacheService.get(cacheKey, fetchFn, this.CACHE_CONFIG.EXERCISES);
   }
+
   updateExerciseDetails(trainningId: number, exerciseId: number, details: any): Observable<any> {
     return this.http.patch(
       `${this.baseUrl}/${trainningId}/exercises/${exerciseId}`,
       details
+    ).pipe(
+      map(response => {
+        // Invalida cache dos exercícios deste treino
+        this.cacheService.invalidate(`trainning_exercises_${trainningId}`);
+        this.cacheService.invalidate(`trainning_detail_${trainningId}`);
+        return response;
+      })
     );
+  }
+
+  // ===== MÉTODOS DE CACHE MANAGEMENT =====
+
+  /**
+   * Invalida todos os caches relacionados a treinos
+   */
+  private invalidateTrainningCaches(): void {
+    this.cacheService.invalidatePattern('trainnings_');
+    this.cacheService.invalidatePattern('trainning_');
+  }
+
+  /**
+   * Força refresh de todos os dados de treinos
+   */
+  refreshAllTrainningsCache(): void {
+    this.invalidateTrainningCaches();
+  }
+
+  /**
+   * Invalida cache específico de um cliente
+   */
+  invalidateClientTrainnings(clientId: number): void {
+    this.cacheService.invalidatePattern(`trainning_by_client_${clientId}`);
+  }
+
+  /**
+   * Obtém estatísticas do cache
+   */
+  getCacheStats(): any {
+    return this.cacheService.getStats();
   }
 
 }

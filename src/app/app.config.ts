@@ -13,6 +13,7 @@ import { routes } from './app.routes';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { DateFormatInterceptor } from './core/interceptors/date-format.interceptor/date-format.interceptor';
 import { jwtInterceptor } from './core/interceptors/jwt.interceptor';
+import { cacheInterceptor } from './core/interceptors/cache-functional.interceptor';
 
 // Formato de datas para exibição no formulário
 export const DATE_FORMATS = {
@@ -30,16 +31,19 @@ export const DATE_FORMATS = {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    // Múltiplos interceptores - error, date-format e jwt
-    provideHttpClient(withInterceptors([errorInterceptor, DateFormatInterceptor, jwtInterceptor])),
+    // Múltiplos interceptores incluindo o cache
+    provideHttpClient(withInterceptors([
+      errorInterceptor, 
+      DateFormatInterceptor, 
+      jwtInterceptor,
+      cacheInterceptor
+    ])),
     provideAnimations(),
     provideClientHydration(),
 
     // Módulos do Material
     importProvidersFrom(
-      MatSnackBarModule,
-      // Substitua MatNativeDateModule pelo adapter do moment se necessário
-      // MatNativeDateModule
+      MatSnackBarModule
     ),
 
     // DatePipe disponível globalmente

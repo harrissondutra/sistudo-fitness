@@ -28,6 +28,8 @@ import { NutritionistCreateComponent } from './nutritionist/nutritionist-create/
 import { PersonalListComponent } from './personal/personal-list/personal-list.component';
 import { PersonalViewComponent } from './personal/personal-view/personal-view.component';
 import { PersonalUpdateComponent } from './personal/personal-update/personal-update.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { PersonalCreateComponent } from './personal/personal-create/personal-create.component';
 import { LoginComponent } from './login/login.component';
 import { AuthGuard } from './core/auth.guard';
@@ -41,6 +43,8 @@ import { AdminRegisterComponent } from './admin/admin-register/admin-register.co
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
   {
     path: '',
     component: HomeComponent,
@@ -57,7 +61,8 @@ export const routes: Routes = [
       { path: 'clients-list', component: ClientListComponent },
       { path: 'clients-edit/:id', component: ClientEditComponent },
       { path: 'edit-measures/:id', component: EditMeasuresComponent },
-      { path: 'trainning-create/:id', component: TrainningCreateComponent },
+      { path: 'trainning-create', component: TrainningCreateComponent },
+      { path: 'trainning-create/:clientId', component: TrainningCreateComponent },
       { path: 'trainning-view/:id', component: TrainningViewComponent },
       { path: 'trainning-edit/:id', component: TrainningEditComponent },
       { path: 'exercises', component: ListExerciseComponent },

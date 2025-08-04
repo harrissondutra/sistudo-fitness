@@ -31,7 +31,7 @@ export class MenuService {
       visible: true,
       links: [
         { id: 'list-clients', label: 'Listar Clientes', route: '/clients-list', visible: true },
-        { id: 'client-details', label: 'Meus dados', route: '/client/:id', visible: true }
+        { id: 'client-details', label: 'Meus dados', route: '/client/:id', visible: true, isDynamic: true }
       ]
     },
     {
@@ -75,7 +75,7 @@ export class MenuService {
       links: [
         { id: 'list-trainings', label: 'Exibir Treinos', route: '/trainnings', visible: true },
         { id: 'inactive-trainings', label: 'Inativos', route: '/inactive-trainning', visible: true },
-        { id: 'create-training', label: 'Criar Novo Treino', route: '/trainning-create/:id', visible: true },
+        { id: 'create-training', label: 'Criar Novo Treino', route: '/trainning-create', visible: true },
         { id: 'create-training-category', label: 'Criar Categoria de Treino', route: '/create-category-trainning', visible: true }
       ]
     },
@@ -138,11 +138,69 @@ export class MenuService {
   menuItems$ = this.menuItemsSource.asObservable();
 
   constructor(private authService: AuthService) {
+    console.log('MenuService construtor iniciado');
+    
+    // Inicializar currentUserId imediatamente se possível
+    this.initializeUserId();
+    
     // Observar o ID do usuário atual para uso em rotas dinâmicas
     this.authService.getCurrentUserId().subscribe(id => {
+      console.log('MenuService: ID do usuário atualizado:', id);
       this.currentUserId = id;
-      // Quando o ID do usuário muda, notifica os ouvintes que os menus foram atualizados
+      // Quando o ID do usuário muda, recarrega os menus com as rotas atualizadas
+      this.reloadMenusWithUserId();
+    });
+  }
+
+  // Método para inicializar o ID do usuário imediatamente
+  private initializeUserId(): void {
+    // Tenta obter o ID do usuário de forma síncrona primeiro
+    const userData = this.authService.getUserData();
+    if (userData?.id) {
+      console.log('MenuService: ID obtido sincronamente:', userData.id);
+      this.currentUserId = userData.id;
+    } else {
+      console.log('MenuService: ID não disponível sincronamente');
+    }
+  }
+
+  // Método para recarregar os menus quando o ID do usuário muda
+  private reloadMenusWithUserId(): void {
+    if (this.currentUserId) {
+      console.log('MenuService: Recarregando menus com ID do usuário:', this.currentUserId);
+      const updatedMenus = this.getMenuItems();
+      this.menuItemsSource.next(updatedMenus);
       this.notifyMenuUpdated();
+    } else {
+      console.log('MenuService: ID do usuário não disponível para recarregar menus');
+    }
+  }
+
+  // Método público para forçar atualização dos menus (útil após login)
+  public refreshMenus(): void {
+    console.log('MenuService: Forçando atualização dos menus');
+    
+    // Tenta primeiro obter o ID imediatamente
+    this.authService.getCurrentUserId().subscribe(id => {
+      console.log('ID obtido para refresh:', id);
+      if (id) {
+        this.currentUserId = id;
+        this.reloadMenusWithUserId();
+      } else {
+        // Se não conseguir o ID, tenta novamente após um pequeno delay
+        console.log('ID não disponível imediatamente, tentando novamente em 500ms...');
+        setTimeout(() => {
+          this.authService.getCurrentUserId().subscribe(retryId => {
+            console.log('ID obtido na segunda tentativa:', retryId);
+            if (retryId) {
+              this.currentUserId = retryId;
+              this.reloadMenusWithUserId();
+            } else {
+              console.warn('Não foi possível obter o ID do usuário após duas tentativas');
+            }
+          });
+        }, 500);
+      }
     });
   }
 
@@ -341,9 +399,28 @@ export class MenuService {
 
   // Adicione este método ao MenuService
   private processMenuItems(menuItems: MenuItem[]): MenuItem[] {
+    console.log('MenuService processMenuItems iniciado');
+    console.log('currentUserId:', this.currentUserId);
+    console.log('menuItems originais:', menuItems);
+    
+    // Tenta obter o ID do usuário se não estiver disponível
     if (!this.currentUserId) {
-      console.warn('Usuário não logado ou ID não disponível para rotas dinâmicas', this.currentUserId);
-      return menuItems;
+      console.warn('currentUserId é null, tentando obter do AuthService...');
+      const userData = this.authService.getUserData();
+      if (userData?.id && (typeof userData.id === 'number' || !isNaN(Number(userData.id)))) {
+        this.currentUserId = Number(userData.id);
+        console.log('ID do usuário obtido do AuthService:', this.currentUserId);
+      } else {
+        // Fallback para administradores - usar ID 1 como padrão
+        const userRole = this.authService.getUserRole();
+        if (userRole === UserRole.ADMIN) {
+          console.warn('Usuário é administrador mas sem ID numérico - usando ID padrão 1');
+          this.currentUserId = 1;
+        } else {
+          console.warn('Usuário não logado ou ID não disponível - processando sem substituição dinâmica');
+          return menuItems; // Retorna sem processar se não há ID do usuário
+        }
+      }
     }
 
     console.log('Processando menus com ID de usuário:', this.currentUserId);
@@ -358,13 +435,21 @@ export class MenuService {
       processedMenu.links = processedMenu.links.map((link: LinkItem) => {
         const processedLink = { ...link };
 
+        console.log(`🔍 Verificando link: ${link.label}`);
+        console.log(`🔍 - isDynamic: ${link.isDynamic} (tipo: ${typeof link.isDynamic})`);
+        console.log(`🔍 - route: ${link.route}`);
+        console.log(`🔍 - currentUserId: ${this.currentUserId} (tipo: ${typeof this.currentUserId})`);
+
         // Verifique EXPLICITAMENTE se isDynamic é true e se a rota contém :id
         if (processedLink.isDynamic === true && processedLink.route && processedLink.route.includes(':id')) {
           const originalRoute = processedLink.route;
           // Usar uma verificação para garantir que currentUserId não é null
           const userId = this.currentUserId !== null ? this.currentUserId.toString() : '0';
           processedLink.route = processedLink.route.replace(/:id/g, userId);
-          console.log(`Rota dinâmica processada: ${originalRoute} -> ${processedLink.route}`);
+          console.log(`🔍 Rota dinâmica processada: ${originalRoute} -> ${processedLink.route}`);
+          console.log(`🔍 - userId usado: ${userId}`);
+        } else {
+          console.log(`🔍 Link ${link.label} não processado - isDynamic: ${link.isDynamic}, contém :id: ${link.route?.includes(':id')}`);
         }
 
         // Processar sublinks
@@ -397,6 +482,23 @@ export class MenuService {
   private notifyMenuUpdated(): void {
     // Dispara um evento personalizado que pode ser capturado pelo componente de navegação
     window.dispatchEvent(new CustomEvent('menu-updated'));
+  }
+
+
+  // Método público para debug
+  public debugCurrentState(): void {
+    console.log('=== MenuService Debug State ===');
+    console.log('ID do usuário atual:', this.currentUserId);
+    console.log('Menus atuais:', this.getMenuItems());
+    
+    // Teste o AuthService diretamente
+    this.authService.getCurrentUserId().subscribe(id => {
+      console.log('ID obtido diretamente do AuthService:', id);
+    });
+    
+    // Mostra dados do usuário
+    console.log('Dados do usuário (AuthService):', this.authService.getUserData());
+    console.log('Info do token:', this.authService.getUserInfo());
   }
 
   // Adicione este método para verificar os menus e seus status dinâmicos

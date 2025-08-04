@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { MenuService } from '../services/menu-visibility/menu.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, CommonModule], // <-- Inclua CommonModule aqui
+  imports: [FormsModule, CommonModule, RouterModule], // <-- Inclua RouterModule aqui
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -17,18 +18,36 @@ export class LoginComponent {
   loading = false;
   error = '';
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService, 
+    private router: Router,
+    private menuService: MenuService
+  ) {}
 
   onSubmit() {
     this.error = '';
     this.loading = true;
     this.authService.login(this.email, this.password).subscribe({
       next: (res) => {
+        console.log('Resposta do login recebida:', res);
+        
+        // Salva o token e dados do usuário
         this.authService.setToken(res.token, {
           email: res.email,
           username: res.username,
           role: res.role
         });
+        
+        // Debug para verificar dados salvos
+        this.authService.debugUserData();
+        this.authService.debugFullToken();
+        
+        // Aguarda um pouco para garantir que o token foi processado
+        setTimeout(() => {
+          console.log('Login bem-sucedido, atualizando menus...');
+          this.menuService.refreshMenus();
+        }, 100);
+        
         this.loading = false;
         this.router.navigate(['/']);
       },
