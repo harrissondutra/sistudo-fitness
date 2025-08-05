@@ -4,11 +4,19 @@ import { AuthService } from '../services/auth.service';
 import { MenuService } from '../services/menu-visibility/menu.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterModule], // <-- Inclua RouterModule aqui
+  imports: [
+    FormsModule, 
+    CommonModule, 
+    RouterModule,
+    MatIconModule,
+    MatProgressSpinnerModule
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })

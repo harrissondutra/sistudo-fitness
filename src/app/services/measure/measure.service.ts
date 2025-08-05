@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { Measure } from '../../models/measure';
 import { environment } from '../../../environments/environment';
 
@@ -19,10 +19,16 @@ export class MeasureService {
    * @returns Um Observable com o objeto Measure ou null.
    */
   getMeasureByClientId(userId: number): Observable<Measure | null> {
+    console.log(`🔍 Buscando medidas para cliente ID: ${userId}`);
+    console.log(`🔍 URL completa: ${this.baseUrl}/getMeasureByClientId/${userId}`);
+    
     return this.http.get<any>(`${this.baseUrl}/getMeasureByClientId/${userId}`)
       .pipe(
         map(response => {
+          console.log('✅ Resposta do backend (medidas):', response);
+          
           if (!response || !response.measure) {
+            console.log('ℹ️ Nenhuma medida encontrada para o cliente');
             return null;
           }
 
@@ -49,7 +55,42 @@ export class MeasureService {
             data: new Date() // Se a data não estiver disponível, use a data atual
           };
 
+          console.log('✅ Medidas processadas:', measureData);
           return measureData;
+        }),
+        catchError(error => {
+          console.error('❌ Erro ao buscar medidas do cliente:', error);
+          console.error('❌ Status:', error.status);
+          console.error('❌ StatusText:', error.statusText);
+          console.error('❌ Error body:', error.error);
+          
+          // Se for erro 404, significa que o cliente não tem medidas
+          if (error.status === 404) {
+            console.log('ℹ️ Cliente não possui medidas cadastradas (404)');
+            return of(null); // Retorna null em caso de 404
+          }
+          
+          // Se for erro 400, pode ser problema de validação
+          if (error.status === 400) {
+            console.error('❌ Erro 400 - Bad Request. Possíveis causas:');
+            
+            // Verifica se é o erro específico "source cannot be null"
+            if (error.error?.mensagem === 'source cannot be null') {
+              console.error('❌ ERRO ESPECÍFICO: Backend com problema "source cannot be null"');
+              console.error('❌ Este é um problema do BACKEND que precisa ser corrigido');
+              console.error('❌ Sugestão: Verificar o controller/service de medidas no Spring Boot');
+              
+              // Retorna null para não quebrar a interface
+              return of(null);
+            }
+            
+            console.error('   - ID do cliente inválido');
+            console.error('   - Endpoint não encontrado no backend');
+            console.error('   - Parâmetro em formato incorreto');
+          }
+          
+          // Para outros erros, propaga o erro
+          throw error;
         })
       );
   }

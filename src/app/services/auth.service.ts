@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
@@ -49,16 +49,23 @@ export class AuthService {
 
   /**
    * Redefine a senha usando o token de recuperação.
+   * Backend espera @RequestParam, então enviamos como query parameters
    */
   resetPassword(token: string, newPassword: string): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/reset-password`, { token, newPassword });
+    const params = new HttpParams()
+      .set('token', token)
+      .set('newPassword', newPassword);
+    
+    return this.http.post<any>(`${this.baseUrl}/reset-password`, null, { params });
   }
 
   /**
    * Valida se o token de redefinição de senha é válido.
+   * Backend usa @GetMapping com @RequestParam
    */
   validateResetToken(token: string): Observable<any> {
-    return this.http.post<any>(`${this.baseUrl}/validate-reset-token`, { token });
+    const params = new HttpParams().set('token', token);
+    return this.http.get<any>(`${this.baseUrl}/validate-reset-token`, { params });
   }
 
   /**
