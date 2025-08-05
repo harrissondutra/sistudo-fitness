@@ -1,0 +1,368 @@
+<div class="dashboard-container">
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Carregando dashboard do cliente...</p>
+    </div>
+  } @else if (error || !dashboardData.client) {
+    <div class="error-container">
+      <mat-icon>error_outline</mat-icon>
+      <h2>Erro ao carregar dashboard</h2>
+      <p>Cliente não encontrado ou ocorreu um erro ao carregar os dados.</p>
+      <button mat-raised-button color="primary" (click)="onBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Voltar à Lista
+      </button>
+    </div>
+  } @else {
+    <div class="dashboard gestalt-proximity">
+
+      <!-- CABEÇALHO DO CLIENTE -->
+      <div class="client-header">
+        <div class="client-info">
+          <div class="client-avatar">
+            @if (dashboardData.client.evolutionPhotos?.length) {
+              <img [src]="dashboardData.client.evolutionPhotos?.[0]" [alt]="dashboardData.client.name + ' - Foto'">
+            } @else {
+              <mat-icon>person</mat-icon>
+            }
+          </div>
+          <div class="client-details">
+            <h1 class="client-name">{{ dashboardData.client.name }}</h1>
+            @if (dashboardData.client.dateOfBirth && calculateAge(dashboardData.client.dateOfBirth)) {
+              <p class="client-age">{{ calculateAge(dashboardData.client.dateOfBirth) }} anos</p>
+            }
+            <p class="client-email">{{ dashboardData.client.email }}</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button mat-raised-button color="primary" (click)="navigateToClientView()">
+            <mat-icon>visibility</mat-icon>
+            Ver Perfil Completo
+          </button>
+          <button mat-icon-button (click)="onBack()" matTooltip="Voltar">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <!-- SEÇÃO PRINCIPAL: Dados Pessoais -->
+      <div class="dashboard-section metrics hero-section">
+        <div class="section-header">
+          <h2 class="hero-title">
+            <mat-icon>person</mat-icon>
+            Dados Pessoais
+          </h2>
+          <p class="hero-subtitle">Informações básicas do cliente</p>
+        </div>
+
+        <div class="hero-cards-grid">
+          <!-- Altura -->
+          <div class="fitness-card-primary card-height">
+            <div class="card-content">
+              <div class="metric-header">
+                <div class="card-icon">
+                  <mat-icon>straighten</mat-icon>
+                </div>
+                <div class="metric-info">
+                  <p class="metric-label">Altura</p>
+                  <p class="metric-value">{{ dashboardData.client.height || '-' }}</p>
+                </div>
+              </div>
+              <div class="metric-footer">
+                <div class="metric-trend">
+                  <mat-icon>straighten</mat-icon>
+                  <span>Centímetros</span>
+                </div>
+                <span class="metric-period">cm</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Peso -->
+          <div class="fitness-card-primary card-weight">
+            <div class="card-content">
+              <div class="metric-header">
+                <div class="card-icon">
+                  <mat-icon>scale</mat-icon>
+                </div>
+                <div class="metric-info">
+                  <p class="metric-label">Peso</p>
+                  <p class="metric-value">{{ dashboardData.client.weight || '-' }}</p>
+                </div>
+              </div>
+              <div class="metric-footer">
+                <div class="metric-trend">
+                  <mat-icon>scale</mat-icon>
+                  <span>Quilogramas</span>
+                </div>
+                <span class="metric-period">kg</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- IMC -->
+          <div class="fitness-card-primary card-bmi">
+            <div class="card-content">
+              <div class="metric-header">
+                <div class="card-icon">
+                  <mat-icon>analytics</mat-icon>
+                </div>
+                <div class="metric-info">
+                  <p class="metric-label">IMC</p>
+                  <p class="metric-value">{{ getBMI() || '-' }}</p>
+                </div>
+              </div>
+              <div class="metric-footer">
+                <div class="metric-trend">
+                  <mat-icon>monitor_weight</mat-icon>
+                  <span>Índice de Massa</span>
+                </div>
+                <span class="metric-period">kg/m²</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEÇÃO SECUNDÁRIA: Treinos -->
+      <div class="dashboard-section training-metrics secondary-section">
+        <div class="section-header-simple">
+          <h2 class="section-title-simple">Treinos do Cliente</h2>
+        </div>
+
+        <div class="action-cards-grid">
+          <!-- Total de Treinos -->
+          <div class="fitness-card-secondary">
+            <div class="card-content">
+              <div class="card-icon">
+                <mat-icon>assignment</mat-icon>
+              </div>
+              <p class="action-title">Total de Treinos</p>
+              <p class="metric-number">{{ dashboardData.totalTrainings }}</p>
+              <p class="action-description">Programas do cliente</p>
+            </div>
+          </div>
+
+          <!-- Treinos Ativos -->
+          <div class="fitness-card-secondary" (click)="navigateToActiveTrainings()">
+            <div class="card-content">
+              <div class="card-icon">
+                <mat-icon>fitness_center</mat-icon>
+              </div>
+              <p class="action-title">Treinos Ativos</p>
+              <p class="metric-number">{{ dashboardData.activeTrainings }}</p>
+              <p class="action-description">Ver treinos ativos</p>
+            </div>
+          </div>
+
+          <!-- Treinos Completos -->
+          <div class="fitness-card-secondary" (click)="navigateToInactiveTrainings()">
+            <div class="card-content">
+              <div class="card-icon">
+                <mat-icon>check_circle</mat-icon>
+              </div>
+              <p class="action-title">Completos</p>
+              <p class="metric-number">{{ dashboardData.completedTrainings }}</p>
+              <p class="action-description">Finalizados</p>
+            </div>
+          </div>
+
+          <!-- Criar Novo Treino -->
+          <div class="fitness-card-secondary" (click)="navigateToTrainingCreate()">
+            <div class="card-content">
+              <div class="card-icon">
+                <mat-icon>add_box</mat-icon>
+              </div>
+              <p class="action-title">Criar Treino</p>
+              <p class="action-description">Novo treino para este cliente</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEÇÃO SECUNDÁRIA: Medidas Corporais -->
+      <div class="dashboard-section measures-metrics secondary-section">
+        <div class="section-header-simple">
+          <h2 class="section-title-simple">Medidas Corporais</h2>
+        </div>
+
+        <div class="action-cards-grid">
+          <!-- Medidas Atuais -->
+          <div class="fitness-card-secondary" (click)="navigateToClientMeasures()">
+            <div class="card-content">
+              <div class="card-icon">
+                <mat-icon>straighten</mat-icon>
+              </div>
+              <p class="action-title">Medidas Atuais</p>
+              <p class="action-description">{{ dashboardData.clientMeasures ? 'Ver medidas detalhadas' : 'Adicionar medidas' }}</p>
+            </div>
+          </div>
+
+          <!-- Ver Histórico de Medidas -->
+          <div class="fitness-card-secondary" (click)="navigateToClientMeasureHistory()">
+            <div class="card-content">
+              <div class="card-icon">
+                <mat-icon>history</mat-icon>
+              </div>
+              <p class="action-title">Histórico de Medidas</p>
+              <p class="action-description">{{ dashboardData.clientMeasures ? 'Ver histórico completo' : 'Sem medidas cadastradas' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEÇÃO TERCIÁRIA: Profissionais Associados -->
+      <div class="dashboard-section professionals-metrics tertiary-section">
+        <div class="section-header-simple">
+          <h2 class="section-title-simple">Profissionais Associados</h2>
+        </div>
+
+        <div class="action-cards-grid">
+          <!-- Médicos -->
+          @if (dashboardData.associatedDoctors.length > 0) {
+            @for (doctor of dashboardData.associatedDoctors; track doctor.id) {
+              <div class="fitness-card-secondary" (click)="doctor.id && navigateToDoctorView(doctor.id)">
+                <div class="card-content">
+                  <div class="card-icon">
+                    <mat-icon>local_hospital</mat-icon>
+                  </div>
+                  <p class="action-title">Dr. {{ doctor.name }}</p>
+                  <p class="action-description">{{ formatCRM(doctor.crm) }}</p>
+                  <p class="action-description">{{ doctor.specialty || 'Médico' }}</p>
+                </div>
+              </div>
+            }
+          } @else {
+            <div class="fitness-card-secondary" (click)="navigateToAssociatedDoctors()">
+              <div class="card-content">
+                <div class="card-icon">
+                  <mat-icon>local_hospital</mat-icon>
+                </div>
+                <p class="action-title">Médicos</p>
+                <p class="action-description">Nenhum médico associado</p>
+              </div>
+            </div>
+          }
+
+          <!-- Personal Trainers -->
+          @if (dashboardData.associatedPersonals.length > 0) {
+            @for (personal of dashboardData.associatedPersonals; track personal.id) {
+              <div class="fitness-card-secondary" (click)="personal.id && navigateToPersonalView(personal.id)">
+                <div class="card-content">
+                  <div class="card-icon">
+                    <mat-icon>fitness_center</mat-icon>
+                  </div>
+                  <p class="action-title">{{ personal.name }}</p>
+                  <p class="action-description">{{ formatCREF(personal.registry) }}</p>
+                  <p class="action-description">Personal Trainer</p>
+                </div>
+              </div>
+            }
+          } @else {
+            <div class="fitness-card-secondary" (click)="navigateToAssociatedPersonals()">
+              <div class="card-content">
+                <div class="card-icon">
+                  <mat-icon>fitness_center</mat-icon>
+                </div>
+                <p class="action-title">Personal Trainers</p>
+                <p class="action-description">Nenhum personal associado</p>
+              </div>
+            </div>
+          }
+
+          <!-- Nutricionistas -->
+          @if (dashboardData.associatedNutritionists.length > 0) {
+            @for (nutritionist of dashboardData.associatedNutritionists; track nutritionist.id) {
+              <div class="fitness-card-secondary" (click)="nutritionist.id && navigateToNutritionistView(nutritionist.id)">
+                <div class="card-content">
+                  <div class="card-icon">
+                    <mat-icon>restaurant</mat-icon>
+                  </div>
+                  <p class="action-title">{{ nutritionist.name }}</p>
+                  <p class="action-description">{{ formatCRN(nutritionist.registry) }}</p>
+                  <p class="action-description">Nutricionista</p>
+                </div>
+              </div>
+            }
+          } @else {
+            <div class="fitness-card-secondary" (click)="navigateToAssociatedNutritionists()">
+              <div class="card-content">
+                <div class="card-icon">
+                  <mat-icon>restaurant</mat-icon>
+                </div>
+                <p class="action-title">Nutricionistas</p>
+                <p class="action-description">Nenhum nutricionista associado</p>
+              </div>
+            </div>
+          }
+
+          <!-- Ver Todos os Profissionais -->
+          <div class="fitness-card-secondary" (click)="navigateToAllProfessionals()">
+            <div class="card-content">
+              <div class="card-icon">
+                <mat-icon>people</mat-icon>
+              </div>
+              <p class="action-title">Ver Todos</p>
+              <p class="action-description">Todos os profissionais</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEÇÃO QUATERNÁRIA: Ações Rápidas -->
+      <div class="dashboard-section actions quaternary-section">
+        <div class="section-header-simple">
+          <h2 class="section-title-simple">Ações Rápidas</h2>
+        </div>
+
+        <div class="quick-actions-grid">
+          <!-- Ver Perfil Completo -->
+          <div class="fitness-card-tertiary" (click)="navigateToClientView()">
+            <div class="card-content">
+              <div class="card-icon">
+                <mat-icon>visibility</mat-icon>
+              </div>
+              <p class="action-title">Ver Perfil</p>
+              <p class="action-description">Dados completos do cliente</p>
+            </div>
+          </div>
+
+          <!-- Histórico de Treinos -->
+          <div class="fitness-card-tertiary" (click)="navigateToTrainingHistory()">
+            <div class="card-content">
+              <div class="card-icon">
+                <mat-icon>history</mat-icon>
+              </div>
+              <p class="action-title">Histórico</p>
+              <p class="action-description">Treinos deste cliente</p>
+            </div>
+          </div>
+
+          <!-- Editar Cliente -->
+          <div class="fitness-card-tertiary" (click)="navigateToEditClient()">
+            <div class="card-content">
+              <div class="card-icon">
+                <mat-icon>edit</mat-icon>
+              </div>
+              <p class="action-title">Editar Cliente</p>
+              <p class="action-description">Atualizar dados</p>
+            </div>
+          </div>
+
+          <!-- Voltar à Lista -->
+          <div class="fitness-card-tertiary" (click)="onBack()">
+            <div class="card-content">
+              <div class="card-icon">
+                <mat-icon>arrow_back</mat-icon>
+              </div>
+              <p class="action-title">Voltar</p>
+              <p class="action-description">Lista de clientes</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  }
+</div>

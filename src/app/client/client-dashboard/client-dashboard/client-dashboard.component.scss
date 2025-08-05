@@ -1,0 +1,984 @@
+/* === SISTUDO FITNESS - CLIENT DASHBOARD === */
+@import '../../../../styles/variables';
+
+/* === CONTAINER PRINCIPAL === */
+.dashboard-container {
+  min-height: 100vh;
+  background: $background-color;
+  padding: $spacing-lg;
+
+  @media (max-width: 768px) {
+    padding: $spacing-md;
+  }
+}
+
+/* === LOADING STATE === */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: $spacing-lg;
+
+  p {
+    color: $text-secondary;
+    font-size: 16px;
+    text-align: center;
+    margin: 0;
+  }
+
+  mat-spinner ::ng-deep .mat-spinner circle {
+    stroke: $primary-color;
+  }
+}
+
+/* === ERROR STATE === */
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: $spacing-lg;
+  text-align: center;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: $error-color;
+  }
+
+  h2 {
+    color: $text-color;
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  p {
+    color: $text-secondary;
+    font-size: 16px;
+    margin: 0;
+    max-width: 400px;
+  }
+}
+
+/* === CABEÇALHO DO CLIENTE === */
+.client-header {
+  background: white;
+  border-radius: 18px;
+  padding: $spacing-xl;
+  margin-bottom: $spacing-xl;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .client-info {
+    display: flex;
+    align-items: center;
+    gap: $spacing-lg;
+
+    .client-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: rgba($primary-color, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid rgba($primary-color, 0.2);
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      mat-icon {
+        font-size: 40px;
+        width: 40px;
+        height: 40px;
+        color: $primary-color;
+      }
+    }
+
+    .client-details {
+      .client-name {
+        font-size: 28px;
+        font-weight: 700;
+        color: $text-color;
+        margin: 0 0 $spacing-xs 0;
+      }
+
+      .client-age {
+        font-size: 16px;
+        color: $text-secondary;
+        margin: 0 0 $spacing-xs 0;
+        font-weight: 500;
+      }
+
+      .client-email {
+        font-size: 14px;
+        color: $text-muted;
+        margin: 0;
+      }
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: $spacing-lg;
+    text-align: center;
+
+    .client-info {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .header-actions {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+/* === DASHBOARD PRINCIPAL === */
+.dashboard {
+  max-width: 1400px;
+  margin: 0 auto;
+
+  /* === SEÇÃO HERO (MÉTRICAS PRINCIPAIS) === */
+  .hero-section {
+    margin-bottom: $spacing-xl;
+
+    .section-header {
+      text-align: center;
+      margin-bottom: $spacing-xl;
+
+      .hero-title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: $spacing-md;
+        font-size: 28px;
+        font-weight: 700;
+        color: $text-color;
+        margin: 0 0 $spacing-sm 0;
+
+        mat-icon {
+          font-size: 32px;
+          width: 32px;
+          height: 32px;
+          color: $primary-color;
+        }
+      }
+
+      .hero-subtitle {
+        font-size: 16px;
+        color: $text-secondary;
+        margin: 0;
+        font-weight: 400;
+      }
+    }
+
+    .hero-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: $spacing-lg;
+
+      @media (min-width: 1200px) {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+        gap: $spacing-md;
+      }
+    }
+  }
+
+  /* === SEÇÕES SECUNDÁRIAS === */
+  .secondary-section,
+  .tertiary-section,
+  .quaternary-section {
+    margin-top: $spacing-xl * 1.5;
+
+    .section-header-simple {
+      margin-bottom: $spacing-lg;
+
+      .section-title-simple {
+        font-size: 24px;
+        font-weight: 600;
+        color: $text-color;
+        margin: 0;
+        position: relative;
+        padding-bottom: $spacing-sm;
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 60px;
+          height: 3px;
+          background: linear-gradient(90deg, $primary-color 0%, $primary-light 100%);
+          border-radius: 2px;
+        }
+      }
+    }
+
+    .action-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: $spacing-lg;
+
+      @media (max-width: 768px) {
+        grid-template-columns: repeat(2, 1fr);
+        gap: $spacing-md;
+      }
+
+      @media (max-width: 480px) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .quick-actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: $spacing-md;
+
+      @media (max-width: 768px) {
+        grid-template-columns: repeat(2, 1fr);
+        gap: $spacing-sm;
+      }
+
+      @media (max-width: 480px) {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}
+
+/* === CARDS FITNESS - DESIGN PREMIUM === */
+
+/* CARDS PRIMÁRIOS (HERO/PRINCIPAIS) */
+.fitness-card-primary {
+  min-height: 200px;
+  padding: 0;
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 18px;
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.08),
+    0 4px 16px rgba(0, 0, 0, 0.06),
+    0 1px 4px rgba(0, 0, 0, 0.04);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+
+  /* Barra superior colorida */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: var(--card-color);
+    transition: all 0.4s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    padding: $spacing-lg;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .metric-header {
+      display: flex;
+      align-items: flex-start;
+      gap: $spacing-lg;
+
+      .card-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--card-bg-color, rgba(0, 168, 107, 0.1));
+        flex-shrink: 0;
+        transition: all 0.3s ease;
+
+        mat-icon {
+          font-size: 28px;
+          width: 28px;
+          height: 28px;
+          color: var(--card-color, $primary-color);
+        }
+      }
+
+      .metric-info {
+        flex-grow: 1;
+
+        .metric-label {
+          font-size: 14px;
+          font-weight: 600;
+          color: $text-secondary;
+          margin: 0 0 $spacing-xs 0;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .metric-value {
+          font-size: 36px;
+          font-weight: 700;
+          color: $text-color;
+          margin: 0;
+          line-height: 1;
+        }
+      }
+    }
+
+    .metric-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: $spacing-md;
+
+      .metric-trend {
+        display: flex;
+        align-items: center;
+        gap: $spacing-xs;
+        font-size: 12px;
+        color: var(--card-color, $primary-color);
+        font-weight: 500;
+
+        mat-icon {
+          font-size: 16px;
+          width: 16px;
+          height: 16px;
+        }
+      }
+
+      .metric-period {
+        font-size: 12px;
+        color: $text-muted;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+
+  /* Hover com animação elevada */
+  &:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow:
+      0 20px 40px rgba(0, 0, 0, 0.12),
+      0 8px 24px rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.12);
+
+    &::before {
+      height: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-icon {
+      transform: scale(1.1);
+    }
+
+    .metric-value {
+      transform: scale(1.05);
+    }
+  }
+
+  /* Cores específicas para cada card */
+  &.card-clients {
+    --card-color: #00A86B;
+    --card-bg-color: rgba(0, 168, 107, 0.1);
+  }
+
+  &.card-active {
+    --card-color: #4CAF50;
+    --card-bg-color: rgba(76, 175, 80, 0.1);
+  }
+
+  &.card-new {
+    --card-color: #2196F3;
+    --card-bg-color: rgba(33, 150, 243, 0.1);
+  }
+
+  &.card-height {
+    --card-color: #9C27B0;
+    --card-bg-color: rgba(156, 39, 176, 0.1);
+  }
+
+  &.card-weight {
+    --card-color: #FF5722;
+    --card-bg-color: rgba(255, 87, 34, 0.1);
+  }
+
+  &.card-bmi {
+    --card-color: #607D8B;
+    --card-bg-color: rgba(96, 125, 139, 0.1);
+  }
+}
+
+/* CARDS SECUNDÁRIOS */
+.fitness-card-secondary {
+  min-height: 160px;
+  background: rgba(255,255,255,0.8);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  box-shadow:
+    0 8px 24px rgba(0,0,0,0.05),
+    0 2px 8px rgba(0,0,0,0.03);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  .card-content {
+    height: 100%;
+    padding: $spacing-lg;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba($primary-color, 0.1);
+      margin-bottom: $spacing-md;
+      transition: all 0.3s ease;
+
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+        color: $primary-color;
+      }
+    }
+
+    .action-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: $text-color;
+      margin: 0 0 $spacing-xs 0;
+    }
+
+    .metric-number {
+      font-size: 24px;
+      font-weight: 700;
+      color: $primary-color;
+      margin: 0 0 $spacing-xs 0;
+    }
+
+    .action-description {
+      font-size: 12px;
+      color: $text-secondary;
+      margin: 0;
+      font-weight: 500;
+    }
+  }
+
+  &:hover {
+    transform: translateY(-6px);
+    background: rgba(255,255,255,0.95);
+    border-color: rgba($primary-color, 0.12);
+    box-shadow:
+      0 12px 32px rgba(0,0,0,0.08),
+      0 4px 16px rgba(0,0,0,0.05);
+
+    .card-icon {
+      transform: scale(1.1);
+      background: rgba($primary-color, 0.15);
+    }
+
+    .metric-number {
+      transform: scale(1.05);
+    }
+  }
+}
+
+/* CARDS TERCIÁRIOS (AÇÕES RÁPIDAS) */
+.fitness-card-tertiary {
+  min-height: 120px;
+  background: rgba(255,255,255,0.6);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
+  box-shadow:
+    0 4px 16px rgba(0,0,0,0.03),
+    0 1px 4px rgba(0,0,0,0.02);
+  backdrop-filter: blur(6px);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  .card-content {
+    height: 100%;
+    padding: $spacing-md;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    .card-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba($accent-color, 0.1);
+      margin-bottom: $spacing-sm;
+      transition: all 0.3s ease;
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        color: $accent-color;
+      }
+    }
+
+    .action-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: $text-color;
+      margin: 0 0 $spacing-xs 0;
+    }
+
+    .action-description {
+      font-size: 11px;
+      color: $text-secondary;
+      margin: 0;
+      font-weight: 500;
+    }
+  }
+
+  &:hover {
+    transform: translateY(-3px);
+    background: rgba(255,255,255,0.85);
+    border-color: rgba($accent-color, 0.08);
+    box-shadow:
+      0 8px 24px rgba(0,0,0,0.06),
+      0 2px 8px rgba(0,0,0,0.04);
+
+    .card-icon {
+      transform: scale(1.1);
+      background: rgba($accent-color, 0.15);
+    }
+  }
+}
+
+/* === ANIMAÇÕES === */
+@keyframes cardFadeInElevated {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-5px) scale(1.02);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.fitness-card-primary {
+  animation: cardFadeInElevated 0.8s ease-out;
+
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.25s; }
+  &:nth-child(3) { animation-delay: 0.4s; }
+}
+
+/* === RESPONSIVIDADE === */
+@media (max-width: 768px) {
+  .dashboard {
+    .hero-section {
+      .section-header {
+        .hero-title {
+          font-size: 24px;
+          flex-direction: column;
+          gap: $spacing-sm;
+
+          mat-icon {
+            font-size: 28px;
+            width: 28px;
+            height: 28px;
+          }
+        }
+
+        .hero-subtitle {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+
+  .fitness-card-primary {
+    min-height: 160px;
+
+    .card-content {
+      padding: $spacing-md;
+
+      .metric-header {
+        gap: $spacing-md;
+
+        .card-icon {
+          width: 48px;
+          height: 48px;
+
+          mat-icon {
+            font-size: 24px;
+            width: 24px;
+            height: 24px;
+          }
+        }
+
+        .metric-info {
+          .metric-value {
+            font-size: 28px;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-container {
+    padding: $spacing-sm;
+  }
+
+  .fitness-card-primary {
+    min-height: 140px;
+
+    .card-content {
+      .metric-header {
+        flex-direction: column;
+        text-align: center;
+        gap: $spacing-sm;
+
+        .metric-info {
+          .metric-value {
+            font-size: 24px;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* === ACESSIBILIDADE === */
+.fitness-card-primary:focus-visible,
+.fitness-card-secondary:focus-visible,
+.fitness-card-tertiary:focus-visible {
+  outline: 2px solid $primary-color;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fitness-card-primary,
+  .fitness-card-secondary,
+  .fitness-card-tertiary {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* === ACCORDION E PAINÉIS === */
+.dashboard-accordion {
+  margin-top: $spacing-xl * 1.5;
+
+  .dashboard-panel {
+    margin-bottom: $spacing-lg;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    border: none;
+    overflow: hidden;
+
+    .mat-expansion-panel-header {
+      padding: $spacing-lg;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 16px 16px 0 0;
+
+      .mat-panel-title {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        font-weight: 600;
+        color: $text-color;
+
+        mat-icon {
+          color: $primary-color;
+        }
+      }
+
+      .mat-panel-description {
+        color: $text-secondary;
+        font-size: 14px;
+      }
+    }
+
+    .mat-expansion-panel-content {
+      .mat-expansion-panel-body {
+        padding: $spacing-lg;
+        background: white;
+      }
+    }
+  }
+}
+
+/* === MEDIDAS CONTAINER === */
+.measures-container {
+  .measure-group {
+    background: rgba($primary-color, 0.05);
+    border-radius: 12px;
+    padding: $spacing-lg;
+    border: 1px solid rgba($primary-color, 0.1);
+
+    h3 {
+      color: $text-color;
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 $spacing-lg 0;
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+
+      &::before {
+        content: '';
+        width: 4px;
+        height: 20px;
+        background: $primary-color;
+        border-radius: 2px;
+      }
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: $spacing-md;
+
+      .info-item {
+        background: white;
+        padding: $spacing-md;
+        border-radius: 8px;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        transition: all 0.2s ease;
+
+        &:hover {
+          border-color: rgba($primary-color, 0.2);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .label {
+          font-size: 12px;
+          font-weight: 600;
+          color: $text-secondary;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          display: block;
+          margin-bottom: $spacing-xs;
+        }
+
+        .value {
+          font-size: 16px;
+          font-weight: 600;
+          color: $text-color;
+          display: block;
+        }
+      }
+    }
+  }
+}
+
+/* === PROFISSIONAIS === */
+.professionals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: $spacing-lg;
+  margin: $spacing-md 0;
+
+  .professional-card {
+    background: white;
+    border-radius: 12px;
+    padding: $spacing-lg;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      border-color: rgba($primary-color, 0.2);
+    }
+
+    .professional-header {
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
+      margin-bottom: $spacing-lg;
+
+      .professional-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        mat-icon {
+          font-size: 28px;
+          width: 28px;
+          height: 28px;
+          color: white;
+        }
+
+        &.doctor-avatar {
+          background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        &.personal-avatar {
+          background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        }
+
+        &.nutritionist-avatar {
+          background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+      }
+
+      .professional-info {
+        flex-grow: 1;
+
+        h3 {
+          font-size: 18px;
+          font-weight: 600;
+          color: $text-color;
+          margin: 0 0 $spacing-xs 0;
+        }
+
+        .professional-specialty {
+          font-size: 14px;
+          color: $text-secondary;
+          margin: 0;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .professional-details {
+      .detail-row {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        margin-bottom: $spacing-sm;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .detail-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+          color: $text-secondary;
+          flex-shrink: 0;
+        }
+
+        .detail-text {
+          font-size: 14px;
+          color: $text-color;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}
+
+/* === NO DATA CONTAINER === */
+.no-data-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xl;
+  text-align: center;
+  background: rgba($background-color, 0.5);
+  border-radius: 12px;
+  border: 2px dashed rgba($text-secondary, 0.3);
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: $text-secondary;
+    margin-bottom: $spacing-md;
+  }
+
+  p {
+    color: $text-secondary;
+    font-size: 16px;
+    margin: 0 0 $spacing-lg 0;
+    font-weight: 500;
+  }
+
+  button {
+    background: $primary-color;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: $spacing-sm $spacing-lg;
+    font-weight: 600;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: darken($primary-color, 10%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+    }
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      margin-right: $spacing-xs;
+      margin-bottom: 0;
+    }
+  }
+}

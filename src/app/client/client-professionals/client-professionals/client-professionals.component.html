@@ -1,0 +1,253 @@
+<div class="professionals-container">
+  @if (loading) {
+    <!-- Loading State -->
+    <div class="loading-container">
+      <mat-progress-spinner diameter="50"></mat-progress-spinner>
+      <p class="loading-text">Carregando profissionais...</p>
+    </div>
+  } @else if (error) {
+    <!-- Error State -->
+    <div class="error-container">
+      <mat-icon class="error-icon">error</mat-icon>
+      <h2 class="error-title">Erro ao carregar dados</h2>
+      <p class="error-message">{{ error }}</p>
+      <button mat-raised-button color="primary" (click)="loadProfessionalsData()">
+        <mat-icon>refresh</mat-icon>
+        Tentar Novamente
+      </button>
+    </div>
+  } @else if (professionalsData) {
+    <!-- Main Content -->
+    <div class="professionals-content">
+
+      <!-- Header -->
+      <div class="professionals-header">
+        <div class="header-info">
+          <h1 class="page-title">
+            <mat-icon>people</mat-icon>
+            Profissionais Associados
+          </h1>
+          <div class="client-info">
+            <p class="client-name">{{ professionalsData.client.name }}</p>
+            <p class="total-professionals">{{ getTotalProfessionals() }} profissional(is) associado(s)</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button mat-raised-button color="primary" (click)="navigateToClientDashboard()">
+            <mat-icon>dashboard</mat-icon>
+            Dashboard do Cliente
+          </button>
+          <button mat-icon-button (click)="onBack()" matTooltip="Voltar">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <!-- Médicos Section -->
+      <div class="professionals-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <mat-icon>local_hospital</mat-icon>
+            Médicos
+            <span class="section-count">({{ professionalsData.doctors.length }})</span>
+          </h2>
+        </div>
+
+        @if (professionalsData.doctors.length > 0) {
+          <div class="professionals-grid">
+            @for (doctor of professionalsData.doctors; track doctor.id) {
+              <div class="professional-card" (click)="doctor.id && navigateToDoctorView(doctor.id)">
+                <div class="card-header">
+                  <div class="professional-avatar">
+                    <mat-icon>local_hospital</mat-icon>
+                  </div>
+                  <div class="professional-info">
+                    <h3 class="professional-name">Dr. {{ doctor.name }}</h3>
+                    <p class="professional-registry">{{ formatCRM(doctor.crm) }}</p>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="professional-detail">
+                    <mat-icon>medical_services</mat-icon>
+                    <span>{{ doctor.specialty || 'Especialidade não informada' }}</span>
+                  </div>
+                  @if (doctor.email) {
+                    <div class="professional-detail">
+                      <mat-icon>email</mat-icon>
+                      <span>{{ doctor.email }}</span>
+                    </div>
+                  }
+                  @if (doctor.phone) {
+                    <div class="professional-detail">
+                      <mat-icon>phone</mat-icon>
+                      <span>{{ doctor.phone }}</span>
+                    </div>
+                  }
+                </div>
+                <div class="card-actions">
+                  <button mat-button color="primary">
+                    <mat-icon>visibility</mat-icon>
+                    Ver Perfil
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-section">
+            <mat-icon>local_hospital</mat-icon>
+            <h3>Nenhum médico associado</h3>
+            <p>Este cliente ainda não possui médicos associados.</p>
+          </div>
+        }
+      </div>
+
+      <!-- Personal Trainers Section -->
+      <div class="professionals-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <mat-icon>fitness_center</mat-icon>
+            Personal Trainers
+            <span class="section-count">({{ professionalsData.personals.length }})</span>
+          </h2>
+        </div>
+
+        @if (professionalsData.personals.length > 0) {
+          <div class="professionals-grid">
+            @for (personal of professionalsData.personals; track personal.id) {
+              <div class="professional-card" (click)="personal.id && navigateToPersonalView(personal.id)">
+                <div class="card-header">
+                  <div class="professional-avatar">
+                    <mat-icon>fitness_center</mat-icon>
+                  </div>
+                  <div class="professional-info">
+                    <h3 class="professional-name">{{ personal.name }}</h3>
+                    <p class="professional-registry">{{ formatCREF(personal.registry) }}</p>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="professional-detail">
+                    <mat-icon>sports</mat-icon>
+                    <span>{{ personal.specialty || 'Personal Trainer' }}</span>
+                  </div>
+                  @if (personal.email) {
+                    <div class="professional-detail">
+                      <mat-icon>email</mat-icon>
+                      <span>{{ personal.email }}</span>
+                    </div>
+                  }
+                  @if (personal.phone) {
+                    <div class="professional-detail">
+                      <mat-icon>phone</mat-icon>
+                      <span>{{ personal.phone }}</span>
+                    </div>
+                  }
+                </div>
+                <div class="card-actions">
+                  <button mat-button color="primary">
+                    <mat-icon>visibility</mat-icon>
+                    Ver Perfil
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-section">
+            <mat-icon>fitness_center</mat-icon>
+            <h3>Nenhum personal trainer associado</h3>
+            <p>Este cliente ainda não possui personal trainers associados.</p>
+          </div>
+        }
+      </div>
+
+      <!-- Nutricionistas Section -->
+      <div class="professionals-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <mat-icon>restaurant</mat-icon>
+            Nutricionistas
+            <span class="section-count">({{ professionalsData.nutritionists.length }})</span>
+          </h2>
+        </div>
+
+        @if (professionalsData.nutritionists.length > 0) {
+          <div class="professionals-grid">
+            @for (nutritionist of professionalsData.nutritionists; track nutritionist.id) {
+              <div class="professional-card" (click)="nutritionist.id && navigateToNutritionistView(nutritionist.id)">
+                <div class="card-header">
+                  <div class="professional-avatar">
+                    <mat-icon>restaurant</mat-icon>
+                  </div>
+                  <div class="professional-info">
+                    <h3 class="professional-name">{{ nutritionist.name }}</h3>
+                    <p class="professional-registry">{{ formatCRN(nutritionist.registry) }}</p>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="professional-detail">
+                    <mat-icon>restaurant_menu</mat-icon>
+                    <span>{{ nutritionist.specialty || 'Nutricionista' }}</span>
+                  </div>
+                  @if (nutritionist.email) {
+                    <div class="professional-detail">
+                      <mat-icon>email</mat-icon>
+                      <span>{{ nutritionist.email }}</span>
+                    </div>
+                  }
+                  @if (nutritionist.phone) {
+                    <div class="professional-detail">
+                      <mat-icon>phone</mat-icon>
+                      <span>{{ nutritionist.phone }}</span>
+                    </div>
+                  }
+                </div>
+                <div class="card-actions">
+                  <button mat-button color="primary">
+                    <mat-icon>visibility</mat-icon>
+                    Ver Perfil
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-section">
+            <mat-icon>restaurant</mat-icon>
+            <h3>Nenhum nutricionista associado</h3>
+            <p>Este cliente ainda não possui nutricionistas associados.</p>
+          </div>
+        }
+      </div>
+
+      <!-- Summary Card -->
+      @if (getTotalProfessionals() > 0) {
+        <div class="summary-section">
+          <div class="summary-card">
+            <div class="summary-header">
+              <h3>Resumo dos Profissionais</h3>
+            </div>
+            <div class="summary-stats">
+              <div class="stat-item">
+                <mat-icon>local_hospital</mat-icon>
+                <span class="stat-number">{{ professionalsData.doctors.length }}</span>
+                <span class="stat-label">Médico(s)</span>
+              </div>
+              <div class="stat-item">
+                <mat-icon>fitness_center</mat-icon>
+                <span class="stat-number">{{ professionalsData.personals.length }}</span>
+                <span class="stat-label">Personal(s)</span>
+              </div>
+              <div class="stat-item">
+                <mat-icon>restaurant</mat-icon>
+                <span class="stat-number">{{ professionalsData.nutritionists.length }}</span>
+                <span class="stat-label">Nutricionista(s)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+    </div>
+  }
+

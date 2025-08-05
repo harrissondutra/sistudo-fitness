@@ -1,46 +1,51 @@
 <!-- Container Principal -->
-<div class="trainning-container">
-  <!-- Cabeçalho -->
-  <div class="header" role="banner">
-    <ng-container *ngIf="client?.evolutionPhotos?.length; else noAvatar">
-      <img [src]="client?.evolutionPhotos?.[0]" [alt]="(client?.name || 'Cliente') + ' - Foto'" class="client-avatar">
-    </ng-container>
-    <ng-template #noAvatar>
-      <div class="client-avatar" aria-hidden="true">
-        <mat-icon>fitness_center</mat-icon>
-      </div>
-    </ng-template>
-    <div class="header-content">
-      <h1>
-        {{ client?.name || 'Cliente' }}
-        <span class="client-age" *ngIf="calculateAge(client?.dateOfBirth)">
-          ({{ calculateAge(client?.dateOfBirth) }} anos)
-        </span>
-      </h1>
-      <p class="subtitle">Detalhes do Cliente e Treinos</p>
+<div class="client-container">
+  <!-- Loading State -->
+  @if (isLoading) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Carregando informações do cliente...</p>
     </div>
+  } @else if (client) {
 
-    <!-- Botão de voltar -->
-    <button mat-icon-button color="primary" class="back-button" (click)="onBack()"
-      matTooltip="Voltar para lista de clientes" aria-label="Voltar">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-  </div>
+    <!-- Header Card -->
+    <mat-card class="header-card">
+      <mat-card-content class="header-content">
+        <div class="client-info">
+          <div class="client-avatar">
+            @if (client?.evolutionPhotos?.length) {
+              <img [src]="client?.evolutionPhotos?.[0]" [alt]="(client?.name || 'Cliente') + ' - Foto'">
+            } @else {
+              <mat-icon>person</mat-icon>
+            }
+          </div>
+          <div class="client-details">
+            <h1 class="client-name">{{ client?.name || 'Cliente' }}</h1>
+            @if (calculateAge(client?.dateOfBirth)) {
+              <p class="client-age">{{ calculateAge(client?.dateOfBirth) }} anos</p>
+            }
+            <p class="client-type">Perfil do Cliente</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button mat-icon-button (click)="onBack()" matTooltip="Voltar">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
 
-  @if (client) {
-  <!-- Controles globais para expandir/recolher todos os painéis -->
-  <div class="expansion-controls">
-    <button mat-button color="primary" (click)="expandAllPanels()" aria-label="Expandir todos os painéis">
-      <mat-icon>unfold_more</mat-icon>
-      <span>Expandir Todos</span>
-    </button>
-    <button mat-button color="primary" (click)="collapseAllPanels()" aria-label="Recolher todos os painéis">
-      <mat-icon>unfold_less</mat-icon>
-      <span>Recolher Todos</span>
-    </button>
-  </div>
-
-  <div class="content" role="main">
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button mat-raised-button color="primary" (click)="expandAllPanels()">
+        <mat-icon>unfold_more</mat-icon>
+        Expandir Todos
+      </button>
+      <button mat-raised-button color="primary" (click)="collapseAllPanels()">
+        <mat-icon>unfold_less</mat-icon>
+        Recolher Todos
+      </button>
+    </div>
     <!-- Informações Pessoais -->
     <div class="dashboard-row dashboard-row-personal-info">
       <section class="info-section personal-info-section" aria-labelledby="personal-info-title">
@@ -823,7 +828,6 @@
         </div>
       </mat-expansion-panel>
     </mat-accordion>
-  </div>
   } @else {
   <div class="loading-spinner" role="status" aria-live="polite">
     <mat-spinner diameter="50"></mat-spinner>
@@ -936,4 +940,3 @@
       </div>
     </div>
   </div>
-</div>

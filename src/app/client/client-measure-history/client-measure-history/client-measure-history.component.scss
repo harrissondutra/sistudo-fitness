@@ -1,0 +1,655 @@
+/* === SISTUDO FITNESS - CLIENT MEASURE HISTORY === */
+@import '../../../../styles/variables';
+@import '../../../../styles/fitness-theme';
+@import '../../../../styles/fitness-utilities';
+
+/* === ESTILOS GLOBAIS PARA BOTÕES === */
+button {
+  &.mat-raised-button {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-sm $spacing-xl;
+    font-weight: 600;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    text-transform: none;
+    letter-spacing: 0.5px;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      color: white;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+
+    &[color="primary"] {
+      background: $primary-color;
+      color: white;
+
+      &:hover {
+        background: darken($primary-color, 8%);
+        box-shadow: 0 8px 24px rgba($primary-color, 0.3);
+      }
+    }
+
+    &[color="accent"] {
+      background: $secondary-color;
+      color: white;
+
+      &:hover {
+        background: darken($secondary-color, 8%);
+        box-shadow: 0 8px 24px rgba($secondary-color, 0.3);
+      }
+    }
+  }
+
+  &.mat-icon-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    border-radius: 50%;
+
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+      color: $text-secondary;
+      margin: 0;
+    }
+
+    &:hover {
+      background: rgba($primary-color, 0.1);
+      transform: scale(1.1);
+
+      mat-icon {
+        color: $primary-color;
+      }
+    }
+  }
+}
+
+/* === CONTAINER PRINCIPAL === */
+.measure-history-container {
+  min-height: 100vh;
+  background: $background-color;
+  padding: $spacing-lg;
+
+  @media (max-width: 768px) {
+    padding: $spacing-md;
+  }
+}
+
+/* === LOADING STATE === */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: $spacing-lg;
+
+  p {
+    color: $text-secondary;
+    font-size: 16px;
+    text-align: center;
+    margin: 0;
+  }
+
+  mat-spinner ::ng-deep .mat-spinner circle {
+    stroke: $primary-color;
+  }
+}
+
+/* === ERROR STATE === */
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: $spacing-lg;
+  text-align: center;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: $error-color;
+  }
+
+  h2 {
+    color: $text-color;
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  p {
+    color: $text-secondary;
+    font-size: 16px;
+    margin: 0;
+    max-width: 400px;
+  }
+
+  button {
+    margin-top: $spacing-lg;
+  }
+}
+
+/* === CABEÇALHO DA PÁGINA === */
+.page-header {
+  background: white;
+  border-radius: 18px;
+  padding: $spacing-xl;
+  margin-bottom: $spacing-xl;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+
+    .title-section {
+      .title-with-icon {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+        margin-bottom: $spacing-sm;
+
+        mat-icon {
+          font-size: 32px;
+          width: 32px;
+          height: 32px;
+          color: $primary-color;
+        }
+
+        h1 {
+          font-size: 28px;
+          font-weight: 700;
+          color: $text-color;
+          margin: 0;
+        }
+      }
+
+      .subtitle {
+        font-size: 16px;
+        color: $text-secondary;
+        margin: 0;
+        font-weight: 500;
+      }
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
+    }
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: $spacing-lg;
+      text-align: center;
+
+      .header-actions {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+}
+
+/* === SEÇÃO DE CONTEÚDO === */
+.content-section {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+/* === ESTADO VAZIO === */
+.empty-state {
+  mat-card {
+    border-radius: 18px;
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.08),
+      0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+
+    .empty-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: $spacing-xl;
+
+      mat-icon {
+        font-size: 64px;
+        width: 64px;
+        height: 64px;
+        color: $text-secondary;
+        margin-bottom: $spacing-lg;
+      }
+
+      h2 {
+        font-size: 24px;
+        font-weight: 600;
+        color: $text-color;
+        margin: 0 0 $spacing-md 0;
+      }
+
+      p {
+        font-size: 16px;
+        color: $text-secondary;
+        margin: 0 0 $spacing-xl 0;
+        max-width: 400px;
+      }
+
+      button {
+        margin-top: $spacing-lg;
+      }
+    }
+  }
+}
+
+/* === SEÇÃO DA TABELA === */
+.history-table-section {
+  mat-card {
+    border-radius: 18px;
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.08),
+      0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+
+    mat-card-header {
+      padding: $spacing-lg $spacing-lg $spacing-md;
+
+      mat-card-title {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        font-size: 20px;
+        font-weight: 600;
+        color: $text-color;
+        margin: 0;
+
+        mat-icon {
+          color: $primary-color;
+        }
+      }
+
+      mat-card-subtitle {
+        color: $text-secondary;
+        font-size: 14px;
+        margin: $spacing-xs 0 0 0;
+      }
+    }
+
+    mat-card-content {
+      padding: 0 $spacing-lg $spacing-lg;
+
+      .table-container {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+        margin-bottom: $spacing-lg;
+
+        .measures-table {
+          width: 100%;
+
+          th {
+            background: rgba($primary-color, 0.05);
+            color: $text-color;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: $spacing-md;
+            border-bottom: 2px solid rgba($primary-color, 0.1);
+
+            &.mat-sort-header-sorted {
+              color: $primary-color;
+            }
+          }
+
+          td {
+            padding: $spacing-md;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            font-size: 14px;
+            color: $text-color;
+
+            .date-cell {
+              display: flex;
+              align-items: center;
+              gap: $spacing-xs;
+
+              mat-icon {
+                font-size: 16px;
+                width: 16px;
+                height: 16px;
+                color: $text-secondary;
+              }
+            }
+          }
+
+          .measure-row {
+            transition: background-color 0.2s ease;
+
+            &:hover {
+              background: rgba($primary-color, 0.02);
+            }
+
+            &:last-child td {
+              border-bottom: none;
+            }
+          }
+        }
+      }
+
+      mat-paginator {
+        background: transparent;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        border-radius: 0 0 12px 12px;
+
+        ::ng-deep .mat-paginator-container {
+          padding: $spacing-md $spacing-lg;
+        }
+      }
+    }
+  }
+}
+
+/* === SEÇÃO ESTATÍSTICAS === */
+.stats-section {
+  mat-card {
+    border-radius: 18px;
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.08),
+      0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+
+    mat-card-header {
+      padding: $spacing-lg $spacing-lg $spacing-md;
+
+      mat-card-title {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        font-size: 20px;
+        font-weight: 600;
+        color: $text-color;
+        margin: 0;
+
+        mat-icon {
+          color: $secondary-color;
+        }
+      }
+
+      mat-card-subtitle {
+        color: $text-secondary;
+        font-size: 14px;
+        margin: $spacing-xs 0 0 0;
+      }
+    }
+
+    mat-card-content {
+      padding: 0 $spacing-lg $spacing-lg;
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: $spacing-lg;
+
+        .stat-item {
+          display: flex;
+          align-items: center;
+          gap: $spacing-md;
+          padding: $spacing-lg;
+          background: rgba($background-color, 0.5);
+          border-radius: 12px;
+          border: 1px solid rgba(0, 0, 0, 0.06);
+          transition: all 0.3s ease;
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-color: rgba($primary-color, 0.2);
+          }
+
+          .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba($secondary-color, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+
+            mat-icon {
+              font-size: 24px;
+              width: 24px;
+              height: 24px;
+              color: $secondary-color;
+            }
+          }
+
+          .stat-info {
+            display: flex;
+            flex-direction: column;
+
+            .stat-label {
+              font-size: 12px;
+              font-weight: 600;
+              color: $text-secondary;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              margin-bottom: $spacing-xs;
+            }
+
+            .stat-value {
+              font-size: 18px;
+              font-weight: 700;
+              color: $text-color;
+            }
+          }
+        }
+
+        @media (max-width: 768px) {
+          grid-template-columns: repeat(2, 1fr);
+          gap: $spacing-md;
+
+          .stat-item {
+            padding: $spacing-md;
+
+            .stat-icon {
+              width: 40px;
+              height: 40px;
+
+              mat-icon {
+                font-size: 20px;
+                width: 20px;
+                height: 20px;
+              }
+            }
+
+            .stat-info {
+              .stat-value {
+                font-size: 16px;
+              }
+            }
+          }
+        }
+
+        @media (max-width: 480px) {
+          grid-template-columns: 1fr;
+        }
+      }
+    }
+  }
+}
+
+/* === RESPONSIVIDADE AVANÇADA === */
+@media (max-width: 1200px) {
+  .history-table-section {
+    mat-card-content {
+      .table-container {
+        overflow-x: auto;
+
+        .measures-table {
+          min-width: 1000px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .measure-history-container {
+    padding: $spacing-sm;
+  }
+
+  .page-header {
+    padding: $spacing-lg;
+
+    .header-content {
+      .title-section {
+        .title-with-icon {
+          h1 {
+            font-size: 24px;
+          }
+
+          mat-icon {
+            font-size: 28px;
+            width: 28px;
+            height: 28px;
+          }
+        }
+      }
+
+      .header-actions {
+        button.mat-raised-button {
+          padding: $spacing-sm $spacing-md;
+          font-size: 14px;
+
+          mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+          }
+        }
+      }
+    }
+  }
+
+  .history-table-section {
+    mat-card {
+      mat-card-header {
+        padding: $spacing-md;
+
+        mat-card-title {
+          font-size: 18px;
+        }
+      }
+
+      mat-card-content {
+        padding: 0 $spacing-md $spacing-md;
+
+        .table-container {
+          .measures-table {
+            th, td {
+              padding: $spacing-sm;
+              font-size: 12px;
+            }
+          }
+        }
+
+        mat-paginator {
+          ::ng-deep .mat-paginator-container {
+            padding: $spacing-sm $spacing-md;
+          }
+        }
+      }
+    }
+  }
+
+  // Botões em telas pequenas
+  .empty-state .empty-content button,
+  .error-container button {
+    padding: $spacing-sm $spacing-lg;
+    font-size: 14px;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header {
+    .header-content {
+      .title-section {
+        .title-with-icon {
+          flex-direction: column;
+          gap: $spacing-sm;
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+
+/* === ACESSIBILIDADE === */
+.measures-table {
+  th:focus,
+  td:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+}
+
+button:focus-visible {
+  outline: 2px solid $primary-color;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stat-item,
+  .measure-row {
+    transition: none;
+  }
+}
+
+/* === SCROLLBAR PERSONALIZADA === */
+.table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: rgba($primary-color, 0.3);
+  border-radius: 4px;
+
+  &:hover {
+    background: rgba($primary-color, 0.5);
+  }
+}

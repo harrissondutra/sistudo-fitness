@@ -1,0 +1,312 @@
+<div class="inactive-trainings-container">
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Carregando treinos inativos...</p>
+    </div>
+  } @else if (error || !client) {
+    <div class="error-container">
+      <mat-icon>error_outline</mat-icon>
+      <h2>Erro ao carregar treinos</h2>
+      <p>Cliente não encontrado ou ocorreu um erro ao carregar os dados.</p>
+      <button mat-raised-button color="primary" (click)="onBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Voltar
+      </button>
+    </div>
+  } @else {
+    <!-- CABEÇALHO -->
+    <div class="page-header">
+      <div class="header-content">
+        <div class="client-info">
+          <div class="client-avatar">
+            @if (client.evolutionPhotos?.length) {
+              <img [src]="client.evolutionPhotos?.[0]" [alt]="client.name + ' - Foto'">
+            } @else {
+              <mat-icon>person</mat-icon>
+            }
+          </div>
+          <div class="client-details">
+            <h1 class="page-title">Treinos Inativos & Completos</h1>
+            <p class="client-name">{{ client.name }}</p>
+            <p class="trainings-count">{{ getTotalInactive() }} treino(s) inativo(s)/completo(s)</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button mat-raised-button color="accent" (click)="createNewTraining()">
+            <mat-icon>add</mat-icon>
+            Novo Treino
+          </button>
+          <button mat-icon-button (click)="onBack()" matTooltip="Voltar ao Dashboard">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESTATÍSTICAS RÁPIDAS -->
+    <div class="stats-grid">
+      <div class="stat-card completed">
+        <div class="stat-icon">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-number">{{ completedTrainings.length }}</span>
+          <span class="stat-label">Concluídos</span>
+        </div>
+      </div>
+
+      <div class="stat-card expired">
+        <div class="stat-icon">
+          <mat-icon>schedule</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-number">{{ expiredTrainings.length }}</span>
+          <span class="stat-label">Expirados</span>
+        </div>
+      </div>
+
+      <div class="stat-card inactive">
+        <div class="stat-icon">
+          <mat-icon>pause_circle</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-number">{{ inactiveTrainings.length }}</span>
+          <span class="stat-label">Inativos</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TREINOS CONCLUÍDOS -->
+    @if (completedTrainings.length > 0) {
+      <div class="training-section">
+        <div class="section-header">
+          <h2>
+            <mat-icon>check_circle</mat-icon>
+            Treinos Concluídos
+          </h2>
+          <p>Treinos que foram finalizados com sucesso</p>
+        </div>
+
+        <div class="trainings-grid">
+          @for (training of completedTrainings; track training.id) {
+            <mat-card class="training-card completed-card">
+              <mat-card-header>
+                <div class="training-avatar completed">
+                  <mat-icon>check_circle</mat-icon>
+                </div>
+                <mat-card-title>{{ training.name || 'Treino sem nome' }}</mat-card-title>
+                <mat-card-subtitle>
+                  <mat-chip color="primary" selected>
+                    {{ getTrainingStatus(training) }}
+                  </mat-chip>
+                </mat-card-subtitle>
+              </mat-card-header>
+
+              <mat-card-content>
+                <div class="training-info">
+                  <div class="info-row">
+                    <mat-icon>date_range</mat-icon>
+                    <span>{{ formatDateRange(training.startDate, training.endDate) }}</span>
+                  </div>
+                  @if (training.description) {
+                    <div class="info-row">
+                      <mat-icon>description</mat-icon>
+                      <span>{{ training.description }}</span>
+                    </div>
+                  }
+                  <div class="info-row">
+                    <mat-icon>fitness_center</mat-icon>
+                    <span>{{ training.exercises.length || 0 }} exercício(s)</span>
+                  </div>
+                </div>
+
+                <!-- EXERCÍCIOS -->
+                @if (training.exercises && training.exercises.length > 0) {
+                  <mat-expansion-panel class="exercises-panel">
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        <mat-icon>list</mat-icon>
+                        Exercícios ({{ training.exercises.length }})
+                      </mat-panel-title>
+                    </mat-expansion-panel-header>
+
+                    <div class="exercises-list">
+                      @for (exercise of training.exercises; track exercise.id) {
+                        <div class="exercise-item">
+                          <div class="exercise-header">
+                            <mat-icon>fitness_center</mat-icon>
+                            <span class="exercise-name">{{ exercise.name || 'Exercício' }}</span>
+                          </div>
+                          @if (exercise.sets || exercise.repetitions || exercise.weight) {
+                            <div class="exercise-details">
+                              @if (exercise.sets) {
+                                <span class="detail-chip">{{ exercise.sets }} séries</span>
+                              }
+                              @if (exercise.repetitions) {
+                                <span class="detail-chip">{{ exercise.repetitions }} reps</span>
+                              }
+                              @if (exercise.weight) {
+                                <span class="detail-chip">{{ exercise.weight }}kg</span>
+                              }
+                            </div>
+                          }
+                        </div>
+                      }
+                    </div>
+                  </mat-expansion-panel>
+                }
+              </mat-card-content>
+
+              <mat-card-actions align="end">
+                <button mat-button (click)="navigateToTrainingView(training.id!)">
+                  <mat-icon>visibility</mat-icon>
+                  Ver Detalhes
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- TREINOS EXPIRADOS -->
+    @if (expiredTrainings.length > 0) {
+      <div class="training-section">
+        <div class="section-header">
+          <h2>
+            <mat-icon>schedule</mat-icon>
+            Treinos Expirados
+          </h2>
+          <p>Treinos que ultrapassaram a data de finalização</p>
+        </div>
+
+        <div class="trainings-grid">
+          @for (training of expiredTrainings; track training.id) {
+            <mat-card class="training-card expired-card">
+              <mat-card-header>
+                <div class="training-avatar expired">
+                  <mat-icon>schedule</mat-icon>
+                </div>
+                <mat-card-title>{{ training.name || 'Treino sem nome' }}</mat-card-title>
+                <mat-card-subtitle>
+                  <mat-chip color="warn" selected>
+                    {{ getTrainingStatus(training) }}
+                  </mat-chip>
+                </mat-card-subtitle>
+              </mat-card-header>
+
+              <mat-card-content>
+                <div class="training-info">
+                  <div class="info-row">
+                    <mat-icon>date_range</mat-icon>
+                    <span>{{ formatDateRange(training.startDate, training.endDate) }}</span>
+                  </div>
+                  @if (training.description) {
+                    <div class="info-row">
+                      <mat-icon>description</mat-icon>
+                      <span>{{ training.description }}</span>
+                    </div>
+                  }
+                  <div class="info-row">
+                    <mat-icon>fitness_center</mat-icon>
+                    <span>{{ training.exercises.length || 0 }} exercício(s)</span>
+                  </div>
+                </div>
+              </mat-card-content>
+
+              <mat-card-actions align="end">
+                <button mat-button (click)="navigateToTrainingView(training.id!)">
+                  <mat-icon>visibility</mat-icon>
+                  Ver Detalhes
+                </button>
+                <button mat-button color="primary" (click)="reactivateTraining(training.id!)">
+                  <mat-icon>refresh</mat-icon>
+                  Reativar
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- TREINOS INATIVOS -->
+    @if (inactiveTrainings.length > 0) {
+      <div class="training-section">
+        <div class="section-header">
+          <h2>
+            <mat-icon>pause_circle</mat-icon>
+            Treinos Inativos
+          </h2>
+          <p>Treinos pausados ou desativados</p>
+        </div>
+
+        <div class="trainings-grid">
+          @for (training of inactiveTrainings; track training.id) {
+            <mat-card class="training-card inactive-card">
+              <mat-card-header>
+                <div class="training-avatar inactive">
+                  <mat-icon>pause_circle</mat-icon>
+                </div>
+                <mat-card-title>{{ training.name || 'Treino sem nome' }}</mat-card-title>
+                <mat-card-subtitle>
+                  <mat-chip color="accent" selected>
+                    {{ getTrainingStatus(training) }}
+                  </mat-chip>
+                </mat-card-subtitle>
+              </mat-card-header>
+
+              <mat-card-content>
+                <div class="training-info">
+                  <div class="info-row">
+                    <mat-icon>date_range</mat-icon>
+                    <span>{{ formatDateRange(training.startDate, training.endDate) }}</span>
+                  </div>
+                  @if (training.description) {
+                    <div class="info-row">
+                      <mat-icon>description</mat-icon>
+                      <span>{{ training.description }}</span>
+                    </div>
+                  }
+                  <div class="info-row">
+                    <mat-icon>fitness_center</mat-icon>
+                    <span>{{ training.exercises.length || 0 }} exercício(s)</span>
+                  </div>
+                </div>
+              </mat-card-content>
+
+              <mat-card-actions align="end">
+                <button mat-button (click)="navigateToTrainingView(training.id!)">
+                  <mat-icon>visibility</mat-icon>
+                  Ver Detalhes
+                </button>
+                <button mat-button color="primary" (click)="navigateToTrainingEdit(training.id!)">
+                  <mat-icon>edit</mat-icon>
+                  Editar
+                </button>
+                <button mat-button color="accent" (click)="reactivateTraining(training.id!)">
+                  <mat-icon>play_arrow</mat-icon>
+                  Reativar
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- ESTADO VAZIO -->
+    @if (getTotalInactive() === 0) {
+      <div class="no-trainings-container">
+        <mat-icon>sentiment_satisfied</mat-icon>
+        <h2>Nenhum treino inativo</h2>
+        <p>Este cliente não possui treinos inativos ou completos no momento. Todos os treinos estão ativos!</p>
+        <button mat-raised-button color="primary" (click)="createNewTraining()">
+          <mat-icon>add</mat-icon>
+          Criar Novo Treino
+        </button>
+      </div>
+    }
+  }
+</div>

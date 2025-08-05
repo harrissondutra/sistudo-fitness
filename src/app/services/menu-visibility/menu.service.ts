@@ -31,8 +31,10 @@ export class MenuService {
       icon: 'group',
       visible: true,
       links: [
+        { id: 'client-dashboard', label: 'Dashboard', route: '/client-dashboard/:id', visible: true, isDynamic: true },
         { id: 'list-clients', label: 'Listar Clientes', route: '/clients-list', visible: true },
         { id: 'client-details', label: 'Meus dados', route: '/client/:id', visible: true, isDynamic: true }
+
       ]
     },
     {
@@ -140,10 +142,10 @@ export class MenuService {
 
   constructor(private authService: AuthService) {
     console.log('MenuService construtor iniciado');
-    
+
     // Inicializar currentUserId imediatamente se possível
     this.initializeUserId();
-    
+
     // Observar o ID do usuário atual para uso em rotas dinâmicas
     this.authService.getCurrentUserId().subscribe(id => {
       console.log('MenuService: ID do usuário atualizado:', id);
@@ -180,7 +182,7 @@ export class MenuService {
   // Método público para forçar atualização dos menus (útil após login)
   public refreshMenus(): void {
     console.log('MenuService: Forçando atualização dos menus');
-    
+
     // Tenta primeiro obter o ID imediatamente
     this.authService.getCurrentUserId().subscribe(id => {
       console.log('ID obtido para refresh:', id);
@@ -403,7 +405,7 @@ export class MenuService {
     console.log('MenuService processMenuItems iniciado');
     console.log('currentUserId:', this.currentUserId);
     console.log('menuItems originais:', menuItems);
-    
+
     // Tenta obter o ID do usuário se não estiver disponível
     if (!this.currentUserId) {
       console.warn('currentUserId é null, tentando obter do AuthService...');
@@ -491,12 +493,12 @@ export class MenuService {
     console.log('=== MenuService Debug State ===');
     console.log('ID do usuário atual:', this.currentUserId);
     console.log('Menus atuais:', this.getMenuItems());
-    
+
     // Teste o AuthService diretamente
     this.authService.getCurrentUserId().subscribe(id => {
       console.log('ID obtido diretamente do AuthService:', id);
     });
-    
+
     // Mostra dados do usuário
     console.log('Dados do usuário (AuthService):', this.authService.getUserData());
     console.log('Info do token:', this.authService.getUserInfo());

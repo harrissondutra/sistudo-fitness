@@ -1,0 +1,245 @@
+<div class="measure-history-container">
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Carregando histórico de medidas...</p>
+    </div>
+  } @else if (error) {
+    <div class="error-container">
+      <mat-icon>error_outline</mat-icon>
+      <h2>Erro ao carregar dados</h2>
+      <p>Não foi possível carregar o histórico de medidas do cliente.</p>
+      <button mat-raised-button color="primary" (click)="onBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Voltar ao Dashboard
+      </button>
+    </div>
+  } @else {
+    <!-- CABEÇALHO -->
+    <div class="page-header">
+      <div class="header-content">
+        <div class="title-section">
+          <div class="title-with-icon">
+            <mat-icon>history</mat-icon>
+            <h1>Histórico de Medidas</h1>
+          </div>
+          @if (client) {
+            <p class="subtitle">{{ client.name }}</p>
+          }
+        </div>
+        <div class="header-actions">
+          <button mat-raised-button color="accent" (click)="navigateToCurrentMeasures()">
+            <mat-icon>straighten</mat-icon>
+            Medidas Atuais
+          </button>
+          <button mat-icon-button (click)="onBack()" matTooltip="Voltar ao Dashboard">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="content-section">
+      @if (measures.length === 0) {
+        <!-- ESTADO VAZIO -->
+        <div class="empty-state">
+          <mat-card>
+            <mat-card-content>
+              <div class="empty-content">
+                <mat-icon>timeline</mat-icon>
+                <h2>Nenhum Histórico Encontrado</h2>
+                <p>Este cliente ainda não possui histórico de medidas registradas.</p>
+                <button mat-raised-button color="primary" (click)="navigateToCurrentMeasures()">
+                  <mat-icon>add</mat-icon>
+                  Adicionar Primeira Medida
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      } @else {
+        <!-- TABELA DE HISTÓRICO -->
+        <div class="history-table-section">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>analytics</mat-icon>
+                Evolução das Medidas
+              </mat-card-title>
+              <mat-card-subtitle>
+                Total de {{ measures.length }} registro{{ measures.length !== 1 ? 's' : '' }} encontrado{{ measures.length !== 1 ? 's' : '' }}
+              </mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              <div class="table-container">
+                <table mat-table [dataSource]="dataSource" class="measures-table" matSort>
+
+                  <!-- Coluna Data -->
+                  <ng-container matColumnDef="data">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Data</th>
+                    <td mat-cell *matCellDef="let measure">
+                      <div class="date-cell">
+                        <mat-icon>calendar_today</mat-icon>
+                        {{ formatDate(measure.data) }}
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <!-- Circunferências -->
+                  <ng-container matColumnDef="ombro">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Ombro (cm)</th>
+                    <td mat-cell *matCellDef="let measure">{{ formatMeasure(measure.ombro, 'cm') }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="peitoral">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Peitoral (cm)</th>
+                    <td mat-cell *matCellDef="let measure">{{ formatMeasure(measure.peitoral, 'cm') }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="cintura">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Cintura (cm)</th>
+                    <td mat-cell *matCellDef="let measure">{{ formatMeasure(measure.cintura, 'cm') }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="quadril">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Quadril (cm)</th>
+                    <td mat-cell *matCellDef="let measure">{{ formatMeasure(measure.quadril, 'cm') }}</td>
+                  </ng-container>
+
+                  <!-- Membros -->
+                  <ng-container matColumnDef="braco_direito">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Braço Dir. (cm)</th>
+                    <td mat-cell *matCellDef="let measure">{{ formatMeasure(measure.braco_direito, 'cm') }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="braco_esquerdo">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Braço Esq. (cm)</th>
+                    <td mat-cell *matCellDef="let measure">{{ formatMeasure(measure.braco_esquerdo, 'cm') }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="coxa_direita">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Coxa Dir. (cm)</th>
+                    <td mat-cell *matCellDef="let measure">{{ formatMeasure(measure.coxa_direita, 'cm') }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="coxa_esquerda">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Coxa Esq. (cm)</th>
+                    <td mat-cell *matCellDef="let measure">{{ formatMeasure(measure.coxa_esquerda, 'cm') }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="panturrilha_direita">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Pant. Dir. (cm)</th>
+                    <td mat-cell *matCellDef="let measure">{{ formatMeasure(measure.panturrilha_direita, 'cm') }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="panturrilha_esquerda">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Pant. Esq. (cm)</th>
+                    <td mat-cell *matCellDef="let measure">{{ formatMeasure(measure.panturrilha_esquerda, 'cm') }}</td>
+                  </ng-container>
+
+                  <!-- Dobras Cutâneas -->
+                  <ng-container matColumnDef="subescapular">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Subescapular (mm)</th>
+                    <td mat-cell *matCellDef="let measure">{{ formatMeasure(measure.subescapular, 'mm') }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="triceps">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tríceps (mm)</th>
+                    <td mat-cell *matCellDef="let measure">{{ formatMeasure(measure.triceps, 'mm') }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="abdominal">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Abdominal (mm)</th>
+                    <td mat-cell *matCellDef="let measure">{{ formatMeasure(measure.abdominal, 'mm') }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="suprailiaca">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Suprailiaca (mm)</th>
+                    <td mat-cell *matCellDef="let measure">{{ formatMeasure(measure.suprailiaca, 'mm') }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="axilar">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Axilar (mm)</th>
+                    <td mat-cell *matCellDef="let measure">{{ formatMeasure(measure.axilar, 'mm') }}</td>
+                  </ng-container>
+
+                  <!-- Header e Rows -->
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="measure-row"></tr>
+                </table>
+              </div>
+
+              <!-- Paginação -->
+              <mat-paginator
+                [pageSize]="10"
+                [pageSizeOptions]="[5, 10, 25, 50]"
+                showFirstLastButtons>
+              </mat-paginator>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <!-- RESUMO ESTATÍSTICO -->
+        <div class="stats-section">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>insights</mat-icon>
+                Resumo Estatístico
+              </mat-card-title>
+              <mat-card-subtitle>
+                Baseado em {{ measures.length }} medição{{ measures.length !== 1 ? 'ões' : '' }}
+              </mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              <div class="stats-grid">
+                <div class="stat-item">
+                  <div class="stat-icon">
+                    <mat-icon>calendar_today</mat-icon>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-label">Primeira Medição</span>
+                    <span class="stat-value">{{ measures.length > 0 ? formatDate(measures[measures.length - 1].data) : '-' }}</span>
+                  </div>
+                </div>
+
+                <div class="stat-item">
+                  <div class="stat-icon">
+                    <mat-icon>update</mat-icon>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-label">Última Medição</span>
+                    <span class="stat-value">{{ measures.length > 0 ? formatDate(measures[0].data) : '-' }}</span>
+                  </div>
+                </div>
+
+                <div class="stat-item">
+                  <div class="stat-icon">
+                    <mat-icon>timeline</mat-icon>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-label">Total de Registros</span>
+                    <span class="stat-value">{{ measures.length }}</span>
+                  </div>
+                </div>
+
+                <div class="stat-item">
+                  <div class="stat-icon">
+                    <mat-icon>trending_up</mat-icon>
+                  </div>
+                  <div class="stat-info">
+                    <span class="stat-label">Acompanhamento</span>
+                    <span class="stat-value">Ativo</span>
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      }
+    </div>
+  }
+</div>

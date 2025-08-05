@@ -1,0 +1,225 @@
+<div class="measures-container">
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Carregando medidas do cliente...</p>
+    </div>
+  } @else if (error || !client) {
+    <div class="error-container">
+      <mat-icon>error_outline</mat-icon>
+      <h2>Erro ao carregar medidas</h2>
+      <p>Cliente não encontrado ou ocorreu um erro ao carregar os dados.</p>
+      <button mat-raised-button color="primary" (click)="onBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Voltar
+      </button>
+    </div>
+  } @else {
+    <!-- CABEÇALHO -->
+    <div class="page-header">
+      <div class="header-content">
+        <div class="client-info">
+          <div class="client-avatar">
+            @if (client.evolutionPhotos?.length) {
+              <img [src]="client.evolutionPhotos?.[0]" [alt]="client.name + ' - Foto'">
+            } @else {
+              <mat-icon>person</mat-icon>
+            }
+          </div>
+          <div class="client-details">
+            <h1 class="page-title">Medidas Corporais</h1>
+            <p class="client-name">{{ client.name }}</p>
+            <p class="measures-info">Acompanhamento de medidas e evolução</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button mat-raised-button color="accent" (click)="navigateToEditMeasures()">
+            <mat-icon>edit</mat-icon>
+            {{ measures ? 'Editar Medidas' : 'Adicionar Medidas' }}
+          </button>
+          <button mat-icon-button (click)="onBack()" matTooltip="Voltar ao Dashboard">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESTATÍSTICAS RÁPIDAS -->
+    <div class="stats-grid">
+      <div class="stat-card weight">
+        <div class="stat-icon">
+          <mat-icon>scale</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-number">{{ client.weight || '-' }}</span>
+          <span class="stat-label">Peso (kg)</span>
+        </div>
+      </div>
+
+      <div class="stat-card height">
+        <div class="stat-icon">
+          <mat-icon>straighten</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-number">{{ client.height || '-' }}</span>
+          <span class="stat-label">Altura (cm)</span>
+        </div>
+      </div>
+
+      <div class="stat-card bmi">
+        <div class="stat-icon">
+          <mat-icon>analytics</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-number">{{ calculateBMI() || '-' }}</span>
+          <span class="stat-label">IMC</span>
+        </div>
+      </div>
+    </div>
+
+    @if (measures) {
+      <!-- SEÇÃO DE MEDIDAS DETALHADAS -->
+      <div class="measures-section">
+        <div class="section-header">
+          <h2>
+            <mat-icon>straighten</mat-icon>
+            Medidas Detalhadas
+          </h2>
+          <p>Circunferências corporais atuais</p>
+        </div>
+
+        <div class="measures-grid">
+          <!-- Medidas do Tronco -->
+          <mat-card class="measure-group-card">
+            <mat-card-header>
+              <div class="group-avatar tronco">
+                <mat-icon>accessibility</mat-icon>
+              </div>
+              <mat-card-title>Tronco</mat-card-title>
+              <mat-card-subtitle>Medidas da região do tronco</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="measures-list">
+                <div class="measure-item">
+                  <div class="measure-info">
+                    <mat-icon>straighten</mat-icon>
+                    <span class="measure-name">Peitoral</span>
+                  </div>
+                  <span class="measure-value">{{ measures.peitoral || '-' }} cm</span>
+                </div>
+                <div class="measure-item">
+                  <div class="measure-info">
+                    <mat-icon>straighten</mat-icon>
+                    <span class="measure-name">Cintura</span>
+                  </div>
+                  <span class="measure-value">{{ measures.cintura || '-' }} cm</span>
+                </div>
+                <div class="measure-item">
+                  <div class="measure-info">
+                    <mat-icon>straighten</mat-icon>
+                    <span class="measure-name">Quadril</span>
+                  </div>
+                  <span class="measure-value">{{ measures.quadril || '-' }} cm</span>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Medidas dos Braços -->
+          <mat-card class="measure-group-card">
+            <mat-card-header>
+              <div class="group-avatar bracos">
+                <mat-icon>fitness_center</mat-icon>
+              </div>
+              <mat-card-title>Braços</mat-card-title>
+              <mat-card-subtitle>Circunferências dos braços</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="measures-list">
+                <div class="measure-item">
+                  <div class="measure-info">
+                    <mat-icon>straighten</mat-icon>
+                    <span class="measure-name">Braço Direito</span>
+                  </div>
+                  <span class="measure-value">{{ measures.braco_direito || '-' }} cm</span>
+                </div>
+                <div class="measure-item">
+                  <div class="measure-info">
+                    <mat-icon>straighten</mat-icon>
+                    <span class="measure-name">Braço Esquerdo</span>
+                  </div>
+                  <span class="measure-value">{{ measures.braco_esquerdo || '-' }} cm</span>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Medidas das Pernas -->
+          <mat-card class="measure-group-card">
+            <mat-card-header>
+              <div class="group-avatar pernas">
+                <mat-icon>directions_run</mat-icon>
+              </div>
+              <mat-card-title>Pernas</mat-card-title>
+              <mat-card-subtitle>Circunferências das coxas</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="measures-list">
+                <div class="measure-item">
+                  <div class="measure-info">
+                    <mat-icon>straighten</mat-icon>
+                    <span class="measure-name">Coxa Direita</span>
+                  </div>
+                  <span class="measure-value">{{ measures.coxa_direita || '-' }} cm</span>
+                </div>
+                <div class="measure-item">
+                  <div class="measure-info">
+                    <mat-icon>straighten</mat-icon>
+                    <span class="measure-name">Coxa Esquerda</span>
+                  </div>
+                  <span class="measure-value">{{ measures.coxa_esquerda || '-' }} cm</span>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- IMC e Análise -->
+          <mat-card class="measure-group-card analysis-card">
+            <mat-card-header>
+              <div class="group-avatar analysis" [style.background-color]="getBMIColor()">
+                <mat-icon>analytics</mat-icon>
+              </div>
+              <mat-card-title>Análise IMC</mat-card-title>
+              <mat-card-subtitle>Índice de Massa Corporal</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="bmi-analysis">
+                <div class="bmi-value">
+                  <span class="bmi-number">{{ calculateBMI() || '-' }}</span>
+                  <span class="bmi-unit">kg/m²</span>
+                </div>
+                <div class="bmi-category" [style.color]="getBMIColor()">
+                  {{ getBMICategory() }}
+                </div>
+                <div class="bmi-description">
+                  <p>IMC calculado com base no peso e altura atuais</p>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    } @else {
+      <!-- ESTADO SEM MEDIDAS -->
+      <div class="no-measures-container">
+        <mat-icon>straighten</mat-icon>
+        <h2>Nenhuma medida registrada</h2>
+        <p>Este cliente ainda não possui medidas corporais registradas no sistema.</p>
+        <button mat-raised-button color="primary" (click)="navigateToEditMeasures()">
+          <mat-icon>add</mat-icon>
+          Adicionar Primeiras Medidas
+        </button>
+      </div>
+    }
+  }
+</div>

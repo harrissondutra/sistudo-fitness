@@ -40,6 +40,12 @@ import { GymComponent } from './gym/gym.component';
 import { ViewComponent } from './admin/view/view.component';
 import { GymEditComponent } from './gym/gym-edit/gym-edit.component';
 import { AdminRegisterComponent } from './admin/admin-register/admin-register.component';
+import { ClientDashboardComponent } from './client/client-dashboard/client-dashboard/client-dashboard.component';
+import { ClientTrainningActiveComponent } from './client/client-trainning-active/client-trainning-active/client-trainning-active.component';
+import { ClientTrainningInactiveComponent } from './client/client-trainning-inactive/client-trainning-inactive/client-trainning-inactive.component';
+import { ClientMeasureComponent } from './client/client-measure/client-measure/client-measure.component';
+import { ClientMeasureHistoryComponent } from './client/client-measure-history/client-measure-history/client-measure-history.component';
+import { ClientProfessionalsComponent } from './client/client-professionals/client-professionals/client-professionals.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -58,6 +64,12 @@ export const routes: Routes = [
       { path: 'logout', component: LogoutComponent },
       { path: 'register', component: ClientRegistrationComponent },
       { path: 'client/:id', component: ClientViewComponent },
+      { path: 'client-dashboard/:id', component: ClientDashboardComponent },
+      { path: 'client-trainning-active/:id', component: ClientTrainningActiveComponent },
+      { path: 'client-trainning-inactive/:id', component: ClientTrainningInactiveComponent },
+      { path: 'client-measure/:id', component: ClientMeasureComponent },
+      { path: 'client-measure-history/:id', component: ClientMeasureHistoryComponent },
+      { path: 'client-professionals/:id', component: ClientProfessionalsComponent },
       { path: 'clients-list', component: ClientListComponent },
       { path: 'clients-edit/:id', component: ClientEditComponent },
       { path: 'edit-measures/:id', component: EditMeasuresComponent },
@@ -72,7 +84,7 @@ export const routes: Routes = [
       { path: 'trainnings', component: TrainningComponent },
       { path: 'inactive-trainning', component: InactiveTrainningComponent },
       { path: 'doctor-list', component: DoctorListComponent },
-      { path: 'doctor-view', component: DoctorViewComponent },
+      { path: 'doctor-view/:id', component: DoctorViewComponent },
       { path: 'doctor-update/:id', component: DoctorUpdateComponent },
       { path: 'doctor-create', component: DoctorCreateComponent },
       { path: 'doctor-create/:id', component: DoctorCreateComponent },
