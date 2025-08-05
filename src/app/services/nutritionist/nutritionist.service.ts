@@ -31,6 +31,24 @@ export class NutritionistService {
     );
   }
 
+  getClientsByNutritionistId(nutritionistId: number): Observable<Client[]> {
+    const url = `${this.baseUrl}/getClientsByNutritionistId/${nutritionistId}`;
+    console.log('Chamando endpoint getClientsByNutritionistId:', url);
+
+    return this.http.get<Client[]>(url).pipe(
+      tap(response => {
+        console.log('Resposta da API getClientsByNutritionistId:', response);
+        console.log('Tipo da resposta:', typeof response);
+        console.log('É array?', Array.isArray(response));
+        console.log('Quantidade de clientes:', response?.length || 0);
+      }),
+      catchError(error => {
+        console.error('Erro ao buscar clientes do nutricionista:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
   createNutritionist(nutritionist: Nutritionist): Observable<Nutritionist> {
     return this.http.post<Nutritionist>(`${this.baseUrl}/create`, nutritionist).pipe(
       catchError(this.handleError)

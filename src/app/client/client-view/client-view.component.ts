@@ -163,14 +163,14 @@ export class ClientViewComponent implements OnInit, OnDestroy {
     console.log('🔍 ClientViewComponent - Tipo do ID:', typeof clientId);
     console.log('🔍 ClientViewComponent - URL completa:', this.router.url);
     console.log('🔍 ClientViewComponent - Parâmetros da rota:', this.route.snapshot.paramMap);
-    
+
     // Testa conversão para número
     if (clientId) {
       console.log('🔍 ClientViewComponent - Number(clientId):', Number(clientId));
       console.log('🔍 ClientViewComponent - isNaN(Number(clientId)):', isNaN(Number(clientId)));
       console.log('🔍 ClientViewComponent - clientId !== "NaN":', clientId !== 'NaN');
     }
-    
+
     if (clientId && clientId !== 'NaN' && !isNaN(Number(clientId))) {
       this.initializeClient(clientId);
     } else {
@@ -485,7 +485,7 @@ export class ClientViewComponent implements OnInit, OnDestroy {
       email: this.client.email,
       phone: this.client.phone,    // Adicionado telefone
       cpf: this.client.cpf,        // Adicionado CPF
-      dateOfBirth: this.client.dateOfBirth ? new Date(this.client.dateOfBirth) : undefined,
+      dateOfBirth: this.formatDateOfBirth(this.client.dateOfBirth),
       height: this.client.height,
       weight: this.client.weight
     };
@@ -531,15 +531,44 @@ export class ClientViewComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Formata a data para exibição, tratando arrays de números do backend Java
+   */
+  formatDateOfBirth(dateOfBirth: Date | string | number[] | undefined): Date | undefined {
+    if (!dateOfBirth) {
+      return undefined;
+    }
+
+    // Se for array de números (formato do backend Java LocalDateTime)
+    if (Array.isArray(dateOfBirth)) {
+      try {
+        const [year, month, day, hour = 0, minute = 0] = dateOfBirth;
+        return new Date(year, month - 1, day, hour, minute);
+      } catch (error) {
+        console.error('Erro ao converter array de data:', error);
+        return undefined;
+      }
+    }
+
+    // Se for string ou Date, retorna como Date
+    if (typeof dateOfBirth === 'string' || dateOfBirth instanceof Date) {
+      const date = new Date(dateOfBirth);
+      return isNaN(date.getTime()) ? undefined : date;
+    }
+
+    return undefined;
+  }
+
+  /**
  * Calcula a idade com base na data de nascimento
  */
-  calculateAge(dateOfBirth: Date | string | undefined): number | null {
+  calculateAge(dateOfBirth: Date | string | number[] | undefined): number | null {
     if (!dateOfBirth) {
       return null;
     }
 
-    const birthDate = new Date(dateOfBirth);
-    if (isNaN(birthDate.getTime())) {
+    // Converte para Date usando o método formatDateOfBirth
+    const birthDate = this.formatDateOfBirth(dateOfBirth);
+    if (!birthDate || isNaN(birthDate.getTime())) {
       return null; // Data inválida
     }
 

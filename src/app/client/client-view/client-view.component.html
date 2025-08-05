@@ -104,7 +104,7 @@
           <div class="info-item">
             <span class="label">Nascimento:</span>
             @if (!editingClient) {
-            <span class="value">{{ client.dateOfBirth ? (client.dateOfBirth | date:'dd/MM/yyyy') : '-' }}</span>
+            <span class="value">{{ formatDateOfBirth(client.dateOfBirth) | date:'dd/MM/yyyy' }}</span>
             } @else {
             <mat-form-field appearance="outline" class="client-input">
               <input matInput [matDatepicker]="dobPicker" [(ngModel)]="editableClient.dateOfBirth"

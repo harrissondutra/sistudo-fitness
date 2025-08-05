@@ -1,0 +1,687 @@
+@use 'sass:math';
+@use '../../../styles/variables' as vars;
+
+// === NUTRITIONIST THEME COLORS ===
+$primary-color: #FF9800;
+$primary-light: #FFB74D;
+$primary-dark: #E65100;
+$surface-color: #ffffff;
+$background-color: #f5f5f5;
+$text-primary: #212121;
+$text-secondary: #757575;
+$text-disabled: #9e9e9e;
+$success-color: #4caf50;
+$error-color: #f44336;
+$warning-color: #ff9800;
+
+// === SPACING ===
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+// === MIXINS ===
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin card-shadow {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+@mixin hover-shadow {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+@mixin transition {
+  transition: all 0.3s ease;
+}
+
+// === ANIMATIONS ===
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+// === MAIN CONTAINER ===
+.nutritionist-view-container {
+  min-height: 100vh;
+  background: $background-color;
+  padding: $spacing-lg;
+
+  @media (max-width: 768px) {
+    padding: $spacing-md;
+  }
+}
+
+// === HEADER ===
+.page-header {
+  margin-bottom: $spacing-xl;
+  animation: fadeIn 0.5s ease;
+
+  .header-content {
+    @include flex-between;
+    background: $surface-color;
+    padding: $spacing-lg;
+    border-radius: 12px;
+    @include card-shadow;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: $spacing-md;
+      text-align: center;
+    }
+  }
+
+  .title-section {
+    .page-title {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+      margin: 0;
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: $text-primary;
+
+      .title-icon {
+        color: $primary-color;
+        font-size: 2rem;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+    }
+
+    .page-subtitle {
+      margin: $spacing-xs 0 0;
+      color: $text-secondary;
+      font-size: 1rem;
+    }
+  }
+
+  .header-actions {
+    .back-button {
+      @include transition;
+
+      &:hover {
+        transform: translateX(-4px);
+      }
+    }
+  }
+}
+
+// === LOADING STATE ===
+.loading-state {
+  @include flex-center;
+  flex-direction: column;
+  gap: $spacing-md;
+  padding: $spacing-xl * 2;
+  background: $surface-color;
+  border-radius: 12px;
+  @include card-shadow;
+  text-align: center;
+
+  h2 {
+    margin: 0;
+    color: $text-primary;
+    font-size: 1.25rem;
+  }
+
+  p {
+    margin: 0;
+    color: $text-secondary;
+  }
+}
+
+// === CONTENT LAYOUT ===
+.content-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: $spacing-lg;
+  animation: fadeIn 0.6s ease;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// === MAIN CARD ===
+.main-card {
+  .nutritionist-card {
+    background: $surface-color;
+    border-radius: 12px;
+    @include card-shadow;
+    @include transition;
+    overflow: hidden;
+
+    &:hover {
+      @include hover-shadow;
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($primary-color, 0.1) 100%);
+      border-bottom: 1px solid rgba($primary-color, 0.1);
+
+      .nutritionist-avatar {
+        background: $primary-color;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        mat-icon {
+          font-size: 1.5rem;
+          width: 24px;
+          height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+
+      ::ng-deep .mat-mdc-card-title {
+        color: $text-primary;
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+
+      ::ng-deep .mat-mdc-card-subtitle {
+        display: flex;
+        align-items: center;
+        gap: $spacing-xs;
+        color: $text-secondary;
+
+        mat-icon {
+          color: $primary-color;
+          font-size: 1rem;
+          width: 16px;
+          height: 16px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+    }
+
+    .card-content {
+      padding: $spacing-lg;
+    }
+  }
+}
+
+// === FORM STYLES ===
+.nutritionist-form {
+  .form-section {
+    margin-bottom: $spacing-xl;
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+      margin: 0 0 $spacing-lg 0;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: $text-primary;
+
+      mat-icon {
+        color: $primary-color;
+        font-size: 1.25rem;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: $spacing-md;
+
+      .full-width {
+        grid-column: 1 / -1;
+      }
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: $spacing-md;
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    mat-form-field {
+      width: 100%;
+
+      ::ng-deep {
+        .mat-mdc-text-field-wrapper {
+          background: rgba($primary-color, 0.02);
+          @include transition;
+
+          &:hover {
+            background: rgba($primary-color, 0.04);
+          }
+        }
+
+        &.mat-focused .mat-mdc-text-field-wrapper {
+          background: rgba($primary-color, 0.06);
+        }
+
+        .mat-mdc-form-field-label {
+          color: $text-secondary;
+        }
+
+        .mat-mdc-input-element {
+          color: $text-primary;
+
+          &[readonly] {
+            background-color: rgba($text-disabled, 0.05);
+            cursor: default;
+          }
+        }
+
+        .mat-icon {
+          color: $primary-color;
+          font-size: 1.125rem;
+          width: 18px;
+          height: 18px;
+          display: inline-flex;
+          align-items: center;
+        }
+
+        .mat-mdc-form-field-hint {
+          color: $text-secondary;
+          font-size: 0.75rem;
+        }
+      }
+    }
+  }
+}
+
+// === CLIENTS DISPLAY ===
+.clients-display {
+  .clients-list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+
+  .client-item {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-sm $spacing-md;
+    background: rgba($primary-color, 0.05);
+    border-radius: 8px;
+    border-left: 3px solid $primary-color;
+
+    mat-icon {
+      color: $primary-color;
+      font-size: 1.125rem;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .client-info {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+
+      .client-name {
+        font-weight: 500;
+        color: $text-primary;
+        line-height: 1.2;
+      }
+
+      .client-email {
+        font-size: 0.875rem;
+        color: $text-secondary;
+        line-height: 1.2;
+        margin-top: 2px;
+      }
+    }
+  }
+
+  .no-clients {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-md;
+    color: $text-secondary;
+    font-style: italic;
+
+    mat-icon {
+      color: $text-disabled;
+      font-size: 1.125rem;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+  }
+}
+
+// === CARD ACTIONS ===
+.card-actions {
+  padding: $spacing-md $spacing-lg;
+  background: rgba($primary-color, 0.02);
+
+  .action-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: $spacing-md;
+    width: 100%;
+
+    @media (max-width: 640px) {
+      flex-direction: column;
+      align-items: stretch;
+
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+
+  button {
+    @include transition;
+    min-width: 140px;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+
+    mat-icon {
+      margin-right: $spacing-xs;
+      font-size: 1.125rem;
+      width: 18px;
+      height: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &.primary-action {
+      background: linear-gradient(135deg, $primary-color, $primary-light);
+      color: white;
+
+      &:hover {
+        background: linear-gradient(135deg, $primary-dark, $primary-color);
+      }
+
+      &:disabled {
+        background: $text-disabled;
+        color: rgba(white, 0.7);
+        transform: none;
+      }
+    }
+
+    &.secondary-action {
+      border-color: $text-secondary;
+      color: $text-secondary;
+
+      &:hover {
+        background: rgba($text-secondary, 0.1);
+        border-color: $text-primary;
+        color: $text-primary;
+      }
+    }
+
+    &.danger-action {
+      background: $error-color;
+      color: white;
+
+      &:hover {
+        background: darken($error-color, 10%);
+      }
+    }
+  }
+}
+
+// === SIDE CARD ===
+.side-card {
+  .summary-card {
+    background: $surface-color;
+    border-radius: 12px;
+    @include card-shadow;
+    @include transition;
+    animation: slideIn 0.6s ease;
+
+    &:hover {
+      @include hover-shadow;
+    }
+
+    ::ng-deep .mat-mdc-card-header {
+      background: linear-gradient(135deg, rgba($primary-color, 0.05) 0%, rgba($primary-color, 0.1) 100%);
+      border-bottom: 1px solid rgba($primary-color, 0.1);
+
+      .mat-mdc-card-title {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        color: $text-primary;
+        font-weight: 600;
+
+        mat-icon {
+          color: $primary-color;
+          font-size: 1.25rem;
+          width: 20px;
+          height: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+    }
+
+    ::ng-deep .mat-mdc-card-content {
+      padding: $spacing-lg;
+    }
+  }
+
+  .summary-grid {
+    display: grid;
+    gap: $spacing-md;
+    margin-bottom: $spacing-lg;
+
+    .summary-item {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+      padding: $spacing-sm;
+      background: rgba($primary-color, 0.03);
+      border-radius: 8px;
+      @include transition;
+
+      &:hover {
+        background: rgba($primary-color, 0.06);
+      }
+
+      mat-icon {
+        color: $primary-color;
+        font-size: 1.25rem;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .summary-content {
+        display: flex;
+        flex-direction: column;
+
+        .label {
+          font-size: 0.75rem;
+          color: $text-secondary;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          font-weight: 500;
+        }
+
+        .value {
+          font-size: 0.875rem;
+          color: $text-primary;
+          font-weight: 600;
+          margin-top: 2px;
+        }
+      }
+    }
+  }
+}
+
+// === ERROR STATE ===
+.error-state {
+  @include flex-center;
+  flex-direction: column;
+  gap: $spacing-md;
+  padding: $spacing-xl * 2;
+  background: $surface-color;
+  border-radius: 12px;
+  @include card-shadow;
+  text-align: center;
+
+  .error-icon {
+    font-size: 4rem;
+    color: $error-color;
+    margin-bottom: $spacing-md;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  h2 {
+    margin: 0;
+    color: $text-primary;
+    font-size: 1.5rem;
+  }
+
+  p {
+    margin: 0 0 $spacing-lg 0;
+    color: $text-secondary;
+    max-width: 400px;
+  }
+
+  button {
+    @include transition;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// === RESPONSIVE ===
+@media (max-width: 768px) {
+  .nutritionist-view-container {
+    padding: $spacing-sm;
+  }
+
+  .content-layout {
+    gap: $spacing-md;
+  }
+
+  .main-card .nutritionist-card {
+    .card-header {
+      ::ng-deep .mat-mdc-card-title {
+        font-size: 1.25rem;
+      }
+    }
+
+    .card-content {
+      padding: $spacing-md;
+    }
+  }
+
+  .side-card .summary-card {
+    ::ng-deep .mat-mdc-card-content {
+      padding: $spacing-md;
+    }
+  }
+
+  .nutritionist-form .form-section {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header .header-content {
+    padding: $spacing-md;
+  }
+
+  .nutritionist-form .form-section {
+    margin-bottom: $spacing-lg;
+
+    .section-title {
+      font-size: 1rem;
+      margin-bottom: $spacing-md;
+    }
+  }
+}
+
+// === SNACKBAR STYLES ===
+::ng-deep {
+  .snackbar-success {
+    background: $success-color !important;
+    color: white !important;
+  }
+
+  .snackbar-error {
+    background: $error-color !important;
+    color: white !important;
+  }
+
+  // Material Design theme override for nutritionist forms
+  .nutritionist-view-container {
+    .mat-mdc-form-field.mat-focused .mat-mdc-select-arrow {
+      color: $primary-color;
+    }
+
+    .mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
+    .mat-mdc-form-field.mat-focused .mdc-notched-outline__notch,
+    .mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing {
+      border-color: $primary-color !important;
+    }
+
+    .mat-mdc-form-field.mat-focused .mdc-floating-label {
+      color: $primary-color !important;
+    }
+  }
+}

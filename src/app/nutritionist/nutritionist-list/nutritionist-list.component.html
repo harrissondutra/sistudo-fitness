@@ -1,5 +1,4 @@
 <div class="nutritionist-list-container">
-  <!-- Cabeçalho -->
   <div class="header">
     <div class="title-section">
       <h2>Lista de Nutricionistas</h2>
@@ -11,7 +10,6 @@
     </button>
   </div>
 
-  <!-- Seção de Busca -->
   <div class="search-section">
     <mat-form-field appearance="outline" class="search-input">
       <mat-label>Buscar Nutricionista</mat-label>
@@ -20,58 +18,69 @@
     </mat-form-field>
   </div>
 
-  <!-- Indicador de carregamento -->
-  <div *ngIf="isLoading" class="loading-indicator">
+  @if (isLoading) {
+  <div class="loading-indicator">
     <mat-spinner diameter="50"></mat-spinner>
     <p>Carregando nutricionistas...</p>
   </div>
+  }
 
-  <!-- Lista de Nutricionistas -->
-  <ng-container *ngIf="!isLoading">
-    <ion-list *ngIf="filteredNutritionists && filteredNutritionists.length > 0" class="nutritionist-ionic-list mat-elevation-z2">
-      <ion-item *ngFor="let nutritionist of filteredNutritionists" button (click)="onViewNutritionist(nutritionist)" class="nutritionist-item">
-        <ion-label>
-          <h3>{{ nutritionist.name || 'Sem nome' }}</h3>
-          <p class="nutritionist-info" *ngIf="nutritionist.email">
-            <mat-icon>email</mat-icon>
-            {{ nutritionist.email }}
-          </p>
-          <p class="nutritionist-info" *ngIf="nutritionist.registry">
-            <mat-icon>assignment_ind</mat-icon>
-            {{ nutritionist.registry }}
-          </p>
-          <p class="nutritionist-info" *ngIf="nutritionist.specialty">
-            <mat-icon>restaurant_menu</mat-icon>
-            {{ nutritionist.specialty }}
-          </p>
-          <p class="nutritionist-info" *ngIf="nutritionist.phone">
-            <mat-icon>phone</mat-icon>
-            {{ nutritionist.phone }}
-          </p>
-        </ion-label>
-        <div class="action-buttons" slot="end">
-          <button mat-icon-button color="primary" (click)="onViewNutritionist(nutritionist); $event.stopPropagation()"
-            matTooltip="Visualizar">
-            <mat-icon>visibility</mat-icon>
-          </button>
-          <button mat-icon-button color="accent" (click)="onEditNutritionist(nutritionist); $event.stopPropagation()"
-            matTooltip="Editar">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button color="warn"
-            (click)="onDeleteNutritionist(nutritionist.id!.toString()); $event.stopPropagation()" matTooltip="Excluir">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </div>
-      </ion-item>
-    </ion-list>
+  @if (!isLoading && filteredNutritionists && filteredNutritionists.length > 0) {
+  <ion-list class="nutritionist-ionic-list mat-elevation-z2">
+    @for (nutritionist of filteredNutritionists; track nutritionist.id) {
+    <ion-item button (click)="onViewNutritionist(nutritionist)" class="nutritionist-item">
+      <ion-label>
+        <h3>{{ nutritionist.name }}</h3>
+        <p class="nutritionist-info">
+          <mat-icon>email</mat-icon>
+          {{ nutritionist.email }}
+        </p>
+        @if (nutritionist.registry) {
+        <p class="nutritionist-info">
+          <mat-icon>assignment_ind</mat-icon>
+          {{ nutritionist.registry }}
+        </p>
+        }
+        @if (nutritionist.specialty) {
+        <p class="nutritionist-info">
+          <mat-icon>restaurant_menu</mat-icon>
+          {{ nutritionist.specialty }}
+        </p>
+        }
+        @if (nutritionist.phone) {
+        <p class="nutritionist-info">
+          <mat-icon>phone</mat-icon>
+          {{ nutritionist.phone }}
+        </p>
+        }
+      </ion-label>
+      <div class="action-buttons" slot="end">
+        <button mat-icon-button color="primary" (click)="onViewNutritionist(nutritionist); $event.stopPropagation()"
+          matTooltip="Visualizar">
+          <mat-icon>visibility</mat-icon>
+        </button>
+        <button mat-icon-button color="accent" (click)="onEditNutritionist(nutritionist); $event.stopPropagation()"
+          matTooltip="Editar">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="onDeleteNutritionist(nutritionist.id!.toString()); $event.stopPropagation()"
+          matTooltip="Excluir">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </ion-item>
+    }
+  </ion-list>
+  }
 
-    <!-- Mensagem quando não há dados -->
-    <div *ngIf="!filteredNutritionists || filteredNutritionists.length === 0" class="no-data-content">
-      <mat-icon>restaurant_menu</mat-icon>
-      <p *ngIf="searchControl.value">Nenhum nutricionista encontrado com o filtro aplicado.</p>
-      <p *ngIf="!searchControl.value">Nenhum nutricionista cadastrado ainda.</p>
-      <button mat-button color="primary" (click)="loadAllNutritionists()">Recarregar</button>
-    </div>
-  </ng-container>
+  @if (!isLoading && (!filteredNutritionists || filteredNutritionists.length === 0)) {
+  <div class="no-data-content">
+    <mat-icon>restaurant_menu</mat-icon>
+    @if (searchControl.value) {
+    <p>Nenhum nutricionista encontrado com o filtro aplicado.</p>
+    } @else {
+    <p>Nenhum nutricionista cadastrado ainda.</p>
+    }
+  </div>
+  }
 </div>

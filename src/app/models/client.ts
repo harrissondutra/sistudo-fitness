@@ -5,12 +5,21 @@ import { Nutritionist } from './nutritionist';
 import { Measure } from './measure';
 import { Trainning } from './trainning'; // Corrected import name to 'Training' (capital T)
 
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  password?: string;
+  role: string;
+}
+
 export interface Client {
   id?: number; // Long no backend -> number no frontend
   name: string;
   email: string;
+  user?: User; // Objeto User do backend
   cpf: string;
-  dateOfBirth?: Date | string; // LocalDateTime no backend -> string no frontend (ISO 8601)
+  dateOfBirth?: Date | string | number[]; // LocalDateTime no backend -> pode ser array de números [year, month, day, hour, minute]
   phone?: string; // Telefone do cliente
   weight?: number;
   height?: number;
@@ -18,6 +27,7 @@ export interface Client {
   hasDoctorAssistance?: boolean;
   hasPersonalAssistance?: boolean;
   hasNutritionistAssistance?: boolean;
+  role?: string; // Campo role adicional
   trainings?: Trainning[]; // Lista de treinos (ManyToMany no backend), renomeado para 'trainings'
   doctor?: Doctor; // Objeto Doctor completo (ManyToOne no backend)
   personal?: Personal; // Objeto Personal completo (ManyToOne no backend)

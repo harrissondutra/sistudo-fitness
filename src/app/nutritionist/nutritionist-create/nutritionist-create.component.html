@@ -1,92 +1,80 @@
-<div class="registration-container">
+<div class="nutritionist-update-container">
   <div class="header">
     <div class="title-section">
-      <h2>Cadastro de Nutricionista</h2>
-      <p class="subtitle">Preencha os dados para criar um novo Nutricionista</p>
+      <h2>Novo Nutricionista</h2>
+      <p class="subtitle">Cadastre um novo nutricionista no sistema</p>
     </div>
   </div>
 
-  <form [formGroup]="nutritionistForm" (ngSubmit)="onSubmit()">
-    <mat-card class="form-card">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>restaurant_menu</mat-icon>
-          Dados do Profissional
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="form-section">
-          <!-- Nome -->
-          <mat-form-field appearance="outline" class="full-width-input">
-            <mat-label>Nome Completo</mat-label>
-            <input matInput type="text" formControlName="name" placeholder="Ex: Maria da Silva" />
-            <mat-icon matSuffix>person</mat-icon>
-            <mat-error *ngIf="nutritionistForm.get('name')?.invalid && nutritionistForm.get('name')?.touched">
-              Nome é obrigatório.
-            </mat-error>
-          </mat-form-field>
+  <form [formGroup]="nutritionistForm" (ngSubmit)="onSubmit()" class="nutritionist-form mat-elevation-z2">
+    <ion-list>
+      <ion-item class="form-item">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nome Completo</mat-label>
+          <input matInput formControlName="name" placeholder="Nome do nutricionista" required>
+          @if (nutritionistForm.get('name')?.hasError('required') && nutritionistForm.get('name')?.touched) {
+          <mat-error>O nome é obrigatório.</mat-error>
+          }
+        </mat-form-field>
+      </ion-item>
 
-          <!-- Email -->
-          <mat-form-field appearance="outline" class="full-width-input">
-            <mat-label>Email</mat-label>
-            <input matInput type="email" formControlName="email" placeholder="Ex: maria.silva@example.com" />
-            <mat-icon matSuffix>email</mat-icon>
-            <mat-error *ngIf="nutritionistForm.get('email')?.invalid && nutritionistForm.get('email')?.touched">
-              <span *ngIf="nutritionistForm.get('email')?.errors?.['required']">Email é obrigatório.</span>
-              <span *ngIf="nutritionistForm.get('email')?.errors?.['email']">Email inválido.</span>
-            </mat-error>
-          </mat-form-field>
+      <ion-item class="form-item">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>E-mail</mat-label>
+          <input matInput type="email" formControlName="email" placeholder="email@exemplo.com" required email>
+          @if (nutritionistForm.get('email')?.hasError('required') && nutritionistForm.get('email')?.touched) {
+          <mat-error>O e-mail é obrigatório.</mat-error>
+          }
+          @if (nutritionistForm.get('email')?.hasError('email') && nutritionistForm.get('email')?.touched) {
+          <mat-error>Por favor, insira um e-mail válido.</mat-error>
+          }
+        </mat-form-field>
+      </ion-item>
 
-          <!-- Telefone -->
-          <mat-form-field appearance="outline" class="full-width-input">
-            <mat-label>Telefone</mat-label>
-            <input matInput type="text" formControlName="phone" mask="(00) 00000-0000" [dropSpecialCharacters]="true"
-              placeholder="(00) 00000-0000" />
-            <mat-icon matSuffix>phone</mat-icon>
-            <mat-error *ngIf="nutritionistForm.get('phone')?.invalid && nutritionistForm.get('phone')?.touched">
-              <span *ngIf="nutritionistForm.get('phone')?.errors?.['required']">Telefone é obrigatório.</span>
-              <span *ngIf="nutritionistForm.get('phone')?.errors?.['pattern']">Formato de telefone inválido.</span>
-            </mat-error>
-          </mat-form-field>
+      <ion-item class="form-item">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Telefone</mat-label>
+          <input matInput formControlName="phone" placeholder="(XX) XXXXX-XXXX">
+        </mat-form-field>
+      </ion-item>
 
-          <!-- Especialidade -->
-          <mat-form-field appearance="outline" class="full-width-input">
-            <mat-label>Especialidade</mat-label>
-            <mat-select formControlName="specialty">
-              <mat-option *ngFor="let especialidade of especialidades" [value]="especialidade.value">
+      <ion-item class="form-item">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Especialidade</mat-label>
+          <mat-select formControlName="specialty" required>
+            @for (especialidade of especialidades; track especialidade.value) {
+              <mat-option [value]="especialidade.value">
                 {{ especialidade.viewValue }}
               </mat-option>
-            </mat-select>
-            <mat-icon matSuffix>restaurant_menu</mat-icon>
-            <mat-error *ngIf="nutritionistForm.get('specialty')?.invalid && nutritionistForm.get('specialty')?.touched">
-              Especialidade é obrigatória.
-            </mat-error>
-          </mat-form-field>
+            }
+          </mat-select>
+          <mat-hint>Selecione a especialidade do nutricionista</mat-hint>
+          <mat-error *ngIf="nutritionistForm.get('specialty')?.hasError('required')">
+            A especialidade é obrigatória
+          </mat-error>
+        </mat-form-field>
+      </ion-item>
 
-          <!-- Registro CRN -->
-          <mat-form-field appearance="outline" class="full-width-input">
-            <mat-label>Registro CRN</mat-label>
-            <input matInput type="text" formControlName="registry" mask="00000/0" [dropSpecialCharacters]="false"
-              placeholder="Ex: 12345/1" />
-            <mat-icon matSuffix>card_membership</mat-icon>
-            <mat-hint>Formato: 00000/0</mat-hint>
-            <mat-error *ngIf="nutritionistForm.get('registry')?.invalid && nutritionistForm.get('registry')?.touched">
-              <span *ngIf="nutritionistForm.get('registry')?.errors?.['required']">Registro CRN é obrigatório.</span>
-              <span *ngIf="nutritionistForm.get('registry')?.errors?.['pattern']">Formato inválido. Use: 00000/0</span>
-            </mat-error>
-          </mat-form-field>
-        </div>
-      </mat-card-content>
-    </mat-card>
+      <ion-item class="form-item">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Registro CRN</mat-label>
+          <input matInput formControlName="registry" placeholder="Ex: 12345/A">
+          <mat-hint>Informe o registro profissional do nutricionista</mat-hint>
+          <mat-error *ngIf="nutritionistForm.get('registry')?.hasError('required')">
+            O registro CRN é obrigatório
+          </mat-error>
+        </mat-form-field>
+      </ion-item>
+    </ion-list>
 
     <div class="form-actions">
-      <button mat-button type="button" (click)="goBack()">
-        <mat-icon>arrow_back</mat-icon>
-        <span>Voltar</span>
+      <button mat-raised-button color="warn" type="button" (click)="onCancel()">
+        <mat-icon>cancel</mat-icon>
+        <span>Cancelar</span>
       </button>
       <button mat-raised-button color="primary" type="submit" [disabled]="nutritionistForm.invalid">
         <mat-icon>save</mat-icon>
-        <span>Cadastrar</span>
+        <span>Cadastrar Nutricionista</span>
       </button>
     </div>
   </form>

@@ -1,1 +1,262 @@
-<p>nutritionist-view works!</p>
+<div class="nutritionist-view-container">
+  <!-- Header Section -->
+  <header class="page-header">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">
+            {{ isEditing ? 'edit' : 'local_dining' }}
+          </mat-icon>
+          <span>{{ isEditing ? 'Editar Nutricionista' : 'Visualizar Nutricionista' }}</span>
+        </h1>
+        <p class="page-subtitle">
+          {{ isEditing ? 'Edite as informações do nutricionista' : 'Informações detalhadas do nutricionista' }}
+        </p>
+      </div>
+
+      <div class="header-actions">
+        <button
+          mat-fab
+          color="primary"
+          (click)="onBack()"
+          matTooltip="Voltar à lista"
+          class="back-button">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Loading State -->
+  @if (isLoading) {
+    <div class="loading-state">
+      <mat-spinner diameter="60" color="primary"></mat-spinner>
+      <h2>{{ isSaving ? 'Salvando alterações...' : 'Carregando dados...' }}</h2>
+      <p>Aguarde um momento</p>
+    </div>
+  }
+
+  <!-- Main Content -->
+  @if (!isLoading && nutritionist) {
+    <div class="content-layout">
+      <!-- Nutritionist Information Card -->
+      <div class="main-card">
+        <mat-card class="nutritionist-card">
+          <!-- Card Header -->
+          <mat-card-header class="card-header">
+            <div mat-card-avatar class="nutritionist-avatar">
+              <mat-icon>local_dining</mat-icon>
+            </div>
+            <mat-card-title>{{ nutritionist.name }}</mat-card-title>
+            <mat-card-subtitle>
+              <mat-icon>local_dining</mat-icon>
+              {{ nutritionist.specialty }}
+            </mat-card-subtitle>
+          </mat-card-header>
+
+          <!-- Card Content -->
+          <mat-card-content class="card-content">
+            <form [formGroup]="nutritionistForm" class="nutritionist-form">
+              <!-- Personal Information -->
+              <div class="form-section">
+                <h3 class="section-title">
+                  <mat-icon>person</mat-icon>
+                  Informações Pessoais
+                </h3>
+
+                <div class="form-grid">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Nome Completo</mat-label>
+                    <input matInput formControlName="name" [readonly]="!isEditing" placeholder="Digite o nome completo">
+                    <mat-icon matSuffix>person</mat-icon>
+                    @if (isEditing && nutritionistForm.get('name')?.invalid && nutritionistForm.get('name')?.touched) {
+                      <mat-error>{{ getFieldError('name') }}</mat-error>
+                    }
+                  </mat-form-field>
+
+                  <div class="form-row">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Registro Profissional</mat-label>
+                      <input matInput formControlName="registry" [readonly]="!isEditing" placeholder="Ex: CRN-1 12345">
+                      <mat-icon matSuffix>assignment_ind</mat-icon>
+                      @if (isEditing && nutritionistForm.get('registry')?.invalid && nutritionistForm.get('registry')?.touched) {
+                        <mat-error>{{ getFieldError('registry') }}</mat-error>
+                      }
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                      <mat-label>Especialidade</mat-label>
+                      <input matInput formControlName="specialty" [readonly]="!isEditing" placeholder="Ex: Nutrição Clínica">
+                      <mat-icon matSuffix>local_dining</mat-icon>
+                      @if (isEditing && nutritionistForm.get('specialty')?.invalid && nutritionistForm.get('specialty')?.touched) {
+                        <mat-error>{{ getFieldError('specialty') }}</mat-error>
+                      }
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Contact Information -->
+              <div class="form-section">
+                <h3 class="section-title">
+                  <mat-icon>contact_mail</mat-icon>
+                  Informações de Contato
+                </h3>
+
+                <div class="form-row">
+                  <mat-form-field appearance="outline">
+                    <mat-label>E-mail</mat-label>
+                    <input matInput type="email" formControlName="email" [readonly]="!isEditing" placeholder="exemplo@email.com">
+                    <mat-icon matSuffix>email</mat-icon>
+                    @if (isEditing && nutritionistForm.get('email')?.invalid && nutritionistForm.get('email')?.touched) {
+                      <mat-error>{{ getFieldError('email') }}</mat-error>
+                    }
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline">
+                    <mat-label>Telefone</mat-label>
+                    <input matInput formControlName="phone" [readonly]="!isEditing" placeholder="(11) 99999-9999">
+                    <mat-icon matSuffix>phone</mat-icon>
+                    @if (isEditing && nutritionistForm.get('phone')?.invalid && nutritionistForm.get('phone')?.touched) {
+                      <mat-error>{{ getFieldError('phone') }}</mat-error>
+                    }
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <!-- Clients Section -->
+              <div class="form-section">
+                <h3 class="section-title">
+                  <mat-icon>people</mat-icon>
+                  Clientes Atendidos
+                </h3>
+
+                <div class="clients-display">
+                  @if (nutritionistClients && nutritionistClients.length > 0) {
+                    <div class="clients-list">
+                      @for (client of nutritionistClients; track client.id) {
+                        <div class="client-item">
+                          <mat-icon>person</mat-icon>
+                          <div class="client-info">
+                            <span class="client-name">{{ client.name }}</span>
+                            @if (client.email && client.email !== 'Email não disponível' && client.email !== 'Email não informado') {
+                              <span class="client-email">{{ client.email }}</span>
+                            }
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  } @else {
+                    <div class="no-clients">
+                      <mat-icon>person_off</mat-icon>
+                      <span>Nenhum cliente vinculado a este nutricionista</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            </form>
+          </mat-card-content>
+
+          <!-- Card Actions -->
+          <mat-divider></mat-divider>
+          <mat-card-actions class="card-actions">
+            @if (!isEditing) {
+              <div class="action-group">
+                <button mat-raised-button color="primary" (click)="toggleEdit()" class="primary-action">
+                  <mat-icon>edit</mat-icon>
+                  <span>Editar Informações</span>
+                </button>
+                <button mat-raised-button color="warn" (click)="onDelete()" class="danger-action">
+                  <mat-icon>delete</mat-icon>
+                  <span>Excluir Nutricionista</span>
+                </button>
+              </div>
+            } @else {
+              <div class="action-group">
+                <button mat-stroked-button (click)="onCancel()" class="secondary-action">
+                  <mat-icon>close</mat-icon>
+                  <span>Cancelar</span>
+                </button>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  (click)="onSave()"
+                  [disabled]="nutritionistForm.invalid || isSaving"
+                  class="primary-action">
+                  @if (isSaving) {
+                    <mat-spinner diameter="20"></mat-spinner>
+                  } @else {
+                    <mat-icon>save</mat-icon>
+                  }
+                  <span>Salvar Alterações</span>
+                </button>
+              </div>
+            }
+          </mat-card-actions>
+        </mat-card>
+      </div>
+
+      <!-- Summary Card -->
+      <div class="side-card">
+        <mat-card class="summary-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>info</mat-icon>
+              <span>Resumo do Nutricionista</span>
+            </mat-card-title>
+            <mat-card-subtitle>Informações gerais</mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <div class="summary-grid">
+              <div class="summary-item">
+                <mat-icon>badge</mat-icon>
+                <div class="summary-content">
+                  <span class="label">ID do Nutricionista</span>
+                  <span class="value">#{{ nutritionist.id }}</span>
+                </div>
+              </div>
+
+              <div class="summary-item">
+                <mat-icon>people</mat-icon>
+                <div class="summary-content">
+                  <span class="label">Total de Clientes</span>
+                  <span class="value">{{ nutritionistClients.length || 0 }}</span>
+                </div>
+              </div>
+
+              <div class="summary-item">
+                <mat-icon>local_dining</mat-icon>
+                <div class="summary-content">
+                  <span class="label">Especialidade</span>
+                  <span class="value">{{ nutritionist.specialty }}</span>
+                </div>
+              </div>
+
+              <div class="summary-item">
+                <mat-icon>email</mat-icon>
+                <div class="summary-content">
+                  <span class="label">E-mail Principal</span>
+                  <span class="value">{{ nutritionist.email }}</span>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (!isLoading && !nutritionist) {
+    <div class="error-state">
+      <mat-icon class="error-icon">sentiment_dissatisfied</mat-icon>
+      <h2>Nutricionista não encontrado</h2>
+      <p>Não foi possível encontrar as informações do nutricionista solicitado.</p>
+      <button mat-raised-button color="primary" (click)="onBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Voltar à Lista
+      </button>
+    </div>
+  }
+</div>

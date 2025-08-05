@@ -1,72 +1,324 @@
-.registration-container {
-  max-width: 900px;
-  margin: 2rem auto;
-  padding: 1rem;
+@use 'sass:math';
+@import '../../../styles/variables';
+
+// === MÓDULO PERSONAL TRAINERS - CORES E ESPAÇAMENTOS ===
+$personal-primary: #00C851; // Verde profissional para personal trainers
+$personal-primary-light: #4CAF50; // Verde claro
+$personal-surface: $surface-color;
+$personal-text: $text-color;
+$personal-text-secondary: $text-secondary;
+$personal-text-muted: $text-muted;
+$personal-border: $border-color;
+$personal-error: $error-color;
+
+// === MIXINS ===
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+@mixin flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin card-elevation {
+  box-shadow:
+    0 4px 24px rgba($personal-primary, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+@mixin card-elevation-hover {
+  box-shadow:
+    0 8px 32px rgba($personal-primary, 0.12),
+    0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+@mixin smooth-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// === CONTAINER PRINCIPAL ===
+.personal-update-container {
+  max-width: 800px;
+  margin: $spacing-lg auto;
+  padding: $spacing-lg;
+  background: $personal-surface;
+  border-radius: 20px;
+  @include card-elevation;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, $personal-primary, $personal-primary-light);
+    border-radius: 20px 20px 0 0;
+  }
+}
+
+// === CABEÇALHO ===
 .header {
-  margin-bottom: 2rem;
+  @include flex-between;
+  margin-bottom: $spacing-lg;
+  padding: $spacing-md $spacing-lg;
+  background: rgba($personal-primary, 0.04);
+  border-radius: 16px;
+  border: 1px solid rgba($personal-primary, 0.1);
 
   .title-section {
     h2 {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-      color: #3f51b5;
+      margin: 0;
+      font-size: 28px;
+      font-weight: 600;
+      color: $personal-text;
+      background: linear-gradient(135deg, $personal-primary, $personal-primary-light);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .subtitle {
-      font-size: 1rem;
-      color: #666;
+      margin: 4px 0 0;
+      font-size: 14px;
+      color: $personal-text-secondary;
     }
   }
 }
 
-.form-card {
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+// === FORMULÁRIO ===
+.personal-form {
+  background: $personal-surface;
+  border-radius: 16px;
+  @include card-elevation;
+  padding: $spacing-lg;
+  @include smooth-transition;
 
-  mat-card-header {
-    margin-bottom: 1rem;
+  ion-list {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+  }
 
-    mat-card-title {
-      display: flex;
-      align-items: center;
-      font-size: 1.5rem;
-      color: #3f51b5;
+  .form-item {
+    --background: transparent;
+    --border-color: transparent;
+    --inner-border-width: 0;
+    --padding-start: 0;
+    --padding-end: 0;
+    --padding-top: 0;
+    --padding-bottom: 0;
+    margin-bottom: $spacing-md;
 
-      mat-icon {
-        margin-right: 0.5rem;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .full-width {
+    width: 100%;
+
+    ::ng-deep .mat-mdc-form-field {
+      .mat-mdc-text-field-wrapper {
+        background: rgba($personal-surface, 0.8);
+        border-radius: 12px;
+        border: 1px solid rgba($personal-primary, 0.15);
+        @include smooth-transition;
+
+        &:hover {
+          border-color: rgba($personal-primary, 0.3);
+        }
+      }
+
+      &.mat-focused .mat-mdc-text-field-wrapper {
+        border-color: $personal-primary;
+        box-shadow: 0 0 0 2px rgba($personal-primary, 0.1);
+      }
+
+      .mat-mdc-form-field-label {
+        color: $personal-text-secondary;
+
+        &.mat-focused {
+          color: $personal-primary;
+        }
+      }
+
+      .mat-mdc-input-element {
+        color: $personal-text;
+      }
+
+      .mat-icon {
+        color: $personal-primary;
+      }
+
+      .mat-mdc-select-arrow {
+        color: $personal-primary;
+      }
+
+      .mat-error {
+        font-size: 12px;
+        color: $personal-error;
+      }
+
+      .mat-hint {
+        color: $personal-text-secondary;
+        font-size: 12px;
       }
     }
   }
 }
 
-.form-section {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1rem;
+// === BOTÕES DE AÇÃO ===
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-md;
+  margin-top: $spacing-lg;
+  padding-top: $spacing-md;
+  border-top: 1px solid rgba($personal-primary, 0.1);
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+  button {
+    padding: 12px 24px;
+    border-radius: 12px;
+    @include smooth-transition;
+
+    mat-icon {
+      margin-right: 8px;
+    }
+
+    &[color="primary"] {
+      background: linear-gradient(135deg, $personal-primary, $personal-primary-light);
+      color: white;
+      box-shadow: 0 4px 16px rgba($personal-primary, 0.3);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 24px rgba($personal-primary, 0.4);
+      }
+
+      &:disabled {
+        background: rgba($personal-text-muted, 0.3);
+        color: rgba($personal-text-muted, 0.7);
+        box-shadow: none;
+        transform: none;
+      }
+    }
+
+    &[color="warn"] {
+      background: rgba($personal-error, 0.1);
+      color: $personal-error;
+      border: 1px solid rgba($personal-error, 0.3);
+
+      &:hover {
+        background: rgba($personal-error, 0.15);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba($personal-error, 0.2);
+      }
+    }
   }
 }
 
-.full-width-input {
-  width: 100%;
+// === INDICADOR DE CARREGAMENTO ===
+.loading-indicator {
+  @include flex-center;
+  flex-direction: column;
+  gap: $spacing-md;
+  padding: $spacing-xl * 2 0;
+  color: $personal-text-secondary;
+
+  mat-spinner {
+    ::ng-deep circle {
+      stroke: $personal-primary;
+    }
+  }
 }
 
-.form-actions {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 2rem;
+// === RESPONSIVIDADE ===
 
-  button {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+// Tablet (768px)
+@media (max-width: 768px) {
+  .personal-update-container {
+    margin: $spacing-md;
+    padding: $spacing-md;
+  }
 
-    &[color="primary"] {
-      min-width: 150px;
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $spacing-md;
+
+    .title-section h2 {
+      font-size: 24px;
     }
+  }
+
+  .personal-form {
+    padding: $spacing-md;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    gap: $spacing-sm;
+
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+// Smartphone (480px)
+@media (max-width: 480px) {
+  .personal-update-container {
+    margin: $spacing-sm;
+    padding: $spacing-sm;
+  }
+
+  .header {
+    padding: $spacing-sm;
+
+    .title-section h2 {
+      font-size: 20px;
+    }
+  }
+
+  .personal-form {
+    padding: $spacing-sm;
+
+    .form-item {
+      margin-bottom: $spacing-sm;
+    }
+  }
+
+  .form-actions {
+    gap: $spacing-xs;
+    margin-top: $spacing-md;
+    padding-top: $spacing-sm;
+
+    button {
+      padding: 10px 16px;
+      font-size: 14px;
+    }
+  }
+}
+
+// Smartphone pequeno (320px)
+@media (max-width: 320px) {
+  .personal-update-container {
+    margin: 4px;
+  }
+
+  .header .title-section h2 {
+    font-size: 18px;
+  }
+
+  .form-actions button {
+    padding: 8px 12px;
+    font-size: 13px;
   }
 }
