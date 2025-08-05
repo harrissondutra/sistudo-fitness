@@ -1,14 +1,46 @@
-// Cores
-$primary-color: #1976d2;
-$secondary-color: #1565c0;
-$accent-color: #ffca28;
-$background-color: #f5f7fa;
-$surface-color: #fff;
-$text-color: #222;
-$text-light: #fff;
-$error-color: #e53935;
-$success-color: #43a047;
-$border-color: #e0e0e0;
+// === SISTUDO FITNESS - PALETA GESTALT ===
+
+// Cores Principais - Verde Saúde/Vitalidade
+$primary-color: #00A86B;          // Jade Green - Vitalidade
+$primary-light: #4DB682;          // Verde claro para hover
+$primary-dark: #007849;           // Verde escuro para contraste
+
+// Cores Secundárias - Confiança e Energia
+$secondary-color: #1E88E5;        // Azul confiança (médicos/dados)
+$secondary-light: #64B5F6;        // Azul claro
+$secondary-dark: #1565C0;         // Azul escuro
+
+// Cor de Ação - Energia/Motivação
+$accent-color: #FF6F20;           // Laranja energia para CTAs
+$accent-light: #FF9A56;           // Laranja claro
+$accent-dark: #E65100;            // Laranja escuro
+
+// Cor Premium - Sofisticação
+$premium-color: #6A1B9A;          // Roxo para personal trainers
+$premium-light: #9C4DCC;          // Roxo claro
+$premium-dark: #4A148C;           // Roxo escuro
+
+// Cores Funcionais
+$success-color: #43A047;          // Verde sucesso
+$warning-color: #FB8C00;          // Laranja aviso
+$error-color: #E53935;            // Vermelho erro
+$info-color: #1E88E5;             // Azul informação
+
+// Cores de Superfície
+$background-color: #FAFAFA;       // Fundo claro
+$surface-color: #FFFFFF;          // Superfície branca
+$surface-elevated: #F5F5F5;       // Superfície elevada
+
+// Cores de Texto
+$text-color: #263238;             // Texto principal
+$text-secondary: #546E7A;         // Texto secundário
+$text-light: #FFFFFF;             // Texto claro
+$text-muted: #90A4AE;             // Texto suave
+
+// Cores de Borda
+$border-color: #E0E0E0;           // Borda padrão
+$border-light: #F5F5F5;           // Borda clara
+$divider-color: #EEEEEE;          // Divisores
 
 // Espaçamentos
 $spacing-xs: 4px;

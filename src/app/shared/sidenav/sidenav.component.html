@@ -1,64 +1,69 @@
-<mat-nav-list [class.collapsed]="collapsed">
-  <!-- Link Home direto -->
-  <div class="logo">
-    <a mat-list-item>
-      <img src="../../../assets/images/Logo.png" alt="Logo Sistudo" [class.hidden]="collapsed" width="200">
+<div class="fitness-nav gestalt-proximity" [class.collapsed]="collapsed">
+  <!-- Logo Section -->
+  <div class="nav-logo">
+    <a class="logo-link">
+      <img src="../../../assets/images/Logo.png" alt="Sistudo Fitness" [class.hidden]="collapsed" width="180">
     </a>
   </div>
 
-  <button *ngIf="collapsed" mat-icon-button (click)="expandSidenav()" style="margin: 8px; ">
+  <button *ngIf="collapsed" mat-icon-button class="expand-btn" (click)="expandSidenav()">
     <mat-icon>chevron_right</mat-icon>
   </button>
 
-  <mat-accordion>
-  @for (item of visibleMenuItems; track item) {
-    @if (item.links && item.links.length > 0) {
-      <mat-expansion-panel #panel [class.collapsed]="collapsed">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            <mat-icon [fontSet]="'material-symbols-outlined'" matListItemIcon>{{ item.icon }}</mat-icon>
-            <span [class.hidden]="collapsed">{{ item.title }}</span>
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <mat-nav-list>
-          @for (link of item.links; track link) {
-            @if (link.visible) {
-              <!-- Verifica se o link tem sublinks -->
-              @if (link.sublinks && link.sublinks.length > 0) {
-                <!-- Renderiza um painel de expansão aninhado apenas se tiver sublinks visíveis -->
-                <div class="submenu-container">
-                  <mat-expansion-panel class="nested-panel">
-                    <mat-expansion-panel-header>
-                      <mat-panel-title class="sublink-title">
-                        <span [class.hidden]="collapsed">{{ link.label }}</span>
-                      </mat-panel-title>
-                    </mat-expansion-panel-header>
-                    <!-- Renderiza os sublinks -->
-                    @for (sublink of link.sublinks; track sublink) {
-                      @if (sublink.visible) {
-                        <a mat-list-item
-                           [routerLink]="sublink.route"
-                           (click)="onLinkClick()"
-                           class="sublink-item">
-                          <span [class.hidden]="collapsed">{{ sublink.label }}</span>
-                        </a>
+  <!-- Navigation Menu -->
+  <nav class="nav-menu">
+    @for (item of visibleMenuItems; track item) {
+      @if (item.links && item.links.length > 0) {
+        <div class="nav-group">
+          <div class="nav-group-header" (click)="toggleGroup(item)">
+            <div class="nav-item-content">
+              <mat-icon class="nav-icon">{{ item.icon }}</mat-icon>
+              <span class="nav-text" [class.hidden]="collapsed">{{ item.title }}</span>
+            </div>
+            <mat-icon class="expand-icon" [class.rotated]="item.expanded" *ngIf="!collapsed">
+              expand_more
+            </mat-icon>
+          </div>
+          
+          <div class="nav-subgroup" [class.expanded]="item.expanded && !collapsed">
+            @for (link of item.links; track link) {
+              @if (link.visible) {
+                @if (link.sublinks && link.sublinks.length > 0) {
+                  <!-- Submenu aninhado -->
+                  <div class="nav-subitem-group">
+                    <div class="nav-subitem-header" (click)="toggleSublink(link)">
+                      <span class="nav-subtext" [class.hidden]="collapsed">{{ link.label }}</span>
+                      <mat-icon class="expand-icon" [class.rotated]="link.expanded" *ngIf="!collapsed">
+                        expand_more
+                      </mat-icon>
+                    </div>
+                    <div class="nav-sub-subgroup" [class.expanded]="link.expanded && !collapsed">
+                      @for (sublink of link.sublinks; track sublink) {
+                        @if (sublink.visible) {
+                          <a class="nav-item nav-sublink"
+                             [routerLink]="sublink.route"
+                             routerLinkActive="active"
+                             (click)="onLinkClick()">
+                            <span class="nav-subtext" [class.hidden]="collapsed">{{ sublink.label }}</span>
+                          </a>
+                        }
                       }
-                    }
-                  </mat-expansion-panel>
-                </div>
-              } @else {
-                <!-- Renderiza um link normal -->
-                <a mat-list-item
-                   [routerLink]="link.route"
-                   (click)="onLinkClick()">
-                  <span [class.hidden]="collapsed">{{ link.label }}</span>
-                </a>
+                    </div>
+                  </div>
+                } @else {
+                  <!-- Link direto -->
+                  <a class="nav-item nav-subitem"
+                     [routerLink]="link.route"
+                     routerLinkActive="active"
+                     (click)="onLinkClick()">
+                    <span class="nav-subtext" [class.hidden]="collapsed">{{ link.label }}</span>
+                  </a>
+                }
               }
             }
-          }
-        </mat-nav-list>
-      </mat-expansion-panel>
+          </div>
+        </div>
+      }
     }
-  }
-</mat-accordion>
-</mat-nav-list>
+  </nav>
+</div>

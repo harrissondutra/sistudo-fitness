@@ -1,34 +1,60 @@
-<mat-toolbar color="primary">
-  <div class="toolbar-left">
-    <!-- Exemplo de botão toggle na toolbar -->
-    @if (sidenav) {
-      <button mat-icon-button (click)="sidenav.toggle()">
-        <mat-icon>menu</mat-icon>
+<div class="fitness-toolbar">
+  <div class="toolbar-content">
+    <div class="toolbar-left">
+      @if (sidenav) {
+        <button mat-icon-button class="menu-toggle" (click)="sidenav.toggle()">
+          <mat-icon>menu</mat-icon>
+        </button>
+      }
+      <div class="app-brand" (click)="goToHome()">
+        <mat-icon class="brand-icon">fitness_center</mat-icon>
+        <span class="brand-text">Sistudo Fitness</span>
+        <span class="brand-badge">Pro</span>
+      </div>
+    </div>
+
+    <div class="toolbar-center">
+      <!-- Breadcrumb ou navegação contextual pode ser adicionada aqui -->
+    </div>
+
+    <div class="toolbar-right">
+      <!-- Botão Home com estilo Gestalt -->
+      <button mat-icon-button class="nav-btn home-btn" (click)="goToHome()" 
+              matTooltip="Página Inicial">
+        <mat-icon>home</mat-icon>
       </button>
-    }
-    <!-- Adicionada a classe 'app-title' para estilização do cursor -->
-    <span class="app-title" (click)="goToHome()">Gerenciador Fitness</span>
+
+      <!-- Menu do usuário -->
+      <button mat-icon-button *ngIf="authService.isAuthenticated()" 
+              [matMenuTriggerFor]="userMenu" 
+              class="nav-btn user-btn"
+              aria-label="Menu do Usuário">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+      
+      <mat-menu #userMenu="matMenu" class="fitness-user-menu">
+        <div class="user-info">
+          <div class="user-avatar">
+            <mat-icon>person</mat-icon>
+          </div>
+          <div class="user-details">
+            <span class="user-name">{{ getUserName() }}</span>
+            <span class="user-role">Administrador</span>
+          </div>
+        </div>
+        
+        <mat-divider></mat-divider>
+        
+        <button mat-menu-item class="profile-btn">
+          <mat-icon>settings</mat-icon>
+          <span>Perfil</span>
+        </button>
+        
+        <button mat-menu-item class="logout-btn" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Sair</span>
+        </button>
+      </mat-menu>
+    </div>
   </div>
-
-  <div class="toolbar-right">
-
-    <!-- Botão Home -->
-    <button mat-icon-button (click)="goToHome()">
-      <mat-icon>home</mat-icon>
-    </button>
-
-    <button mat-icon-button *ngIf="authService.isAuthenticated()" [matMenuTriggerFor]="userMenu" aria-label="Usuário">
-      <mat-icon>account_circle</mat-icon>
-    </button>
-    <mat-menu #userMenu="matMenu">
-      <button mat-menu-item disabled>
-        <mat-icon>person</mat-icon>
-        <span>{{ getUserName() }}</span>
-      </button>
-      <button mat-menu-item (click)="logout()">
-        <mat-icon>logout</mat-icon>
-        <span>Sair</span>
-      </button>
-    </mat-menu>
-  </div>
-</mat-toolbar>
+</div>

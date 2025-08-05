@@ -4,6 +4,7 @@ export interface LinkItem {
   route?: string;
   visible: boolean;
   isDynamic?: boolean;
+  expanded?: boolean; // Para controle Gestalt de expansão
   sublinks?: SubLinkItem[];
 }
 

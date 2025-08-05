@@ -4,6 +4,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { Router, RouterModule } from '@angular/router';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -17,7 +19,7 @@ import { CommonModule } from '@angular/common'; // Adicione esta linha
 @Component({
   selector: 'app-toolbar',
   imports: [
-      CommonModule, // Adicione aqui
+      CommonModule,
       MatToolbarModule,
       MatIconModule,
       MatButtonModule,
@@ -26,7 +28,9 @@ import { CommonModule } from '@angular/common'; // Adicione esta linha
       MatFormFieldModule,
       MatInputModule,
       MatSnackBarModule,
-      MatMenuModule
+      MatMenuModule,
+      MatDividerModule,
+      MatTooltipModule
   ],
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.scss']

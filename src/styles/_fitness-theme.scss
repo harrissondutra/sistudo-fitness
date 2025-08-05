@@ -1,0 +1,297 @@
+/* === SISTUDO FITNESS - TEMA GESTALT === */
+@import 'variables';
+
+/* === PRINCÍPIOS GESTALT NO DESIGN === */
+
+/* 1. PROXIMIDADE - Elementos relacionados próximos */
+.gestalt-proximity {
+  .section-group {
+    margin-bottom: $spacing-xl;
+    
+    .section-items {
+      gap: $spacing-sm;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}
+
+/* 2. SIMILARIDADE - Elementos similares agrupados */
+.gestalt-similarity {
+  /* Botões Primários - Verde Vitalidade */
+  .btn-primary,
+  .mat-raised-button.mat-primary {
+    background: linear-gradient(135deg, $primary-color 0%, $primary-light 100%);
+    color: $text-light;
+    box-shadow: 0 4px 12px rgba(0, 168, 107, 0.25);
+    border-radius: 8px;
+    
+    &:hover {
+      background: linear-gradient(135deg, $primary-dark 0%, $primary-color 100%);
+      box-shadow: 0 6px 16px rgba(0, 168, 107, 0.35);
+      transform: translateY(-1px);
+    }
+  }
+
+  /* Botões Secundários - Azul Confiança */
+  .btn-secondary,
+  .mat-stroked-button.mat-primary {
+    border: 2px solid $secondary-color;
+    color: $secondary-color;
+    background: transparent;
+    border-radius: 8px;
+    
+    &:hover {
+      background: $secondary-color;
+      color: $text-light;
+      box-shadow: 0 4px 12px rgba(30, 136, 229, 0.25);
+    }
+  }
+
+  /* Botões de Ação - Laranja Energia */
+  .btn-action,
+  .mat-fab.mat-accent {
+    background: linear-gradient(135deg, $accent-color 0%, $accent-light 100%);
+    color: $text-light;
+    box-shadow: 0 4px 12px rgba(255, 111, 32, 0.25);
+    
+    &:hover {
+      background: linear-gradient(135deg, $accent-dark 0%, $accent-color 100%);
+      box-shadow: 0 6px 16px rgba(255, 111, 32, 0.35);
+    }
+  }
+
+  /* Botões Premium - Roxo Sofisticação */
+  .btn-premium {
+    background: linear-gradient(135deg, $premium-color 0%, $premium-light 100%);
+    color: $text-light;
+    box-shadow: 0 4px 12px rgba(106, 27, 154, 0.25);
+    border-radius: 8px;
+    
+    &:hover {
+      background: linear-gradient(135deg, $premium-dark 0%, $premium-color 100%);
+      box-shadow: 0 6px 16px rgba(106, 27, 154, 0.35);
+    }
+  }
+}
+
+/* 3. FECHAMENTO - Formas completas e containers */
+.gestalt-closure {
+  .fitness-card {
+    background: $surface-color;
+    border-radius: 12px;
+    padding: $spacing-lg;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid $border-light;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      transform: translateY(-2px);
+    }
+  }
+
+  .section-container {
+    background: $surface-color;
+    border-radius: 16px;
+    padding: $spacing-xl;
+    margin-bottom: $spacing-lg;
+    border-left: 4px solid $primary-color;
+  }
+}
+
+/* 4. CONTINUIDADE - Fluxo visual harmônico */
+.gestalt-continuity {
+  .navigation-flow {
+    .step {
+      position: relative;
+      
+      &:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        right: -20px;
+        top: 50%;
+        width: 40px;
+        height: 2px;
+        background: linear-gradient(90deg, $primary-color, $secondary-color);
+        transform: translateY(-50%);
+      }
+    }
+  }
+
+  .progress-flow {
+    background: linear-gradient(90deg, 
+      $primary-color 0%, 
+      $secondary-color 50%, 
+      $accent-color 100%);
+    height: 4px;
+    border-radius: 2px;
+  }
+}
+
+/* === SEÇÕES ESPECÍFICAS POR CONTEXTO === */
+
+/* ACADEMIAS - Verde + Azul (Saúde + Confiança) */
+.gym-section {
+  .header {
+    background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
+    color: $text-light;
+  }
+  
+  .stats-card {
+    border-left: 4px solid $primary-color;
+    
+    .stat-number {
+      color: $primary-color;
+      font-weight: 600;
+    }
+  }
+}
+
+/* CLIENTES - Verde + Laranja (Saúde + Energia) */
+.client-section {
+  .header {
+    background: linear-gradient(135deg, $primary-color 0%, $accent-color 100%);
+    color: $text-light;
+  }
+  
+  .client-card {
+    border-left: 4px solid $accent-color;
+    
+    .status-active {
+      color: $primary-color;
+      background: rgba(0, 168, 107, 0.1);
+      padding: 4px 8px;
+      border-radius: 12px;
+    }
+  }
+}
+
+/* MÉDICOS - Azul + Verde (Confiança + Saúde) */
+.doctor-section {
+  .header {
+    background: linear-gradient(135deg, $secondary-color 0%, $primary-color 100%);
+    color: $text-light;
+  }
+  
+  .doctor-card {
+    border-left: 4px solid $secondary-color;
+    
+    .specialty {
+      color: $secondary-color;
+      font-weight: 500;
+    }
+  }
+}
+
+/* PERSONAL TRAINERS - Roxo + Laranja (Premium + Energia) */
+.personal-section {
+  .header {
+    background: linear-gradient(135deg, $premium-color 0%, $accent-color 100%);
+    color: $text-light;
+  }
+  
+  .personal-card {
+    border-left: 4px solid $premium-color;
+    
+    .rating {
+      color: $accent-color;
+    }
+    
+    .premium-badge {
+      background: $premium-color;
+      color: $text-light;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 12px;
+    }
+  }
+}
+
+/* EXERCÍCIOS - Laranja + Verde (Energia + Saúde) */
+.exercise-section {
+  .header {
+    background: linear-gradient(135deg, $accent-color 0%, $primary-color 100%);
+    color: $text-light;
+  }
+  
+  .exercise-card {
+    border-left: 4px solid $accent-color;
+    
+    .difficulty {
+      &.easy { color: $success-color; }
+      &.medium { color: $warning-color; }
+      &.hard { color: $error-color; }
+    }
+  }
+}
+
+/* === ESTADO E FEEDBACK === */
+.feedback-states {
+  .success-state {
+    background: rgba(67, 160, 71, 0.1);
+    border-left: 4px solid $success-color;
+    color: $success-color;
+  }
+  
+  .warning-state {
+    background: rgba(251, 140, 0, 0.1);
+    border-left: 4px solid $warning-color;
+    color: $warning-color;
+  }
+  
+  .error-state {
+    background: rgba(229, 57, 53, 0.1);
+    border-left: 4px solid $error-color;
+    color: $error-color;
+  }
+  
+  .info-state {
+    background: rgba(30, 136, 229, 0.1);
+    border-left: 4px solid $info-color;
+    color: $info-color;
+  }
+}
+
+/* === ANIMAÇÕES HARMÔNICAS === */
+@keyframes gestalt-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes gestalt-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(0, 168, 107, 0.25);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 6px 16px rgba(0, 168, 107, 0.35);
+  }
+}
+
+.gestalt-animate {
+  animation: gestalt-fade-in 0.6s ease-out;
+}
+
+.gestalt-pulse {
+  animation: gestalt-pulse 2s ease-in-out infinite;
+}
+
+/* === RESPONSIVIDADE GESTALT === */
+@media (max-width: 768px) {
+  .gestalt-proximity .section-group {
+    margin-bottom: $spacing-lg;
+  }
+  
+  .gestalt-closure .fitness-card {
+    padding: $spacing-md;
+    border-radius: 8px;
+  }
+}

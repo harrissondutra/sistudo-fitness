@@ -1,23 +1,57 @@
-/* You can add global styles to this file, and also import other style files */
+/* SISTUDO FITNESS - SISTEMA DE CORES GESTALT */
 @use '@angular/material' as mat;
 @import 'styles/variables';
+@import 'styles/fitness-theme';
+@import 'styles/fitness-utilities';
 @import 'styles/auth-common';
 
 :root {
-  --primary-color: #3f51b5;
-  --accent-color: #ff4081;
-  --warn-color: #f44336;
-  --background-color: #ffffff;
-  --background-light: #f8f9fa;
-  --text-color: rgba(0, 0, 0, 0.87);
-  --text-secondary-color: rgba(0, 0, 0, 0.6);
-  --border-color: rgba(0, 0, 0, 0.12);
-  --hover-color: rgba(0, 0, 0, 0.04);
+  /* === Cores Principais - Verde Vitalidade === */
+  --primary-color: #00A86B;
+  --primary-light: #4DB682;
+  --primary-dark: #007849;
+  --primary-rgb: 0, 168, 107;
 
-  /* RGB values for rgba() usage */
-  --primary-color-rgb: 63, 81, 181;
-  --accent-color-rgb: 255, 64, 129;
-  --warn-color-rgb: 244, 67, 54;
+  /* === Cores Secundárias - Azul Confiança === */
+  --secondary-color: #1E88E5;
+  --secondary-light: #64B5F6;
+  --secondary-dark: #1565C0;
+  --secondary-rgb: 30, 136, 229;
+
+  /* === Cor de Ação - Laranja Energia === */
+  --accent-color: #FF6F20;
+  --accent-light: #FF9A56;
+  --accent-dark: #E65100;
+  --accent-rgb: 255, 111, 32;
+
+  /* === Cor Premium - Roxo Sofisticação === */
+  --premium-color: #6A1B9A;
+  --premium-light: #9C4DCC;
+  --premium-dark: #4A148C;
+  --premium-rgb: 106, 27, 154;
+
+  /* === Cores Funcionais === */
+  --success-color: #43A047;
+  --warning-color: #FB8C00;
+  --error-color: #E53935;
+  --info-color: #1E88E5;
+
+  /* === Cores de Superfície === */
+  --background-color: #FAFAFA;
+  --background-light: #F5F5F5;
+  --surface-color: #FFFFFF;
+  --surface-elevated: #F8F9FA;
+
+  /* === Cores de Texto === */
+  --text-color: #263238;
+  --text-secondary: #546E7A;
+  --text-light: #FFFFFF;
+  --text-muted: #90A4AE;
+
+  /* === Cores de Borda === */
+  --border-color: #E0E0E0;
+  --border-light: #F5F5F5;
+  --divider-color: #EEEEEE;
 
   --spacing-xs: 4px;
   --spacing-sm: 8px;

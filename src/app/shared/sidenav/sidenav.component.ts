@@ -94,6 +94,20 @@ export class SidenavComponent implements OnInit {
   expandSidenav() {
     this.expandClicked.emit();
   }
+
+  // Métodos para controle de expansão Gestalt
+  toggleGroup(item: MenuItem) {
+    if (!this.collapsed && item) {
+      item.expanded = !item.expanded;
+    }
+  }
+
+  toggleSublink(link: LinkItem) {
+    if (!this.collapsed && link) {
+      link.expanded = !link.expanded;
+    }
+  }
+
   private updateVisibleMenuItems(): void {
     if (!this.expandableMenuItems || this.expandableMenuItems.length === 0) {
       this._visibleMenuItems = [];

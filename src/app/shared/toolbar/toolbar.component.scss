@@ -1,189 +1,279 @@
-@use '@angular/material' as mat;
+/* === SISTUDO FITNESS - TOOLBAR GESTALT === */
+@import '../../../styles/variables';
 
-// Define as cores da paleta Material Design
-$toolbar-bg: mat.m2-get-color-from-palette(mat.$m2-indigo-palette, 700); // Tom um pouco mais escuro para maior profundidade
-$icon-color: white; // Cor dos ícones
-$text-color: white; // Cor do texto principal na toolbar
-$primary-text-color: #333; // Cor para texto principal em cards, etc. (se aplicável fora da toolbar)
-
-// Altura padrão da toolbar
-$toolbar-height: 64px;
-
-mat-toolbar {
-  height: $toolbar-height;
-  background-color: $toolbar-bg;
-  display: flex;
-  align-items: center;
-  padding: 0 16px; // Padding lateral
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); // Sombra sutil
-  color: $text-color;
-  justify-content: space-between; // Espaça os lados esquerdo e direito
-
-  .toolbar-left,
-  .toolbar-right {
+.fitness-toolbar {
+  background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  color: $text-light;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  
+  .toolbar-content {
     display: flex;
     align-items: center;
-  }
+    justify-content: space-between;
+    padding: 0 $spacing-md;
+    height: 64px;
+    max-width: 100%;
+    margin: 0 auto;
 
-  .toolbar-left {
-    gap: 8px; // Espaçamento entre o ícone do menu e o título do app
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
 
-    mat-icon {
-      color: $icon-color;
+      .menu-toggle {
+        color: $text-light;
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+        }
+      }
+
+      .app-brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        padding: 8px 12px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+          transform: translateY(-1px);
+        }
+
+        .brand-icon {
+          font-size: 24px;
+          color: $accent-color;
+        }
+
+        .brand-text {
+          font-size: 20px;
+          font-weight: 600;
+          white-space: nowrap;
+        }
+
+        .brand-badge {
+          background: $accent-color;
+          color: $text-light;
+          padding: 2px 8px;
+          border-radius: 12px;
+          font-size: 12px;
+          font-weight: 500;
+        }
+      }
     }
 
-    .app-title {
-      font-size: 20px;
-      font-weight: 500;
-      white-space: nowrap; // Evita que o título quebre linha
-      overflow: hidden;    // Esconde o excesso de texto se não houver espaço
-      text-overflow: ellipsis; // Adiciona reticências se o texto for muito longo
-      cursor: pointer; // Muda o cursor para ponteiro
-      padding: 0 4px; // Pequeno padding para facilitar o clique
+    .toolbar-center {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      // Espaço para breadcrumbs ou navegação contextual
+    }
+
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+
+      .nav-btn {
+        color: $text-light;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.15);
+          transform: translateY(-1px);
+        }
+
+        &.home-btn:hover {
+          background: rgba(0, 168, 107, 0.2);
+        }
+
+        &.user-btn:hover {
+          background: rgba(255, 111, 32, 0.2);
+        }
+
+        mat-icon {
+          font-size: 20px;
+        }
+      }
     }
   }
+}
 
-  .toolbar-right {
-    gap: 16px; // Espaçamento entre os botões de ação e o campo de pesquisa
-    flex-wrap: nowrap; // Evita que os botões quebrem linha, para manter a pesquisa inline
+/* === MENU DO USUÁRIO GESTALT === */
+::ng-deep .fitness-user-menu {
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  border: none;
+  overflow: hidden;
 
-    // Alinha todos os itens do lado direito verticalmente ao centro para consistência
-    align-items: center;
+  .mat-mdc-menu-content {
+    padding: 0;
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: $spacing-md;
+      background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
+      color: $text-light;
 
-    mat-icon-button {
-      color: $icon-color;
-      // Estilos para botões de ícone para melhor acessibilidade ao toque
-      width: 48px;
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        mat-icon {
+          font-size: 20px;
+        }
+      }
+
+      .user-details {
+        display: flex;
+        flex-direction: column;
+
+        .user-name {
+          font-weight: 600;
+          font-size: 14px;
+        }
+
+        .user-role {
+          font-size: 12px;
+          opacity: 0.8;
+        }
+      }
+    }
+
+    .mat-mdc-menu-item {
       height: 48px;
-      padding: 0;
-      border-radius: 50%;
-      transition: background-color 0.2s ease-in-out;
+      padding: 0 $spacing-md;
+      transition: all 0.3s ease;
 
-      &:hover {
-        background-color: rgba(255, 255, 255, 0.1); // Efeito hover
-      }
-    }
-
-    // Estilo para o campo de pesquisa quando visível
-    .search-field {
-      max-width: 400px; // Largura máxima para evitar que ocupe muito espaço em telas grandes
-      width: 100%; // Permite que ele encolha em telas menores
-      // Transição suave para propriedades visuais como largura e opacidade
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      box-sizing: border-box; // Garante que padding e borda sejam incluídos na largura/altura total
-
-      // Ajustes para o wrapper interno do mat-form-field para alinhamento vertical
-      .mat-form-field-wrapper {
-        padding-bottom: 0 !important; // Remove o padding inferior padrão que pode causar desalinhamento
-        margin: 0 !important; // Remove margens padrão do wrapper
-        height: 48px; // Define a altura explícita para corresponder aos botões de ícone
-      }
-
-      // Estilos para a área flexível que contém o input e o label/ícone
-      .mat-form-field-appearance-outline .mat-form-field-flex {
-        // Cor de fundo do campo de pesquisa para um cinza claro mais visível (25% de opacidade do branco)
-        background-color: rgba(255, 255, 255, 0.25);
-        border-radius: 4px; // Cantos levemente arredondados para o campo
-        // Padding interno horizontal, a altura é controlada pelo 'height: 100%' e 'align-items: center'
-        padding: 0 0.75em;
-        height: 100%; // Faz com que o flex ocupe toda a altura disponível no wrapper (48px)
-        align-items: center; // Centraliza verticalmente o conteúdo (label, input, ícone)
-        // A remoção de margin-top: 5px; é crucial para o alinhamento
-      }
-
-      // Estilos para as linhas do contorno do campo
-      .mat-form-field-outline-start,
-      .mat-form-field-outline-gap,
-      .mat-form-field-outline-end {
-        border-width: 1px !important; // Garante que a borda tenha largura de 1px
-        // Cor da borda em estado normal para um branco menos opaco (mais visível)
-        border-color: rgba(255, 255, 255, 0.7) !important;
-      }
-
-      // Estilos quando o campo de pesquisa está em foco
-      &.mat-focused {
-        .mat-form-field-outline-start,
-        .mat-form-field-outline-gap,
-        .mat-form-field-outline-end {
-            // Cor da borda no foco, um azul mais claro da paleta Material
-            border-color: mat.m2-get-color-from-palette(mat.$m2-light-blue-palette, 200) !important;
-        }
-        .mat-form-field-label {
-          // Cor do label (placeholder) no foco
-          color: mat.m2-get-color-from-palette(mat.$m2-light-blue-palette, 200) !important;
+      &.profile-btn {
+        &:hover {
+          background: rgba(0, 168, 107, 0.1);
+          color: $primary-color;
         }
       }
 
-      // Estilo para o label (placeholder) do campo
-      .mat-form-field-label {
-        color: rgba(255, 255, 255, 0.8); // Cor do label em estado normal
+      &.logout-btn {
+        color: $error-color;
+        border-top: 1px solid $border-light;
+
+        &:hover {
+          background: rgba(229, 57, 53, 0.1);
+        }
       }
 
-      // Estilo para o elemento input real dentro do campo
-      input.mat-input-element {
-        color: $text-color; // Cor do texto digitado
-        caret-color: $text-color; // Cor do cursor (piscante)
-        padding: 0; // Remove padding extra, a altura é controlada pelo flex container
-        // REMOÇÃO: margin-top: 10px; - Esta linha estava causando o desalinhamento
-        height: 100%; // Ocupa a altura total do flex para alinhamento
+      mat-icon {
+        margin-right: 12px;
+        font-size: 18px;
       }
 
-      // Estilo para o ícone sufixo (ícone de lupa à direita do input)
-      mat-icon.mat-suffix {
-        color: rgba(255, 255, 255, 0.8); // Cor do ícone de pesquisa
-        cursor: pointer; // Indica que o ícone é clicável
-        padding-left: 8px; // Espaçamento entre o texto do input e o ícone
+      span {
+        font-weight: 500;
       }
     }
   }
 }
 
-/* ------------------------------------------------------------- */
-/* MEDIA QUERIES PARA RESPONSIVIDADE                           */
-/* ------------------------------------------------------------- */
-
-// Para telas menores que 768px (tablets e celulares)
+/* === RESPONSIVIDADE === */
 @media (max-width: 768px) {
-  mat-toolbar {
-    height: 56px; // Altura menor em telas pequenas
-    padding: 0 8px; // Padding lateral reduzido
+  .fitness-toolbar {
+    .toolbar-content {
+      padding: 0 $spacing-sm;
 
-    .toolbar-left {
-      gap: 4px;
+      .toolbar-left {
+        gap: $spacing-sm;
 
-      .app-title {
-        font-size: 18px; // Tamanho de fonte menor para o título
+        .app-brand {
+          .brand-text {
+            font-size: 18px;
+          }
+
+          .brand-badge {
+            display: none;
+          }
+        }
       }
-    }
 
-    .toolbar-right {
-      gap: 8px; // Espaçamento reduzido entre os botões
+      .toolbar-right {
+        gap: $spacing-xs;
 
-      .search-field {
-        max-width: 150px; // Largura menor para o campo de pesquisa em telas menores
+        .nav-btn {
+          width: 36px;
+          height: 36px;
+        }
       }
     }
   }
 }
 
-// Para telas menores que 480px (celulares)
 @media (max-width: 480px) {
-  mat-toolbar {
-    height: 56px; // Mantém a altura para celulares
-    padding: 0 4px; // Padding mínimo
-
-    .toolbar-left {
-      // Ajuste para evitar quebrar o layout se o título for muito longo
-      flex-shrink: 1;
-      min-width: 0; // Permite que o flex item encolha
-    }
-
-    .toolbar-right {
-      gap: 4px; // Espaçamento mínimo
-
-      .search-field {
-        max-width: 120px; // Largura ainda menor para o campo de pesquisa
+  .fitness-toolbar {
+    .toolbar-content {
+      .toolbar-left {
+        .app-brand {
+          .brand-text {
+            display: none;
+          }
+        }
       }
     }
   }
+}
+
+/* === ANIMAÇÕES GESTALT === */
+@keyframes toolbarSlideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.fitness-toolbar {
+  animation: toolbarSlideDown 0.5s ease-out;
+}
+
+/* === INDICADORES DE ESTADO === */
+.nav-btn {
+  position: relative;
+
+  &.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 2px;
+    background: $accent-color;
+    border-radius: 1px;
+  }
+}
+
+/* === EFEITOS DE PROFUNDIDADE === */
+.fitness-toolbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
 }

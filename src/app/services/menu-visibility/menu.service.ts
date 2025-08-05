@@ -12,6 +12,7 @@ export interface MenuItem {
   title: string;
   icon: string;
   visible: boolean;
+  expanded?: boolean; // Para controle Gestalt de expansão
   links: LinkItem[];
 }
 

@@ -1,0 +1,395 @@
+/* === SISTUDO FITNESS - UTILITÁRIOS GESTALT === */
+@import 'variables';
+
+/* === UTILITÁRIOS DE CORES === */
+
+/* Cores de Fundo */
+.bg-primary { background-color: $primary-color !important; }
+.bg-primary-light { background-color: $primary-light !important; }
+.bg-primary-dark { background-color: $primary-dark !important; }
+
+.bg-secondary { background-color: $secondary-color !important; }
+.bg-secondary-light { background-color: $secondary-light !important; }
+.bg-secondary-dark { background-color: $secondary-dark !important; }
+
+.bg-accent { background-color: $accent-color !important; }
+.bg-accent-light { background-color: $accent-light !important; }
+.bg-accent-dark { background-color: $accent-dark !important; }
+
+.bg-premium { background-color: $premium-color !important; }
+.bg-premium-light { background-color: $premium-light !important; }
+.bg-premium-dark { background-color: $premium-dark !important; }
+
+.bg-success { background-color: $success-color !important; }
+.bg-warning { background-color: $warning-color !important; }
+.bg-error { background-color: $error-color !important; }
+.bg-info { background-color: $info-color !important; }
+
+.bg-surface { background-color: $surface-color !important; }
+.bg-background { background-color: $background-color !important; }
+
+/* Cores de Texto */
+.text-primary { color: $primary-color !important; }
+.text-secondary { color: $secondary-color !important; }
+.text-accent { color: $accent-color !important; }
+.text-premium { color: $premium-color !important; }
+
+.text-success { color: $success-color !important; }
+.text-warning { color: $warning-color !important; }
+.text-error { color: $error-color !important; }
+.text-info { color: $info-color !important; }
+
+.text-dark { color: $text-color !important; }
+.text-muted { color: $text-muted !important; }
+.text-light { color: $text-light !important; }
+
+/* === UTILITÁRIOS DE ESPAÇAMENTO === */
+.p-xs { padding: $spacing-xs !important; }
+.p-sm { padding: $spacing-sm !important; }
+.p-md { padding: $spacing-md !important; }
+.p-lg { padding: $spacing-lg !important; }
+.p-xl { padding: $spacing-xl !important; }
+
+.m-xs { margin: $spacing-xs !important; }
+.m-sm { margin: $spacing-sm !important; }
+.m-md { margin: $spacing-md !important; }
+.m-lg { margin: $spacing-lg !important; }
+.m-xl { margin: $spacing-xl !important; }
+
+.mb-xs { margin-bottom: $spacing-xs !important; }
+.mb-sm { margin-bottom: $spacing-sm !important; }
+.mb-md { margin-bottom: $spacing-md !important; }
+.mb-lg { margin-bottom: $spacing-lg !important; }
+.mb-xl { margin-bottom: $spacing-xl !important; }
+
+.mt-xs { margin-top: $spacing-xs !important; }
+.mt-sm { margin-top: $spacing-sm !important; }
+.mt-md { margin-top: $spacing-md !important; }
+.mt-lg { margin-top: $spacing-lg !important; }
+.mt-xl { margin-top: $spacing-xl !important; }
+
+/* === CARDS GESTALT === */
+.fitness-card {
+  background: $surface-color;
+  border-radius: 12px;
+  padding: $spacing-lg;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid $border-light;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+  }
+
+  &.card-gym {
+    border-left: 4px solid $primary-color;
+    
+    .card-icon {
+      color: $primary-color;
+      background: rgba(0, 168, 107, 0.1);
+      padding: 8px;
+      border-radius: 8px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  &.card-client {
+    border-left: 4px solid $accent-color;
+    
+    .card-icon {
+      color: $accent-color;
+      background: rgba(255, 111, 32, 0.1);
+      padding: 8px;
+      border-radius: 8px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  &.card-doctor {
+    border-left: 4px solid $secondary-color;
+    
+    .card-icon {
+      color: $secondary-color;
+      background: rgba(30, 136, 229, 0.1);
+      padding: 8px;
+      border-radius: 8px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  &.card-personal {
+    border-left: 4px solid $premium-color;
+    
+    .card-icon {
+      color: $premium-color;
+      background: rgba(106, 27, 154, 0.1);
+      padding: 8px;
+      border-radius: 8px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+/* === BADGES E CHIPS === */
+.fitness-badge {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  &.badge-active {
+    background: rgba(67, 160, 71, 0.1);
+    color: $success-color;
+  }
+
+  &.badge-inactive {
+    background: rgba(144, 164, 174, 0.1);
+    color: $text-muted;
+  }
+
+  &.badge-premium {
+    background: $premium-color;
+    color: $text-light;
+  }
+
+  &.badge-new {
+    background: $accent-color;
+    color: $text-light;
+  }
+}
+
+/* === BOTÕES GESTALT === */
+.fitness-btn {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  text-transform: none;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+
+  &.btn-primary {
+    background: linear-gradient(135deg, $primary-color 0%, $primary-light 100%);
+    color: $text-light;
+    box-shadow: 0 4px 12px rgba(0, 168, 107, 0.25);
+    
+    &:hover {
+      background: linear-gradient(135deg, $primary-dark 0%, $primary-color 100%);
+      box-shadow: 0 6px 16px rgba(0, 168, 107, 0.35);
+      transform: translateY(-1px);
+    }
+  }
+
+  &.btn-secondary {
+    border: 2px solid $secondary-color;
+    color: $secondary-color;
+    background: transparent;
+    
+    &:hover {
+      background: $secondary-color;
+      color: $text-light;
+      box-shadow: 0 4px 12px rgba(30, 136, 229, 0.25);
+    }
+  }
+
+  &.btn-accent {
+    background: linear-gradient(135deg, $accent-color 0%, $accent-light 100%);
+    color: $text-light;
+    box-shadow: 0 4px 12px rgba(255, 111, 32, 0.25);
+    
+    &:hover {
+      background: linear-gradient(135deg, $accent-dark 0%, $accent-color 100%);
+      box-shadow: 0 6px 16px rgba(255, 111, 32, 0.35);
+    }
+  }
+
+  &.btn-premium {
+    background: linear-gradient(135deg, $premium-color 0%, $premium-light 100%);
+    color: $text-light;
+    box-shadow: 0 4px 12px rgba(106, 27, 154, 0.25);
+    
+    &:hover {
+      background: linear-gradient(135deg, $premium-dark 0%, $premium-color 100%);
+      box-shadow: 0 6px 16px rgba(106, 27, 154, 0.35);
+    }
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* === ESTADOS DE FORMULÁRIO === */
+.fitness-form-field {
+  margin-bottom: $spacing-md;
+
+  .mat-form-field {
+    width: 100%;
+
+    &.mat-focused .mat-form-field-outline-thick {
+      color: $primary-color;
+    }
+
+    .mat-form-field-outline-start,
+    .mat-form-field-outline-gap,
+    .mat-form-field-outline-end {
+      border-color: $border-color;
+    }
+
+    &:hover .mat-form-field-outline {
+      color: $primary-light;
+    }
+  }
+
+  &.field-error .mat-form-field-outline {
+    color: $error-color !important;
+  }
+
+  &.field-success .mat-form-field-outline {
+    color: $success-color !important;
+  }
+}
+
+/* === NAVEGAÇÃO GESTALT === */
+.fitness-nav {
+  .nav-item {
+    padding: 8px 16px;
+    border-radius: 8px;
+    margin: 2px 0;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: $text-secondary;
+
+    &:hover {
+      background: rgba(0, 168, 107, 0.08);
+      color: $primary-color;
+    }
+
+    &.active {
+      background: linear-gradient(135deg, $primary-color 0%, $primary-light 100%);
+      color: $text-light;
+      box-shadow: 0 2px 8px rgba(0, 168, 107, 0.25);
+    }
+
+    .nav-icon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+/* === TABELAS GESTALT === */
+.fitness-table {
+  background: $surface-color;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  .table-header {
+    background: linear-gradient(135deg, $primary-color 0%, $primary-light 100%);
+    color: $text-light;
+    padding: $spacing-md;
+    font-weight: 600;
+  }
+
+  .table-row {
+    border-bottom: 1px solid $border-light;
+    padding: $spacing-md;
+    transition: background 0.3s ease;
+
+    &:hover {
+      background: $background-color;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+/* === ALERTAS GESTALT === */
+.fitness-alert {
+  padding: $spacing-md;
+  border-radius: 8px;
+  margin-bottom: $spacing-md;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  &.alert-success {
+    background: rgba(67, 160, 71, 0.1);
+    border-left: 4px solid $success-color;
+    color: $success-color;
+  }
+
+  &.alert-warning {
+    background: rgba(251, 140, 0, 0.1);
+    border-left: 4px solid $warning-color;
+    color: $warning-color;
+  }
+
+  &.alert-error {
+    background: rgba(229, 57, 53, 0.1);
+    border-left: 4px solid $error-color;
+    color: $error-color;
+  }
+
+  &.alert-info {
+    background: rgba(30, 136, 229, 0.1);
+    border-left: 4px solid $info-color;
+    color: $info-color;
+  }
+
+  .alert-icon {
+    margin-top: 2px;
+  }
+}
+
+/* === RESPONSIVIDADE === */
+@media (max-width: 768px) {
+  .fitness-card {
+    padding: $spacing-md;
+    border-radius: 8px;
+  }
+
+  .fitness-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .fitness-nav .nav-item {
+    padding: 12px 16px;
+    
+    .nav-text {
+      display: none;
+    }
+  }
+}
