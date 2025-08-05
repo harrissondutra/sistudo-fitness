@@ -5,5 +5,14 @@ export interface Doctor {
   specialty: string;
   email: string;
   phone: string;
-  clientId: number; // Assuming you'll send/receive the client ID in the interface
+  clientId?: number; // Para compatibilidade com API antiga
+  clients?: Client[]; // Array de clientes vinculados
+  clientIds?: number[]; // Array de IDs dos clientes
+}
+
+// Importação do modelo Client
+export interface Client {
+  id?: number;
+  name: string;
+  email: string;
 }

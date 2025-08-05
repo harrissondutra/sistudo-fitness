@@ -30,65 +30,71 @@
     </div>
   }
 
-  <!-- Lista de Clientes responsiva usando Ionic com ícones Material -->
+  <!-- Lista de Clientes responsiva com design moderno -->
   @if (!isLoading && filteredClients && filteredClients.length > 0) {
-    <ion-list class="client-ionic-list mat-elevation-z2">
+    <ion-list class="client-ionic-list">
       @for (client of filteredClients; track client.id) {
         <ion-item button (click)="goToClient(client.id!.toString())" class="client-item">
           <ion-label>
             <h3>{{ client.name }}</h3>
-            <p class="client-info">
-              <mat-icon>email</mat-icon>
-              {{ client.email }}
-            </p>
-            @if (client.cpf) {
+            <div class="client-info-grid">
               <p class="client-info">
-                <mat-icon>badge</mat-icon>
-                {{ client.cpf }}
+                <mat-icon>email</mat-icon>
+                <span class="info-text">{{ client.email }}</span>
               </p>
-            }
-            @if (client.weight || client.height) {
-              <p class="client-info">
-                <mat-icon>fitness_center</mat-icon>
-                @if (client.weight && client.height) {
-                  {{ client.weight }} kg | {{ client.height }} cm
-                } @else if (client.weight) {
-                  {{ client.weight }} kg
-                } @else if (client.height) {
-                  {{ client.height }} cm
-                }
-              </p>
-            }
-            @if (client.doctor || client.personal || client.nutritionist) {
-              <p class="client-info">
-                <mat-icon>people</mat-icon>
-                @if (client.doctor && client.personal && client.nutritionist) {
-                  Médico, Personal e Nutricionista
-                } @else if (client.doctor && client.personal) {
-                  Médico e Personal
-                } @else if (client.doctor && client.nutritionist) {
-                  Médico e Nutricionista
-                } @else if (client.personal && client.nutritionist) {
-                  Personal e Nutricionista
-                } @else if (client.doctor) {
-                  {{ client.doctor.name }}
-                } @else if (client.personal) {
-                  {{ client.personal.name }}
-                } @else if (client.nutritionist) {
-                  {{ client.nutritionist.name }}
-                }
-              </p>
-            }
+              @if (client.cpf) {
+                <p class="client-info">
+                  <mat-icon>badge</mat-icon>
+                  <span class="info-text">{{ client.cpf }}</span>
+                </p>
+              }
+              @if (client.weight || client.height) {
+                <p class="client-info">
+                  <mat-icon>fitness_center</mat-icon>
+                  <span class="info-text">
+                    @if (client.weight && client.height) {
+                      {{ client.weight }} kg | {{ client.height }} cm
+                    } @else if (client.weight) {
+                      {{ client.weight }} kg
+                    } @else if (client.height) {
+                      {{ client.height }} cm
+                    }
+                  </span>
+                </p>
+              }
+              @if (client.doctor || client.personal || client.nutritionist) {
+                <p class="client-info">
+                  <mat-icon>people</mat-icon>
+                  <span class="info-text">
+                    @if (client.doctor && client.personal && client.nutritionist) {
+                      Médico, Personal e Nutricionista
+                    } @else if (client.doctor && client.personal) {
+                      Médico e Personal
+                    } @else if (client.doctor && client.nutritionist) {
+                      Médico e Nutricionista
+                    } @else if (client.personal && client.nutritionist) {
+                      Personal e Nutricionista
+                    } @else if (client.doctor) {
+                      {{ client.doctor.name }}
+                    } @else if (client.personal) {
+                      {{ client.personal.name }}
+                    } @else if (client.nutritionist) {
+                      {{ client.nutritionist.name }}
+                    }
+                  </span>
+                </p>
+              }
+            </div>
           </ion-label>
-          <div class="action-buttons" slot="end">
+          <div class="action-buttons">
             <button mat-icon-button color="primary" (click)="onView(client); $event.stopPropagation()" matTooltip="Visualizar">
               <mat-icon>visibility</mat-icon>
             </button>
             <button mat-icon-button color="accent" (click)="onEdit(client); $event.stopPropagation()" matTooltip="Editar">
-              <mat-icon>edit</mat-icon>
+              <mat-icon>edit_note</mat-icon>
             </button>
             <button mat-icon-button color="warn" (click)="deleteClient(client.id!.toString()); $event.stopPropagation()" matTooltip="Excluir">
-              <mat-icon>delete</mat-icon>
+              <mat-icon>delete_outline</mat-icon>
             </button>
           </div>
         </ion-item>

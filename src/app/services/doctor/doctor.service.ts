@@ -34,6 +34,10 @@ export class DoctorService {
     return this.http.get<any[]>(`${this.baseUrl}/getByClientId/${clientId}`);
   }
 
+  getClientsByDoctorId(doctorId: number | string): Observable<Client[]> {
+    return this.http.get<Client[]>(`${this.baseUrl}/getClientsByDoctorId/${doctorId}`);
+  }
+
   associateDoctorToClient(clientId: number, doctorIds: number[]): Observable<Client> {
     return this.http.post<Client>(`${this.baseUrl}/associateDoctor/${clientId}`, doctorIds);
   }

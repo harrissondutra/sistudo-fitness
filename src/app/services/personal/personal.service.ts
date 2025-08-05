@@ -102,6 +102,12 @@ export class PersonalService {
     );
   }
 
+  getClientsByPersonalId(personalId: number): Observable<Client[]> {
+    return this.http.get<Client[]>(`${this.baseUrl}/getClientsByPersonalId/${personalId}`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   associatePersonalToClient(clientId: number, personalIds: number[]): Observable<Client> {
     // O endpoint correto conforme o controller backend é: /associatePersonal/{clientId}
     return this.http.post<Client>(`${this.baseUrl}/associatePersonal/${clientId}`, personalIds).pipe(

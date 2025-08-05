@@ -4,6 +4,10 @@ export interface Personal {
   email: string;
   phone: string;
   specialty: string;
-  registry: string;
-  clientId?: number; // Optional, as it's nullable in the backend
+  registry: string; // Registro profissional do personal trainer
+  clients?: any[]; // Lista de clientes associados (opcional para exibição)
+  gymPersonals?: any[]; // Lista de academias associadas (opcional para exibição)
+  // Campos herdados de EntityBase
+  createdAt?: string;
+  updatedAt?: string;
 }

@@ -81,7 +81,7 @@ export const routes: Routes = [
       { path: 'nutritionist-update/:id', component: NutritionistUpdateComponent },
       { path: 'nutritionist-create', component: NutritionistCreateComponent },
       { path: 'personal-list', component: PersonalListComponent },
-      { path: 'personal-view', component: PersonalViewComponent },
+      { path: 'personal-view/:id', component: PersonalViewComponent },
       { path: 'personal-update/:id', component: PersonalUpdateComponent },
       { path: 'personal-create', component: PersonalCreateComponent },
       { path: 'gym', component: GymComponent },

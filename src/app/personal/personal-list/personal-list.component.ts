@@ -104,7 +104,7 @@ export class PersonalListComponent implements OnInit {
    * Navega para a tela de criação de um novo profissional.
    */
   addNewPersonal(): void {
-    this.router.navigate(['/personal/new']); // Rota para criar novo profissional
+    this.router.navigate(['/personal-create']); // Rota para criar novo profissional
   }
 
   /**
@@ -113,7 +113,7 @@ export class PersonalListComponent implements OnInit {
  */
   viewPersonal(id: number | undefined): void {
     if (id !== undefined) {
-      this.router.navigate(['/personal/view', id]); // Rota para visualizar detalhes do personal
+      this.router.navigate(['/personal-view', id]); // Rota para visualizar detalhes do personal
     } else {
       this.snackBar.open('ID do profissional não encontrado.', 'Fechar', { duration: 3000 });
     }
@@ -125,7 +125,7 @@ export class PersonalListComponent implements OnInit {
    */
   editPersonal(id: number | undefined): void {
     if (id !== undefined) {
-      this.router.navigate(['/personal/edit', id]); // Rota para editar profissional
+      this.router.navigate(['/personal-update', id]); // Rota para editar profissional
     } else {
       this.snackBar.open('ID do profissional não encontrado para edição.', 'Fechar', { duration: 3000 });
     }

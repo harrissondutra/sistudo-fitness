@@ -1,1 +1,282 @@
-<p>personal-view works!</p>
+<div class="personal-view-container">
+  <!-- Header Section -->
+  <header class="page-header">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">
+          <mat-icon class="title-icon">
+            {{ isEditing ? 'edit' : 'fitness_center' }}
+          </mat-icon>
+          <span>{{ isEditing ? 'Editar Personal Trainer' : 'Visualizar Personal Trainer' }}</span>
+        </h1>
+        <p class="page-subtitle">
+          {{ isEditing ? 'Edite as informações do personal trainer' : 'Informações detalhadas do personal trainer' }}
+        </p>
+      </div>
+
+      <div class="header-actions">
+        <button
+          mat-fab
+          color="primary"
+          (click)="goBack()"
+          matTooltip="Voltar à lista"
+          class="back-button">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Loading State -->
+  @if (isLoading) {
+    <div class="loading-state">
+      <mat-spinner diameter="60" color="primary"></mat-spinner>
+      <h2>{{ isEditing ? 'Salvando alterações...' : 'Carregando dados...' }}</h2>
+      <p>Aguarde um momento</p>
+    </div>
+  }
+
+  <!-- Main Content -->
+  @if (!isLoading && personal) {
+    <div class="content-layout">
+      <!-- Personal Information Card -->
+      <div class="main-card">
+        <mat-card class="personal-card">
+          <!-- Card Header -->
+          <mat-card-header class="card-header">
+            <div mat-card-avatar class="personal-avatar">
+              <mat-icon>fitness_center</mat-icon>
+            </div>
+            <mat-card-title>{{ personal.name }}</mat-card-title>
+            <mat-card-subtitle>
+              <mat-icon>sports</mat-icon>
+              {{ personal.specialty }}
+            </mat-card-subtitle>
+          </mat-card-header>
+
+          <!-- Card Content -->
+          <mat-card-content class="card-content">
+            <form [formGroup]="personalForm" class="personal-form">
+              <!-- Personal Information -->
+              <div class="form-section">
+                <h3 class="section-title">
+                  <mat-icon>person</mat-icon>
+                  Informações Pessoais
+                </h3>
+
+                <div class="form-grid">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Nome Completo</mat-label>
+                    <input matInput formControlName="name" [readonly]="!isEditing" placeholder="Digite o nome completo">
+                    <mat-icon matSuffix>person</mat-icon>
+                    @if (isEditing && personalForm.get('name')?.invalid && personalForm.get('name')?.touched) {
+                      <mat-error>O nome é obrigatório</mat-error>
+                    }
+                  </mat-form-field>
+
+                  <div class="form-row">
+                    <mat-form-field appearance="outline">
+                      <mat-label>E-mail</mat-label>
+                      <input matInput type="email" formControlName="email" [readonly]="!isEditing" placeholder="exemplo@email.com">
+                      <mat-icon matSuffix>email</mat-icon>
+                      @if (isEditing && personalForm.get('email')?.invalid && personalForm.get('email')?.touched) {
+                        <mat-error>E-mail é obrigatório e deve ser válido</mat-error>
+                      }
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline">
+                      <mat-label>Telefone</mat-label>
+                      <input matInput formControlName="phone" [readonly]="!isEditing" placeholder="(11) 99999-9999">
+                      <mat-icon matSuffix>phone</mat-icon>
+                      @if (isEditing && personalForm.get('phone')?.invalid && personalForm.get('phone')?.touched) {
+                        <mat-error>O telefone é obrigatório</mat-error>
+                      }
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Professional Information -->
+              <div class="form-section">
+                <h3 class="section-title">
+                  <mat-icon>fitness_center</mat-icon>
+                  Informações Profissionais
+                </h3>
+
+                <div class="form-row">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Especialidade</mat-label>
+                    <input matInput formControlName="specialty" [readonly]="!isEditing" placeholder="Ex: Musculação">
+                    <mat-icon matSuffix>sports</mat-icon>
+                    @if (isEditing && personalForm.get('specialty')?.invalid && personalForm.get('specialty')?.touched) {
+                      <mat-error>A especialidade é obrigatória</mat-error>
+                    }
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline">
+                    <mat-label>Registro Profissional</mat-label>
+                    <input matInput formControlName="registry" [readonly]="!isEditing" placeholder="Ex: CREF 12345-G/SP">
+                    <mat-icon matSuffix>assignment_ind</mat-icon>
+                    @if (isEditing && personalForm.get('registry')?.invalid && personalForm.get('registry')?.touched) {
+                      <mat-error>O registro profissional é obrigatório</mat-error>
+                    }
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <!-- Clients Section -->
+              <div class="form-section">
+                <h3 class="section-title">
+                  <mat-icon>people</mat-icon>
+                  Clientes Atendidos
+                </h3>
+
+                <div class="clients-display">
+                  @if (personalClients && personalClients.length > 0) {
+                    <div class="clients-list">
+                      @for (client of personalClients; track client.id) {
+                        <div class="client-item">
+                          <mat-icon>person</mat-icon>
+                          <div class="client-info">
+                            <span class="client-name">{{ client.name || 'Nome não disponível' }}</span>
+                            @if (client.email && client.email !== 'E-mail não disponível' && client.email !== 'E-mail não informado') {
+                              <span class="client-email">{{ client.email }}</span>
+                            }
+                          </div>
+                          <button mat-icon-button color="primary" (click)="viewClient(client.id?.toString() || '')"
+                                  matTooltip="Ver detalhes do cliente" class="view-client-btn">
+                            <mat-icon>visibility</mat-icon>
+                          </button>
+                        </div>
+                      }
+                    </div>
+                  } @else {
+                    <div class="no-clients">
+                      <mat-icon>person_off</mat-icon>
+                      <span>Nenhum cliente vinculado a este personal trainer</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            </form>
+          </mat-card-content>
+
+          <!-- Card Actions -->
+          <mat-divider></mat-divider>
+          <mat-card-actions class="card-actions">
+            @if (!isEditing) {
+              <div class="action-group">
+                <button mat-raised-button color="primary" (click)="toggleEdit()" class="primary-action">
+                  <mat-icon>edit</mat-icon>
+                  <span>Editar Informações</span>
+                </button>
+              </div>
+            } @else {
+              <div class="action-group">
+                <button mat-stroked-button (click)="onCancel()" class="secondary-action">
+                  <mat-icon>close</mat-icon>
+                  <span>Cancelar</span>
+                </button>
+                <button
+                  mat-raised-button
+                  color="primary"
+                  (click)="onSave()"
+                  [disabled]="personalForm.invalid || isSaving"
+                  class="primary-action">
+                  @if (isSaving) {
+                    <mat-spinner diameter="20"></mat-spinner>
+                  } @else {
+                    <mat-icon>save</mat-icon>
+                  }
+                  <span>{{ isSaving ? 'Salvando...' : 'Salvar Alterações' }}</span>
+                </button>
+              </div>
+            }
+          </mat-card-actions>
+        </mat-card>
+      </div>
+
+      <!-- Summary Card -->
+      <div class="side-card">
+        <mat-card class="summary-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>info</mat-icon>
+              <span>Resumo do Personal Trainer</span>
+            </mat-card-title>
+            <mat-card-subtitle>Informações gerais</mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <div class="summary-grid">
+              <div class="summary-item">
+                <mat-icon>badge</mat-icon>
+                <div class="summary-content">
+                  <span class="label">ID do Personal</span>
+                  <span class="value">#{{ personal.id }}</span>
+                </div>
+              </div>
+
+              <div class="summary-item">
+                <mat-icon>people</mat-icon>
+                <div class="summary-content">
+                  <span class="label">Total de Clientes</span>
+                  <span class="value">{{ personalClients.length || 0 }}</span>
+                </div>
+              </div>
+
+              <div class="summary-item">
+                <mat-icon>sports</mat-icon>
+                <div class="summary-content">
+                  <span class="label">Especialidade</span>
+                  <span class="value">{{ personal.specialty }}</span>
+                </div>
+              </div>
+
+              <div class="summary-item">
+                <mat-icon>email</mat-icon>
+                <div class="summary-content">
+                  <span class="label">E-mail Principal</span>
+                  <span class="value">{{ personal.email }}</span>
+                </div>
+              </div>
+
+              @if (personal.createdAt) {
+                <div class="summary-item">
+                  <mat-icon>schedule</mat-icon>
+                  <div class="summary-content">
+                    <span class="label">Data de Cadastro</span>
+                    <span class="value">{{ personal.createdAt | date:'dd/MM/yyyy' }}</span>
+                  </div>
+                </div>
+              }
+
+              @if (personal.updatedAt) {
+                <div class="summary-item">
+                  <mat-icon>update</mat-icon>
+                  <div class="summary-content">
+                    <span class="label">Última Atualização</span>
+                    <span class="value">{{ personal.updatedAt | date:'dd/MM/yyyy' }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (!isLoading && !personal) {
+    <div class="error-state">
+      <mat-icon class="error-icon">sentiment_dissatisfied</mat-icon>
+      <h2>Personal Trainer não encontrado</h2>
+      <p>Não foi possível encontrar as informações do personal trainer solicitado.</p>
+      <button mat-raised-button color="primary" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Voltar à Lista
+      </button>
+    </div>
+  }
+</div>

@@ -1,395 +1,496 @@
 @use 'sass:math';
+@import '../../../../styles/variables';
 
-// Variáveis de Cores (ajustadas conforme o tema Material Design fornecido)
-$primary-color: #3f51b5;
-$accent-color: #ff4081;
-$warn-color: #f44336;
-$text-color: #1a237e; // Cor para títulos e textos principais (mais escura)
-$light-text-color: #666; // Cor para subtítulos e textos secundários
-$border-color: #e0e0e0;
-$background-light: #f5f5f5; // Cor de fundo principal
-$white: #fff; // Cor para elementos com fundo branco
-$lighter-primary: #e8eaf6; // Um tom mais claro da cor primária
-$list-item-background: #f8f9fa; // Cor de fundo para itens de lista (similar a info-item)
-$list-item-hover-background: #e8eaf6; // Cor de fundo para itens de lista no hover
+// === MÓDULO MÉDICOS - CORES E ESPAÇAMENTOS ===
+$doctor-primary: #2196F3; // Azul médico profissional
+$doctor-primary-light: #64B5F6; // Azul claro
+$doctor-surface: $surface-color;
+$doctor-text: $text-color;
+$doctor-text-secondary: $text-secondary;
+$doctor-text-muted: $text-muted;
+$doctor-border: $border-color;
+$doctor-error: $error-color;
 
-// Variáveis de Espaçamento
-$spacing-unit: 8px;
-$padding-small: $spacing-unit * 2; // 16px
-$padding-medium: $spacing-unit * 3; // 24px
-$margin-medium: $spacing-unit * 3; // 24px
-
-// Mixins para reutilização de estilos
+// === MIXINS ===
 @mixin flex-center {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-@mixin flex-between-center {
+@mixin flex-between {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-@mixin card-shadow-sm {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Sombra padrão de seção */
+@mixin card-elevation {
+  box-shadow:
+    0 4px 24px rgba($doctor-primary, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
-@mixin card-shadow-md {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Usando a mesma sombra de seção para consistência */
+@mixin card-elevation-hover {
+  box-shadow:
+    0 8px 32px rgba($doctor-primary, 0.12),
+    0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
+@mixin smooth-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// === CONTAINER PRINCIPAL ===
 .doctor-list-container {
-  padding: $padding-medium; /* 24px */
-  max-width: 1200px; /* Mantido o max-width do padrão trainning-container */
-  margin: $margin-medium auto; /* 24px auto */
-  background-color: $white; /* Fundo branco para o container principal, como exercise-list-container */
-  border-radius: $spacing-unit; /* 8px */
-  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
-              0 2px 2px 0 rgba(0, 0, 0, 0.14),
-              0 1px 5px 0 rgba(0, 0, 0, 0.12); /* Sombra do card padrão */
-  min-height: calc(100vh - ($padding-medium * 2)); /* Garante que o container ocupe a altura total da viewport */
+  max-width: 1200px;
+  margin: $spacing-lg auto;
+  padding: $spacing-lg;
+  background: $doctor-surface;
+  border-radius: 20px;
+  @include card-elevation;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, $doctor-primary, $doctor-primary-light);
+    border-radius: 20px 20px 0 0;
+  }
 }
 
+// === CABEÇALHO ===
 .header {
-  @include flex-between-center; /* Reutilizando mixin */
-  margin-bottom: $padding-medium; /* 24px */
-  padding-bottom: $padding-small; /* 16px */
-  border-bottom: 1px solid $border-color; /* Linha divisória */
+  @include flex-between;
+  margin-bottom: $spacing-lg;
+  padding: $spacing-md $spacing-lg;
+  background: rgba($doctor-primary, 0.04);
+  border-radius: 16px;
+  border: 1px solid rgba($doctor-primary, 0.1);
 
   .title-section {
     h2 {
       margin: 0;
-      font-size: 2em; /* Mantido para corresponder ao padrão do exercise-list */
-      color: $text-color;
+      font-size: 28px;
+      font-weight: 600;
+      color: $doctor-text;
+      background: linear-gradient(135deg, $doctor-primary, $doctor-primary-light);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .subtitle {
-      margin: math.div($spacing-unit, 2) 0 0; /* 4px 0 0 */
-      font-size: 0.9em;
-      color: $light-text-color;
+      margin: 4px 0 0;
+      font-size: 14px;
+      color: $doctor-text-secondary;
     }
   }
 
   .new-doctor-btn {
-    padding: $spacing-unit $padding-small; /* 8px 16px */
-    font-weight: 500;
+    padding: 12px 24px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, $doctor-primary, $doctor-primary-light);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 16px rgba($doctor-primary, 0.3);
+    @include smooth-transition;
 
-    mat-icon { /* Usado mat-icon em vez de .mat-icon */
-      margin-right: $spacing-unit; /* 8px */
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba($doctor-primary, 0.4);
+    }
+
+    mat-icon {
+      margin-right: 8px;
     }
   }
 }
 
+// === BUSCA ===
 .search-section {
-  margin-bottom: $padding-medium; /* 24px */
+  margin-bottom: $spacing-lg;
 
   .search-input {
     width: 100%;
 
-    // Ajuste para remover padding extra do MatFormField
-    ::ng-deep {
-      .mat-form-field-wrapper {
-        padding-bottom: 0;
+    ::ng-deep .mat-mdc-form-field {
+      .mat-mdc-text-field-wrapper {
+        background: rgba($doctor-surface, 0.8);
+        border-radius: 12px;
+        border: 1px solid rgba($doctor-primary, 0.15);
+        @include smooth-transition;
+
+        &:hover {
+          border-color: rgba($doctor-primary, 0.3);
+        }
+      }
+
+      &.mat-focused .mat-mdc-text-field-wrapper {
+        border-color: $doctor-primary;
+        box-shadow: 0 0 0 2px rgba($doctor-primary, 0.1);
+      }
+
+      .mat-mdc-form-field-label {
+        color: $doctor-text-secondary;
+      }
+
+      .mat-icon {
+        color: $doctor-primary;
       }
     }
   }
 }
 
-/* --- Ionic List Styles (with Material Icons) --- */
+// === LISTA DE MÉDICOS ===
 .doctor-ionic-list {
-  background: transparent; /* Fundo transparente, pois os itens serão cards */
-  border-radius: $spacing-unit; /* 8px */
-  box-shadow: none; /* Removido o box-shadow do container, agora nos itens */
-  padding: 0;
-  margin: 0;
-
   ion-item {
-    --background: $white; /* Fundo do item */
-    --border-color: transparent; /* Remove a borda padrão do Ionic Item */
-    --border-width: 0; /* Remove a borda padrão do Ionic Item */
+    --background: transparent;
+    --border-width: 0;
+    --padding-start: 0;
+    --padding-end: 0;
+    --padding-top: 0;
+    --padding-bottom: 0;
 
-    // Padding interno dos itens (card) para dar "respiro"
-    --padding-start: $padding-medium; /* 24px */
-    --padding-end: $padding-medium; /* 24px */
-    --padding-top: $padding-small; /* 16px */
-    --padding-bottom: $padding-small; /* 16px */
-
-    // Adicionando padding direto para garantir, caso as variáveis não funcionem totalmente
-    padding: $padding-small $padding-medium !important; /* 16px top/bottom, 24px left/right */
-
-    margin-bottom: $padding-small; /* 16px Espaçamento entre os cards */
-    border-radius: $spacing-unit; /* 8px Cantos arredondados para o card */
-    @include card-shadow-md; /* Sombra padrão de card */
-    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    display: block;
+    margin-bottom: $spacing-sm; // Reduzido de $spacing-md
+    padding: $spacing-md $spacing-lg; // Reduzido padding vertical
+    background: $doctor-surface;
+    border-radius: 16px;
+    @include card-elevation;
+    @include smooth-transition;
+    position: relative;
     cursor: pointer;
-    flex-wrap: wrap; /* Permite que o conteúdo quebre linha em telas menores */
 
-    display: flex;
-    align-items: center; /* Centraliza verticalmente o label e os botões */
-    justify-content: space-between; /* Empurra o slot="end" para a direita */
+    // Indicador lateral
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(135deg, $doctor-primary, $doctor-primary-light);
+      border-radius: 16px 0 0 16px;
+      opacity: 0.6;
+      @include smooth-transition;
+    }
 
     &:hover {
-      --background: $list-item-hover-background; /* Cor de fundo no hover */
-      @include card-shadow-md; /* Mantém a sombra no hover, pode ser ajustado para um efeito de elevação se desejado */
+      transform: translateY(-2px);
+      @include card-elevation-hover;
+
+      &::before {
+        opacity: 1;
+        width: 6px;
+      }
     }
 
     &:last-child {
-      margin-bottom: 0; /* Remove a margem do último item */
+      margin-bottom: 0;
+    }
+  }
+}
+
+// === CONTEÚDO DO CARD ===
+ion-label {
+  display: flex !important;
+  flex-direction: column;
+  gap: $spacing-xs; // Reduzido de $spacing-sm
+  margin: 0;
+
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: $doctor-text;
+    margin: 0 0 $spacing-xs 0; // Reduzido espaçamento inferior
+    line-height: 1.3;
+  }
+
+  .doctor-info {
+    display: flex;
+    align-items: center;
+    gap: 6px; // Reduzido de 8px
+    margin: 0;
+    padding: 2px 0; // Reduzido de 4px
+    font-size: 14px;
+    color: $doctor-text-secondary;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      color: $doctor-primary;
+      opacity: 0.7;
+      flex-shrink: 0;
     }
 
-    ion-label {
-      flex-grow: 1; /* Permite que a label ocupe o espaço restante */
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
 
-      h3 { /* Alterado de h3.exercise-name para h3 */
-        font-size: 1.1em;
-        color: $text-color;
-        margin: 0 0 math.div($spacing-unit, 2) 0; /* 4px Espaçamento abaixo do nome */
-        font-weight: 500;
-      }
+// === BOTÕES DE AÇÃO ===
+.action-buttons {
+  position: absolute;
+  top: $spacing-md;
+  right: $spacing-md;
+  display: flex;
+  gap: 6px;
 
-      p.doctor-info { /* Alterado para doctor-info */
-        font-size: 0.9em;
-        color: $light-text-color;
-        margin: 0 0 math.div($spacing-unit, 2) 0; /* 4px Espaçamento entre parágrafos */
-        display: flex; /* Para alinhar ícone com texto */
-        align-items: center;
-        gap: $spacing-unit / 2; /* 4px de espaço entre ícone e texto */
+  .mat-icon-button {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba($doctor-surface, 0.95);
+    border: 1px solid rgba($doctor-border, 0.2);
+    @include smooth-transition;
 
-        mat-icon {
-          font-size: 1.1em; /* Tamanho do ícone para alinhar com o texto */
-          width: 1.1em;
-          height: 1.1em;
-          color: $primary-color; /* Cor para ícones de informação */
-        }
+    &:hover {
+      transform: translateY(-1px);
+      background: $doctor-surface;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
 
-        &:last-child {
-          margin-bottom: 0;
-        }
+    // Cores dos botões - usando cor padrão do módulo
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      color: rgba($doctor-primary, 0.7) !important;
+    }
+
+    &:hover {
+      background: rgba($doctor-primary, 0.08);
+      border-color: rgba($doctor-primary, 0.25);
+
+      mat-icon {
+        color: $doctor-primary !important;
       }
     }
 
-    .action-buttons {
-      display: flex;
-      gap: math.div($spacing-unit, 2); /* 4px de espaço entre os botões */
-      flex-shrink: 0; /* Evita que os botões encolham */
-      padding-left: $padding-small; /* 16px Espaçamento à esquerda para separar do label */
-      justify-content: flex-end; /* Alinha os botões de ação à direita */
+    // Variações específicas por função
+    &[color="primary"] mat-icon {
+      color: rgba($doctor-primary, 0.8) !important;
+    }
 
-      .mat-icon-button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    &[color="primary"]:hover {
+      background: rgba($doctor-primary, 0.12);
+      border-color: rgba($doctor-primary, 0.3);
 
-        width: 44px; /* Aumentado para acomodar ícones maiores e clique */
-        height: 44px;
-        border-radius: 50%;
-        transition: background-color 0.2s ease, transform 0.2s ease;
+      mat-icon {
+        color: $doctor-primary !important;
+      }
+    }
 
-        mat-icon { /* Usado mat-icon em vez de .mat-icon */
-          font-size: 28px; /* Tamanho maior para todos os dispositivos */
-          width: 28px;
-          height: 28px;
-        }
+    &[color="accent"] mat-icon {
+      color: rgba($doctor-primary, 0.6) !important;
+    }
 
-        // Cores para os ícones Material
-        &[color="primary"] mat-icon {
-          color: $primary-color;
-        }
+    &[color="accent"]:hover {
+      background: rgba($doctor-primary, 0.08);
+      border-color: rgba($doctor-primary, 0.25);
 
-        &[color="accent"] mat-icon {
-          color: $accent-color;
-        }
+      mat-icon {
+        color: rgba($doctor-primary, 0.9) !important;
+      }
+    }
 
-        &[color="warn"] mat-icon {
-          color: $warn-color;
-        }
+    &[color="warn"] mat-icon {
+      color: rgba($doctor-primary, 0.5) !important;
+    }
 
-        &:hover {
-          transform: scale(1.1);
-          background-color: rgba($primary-color, 0.1);
-        }
+    &[color="warn"]:hover {
+      background: rgba($doctor-primary, 0.06);
+      border-color: rgba($doctor-primary, 0.2);
 
-        &:active {
-          background-color: rgba($primary-color, 0.2);
-        }
+      mat-icon {
+        color: rgba($doctor-primary, 0.8) !important;
       }
     }
   }
 }
 
-/* Mensagem quando não há dados */
-.no-data-content {
+// === ESTADOS VAZIOS ===
+.no-data-content,
+.loading-indicator {
   @include flex-center;
   flex-direction: column;
-  gap: $padding-small; /* 16px Espaçamento */
-  color: $light-text-color;
-  padding: $padding-medium * 2 0; /* 48px 0 Padding maior */
+  gap: $spacing-md;
+  padding: $spacing-xl * 2 0;
+  color: $doctor-text-secondary;
+  background: rgba($doctor-primary, 0.02);
+  border-radius: 16px;
+  border: 1px dashed rgba($doctor-primary, 0.2);
 
   mat-icon {
-    font-size: $spacing-unit * 6; /* 48px */
-    width: $spacing-unit * 6;
-    height: $spacing-unit * 6;
-    margin-bottom: $spacing-unit; /* 8px */
-    color: $border-color;
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: rgba($doctor-primary, 0.4);
+    background: rgba($doctor-primary, 0.08);
+    border-radius: 20px;
+    padding: $spacing-md;
   }
 
   p {
     margin: 0;
-    font-size: 1.1em;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: center;
   }
 }
 
-// Indicador de carregamento
-.loading-indicator {
-  @include flex-center;
-  flex-direction: column;
-  padding: $padding-medium; /* 24px */
-  gap: $padding-small; /* 16px */
-  color: $light-text-color;
+.loading-indicator mat-spinner {
+  ::ng-deep circle {
+    stroke: $doctor-primary;
+  }
 }
 
-/* -----------------------------------------------------------
- * Media Queries para Responsividade
- * ----------------------------------------------------------- */
+// === RESPONSIVIDADE ===
 
-// Telas pequenas (smartphones em modo retrato, até 768px)
+// Desktop grande (1024px+)
+@media (min-width: 1024px) {
+  ion-label {
+    display: grid !important;
+    grid-template-columns: 1fr auto;
+    align-items: flex-start;
+    gap: $spacing-sm; // Reduzido de $spacing-md
+
+    h3 {
+      grid-column: 1;
+      margin-bottom: $spacing-xs; // Reduzido de $spacing-sm
+    }
+
+    .doctor-info {
+      grid-column: 1;
+      margin: 0;
+    }
+  }
+}
+
+// Tablet (768px - 1023px)
+@media (max-width: 1023px) {
+  .action-buttons {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    margin-top: $spacing-md;
+    justify-content: flex-end;
+  }
+}
+
+// Tablet pequeno (768px)
 @media (max-width: 768px) {
   .doctor-list-container {
-    padding: $padding-small; /* 16px */
-    margin: $padding-small; /* 16px */
+    margin: $spacing-md;
+    padding: $spacing-md;
   }
 
   .header {
     flex-direction: column;
-    align-items: flex-start;
-    margin-bottom: $padding-medium; /* 24px */
+    align-items: stretch;
+    gap: $spacing-md;
 
-    .title-section {
-      margin-bottom: $padding-small; /* 16px */
-
-      h2 {
-        font-size: 1.6em;
-      }
-
-      .subtitle {
-        font-size: 0.8em;
-      }
+    .title-section h2 {
+      font-size: 24px;
     }
 
     .new-doctor-btn {
       width: 100%;
-      @include flex-center;
+      justify-content: center;
     }
   }
 
-  .search-section {
-    .search-input {
-      ::ng-deep {
-        .mat-form-field-wrapper {
-          font-size: 0.9em;
-        }
-      }
+  ion-item {
+    padding: $spacing-md !important;
+
+    h3 {
+      font-size: 16px !important;
     }
-  }
 
-  .doctor-ionic-list {
-    ion-item {
-      flex-direction: column; /* Empilha label e botões em telas menores */
-      align-items: flex-start; /* Alinha o conteúdo à esquerda (horizontalmente) */
+    .doctor-info {
+      font-size: 13px !important;
 
-      // Ajustando padding em mobile
-      --padding-start: $padding-small; /* 16px */
-      --padding-end: $padding-small; /* 16px */
-      --padding-top: $spacing-unit; /* 8px */
-      --padding-bottom: $spacing-unit; /* 8px */
-      padding: $spacing-unit $padding-small !important; /* 8px top/bottom, 16px left/right */
-
-      ion-label {
-        width: 100%;
-
-        h3 {
-          font-size: 1em;
-        }
-
-        p.doctor-info {
-          font-size: 0.8em;
-          margin: 0 0 math.div($spacing-unit, 2) 0; /* 4px Mantém espaçamento entre linhas */
-        }
-      }
-
-      .action-buttons {
-        width: 100%;
-        justify-content: flex-end; /* Mantém alinhamento à direita dentro do item */
-        margin-top: $spacing-unit; /* 8px Espaçamento entre o texto e os botões */
-        padding-left: 0;
-
-        .mat-icon-button {
-          width: 36px;
-          height: 36px;
-
-          mat-icon {
-            font-size: 20px;
-            width: 20px;
-            height: 20px;
-          }
-        }
+      mat-icon {
+        font-size: 14px !important;
+        width: 14px !important;
+        height: 14px !important;
       }
     }
   }
 }
 
-// Telas muito pequenas (smartphones menores, até 480px)
+// Smartphone (480px)
 @media (max-width: 480px) {
   .doctor-list-container {
-    margin: $spacing-unit; /* 8px */
-    padding: $spacing-unit; /* 8px */
+    margin: $spacing-sm;
+    padding: $spacing-sm;
   }
 
   .header {
-    .title-section {
-      h2 {
-        font-size: 1.4em;
-      }
+    padding: $spacing-sm;
 
-      .subtitle {
-        font-size: 0.7em;
-      }
+    .title-section h2 {
+      font-size: 20px;
+    }
+
+    .new-doctor-btn {
+      padding: 12px 20px;
+      font-size: 14px;
     }
   }
 
-  .doctor-ionic-list {
-    ion-item {
-      // Padding interno dos itens (card) em mobile muito pequeno
-      --padding-start: $spacing-unit; /* 8px */
-      --padding-end: $spacing-unit; /* 8px */
-      --padding-top: math.div($spacing-unit, 2); /* 4px */
-      --padding-bottom: math.div($spacing-unit, 2); /* 4px */
-      padding: math.div($spacing-unit, 2) $spacing-unit !important; /* 4px top/bottom, 8px left/right */
+  ion-item {
+    padding: $spacing-sm !important;
 
-      ion-label {
-        h3 {
-          font-size: 0.9em;
-        }
+    h3 {
+      font-size: 15px !important;
+    }
 
-        p.doctor-info {
-          font-size: 0.7em;
-        }
-      }
+    .doctor-info {
+      font-size: 12px !important;
+    }
+  }
 
-      .action-buttons {
-        .mat-icon-button {
-          width: 32px;
-          height: 32px;
+  .action-buttons .mat-icon-button {
+    width: 32px !important;
+    height: 32px !important;
 
-          mat-icon {
-            font-size: 18px;
-            width: 18px;
-            height: 18px;
-          }
-        }
-      }
+    mat-icon {
+      font-size: 14px !important;
+      width: 14px !important;
+      height: 14px !important;
+    }
+  }
+}
+
+// Smartphone pequeno (320px)
+@media (max-width: 320px) {
+  .doctor-list-container {
+    margin: 4px;
+  }
+
+  .header .title-section h2 {
+    font-size: 18px;
+  }
+
+  ion-item h3 {
+    font-size: 14px !important;
+  }
+
+  .action-buttons .mat-icon-button {
+    width: 28px !important;
+    height: 28px !important;
+
+    mat-icon {
+      font-size: 12px !important;
+      width: 12px !important;
+      height: 12px !important;
     }
   }
 }
