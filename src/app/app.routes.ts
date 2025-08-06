@@ -46,9 +46,11 @@ import { ClientTrainningInactiveComponent } from './client/client-trainning-inac
 import { ClientMeasureComponent } from './client/client-measure/client-measure/client-measure.component';
 import { ClientMeasureHistoryComponent } from './client/client-measure-history/client-measure-history/client-measure-history.component';
 import { ClientProfessionalsComponent } from './client/client-professionals/client-professionals/client-professionals.component';
+import { ClientWebRegisterComponent } from './client/client-web-register/client-web-register/client-web-register.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
+  { path: 'client-web-register', component: ClientWebRegisterComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
   {

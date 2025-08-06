@@ -1,11 +1,77 @@
 // ==========================================
-// ESTILOS ESPECÍFICOS DO LOGIN
+// ESTILOS ESPECÍFICOS DO CADASTRO
 // ==========================================
 
 // Importa os estilos comuns
-@import '../../styles/auth-common';
+@import '../../../../styles/auth-common';
 
-// Classes específicas do login (se necessário)
+// Estilos específicos para o cadastro
+.auth-input-group {
+  position: relative;
+
+  .auth-label {
+    // Estilo para destacar campos obrigatórios
+    color: var(--text-primary);
+
+    // Destaca o asterisco em vermelho
+    &:contains("*") {
+      color: var(--text-primary);
+    }
+  }
+
+  .password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    margin-top: 12px; // Ajuste para compensar o label
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      color: var(--text-secondary);
+    }
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
+
+      mat-icon {
+        color: var(--primary-color);
+      }
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// Estilo global para asteriscos de campos obrigatórios
+:host ::ng-deep {
+  .auth-label {
+    position: relative;
+
+    // Destaca asteriscos em vermelho
+    &:contains("*") {
+      &::after {
+        color: #e53935;
+      }
+    }
+  }
+}
+
+// Classes específicas do cadastro
 .auth-footer {
   display: flex;
   flex-direction: column;
@@ -32,51 +98,6 @@
     &:hover {
       color: var(--primary-color);
       transform: translateY(-1px);
-    }
-
-    &.auth-link-register {
-      color: var(--secondary-color);
-      font-weight: 600;
-      padding: 8px 16px;
-      border: 2px solid var(--secondary-color);
-      border-radius: 8px;
-      background: rgba(var(--secondary-color-rgb), 0.05);
-
-      &:hover {
-        background: var(--secondary-color);
-        color: white;
-
-        mat-icon {
-          color: white;
-        }
-      }
-    }
-  }
-
-  .auth-divider {
-    position: relative;
-    width: 100%;
-    text-align: center;
-    margin: 8px 0;
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 0;
-      right: 0;
-      height: 1px;
-      background: var(--border-color);
-      z-index: 1;
-    }
-
-    span {
-      background: var(--card-background);
-      padding: 0 16px;
-      color: var(--text-secondary);
-      font-size: 12px;
-      position: relative;
-      z-index: 2;
     }
   }
 }
@@ -114,8 +135,7 @@
     border-radius: 8px;
   }
 
-  .auth-button-primary,
-  .auth-button-secondary {
+  .auth-button-primary {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
@@ -125,6 +145,10 @@
   .auth-button-group {
     width: 100%;
     box-sizing: border-box;
+  }
+
+  .password-toggle {
+    right: 8px;
   }
 }
 
@@ -151,5 +175,9 @@
   .auth-input {
     padding: 10px 12px;
     font-size: 16px;
+  }
+
+  .password-toggle {
+    right: 6px;
   }
 }
