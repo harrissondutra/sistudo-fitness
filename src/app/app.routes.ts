@@ -48,6 +48,7 @@ import { ClientMeasureHistoryComponent } from './client/client-measure-history/c
 import { ClientProfessionalsComponent } from './client/client-professionals/client-professionals/client-professionals.component';
 import { ClientWebRegisterComponent } from './client/client-web-register/client-web-register/client-web-register.component';
 import { DietListComponent } from './nutritionist/diet-list/diet-list/diet-list.component';
+import { DoctorPatientListComponent } from './doctor-patient-list/doctor-patient-list.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -90,6 +91,7 @@ export const routes: Routes = [
       { path: 'doctor-view/:id', component: DoctorViewComponent },
       { path: 'doctor-update/:id', component: DoctorUpdateComponent },
       { path: 'doctor-create', component: DoctorCreateComponent },
+      { path: 'doctor-patient-list/:id', component: DoctorPatientListComponent },
       { path: 'doctor-create/:id', component: DoctorCreateComponent },
       { path: 'nutritionist-list', component: NutritionistListComponent },
       { path: 'nutritionist-view/:id', component: NutritionistViewComponent },

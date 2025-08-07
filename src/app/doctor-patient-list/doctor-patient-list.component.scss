@@ -1,0 +1,423 @@
+@import '../../styles/variables';
+
+// Adicionar variáveis faltantes
+$text-primary: $text-color;
+$spacing-unit: $spacing-md;
+$background-light: $surface-elevated;
+
+.doctor-patient-list-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  
+  .doctor-header {
+    background: linear-gradient(135deg, $primary-color 0%, darken($primary-color, 15%) 100%);
+    color: white;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    
+    .back-button {
+      margin-right: 1rem;
+      
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+    }
+    
+    .doctor-info {
+      flex: 1;
+      
+      .doctor-details {
+        .doctor-name {
+          margin: 0;
+          font-size: 1.5rem;
+          font-weight: 600;
+          letter-spacing: 0.5px;
+        }
+        
+        .doctor-specialty {
+          margin: 0.25rem 0 0;
+          opacity: 0.9;
+          font-size: 0.9rem;
+        }
+      }
+    }
+    
+    .header-actions {
+      mat-chip-set {
+        mat-chip {
+          background: rgba(255, 255, 255, 0.2);
+          color: white;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          
+          mat-icon {
+            margin-right: 0.5rem;
+          }
+        }
+      }
+    }
+  }
+  
+  .content {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    
+    .loading-container,
+    .error-container,
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 400px;
+      text-align: center;
+      
+      .loading-text {
+        margin-top: 1rem;
+        color: $text-secondary;
+      }
+      
+      .error-icon,
+      .empty-icon {
+        font-size: 4rem;
+        width: 4rem;
+        height: 4rem;
+        color: $text-secondary;
+        margin-bottom: 1rem;
+      }
+      
+      h3 {
+        margin: 0 0 0.5rem;
+        color: $text-primary;
+        font-weight: 500;
+      }
+      
+      p {
+        margin: 0 0 1.5rem;
+        color: $text-secondary;
+        max-width: 400px;
+      }
+      
+      button {
+        min-width: 200px;
+      }
+    }
+    
+    .patients-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 1.5rem;
+      
+      .patient-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        
+        &:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+          display: flex;
+          align-items: center;
+          padding: 1.5rem;
+          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+          
+          .patient-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 1rem;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            &.placeholder {
+              background: linear-gradient(135deg, $primary-color 0%, lighten($primary-color, 20%) 100%);
+              color: white;
+              
+              mat-icon {
+                font-size: 2rem;
+                width: 2rem;
+                height: 2rem;
+              }
+            }
+            
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+            }
+          }
+          
+          .patient-basic-info {
+            flex: 1;
+            
+            .patient-name {
+              margin: 0 0 0.25rem;
+              font-size: 1.25rem;
+              font-weight: 600;
+              color: $text-primary;
+              line-height: 1.2;
+            }
+            
+            .patient-meta {
+              display: flex;
+              gap: 0.75rem;
+              
+              .age,
+              .gender {
+                font-size: 0.875rem;
+                color: $text-secondary;
+                background: rgba($primary-color, 0.1);
+                padding: 0.25rem 0.5rem;
+                border-radius: 12px;
+                border: 1px solid rgba($primary-color, 0.2);
+              }
+            }
+          }
+        }
+        
+        .patient-details {
+          padding: 1.25rem 1.5rem;
+          
+          .detail-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            
+            mat-icon {
+              color: $primary-color;
+              margin-right: 0.75rem;
+              font-size: 1.25rem;
+              width: 1.25rem;
+              height: 1.25rem;
+            }
+            
+            span {
+              color: $text-secondary;
+              font-size: 0.9rem;
+            }
+            
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+          
+          .status-chip {
+            margin-top: 1rem;
+            
+            mat-chip {
+              font-size: 0.75rem;
+              font-weight: 500;
+              
+              &.status-ativo {
+                background: lighten($success-color, 40%);
+                color: $success-color;
+              }
+              
+              &.status-inativo {
+                background: lighten($error-color, 40%);
+                color: $error-color;
+              }
+              
+              &.status-suspenso {
+                background: lighten($warning-color, 40%);
+                color: $warning-color;
+              }
+            }
+          }
+          
+          .assistance-info {
+            margin-top: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            
+            .assistance-chip {
+              font-size: 0.75rem;
+              display: flex;
+              align-items: center;
+              gap: 0.25rem;
+              
+              mat-icon {
+                font-size: 1rem;
+                width: 1rem;
+                height: 1rem;
+              }
+              
+              &.doctor {
+                background: lighten($secondary-color, 40%);
+                color: $secondary-color;
+              }
+              
+              &.personal {
+                background: lighten($premium-color, 40%);
+                color: $premium-color;
+              }
+              
+              &.nutritionist {
+                background: lighten($accent-color, 40%);
+                color: $accent-color;
+              }
+            }
+          }
+        }
+        
+        .card-actions {
+          padding: 1rem 1.5rem;
+          display: flex;
+          justify-content: space-between;
+          background: #fafbfc;
+          
+          button {
+            flex: 1;
+            margin: 0 0.25rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            
+            &.view-btn {
+              color: $primary-color;
+              border: 1px solid rgba($primary-color, 0.3);
+              
+              &:hover {
+                background: rgba($primary-color, 0.05);
+                border-color: $primary-color;
+              }
+            }
+            
+            &.edit-btn {
+              color: $secondary-color;
+              border: 1px solid rgba($secondary-color, 0.3);
+              
+              &:hover {
+                background: rgba($secondary-color, 0.05);
+                border-color: $secondary-color;
+              }
+            }
+            
+            mat-icon {
+              margin-right: 0.5rem;
+              font-size: 1.125rem;
+              width: 1.125rem;
+              height: 1.125rem;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  .doctor-patient-list-container {
+    .doctor-header {
+      padding: 1rem;
+      
+      .doctor-info {
+        .doctor-details {
+          .doctor-name {
+            font-size: 1.25rem;
+          }
+        }
+      }
+      
+      .header-actions {
+        mat-chip-set {
+          mat-chip {
+            font-size: 0.75rem;
+          }
+        }
+      }
+    }
+    
+    .content {
+      padding: 1rem;
+      
+      .patients-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        
+        .patient-card {
+          .card-header {
+            padding: 1rem;
+            
+            .patient-avatar {
+              width: 50px;
+              height: 50px;
+            }
+            
+            .patient-basic-info {
+              .patient-name {
+                font-size: 1.125rem;
+              }
+              
+              .patient-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+                
+                .age,
+                .gender {
+                  align-self: flex-start;
+                }
+              }
+            }
+          }
+          
+          .patient-details {
+            padding: 1rem;
+          }
+          
+          .card-actions {
+            padding: 1rem;
+            flex-direction: column;
+            gap: 0.5rem;
+            
+            button {
+              margin: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .doctor-patient-list-container {
+    .content {
+      padding: 0.75rem;
+      
+      .patients-grid {
+        .patient-card {
+          .card-header {
+            flex-direction: column;
+            text-align: center;
+            
+            .patient-avatar {
+              margin: 0 0 1rem 0;
+            }
+            
+            .patient-basic-info {
+              .patient-meta {
+                justify-content: center;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
