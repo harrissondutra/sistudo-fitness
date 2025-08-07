@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api-sistudo-fitness.fly.dev', // URL da API em produção
+  apiUrl: 'https://api-sistudo-fitness-production.up.railway.app' // URL da API em produção
 }; 
