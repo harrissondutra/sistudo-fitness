@@ -40,9 +40,6 @@ Thumbs.db
 /dist/*
 !/dist/sistudo-fitness/browser
 
-# Environment files
-/src/environments/environment.prod.ts
-
 # Source files that aren't needed for deployment
 /src/**/*.spec.ts
 /src/**/*.test.ts
