@@ -12,7 +12,21 @@ import { catchError } from 'rxjs/operators';
 export class AuthService {
   private baseUrl = `${environment.apiUrl}/auth`;
 
-  constructor(private http: HttpClient) { }
+  // Configurações de sessão
+  private readonly DEFAULT_SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutos como fallback
+  private sessionTimer: any;
+
+  constructor(private http: HttpClient) {
+    // Inicializa timer de sessão se há um token válido
+    if (this.isAuthenticated()) {
+      this.startSessionTimer();
+    }
+
+    // Detecta fechamento do browser para logout automático
+    window.addEventListener('beforeunload', () => {
+      this.clearSessionTimer();
+    });
+  }
 
   /**
    * Realiza login no backend e retorna o Observable da resposta.
@@ -35,13 +49,13 @@ export class AuthService {
         console.error('Erro na requisição forgot-password:', error);
         console.log('URL chamada:', `${this.baseUrl}/forgot-password`);
         console.log('Dados enviados:', { email });
-        
+
         // Se o backend retorna status 2xx mas com erro, trata como sucesso
         if (error.status >= 200 && error.status < 300) {
           console.log('Convertendo resposta de erro para sucesso devido ao status HTTP');
           return of(error.error || { success: true, message: 'E-mail enviado' });
         }
-        
+
         throw error;
       })
     );
@@ -55,7 +69,7 @@ export class AuthService {
     const params = new HttpParams()
       .set('token', token)
       .set('newPassword', newPassword);
-    
+
     return this.http.post<any>(`${this.baseUrl}/reset-password`, null, { params });
   }
 
@@ -69,22 +83,27 @@ export class AuthService {
   }
 
   /**
-   * Salva o token JWT e informações do usuário no localStorage.
+   * Salva o token JWT e informações do usuário no sessionStorage (não persiste após fechar browser).
    */
   setToken(token: string, userInfo?: { email?: string, username?: string, role?: string }) {
-    localStorage.setItem('token', token);
-    
+    // Usa sessionStorage em vez de localStorage para não persistir após fechar browser
+    sessionStorage.setItem('token', token);
+
+    // Salva timestamp da última atividade
+    const currentTime = Date.now();
+    sessionStorage.setItem('lastActivity', currentTime.toString());
+
     // Extrai informações do token JWT incluindo o ID do usuário
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       console.log('Payload completo do token JWT:', payload);
-      
+
       // Busca por um ID numérico em vários campos possíveis
       let userId = null;
-      
+
       // Lista de campos que podem conter o ID do usuário
       const possibleIdFields = ['id', 'userId', 'user_id', 'sub', 'jti', 'clientId', 'client_id'];
-      
+
       for (const field of possibleIdFields) {
         if (payload[field] !== undefined) {
           const value = payload[field];
@@ -98,11 +117,11 @@ export class AuthService {
           }
         }
       }
-      
+
       if (!userId) {
         console.warn('Nenhum ID numérico encontrado no token JWT. Campos disponíveis:', Object.keys(payload));
       }
-      
+
       // Combina as informações fornecidas com as do token
       const combinedUserInfo = {
         ...userInfo,
@@ -111,40 +130,217 @@ export class AuthService {
         username: userInfo?.username || payload.username || payload.name,
         role: userInfo?.role || payload.role
       };
-      
+
       console.log('Informações do usuário salvas:', combinedUserInfo);
-      localStorage.setItem('userInfo', JSON.stringify(combinedUserInfo));
+      sessionStorage.setItem('userInfo', JSON.stringify(combinedUserInfo));
     } catch (error) {
       console.error('Erro ao decodificar token JWT:', error);
       // Fallback - salva apenas as informações fornecidas
       if (userInfo) {
-        localStorage.setItem('userInfo', JSON.stringify(userInfo));
+        sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
       }
+    }
+
+    // Inicia o timer de sessão
+    this.startSessionTimer();
+  }
+
+  /**
+   * Inicia o timer de sessão que verifica atividade do usuário
+   */
+  private startSessionTimer(): void {
+    this.clearSessionTimer();
+
+    // Calcula o intervalo de verificação baseado no timeout da sessão
+    const sessionTimeout = this.getSessionTimeout();
+    // Verifica a cada 1/10 do tempo de timeout, mas no mínimo a cada minuto e no máximo a cada 5 minutos
+    const checkInterval = Math.max(60000, Math.min(300000, Math.floor(sessionTimeout / 10)));
+
+    console.log(`Timer de sessão iniciado - Timeout: ${Math.floor(sessionTimeout / 60000)} min, Verificação a cada: ${Math.floor(checkInterval / 1000)} seg`);
+
+    this.sessionTimer = setInterval(() => {
+      this.checkSessionTimeout();
+    }, checkInterval);
+  }
+
+  /**
+   * Limpa o timer de sessão
+   */
+  private clearSessionTimer(): void {
+    if (this.sessionTimer) {
+      clearInterval(this.sessionTimer);
+      this.sessionTimer = null;
     }
   }
 
   /**
-   * Recupera o token JWT do localStorage.
+   * Calcula o timeout da sessão baseado no tempo de expiração do token JWT
    */
-  getToken(): string | null {
-    return localStorage.getItem('token');
+  private getSessionTimeout(): number {
+    const token = this.getToken();
+    if (!token) {
+      return this.DEFAULT_SESSION_TIMEOUT;
+    }
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+
+      if (payload.exp) {
+        // exp é em segundos desde epoch, converte para milliseconds
+        const tokenExpirationTime = payload.exp * 1000;
+        const currentTime = Date.now();
+        const timeUntilExpiration = tokenExpirationTime - currentTime;
+
+        // Se o token já expirou ou expira em menos de 1 minuto, usa timeout padrão
+        if (timeUntilExpiration <= 60000) {
+          console.warn('Token expira em menos de 1 minuto, usando timeout padrão');
+          return this.DEFAULT_SESSION_TIMEOUT;
+        }
+
+        // Usa 90% do tempo restante do token como timeout da sessão
+        const sessionTimeout = Math.floor(timeUntilExpiration * 0.9);
+        console.log(`Timeout da sessão calculado baseado no token: ${sessionTimeout}ms (${Math.floor(sessionTimeout / 60000)} minutos)`);
+
+        return sessionTimeout;
+      }
+    } catch (error) {
+      console.error('Erro ao calcular timeout da sessão baseado no token:', error);
+    }
+
+    // Fallback para valor padrão
+    return this.DEFAULT_SESSION_TIMEOUT;
   }
 
   /**
-   * Recupera informações do usuário do localStorage.
+   * Verifica se o token está próximo da expiração e ajusta o timer se necessário
+   */
+  private checkTokenExpiration(): void {
+    const token = this.getToken();
+    if (!token) {
+      this.logout();
+      return;
+    }
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+
+      if (payload.exp) {
+        const tokenExpirationTime = payload.exp * 1000;
+        const currentTime = Date.now();
+        const timeUntilExpiration = tokenExpirationTime - currentTime;
+
+        // Se o token expira em menos de 2 minutos, faz logout
+        if (timeUntilExpiration <= 120000) {
+          console.warn('Token expirando em menos de 2 minutos, fazendo logout');
+          this.logout();
+          window.location.href = '/login';
+          return;
+        }
+
+        // Se o token expira em menos de 5 minutos, reinicia o timer com verificação mais frequente
+        if (timeUntilExpiration <= 300000) {
+          console.warn('Token expirando em menos de 5 minutos, aumentando frequência de verificação');
+          this.startSessionTimer();
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao verificar expiração do token:', error);
+    }
+  }
+
+  /**
+   * Verifica se a sessão expirou por inatividade
+   */
+  private checkSessionTimeout(): void {
+    // Primeiro verifica se o token ainda é válido
+    this.checkTokenExpiration();
+
+    const lastActivity = sessionStorage.getItem('lastActivity');
+    if (!lastActivity) {
+      this.logout();
+      return;
+    }
+
+    const lastActivityTime = parseInt(lastActivity, 10);
+    const currentTime = Date.now();
+    const timeDiff = currentTime - lastActivityTime;
+    const sessionTimeout = this.getSessionTimeout();
+
+    if (timeDiff > sessionTimeout) {
+      console.warn('Sessão expirada por inatividade');
+      this.logout();
+      // Aqui você pode redirecionar para login ou mostrar uma mensagem
+      window.location.href = '/login';
+    }
+  }
+
+  /**
+   * Atualiza o timestamp da última atividade do usuário
+   */
+  public updateLastActivity(): void {
+    const currentTime = Date.now();
+    sessionStorage.setItem('lastActivity', currentTime.toString());
+  }
+
+  /**
+   * Obtém informações sobre o tempo de sessão baseado no token JWT
+   */
+  public getSessionInfo(): { timeoutMinutes: number, tokenExpiresIn: number, isTokenExpiringSoon: boolean } {
+    const token = this.getToken();
+    const sessionTimeout = this.getSessionTimeout();
+
+    let tokenExpiresIn = 0;
+    let isTokenExpiringSoon = false;
+
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.exp) {
+          const tokenExpirationTime = payload.exp * 1000;
+          const currentTime = Date.now();
+          tokenExpiresIn = Math.max(0, tokenExpirationTime - currentTime);
+          isTokenExpiringSoon = tokenExpiresIn <= 300000; // Menos de 5 minutos
+        }
+      } catch (error) {
+        console.error('Erro ao obter informações do token:', error);
+      }
+    }
+
+    return {
+      timeoutMinutes: Math.floor(sessionTimeout / 60000),
+      tokenExpiresIn: Math.floor(tokenExpiresIn / 1000), // em segundos
+      isTokenExpiringSoon
+    };
+  }
+
+  /**
+   * Recupera o token JWT do sessionStorage.
+   */
+  getToken(): string | null {
+    return sessionStorage.getItem('token');
+  }
+
+  /**
+   * Recupera informações do usuário do sessionStorage.
    */
   getUserInfoFromStorage(): any {
-    const userInfo = localStorage.getItem('userInfo');
+    const userInfo = sessionStorage.getItem('userInfo');
     return userInfo ? JSON.parse(userInfo) : null;
   }
 
   /**
-   * Remove o token JWT e informações do usuário do localStorage e efetua logout.
+   * Remove o token JWT e informações do usuário do sessionStorage e efetua logout.
    */
   logout() {
     console.warn('[AuthService] Logout chamado');
-    localStorage.removeItem('token');
-    localStorage.removeItem('userInfo');
+
+    // Limpa dados da sessão
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userInfo');
+    sessionStorage.removeItem('lastActivity');
+
+    // Limpa timer de sessão
+    this.clearSessionTimer();
   }
 
   /**
@@ -195,10 +391,10 @@ export class AuthService {
   }
 
   /**
-   * Recupera os dados completos do usuário, combinando informações do token e localStorage
+   * Recupera os dados completos do usuário, combinando informações do token e sessionStorage
    */
   getUserData(): any {
-    // Primeiro tenta obter do localStorage que tem dados mais completos
+    // Primeiro tenta obter do sessionStorage que tem dados mais completos
     const storageData = this.getUserInfoFromStorage();
 
     // Depois obtém do token que é mais seguro para autenticação
@@ -265,7 +461,7 @@ export class AuthService {
   getCurrentUser(): Observable<{ id: number } | null> {
     // Obtém dados do usuário do token ou localStorage
     const userData = this.getUserData();
-    
+
     if (!userData) {
       return of(null);
     }
@@ -282,7 +478,7 @@ export class AuthService {
     if (tokenData) {
       // Lista de campos que podem conter o ID do usuário
       const possibleIdFields = ['id', 'userId', 'user_id', 'sub', 'jti', 'clientId', 'client_id'];
-      
+
       for (const field of possibleIdFields) {
         if (tokenData[field] !== undefined) {
           const value = tokenData[field];
@@ -344,12 +540,12 @@ export class AuthService {
       const payload = JSON.parse(atob(parts[1]));
       console.log('🔍 DEBUG TOKEN PAYLOAD COMPLETO:', payload);
       console.log('🔍 DEBUG TOKEN - Todas as chaves do payload:', Object.keys(payload));
-      
+
       // Analisa cada campo em busca de ID numérico
       Object.keys(payload).forEach(key => {
         const value = payload[key];
         console.log(`🔍 DEBUG TOKEN - ${key}: ${value} (tipo: ${typeof value})`);
-        
+
         if (typeof value === 'number' || (typeof value === 'string' && !isNaN(Number(value)) && Number(value) > 0)) {
           console.log(`🔍 DEBUG TOKEN - ✅ POSSÍVEL ID NUMÉRICO em '${key}': ${value}`);
         }
@@ -362,11 +558,17 @@ export class AuthService {
 
   // Método de debug para verificar dados do usuário
   debugUserData(): void {
+    const sessionInfo = this.getSessionInfo();
+
     console.log('=== DEBUG AUTH SERVICE ===');
     console.log('Token:', this.getToken());
-    console.log('UserInfo do localStorage:', this.getUserInfoFromStorage());
+    console.log('UserInfo do sessionStorage:', this.getUserInfoFromStorage());
     console.log('UserInfo do token:', this.getUserInfo());
     console.log('UserData combinado:', this.getUserData());
+    console.log('Última atividade:', sessionStorage.getItem('lastActivity'));
+    console.log('Timeout da sessão (min):', sessionInfo.timeoutMinutes);
+    console.log('Token expira em (seg):', sessionInfo.tokenExpiresIn);
+    console.log('Token expirando em breve:', sessionInfo.isTokenExpiringSoon);
     console.log('=========================');
   }
 }

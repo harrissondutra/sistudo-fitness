@@ -74,11 +74,11 @@ export class DoctorListComponent implements OnInit{
       doctor.specialty.toLowerCase().includes(searchTerm)
     );
   }
-  onViewDoctor(doctorId: number): void {
-    this.router.navigate(['/doctor-view', doctorId]);
+  onViewDoctor(doctor: any): void {
+    this.router.navigate(['/doctor-view', doctor.id]);
   }
-  onEditDoctor(doctorId: number): void {
-    this.router.navigate(['/doctor-update', doctorId]);
+  onEditDoctor(doctor: any): void {
+    this.router.navigate(['/doctor-update', doctor.id]);
   }
   onDeleteDoctor(doctorId: number): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {

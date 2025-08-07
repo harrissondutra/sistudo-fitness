@@ -14,6 +14,7 @@ import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { DateFormatInterceptor } from './core/interceptors/date-format.interceptor/date-format.interceptor';
 import { jwtInterceptor } from './core/interceptors/jwt.interceptor';
 import { cacheInterceptor } from './core/interceptors/cache-functional.interceptor';
+import { sessionActivityInterceptor } from './core/interceptors/session-activity.interceptor';
 
 // Formato de datas para exibição no formulário
 export const DATE_FORMATS = {
@@ -31,12 +32,13 @@ export const DATE_FORMATS = {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    // Múltiplos interceptores incluindo o cache
+    // Múltiplos interceptores incluindo o cache e atividade de sessão
     provideHttpClient(withInterceptors([
-      errorInterceptor, 
-      DateFormatInterceptor, 
+      errorInterceptor,
+      DateFormatInterceptor,
       jwtInterceptor,
-      cacheInterceptor
+      cacheInterceptor,
+      sessionActivityInterceptor
     ])),
     provideAnimations(),
     provideClientHydration(),

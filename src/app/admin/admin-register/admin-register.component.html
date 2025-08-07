@@ -52,133 +52,146 @@
 
             <!-- Seção de Links - com suporte para links dinâmicos -->
             <div formArrayName="links" class="links-container">
-              <mat-accordion>
-                <mat-expansion-panel *ngFor="let link of links.controls; let i = index" [formGroupName]="i">
-                  <mat-expansion-panel-header>
-                    <mat-panel-title>
-                      {{ link.get('label')?.value || 'Novo Link' }}
-                    </mat-panel-title>
-                  </mat-expansion-panel-header>
-
-                  <div class="link-form">
-                    <mat-form-field appearance="outline">
-                      <mat-label>ID do Link</mat-label>
-                      <input matInput formControlName="id" placeholder="Ex: list-clients" (input)="validateIdFormat($event)">
-                      <mat-error *ngIf="link.get('id')?.hasError('required')">ID é obrigatório</mat-error>
-                      <mat-error *ngIf="link.get('id')?.hasError('pattern')">Formato inválido</mat-error>
-                    </mat-form-field>
-
-                    <mat-form-field appearance="outline">
-                      <mat-label>Rótulo</mat-label>
-                      <input matInput formControlName="label" placeholder="Ex: Listar Clientes">
-                      <mat-error *ngIf="link.get('label')?.hasError('required')">Rótulo é obrigatório</mat-error>
-                    </mat-form-field>
-
-                    <!-- Campo de Rota com suporte para rotas dinâmicas -->
-                    <mat-form-field appearance="outline">
-                      <mat-label>Rota</mat-label>
-                      <input matInput formControlName="route" placeholder="Ex: /clients-list">
-                      <mat-hint>
-                        <ng-container *ngIf="!link.get('isDynamic')?.value">
-                          Deixe em branco se tiver sublinks
-                        </ng-container>
-                        <ng-container *ngIf="link.get('isDynamic')?.value">
-                          <span class="dynamic-route-hint">
-                            <mat-icon color="accent">autorenew</mat-icon>
-                            Rota dinâmica: ID do usuário será inserido automaticamente
-                          </span>
-                        </ng-container>
-                      </mat-hint>
-
-                      <!-- Botão para tornar a rota dinâmica -->
-                      <button mat-icon-button matSuffix type="button"
-                              (click)="toggleDynamicRoute($any(link))"
-                              [matTooltip]="link.get('isDynamic')?.value ? 'Tornar rota estática' : 'Usar ID do usuário logado'"
-                              [color]="link.get('isDynamic')?.value ? 'accent' : ''">
-                        <mat-icon>{{ link.get('isDynamic')?.value ? 'link_off' : 'link' }}</mat-icon>
-                      </button>
-                    </mat-form-field>
-
-                    <mat-checkbox formControlName="visible" color="primary">Visível</mat-checkbox>
-                    <mat-checkbox formControlName="isDynamic" color="accent" class="dynamic-checkbox">
-                      Rota dinâmica (ID do usuário)
-                    </mat-checkbox>
-
-                    <button type="button" mat-icon-button color="warn" matTooltip="Remover Link" (click)="removeLink(i)">
-                      <mat-icon>delete</mat-icon>
-                    </button>
-                  </div>
-
-                  <!-- Seção de Sublinks -->
-                  <div class="section-header">
-                    <h4>Sublinks</h4>
-                    <button type="button" mat-mini-fab color="primary" (click)="addSublink(i)" matTooltip="Adicionar Sublink">
-                      <mat-icon>playlist_add</mat-icon>
-                    </button>
-                  </div>
-
-                  <!-- Seção de Sublinks - com suporte para links dinâmicos -->
-                  <div formArrayName="sublinks" class="sublinks-container">
-                    <mat-accordion>
-                      <mat-expansion-panel *ngFor="let sublink of getSublinks(i).controls; let j = index" [formGroupName]="j">
-                        <mat-expansion-panel-header>
-                          <mat-panel-title>
-                            {{ sublink.get('label')?.value || 'Novo Sublink' }}
-                          </mat-panel-title>
-                        </mat-expansion-panel-header>
-
-                        <div class="sublink-form">
-                          <mat-form-field appearance="outline">
-                            <mat-label>ID do Sublink</mat-label>
-                            <input matInput formControlName="id" placeholder="Ex: create-client" (input)="validateIdFormat($event)">
-                            <mat-error *ngIf="sublink.get('id')?.hasError('required')">ID é obrigatório</mat-error>
-                            <mat-error *ngIf="sublink.get('id')?.hasError('pattern')">Formato inválido</mat-error>
-                          </mat-form-field>
-
-                          <mat-form-field appearance="outline">
-                            <mat-label>Rótulo</mat-label>
-                            <input matInput formControlName="label" placeholder="Ex: Criar Cliente">
-                            <mat-error *ngIf="sublink.get('label')?.hasError('required')">Rótulo é obrigatório</mat-error>
-                          </mat-form-field>
-
-                          <!-- Campo de Rota com suporte para rotas dinâmicas -->
-                          <mat-form-field appearance="outline">
-                            <mat-label>Rota</mat-label>
-                            <input matInput formControlName="route" placeholder="Ex: /client-create">
-                            <mat-hint>
-                              <ng-container *ngIf="!sublink.get('isDynamic')?.value"></ng-container>
-                              <ng-container *ngIf="sublink.get('isDynamic')?.value">
-                                <span class="dynamic-route-hint">
-                                  <mat-icon color="accent">autorenew</mat-icon>
-                                  Rota dinâmica: ID do usuário será inserido automaticamente
-                                </span>
-                              </ng-container>
-                            </mat-hint>
-                            <mat-error *ngIf="sublink.get('route')?.hasError('required')">Rota é obrigatória</mat-error>
-
-                            <!-- Botão para tornar a rota dinâmica -->
-                            <button mat-icon-button matSuffix type="button"
-                                    (click)="toggleDynamicSubRoute(i, j)"
-                                    [matTooltip]="sublink.get('isDynamic')?.value ? 'Tornar rota estática' : 'Usar ID do usuário logado'"
-                                    [color]="sublink.get('isDynamic')?.value ? 'accent' : ''">
-                              <mat-icon>{{ sublink.get('isDynamic')?.value ? 'link_off' : 'link' }}</mat-icon>
-                            </button>
-                          </mat-form-field>
-
-                          <mat-checkbox formControlName="visible" color="primary">Visível</mat-checkbox>
-                          <mat-checkbox formControlName="isDynamic" color="accent" class="dynamic-checkbox">
-                            Rota dinâmica (ID do usuário)
-                          </mat-checkbox>
-
-                          <button type="button" mat-icon-button color="warn" matTooltip="Remover Sublink" (click)="removeSublink(i, j)">
-                            <mat-icon>delete</mat-icon>
-                          </button>
+              <div cdkDropList (cdkDropListDropped)="dropFormLink($event)" class="form-links-container">
+                <mat-accordion>
+                  <mat-expansion-panel *ngFor="let link of links.controls; let i = index" [formGroupName]="i" cdkDrag>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        <div class="link-header-container">
+                          <div class="drag-handle" cdkDragHandle>
+                            <mat-icon>drag_indicator</mat-icon>
+                          </div>
+                          <span>{{ link.get('label')?.value || 'Novo Link' }}</span>
                         </div>
-                      </mat-expansion-panel>
-                    </mat-accordion>
-                  </div>
-                </mat-expansion-panel>
-              </mat-accordion>
+                      </mat-panel-title>
+                    </mat-expansion-panel-header>
+
+                    <div class="link-form">
+                      <mat-form-field appearance="outline">
+                        <mat-label>ID do Link</mat-label>
+                        <input matInput formControlName="id" placeholder="Ex: list-clients" (input)="validateIdFormat($event)">
+                        <mat-error *ngIf="link.get('id')?.hasError('required')">ID é obrigatório</mat-error>
+                        <mat-error *ngIf="link.get('id')?.hasError('pattern')">Formato inválido</mat-error>
+                      </mat-form-field>
+
+                      <mat-form-field appearance="outline">
+                        <mat-label>Rótulo</mat-label>
+                        <input matInput formControlName="label" placeholder="Ex: Listar Clientes">
+                        <mat-error *ngIf="link.get('label')?.hasError('required')">Rótulo é obrigatório</mat-error>
+                      </mat-form-field>
+
+                      <!-- Campo de Rota com suporte para rotas dinâmicas -->
+                      <mat-form-field appearance="outline">
+                        <mat-label>Rota</mat-label>
+                        <input matInput formControlName="route" placeholder="Ex: /clients-list">
+                        <mat-hint>
+                          @if (!link.get('isDynamic')?.value) {
+                            Deixe em branco se tiver sublinks
+                          }
+                          @if (link.get('isDynamic')?.value) {
+                            <span class="dynamic-route-hint">
+                              <mat-icon color="accent">autorenew</mat-icon>
+                              Rota dinâmica: ID do usuário será inserido automaticamente
+                            </span>
+                          }
+                        </mat-hint>
+
+                        <!-- Botão para tornar a rota dinâmica -->
+                        <button mat-icon-button matSuffix type="button"
+                                (click)="toggleDynamicRoute($any(link))"
+                                [matTooltip]="link.get('isDynamic')?.value ? 'Tornar rota estática' : 'Usar ID do usuário logado'"
+                                [color]="link.get('isDynamic')?.value ? 'accent' : ''">
+                          <mat-icon>{{ link.get('isDynamic')?.value ? 'link_off' : 'link' }}</mat-icon>
+                        </button>
+                      </mat-form-field>
+
+                      <mat-checkbox formControlName="visible" color="primary">Visível</mat-checkbox>
+                      <mat-checkbox formControlName="isDynamic" color="accent" class="dynamic-checkbox">
+                        Rota dinâmica (ID do usuário)
+                      </mat-checkbox>
+
+                      <button type="button" mat-icon-button color="warn" matTooltip="Remover Link" (click)="removeLink(i)">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+
+                    <!-- Seção de Sublinks -->
+                    <div class="section-header">
+                      <h4>Sublinks</h4>
+                      <button type="button" mat-mini-fab color="primary" (click)="addSublink(i)" matTooltip="Adicionar Sublink">
+                        <mat-icon>playlist_add</mat-icon>
+                      </button>
+                    </div>
+
+                    <!-- Seção de Sublinks - com suporte para links dinâmicos -->
+                    <div formArrayName="sublinks" class="sublinks-container">
+                      <div cdkDropList (cdkDropListDropped)="dropFormSublink($event, i)" class="form-sublinks-container">
+                        <mat-accordion>
+                          <mat-expansion-panel *ngFor="let sublink of getSublinks(i).controls; let j = index" [formGroupName]="j" cdkDrag>
+                            <mat-expansion-panel-header>
+                              <mat-panel-title>
+                                <div class="sublink-header-container">
+                                  <div class="drag-handle" cdkDragHandle>
+                                    <mat-icon>drag_indicator</mat-icon>
+                                  </div>
+                                  <span>{{ sublink.get('label')?.value || 'Novo Sublink' }}</span>
+                                </div>
+                              </mat-panel-title>
+                            </mat-expansion-panel-header>
+
+                            <div class="sublink-form">
+                              <mat-form-field appearance="outline">
+                                <mat-label>ID do Sublink</mat-label>
+                                <input matInput formControlName="id" placeholder="Ex: create-client" (input)="validateIdFormat($event)">
+                                <mat-error *ngIf="sublink.get('id')?.hasError('required')">ID é obrigatório</mat-error>
+                                <mat-error *ngIf="sublink.get('id')?.hasError('pattern')">Formato inválido</mat-error>
+                              </mat-form-field>
+
+                              <mat-form-field appearance="outline">
+                                <mat-label>Rótulo</mat-label>
+                                <input matInput formControlName="label" placeholder="Ex: Criar Cliente">
+                                <mat-error *ngIf="sublink.get('label')?.hasError('required')">Rótulo é obrigatório</mat-error>
+                              </mat-form-field>
+
+                              <!-- Campo de Rota com suporte para rotas dinâmicas -->
+                              <mat-form-field appearance="outline">
+                                <mat-label>Rota</mat-label>
+                                <input matInput formControlName="route" placeholder="Ex: /client-create">
+                                <mat-hint>
+                                  @if (sublink.get('isDynamic')?.value) {
+                                    <span class="dynamic-route-hint">
+                                      <mat-icon color="accent">autorenew</mat-icon>
+                                      Rota dinâmica: ID do usuário será inserido automaticamente
+                                    </span>
+                                  }
+                                </mat-hint>
+                                <mat-error *ngIf="sublink.get('route')?.hasError('required')">Rota é obrigatória</mat-error>
+
+                                <!-- Botão para tornar a rota dinâmica -->
+                                <button mat-icon-button matSuffix type="button"
+                                        (click)="toggleDynamicSubRoute(i, j)"
+                                        [matTooltip]="sublink.get('isDynamic')?.value ? 'Tornar rota estática' : 'Usar ID do usuário logado'"
+                                        [color]="sublink.get('isDynamic')?.value ? 'accent' : ''">
+                                  <mat-icon>{{ sublink.get('isDynamic')?.value ? 'link_off' : 'link' }}</mat-icon>
+                                </button>
+                              </mat-form-field>
+
+                              <mat-checkbox formControlName="visible" color="primary">Visível</mat-checkbox>
+                              <mat-checkbox formControlName="isDynamic" color="accent" class="dynamic-checkbox">
+                                Rota dinâmica (ID do usuário)
+                              </mat-checkbox>
+
+                              <button type="button" mat-icon-button color="warn" matTooltip="Remover Sublink" (click)="removeSublink(i, j)">
+                                <mat-icon>delete</mat-icon>
+                              </button>
+                            </div>
+                          </mat-expansion-panel>
+                        </mat-accordion>
+                      </div>
+                    </div>
+                  </mat-expansion-panel>
+                </mat-accordion>
+              </div>
             </div>
 
             <div class="form-actions">
@@ -239,9 +252,11 @@
                       </span>
 
                       <!-- Indicador de rota dinâmica -->
-                      <span *ngIf="link.isDynamic" class="badge badge-info">
-                        <mat-icon>autorenew</mat-icon> Dinâmico
-                      </span>
+                      @if (link.isDynamic) {
+                        <span class="badge badge-info">
+                          <mat-icon>autorenew</mat-icon> Dinâmico
+                        </span>
+                      }
 
                       <ul class="sublinks-list" *ngIf="link.sublinks && link.sublinks.length > 0"
                          cdkDropList (cdkDropListDropped)="dropSublink(i, menu.links.indexOf(link), $event)">
@@ -255,9 +270,11 @@
                           </span>
 
                           <!-- Indicador de sublink dinâmico -->
-                          <span *ngIf="sublink.isDynamic" class="badge badge-info">
-                            <mat-icon>autorenew</mat-icon> Dinâmico
-                          </span>
+                          @if (sublink.isDynamic) {
+                            <span class="badge badge-info">
+                              <mat-icon>autorenew</mat-icon> Dinâmico
+                            </span>
+                          }
                         </li>
                       </ul>
                     </li>

@@ -67,7 +67,7 @@ export class MenuService {
       links: [
         { id: 'list-nutritionist', label: 'Listar Nutricionistas', route: '/nutritionist-list', visible: true },
         { id: 'create-nutritionist', label: 'Criar Novo Nutricionista', route: '/nutritionist-create', visible: true },
-        { id: 'edit-nutritionist', label: 'Editar Nutricionista', route: '/nutritionist-update/:id', visible: true }
+        { id: 'diet-list', label: 'Dietas de Clientes', route: '/diet-list/:id', visible: true, isDynamic: true }
       ]
     },
     {

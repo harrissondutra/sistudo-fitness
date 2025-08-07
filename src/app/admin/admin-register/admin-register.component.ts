@@ -219,6 +219,30 @@ export class AdminRegisterComponent implements OnInit {
     this.menuService.updateMenuItems(this.menuItems);
   }
 
+  // Novo método para drag and drop de links no formulário
+  dropFormLink(event: CdkDragDrop<any[]>): void {
+    const linksArray = this.links;
+    const linkData = linksArray.at(event.previousIndex);
+
+    // Remove o item da posição anterior
+    linksArray.removeAt(event.previousIndex);
+
+    // Insere na nova posição
+    linksArray.insert(event.currentIndex, linkData);
+  }
+
+  // Novo método para drag and drop de sublinks no formulário
+  dropFormSublink(event: CdkDragDrop<any[]>, linkIndex: number): void {
+    const sublinksArray = this.getSublinks(linkIndex);
+    const sublinkData = sublinksArray.at(event.previousIndex);
+
+    // Remove o item da posição anterior
+    sublinksArray.removeAt(event.previousIndex);
+
+    // Insere na nova posição
+    sublinksArray.insert(event.currentIndex, sublinkData);
+  }
+
   dropLink(menuIndex: number, event: CdkDragDrop<LinkItem[]>): void {
     moveItemInArray(this.menuItems[menuIndex].links, event.previousIndex, event.currentIndex);
     this.menuService.updateMenuItems(this.menuItems);

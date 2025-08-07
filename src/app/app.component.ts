@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav'; // Importa MatSidenav
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout'; // Para isHandset$
 import { Observable } from 'rxjs';
@@ -14,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { SidenavComponent } from './shared/sidenav/sidenav.component'; // Seu componente de navegação
 import { ToolbarComponent } from './shared/toolbar/toolbar.component'; // Seu componente da toolbar
 import { RouterModule } from '@angular/router';
+import { UserActivityService } from './services/user-activity.service';
 
 @Component({
     selector: 'app-root', // Ou o seletor do seu componente de layout
@@ -27,7 +28,7 @@ import { RouterModule } from '@angular/router';
     MatIconModule
 ]
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   // Obtém uma referência à mat-sidenav usando o #sidenav do seu HTML
   @ViewChild('sidenav') sidenav!: MatSidenav;
 
@@ -41,7 +42,8 @@ export class AppComponent implements OnInit {
 
   constructor(
     private breakpointObserver: BreakpointObserver,
-    public router: Router // Injeta o Router para usar router.url no template
+    public router: Router, // Injeta o Router para usar router.url no template
+    private userActivityService: UserActivityService // Injeta o serviço de atividade do usuário
   ) {
     // Log de navegação
     this.router.events.subscribe(event => {
@@ -52,7 +54,13 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Lógica de inicialização do componente, se houver.
+    // O UserActivityService já é inicializado automaticamente no constructor
+    console.log('Rastreamento de atividade do usuário iniciado');
+  }
+
+  ngOnDestroy(): void {
+    // Limpa os listeners de atividade quando o componente é destruído
+    this.userActivityService.destroy();
   }
 
   /**

@@ -143,17 +143,17 @@
         margin: 1rem;
         max-width: calc(100% - 2rem);
     }
-    
+
     .sistudo-input-group input {
         padding: 10px 14px;
         font-size: 16px; /* Evita zoom no iOS */
     }
-    
+
     .sistudo-btn-primary {
         padding: 12px 20px;
         font-size: 15px;
     }
-    
+
     .password-toggle {
         right: 8px;
     }
@@ -163,11 +163,11 @@
     .sistudo-registration-wrapper {
         padding: 1rem;
     }
-    
+
     .sistudo-form-header h2 {
         font-size: 1.3rem;
     }
-    
+
     .sistudo-form-header p {
         font-size: 0.9rem;
     }

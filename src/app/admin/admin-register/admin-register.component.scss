@@ -379,8 +379,30 @@ $breakpoint-lg: 992px;
 
 .menu-list.cdk-drop-list-dragging .menu-item:not(.cdk-drag-placeholder),
 .links-list.cdk-drop-list-dragging li:not(.cdk-drag-placeholder),
-.sublinks-list.cdk-drop-list-dragging li:not(.cdk-drag-placeholder) {
+.sublinks-list.cdk-drop-list-dragging li:not(.cdk-drag-placeholder),
+.form-links-container.cdk-drop-list-dragging mat-expansion-panel:not(.cdk-drag-placeholder),
+.form-sublinks-container.cdk-drop-list-dragging mat-expansion-panel:not(.cdk-drag-placeholder) {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+// Form drag containers
+.form-links-container, .form-sublinks-container {
+  min-height: 20px;
+
+  .link-header-container, .sublink-header-container {
+    @include flex(row, flex-start, center);
+    gap: $spacing-sm;
+
+    .drag-handle {
+      cursor: move;
+      color: $color-handle;
+      padding: $spacing-xs;
+
+      &:hover {
+        color: $color-primary;
+      }
+    }
+  }
 }
 
 // Focus states
