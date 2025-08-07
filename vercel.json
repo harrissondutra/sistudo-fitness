@@ -5,7 +5,8 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist/sistudo-fitness/browser/browser"
+        "distDir": "dist/sistudo-fitness/browser/browser",
+        "buildCommand": "npm run build"
       }
     }
   ],
@@ -15,20 +16,7 @@
       "dest": "/index.html"
     }
   ],
-  "functions": {},
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        }
-      ]
-    }
-  ]
+  "env": {
+    "NODE_OPTIONS": "--max-old-space-size=4096"
+  }
 }
