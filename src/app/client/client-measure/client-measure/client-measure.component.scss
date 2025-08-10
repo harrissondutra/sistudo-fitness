@@ -1,4 +1,4 @@
-/* === SISTUDO FITNESS - MEDIDAS DO CLIENTE === */
+/* === SISTUDO FITNESS - CLIENT MEASURES === */
 @import '../../../../styles/variables';
 
 /* === CONTAINER PRINCIPAL === */
@@ -12,8 +12,28 @@
   }
 }
 
-/* === LOADING & ERROR STATES === */
-.loading-container,
+/* === LOADING STATE === */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: $spacing-lg;
+
+  p {
+    color: $text-secondary;
+    font-size: 16px;
+    text-align: center;
+    margin: 0;
+  }
+
+  mat-spinner ::ng-deep .mat-spinner circle {
+    stroke: $primary-color;
+  }
+}
+
+/* === ERROR STATE === */
 .error-container {
   display: flex;
   flex-direction: column;
@@ -23,31 +43,25 @@
   gap: $spacing-lg;
   text-align: center;
 
-  p {
-    color: $text-secondary;
-    font-size: 16px;
-    margin: 0;
-  }
-
-  mat-spinner ::ng-deep .mat-spinner circle {
-    stroke: $primary-color;
-  }
-}
-
-.error-container {
   mat-icon {
     font-size: 64px;
     width: 64px;
     height: 64px;
     color: $error-color;
-    margin-bottom: $spacing-md;
   }
 
   h2 {
     color: $text-color;
     font-size: 24px;
     font-weight: 600;
-    margin: 0 0 $spacing-sm 0;
+    margin: 0;
+  }
+
+  p {
+    color: $text-secondary;
+    font-size: 16px;
+    margin: 0;
+    max-width: 400px;
   }
 }
 
@@ -67,79 +81,150 @@
     justify-content: space-between;
     align-items: center;
 
-    .client-info {
-      display: flex;
-      align-items: center;
-      gap: $spacing-lg;
-
-      .client-avatar {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        overflow: hidden;
-        background: rgba($primary-color, 0.1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 3px solid rgba($primary-color, 0.2);
-
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        mat-icon {
-          font-size: 40px;
-          width: 40px;
-          height: 40px;
-          color: $primary-color;
-        }
-      }
-
-      .client-details {
-        .page-title {
-          font-size: 28px;
-          font-weight: 700;
-          color: $text-color;
-          margin: 0 0 $spacing-xs 0;
-        }
-
-        .client-name {
-          font-size: 18px;
-          color: $text-secondary;
-          margin: 0 0 $spacing-xs 0;
-          font-weight: 500;
-        }
-
-        .measures-info {
-          font-size: 14px;
-          color: $text-muted;
-          margin: 0;
-          font-weight: 500;
-        }
-      }
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: $spacing-md;
-    }
-
     @media (max-width: 768px) {
       flex-direction: column;
       gap: $spacing-lg;
       text-align: center;
+    }
+  }
 
-      .client-info {
-        flex-direction: column;
-        text-align: center;
+  .client-info {
+    display: flex;
+    align-items: center;
+    gap: $spacing-lg;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .client-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: rgba($primary-color, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid rgba($primary-color, 0.2);
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
 
-      .header-actions {
-        width: 100%;
-        justify-content: center;
+      mat-icon {
+        font-size: 40px;
+        width: 40px;
+        height: 40px;
+        color: $primary-color;
+      }
+    }
+
+    .client-details {
+      .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: $text-color;
+        margin: 0 0 $spacing-xs 0;
+      }
+
+      .client-name {
+        font-size: 18px;
+        color: $primary-color;
+        margin: 0 0 $spacing-xs 0;
+        font-weight: 600;
+      }
+
+      .measures-info {
+        font-size: 14px;
+        color: $text-muted;
+        margin: 0;
+      }
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+
+    @media (max-width: 768px) {
+      width: 100%;
+      justify-content: center;
+    }
+
+    // Estilos específicos para botões de ação
+    button {
+      position: relative;
+      min-width: 140px;
+      height: 42px;
+      transition: all 0.3s ease;
+      
+      // Prevenir quebra visual durante loading
+      &[disabled] {
+        pointer-events: none;
+        opacity: 0.7;
+        
+        .mat-button-wrapper {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: $spacing-xs;
+        }
+      }
+
+      // Botão de salvar específico
+      &.save-button {
+        background: linear-gradient(45deg, $primary-color, lighten($primary-color, 10%));
+        color: white;
+        border: none;
+        box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+
+        &:hover:not([disabled]) {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba($primary-color, 0.4);
+        }
+
+        &[disabled] {
+          background: rgba($primary-color, 0.5);
+          box-shadow: none;
+          transform: none;
+        }
+
+        // Spinner de loading
+        .loading-spinner {
+          width: 16px;
+          height: 16px;
+          margin-right: $spacing-xs;
+          
+          ::ng-deep .mat-spinner circle {
+            stroke: white;
+          }
+        }
+      }
+
+      // Botão de cancelar específico
+      &.cancel-button {
+        background: transparent;
+        color: $text-secondary;
+        border: 1px solid rgba($text-secondary, 0.3);
+
+        &:hover:not([disabled]) {
+          background: rgba($error-color, 0.1);
+          color: $error-color;
+          border-color: $error-color;
+        }
+      }
+
+      // Ícones nos botões
+      mat-icon {
+        margin-right: $spacing-xs;
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
       }
     }
   }
@@ -151,103 +236,110 @@
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: $spacing-lg;
   margin-bottom: $spacing-xl;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
 
   @media (max-width: 768px) {
     grid-template-columns: repeat(3, 1fr);
     gap: $spacing-md;
   }
 
-  .stat-card {
-    background: white;
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stat-card {
+  background: white;
+  border-radius: 16px;
+  padding: $spacing-lg;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.06),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 12px 32px rgba(0, 0, 0, 0.08),
+      0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  .stat-icon {
+    width: 50px;
+    height: 50px;
     border-radius: 12px;
-    padding: $spacing-lg;
     display: flex;
     align-items: center;
-    gap: $spacing-md;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    transition: all 0.3s ease;
+    justify-content: center;
+    flex-shrink: 0;
 
-    &:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .stat-info {
+    display: flex;
+    flex-direction: column;
+
+    .stat-number {
+      font-size: 24px;
+      font-weight: 700;
+      color: $text-color;
+      margin: 0;
+      line-height: 1;
     }
 
+    .stat-label {
+      font-size: 12px;
+      color: $text-secondary;
+      margin: 0;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  &.weight {
     .stat-icon {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-
-      mat-icon {
-        font-size: 24px;
-        width: 24px;
-        height: 24px;
-        color: white;
-      }
+      background: rgba(255, 87, 34, 0.1);
+      mat-icon { color: #FF5722; }
     }
+  }
 
-    .stat-info {
-      display: flex;
-      flex-direction: column;
-
-      .stat-number {
-        font-size: 24px;
-        font-weight: 700;
-        color: $text-color;
-        line-height: 1;
-      }
-
-      .stat-label {
-        font-size: 12px;
-        color: $text-secondary;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
+  &.height {
+    .stat-icon {
+      background: rgba(156, 39, 176, 0.1);
+      mat-icon { color: #9C27B0; }
     }
+  }
 
-    &.weight {
-      .stat-icon {
-        background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
-      }
-    }
-
-    &.height {
-      .stat-icon {
-        background: linear-gradient(135deg, #2196F3 0%, #1565C0 100%);
-      }
-    }
-
-    &.bmi {
-      .stat-icon {
-        background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
-      }
+  &.bmi {
+    .stat-icon {
+      background: rgba(96, 125, 139, 0.1);
+      mat-icon { color: #607D8B; }
     }
   }
 }
 
 /* === SEÇÃO DE MEDIDAS === */
 .measures-section {
-  margin-bottom: $spacing-xl * 1.5;
-
   .section-header {
-    text-align: center;
     margin-bottom: $spacing-xl;
+    text-align: center;
 
     h2 {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: $spacing-sm;
+      gap: $spacing-md;
       font-size: 24px;
-      font-weight: 700;
+      font-weight: 600;
       color: $text-color;
       margin: 0 0 $spacing-sm 0;
 
@@ -271,234 +363,307 @@
 .measures-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: $spacing-xl;
-  max-width: 1400px;
-  margin: 0 auto;
+  gap: $spacing-lg;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
-    gap: $spacing-lg;
+    gap: $spacing-md;
   }
 }
 
 /* === CARDS DE GRUPOS DE MEDIDAS === */
 .measure-group-card {
-  background: white;
-  border-radius: 16px;
-  border: none;
+  border-radius: 18px;
   box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.08),
+    0 8px 24px rgba(0, 0, 0, 0.06),
     0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   transition: all 0.3s ease;
   overflow: hidden;
 
   &:hover {
-    transform: translateY(-6px);
+    transform: translateY(-4px);
     box-shadow:
-      0 16px 32px rgba(0, 0, 0, 0.12),
-      0 4px 16px rgba(0, 0, 0, 0.08);
+      0 12px 32px rgba(0, 0, 0, 0.08),
+      0 4px 16px rgba(0, 0, 0, 0.06);
   }
 
   .mat-mdc-card-header {
-    padding: $spacing-lg;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    padding: $spacing-lg $spacing-lg $spacing-md $spacing-lg;
+    background: rgba(0, 0, 0, 0.02);
 
     .group-avatar {
       width: 50px;
       height: 50px;
-      border-radius: 50%;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
 
       mat-icon {
-        color: white;
         font-size: 24px;
         width: 24px;
         height: 24px;
+        color: white;
       }
 
-      &.tronco {
-        background: linear-gradient(135deg, #2196F3 0%, #1565C0 100%);
-      }
-
-      &.bracos {
-        background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
-      }
-
-      &.pernas {
-        background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
-      }
-
-      &.analysis {
-        background: linear-gradient(135deg, #9C27B0 0%, #6A1B9A 100%);
-      }
+      &.tronco { background: linear-gradient(135deg, #FF5722, #FF7043); }
+      &.bracos { background: linear-gradient(135deg, #4CAF50, #66BB6A); }
+      &.pernas { background: linear-gradient(135deg, #2196F3, #42A5F5); }
+      &.dobras { background: linear-gradient(135deg, #9C27B0, #BA68C8); }
+      &.analysis { background: linear-gradient(135deg, #607D8B, #78909C); }
     }
 
     .mat-mdc-card-title {
       font-size: 18px;
       font-weight: 600;
       color: $text-color;
-      margin: 0;
+      margin-bottom: $spacing-xs;
     }
 
     .mat-mdc-card-subtitle {
-      margin-top: $spacing-sm;
-      font-size: 14px;
+      font-size: 12px;
       color: $text-secondary;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
   }
 
   .mat-mdc-card-content {
-    padding: $spacing-lg;
-  }
-
-  &.analysis-card {
-    .mat-mdc-card-header {
-      background: rgba(156, 39, 176, 0.05);
-    }
+    padding: $spacing-md $spacing-lg $spacing-lg $spacing-lg;
   }
 }
 
 /* === LISTA DE MEDIDAS === */
 .measures-list {
-  .measure-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: $spacing-md 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-
-    &:last-child {
-      border-bottom: none;
-    }
-
-    .measure-info {
-      display: flex;
-      align-items: center;
-      gap: $spacing-sm;
-
-      mat-icon {
-        font-size: 18px;
-        width: 18px;
-        height: 18px;
-        color: $text-secondary;
-      }
-
-      .measure-name {
-        font-size: 14px;
-        font-weight: 500;
-        color: $text-color;
-      }
-    }
-
-    .measure-value {
-      font-size: 16px;
-      font-weight: 600;
-      color: $primary-color;
-    }
-  }
-}
-
-/* === ANÁLISE DO IMC === */
-.bmi-analysis {
-  text-align: center;
-
-  .bmi-value {
-    display: flex;
-    align-items: baseline;
-    justify-content: center;
-    gap: $spacing-xs;
-    margin-bottom: $spacing-md;
-
-    .bmi-number {
-      font-size: 32px;
-      font-weight: 700;
-      color: $text-color;
-    }
-
-    .bmi-unit {
-      font-size: 16px;
-      color: $text-secondary;
-      font-weight: 500;
-    }
-  }
-
-  .bmi-category {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: $spacing-md;
-  }
-
-  .bmi-description {
-    p {
-      font-size: 14px;
-      color: $text-secondary;
-      margin: 0;
-    }
-  }
-}
-
-/* === NO MEASURES STATE === */
-.no-measures-container {
   display: flex;
   flex-direction: column;
+  gap: $spacing-md;
+}
+
+.measure-item {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  min-height: 400px;
-  text-align: center;
-  background: white;
-  border-radius: 16px;
-  padding: $spacing-xl;
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.08),
-    0 2px 8px rgba(0, 0, 0, 0.04);
-  margin: 0 auto;
-  max-width: 500px;
+  padding: $spacing-md;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
 
-  mat-icon {
-    font-size: 80px;
-    width: 80px;
-    height: 80px;
-    color: $text-secondary;
-    margin-bottom: $spacing-lg;
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+    transform: translateX(4px);
   }
 
-  h2 {
-    font-size: 24px;
-    font-weight: 600;
-    color: $text-color;
-    margin: 0 0 $spacing-md 0;
-  }
-
-  p {
-    font-size: 16px;
-    color: $text-secondary;
-    margin: 0 0 $spacing-xl 0;
-    max-width: 300px;
-  }
-
-  button {
-    padding: $spacing-sm $spacing-xl;
+  .measure-info {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
 
     mat-icon {
       font-size: 18px;
       width: 18px;
       height: 18px;
-      margin-right: $spacing-sm;
-      margin-bottom: 0;
+      color: $text-secondary;
+    }
+
+    .measure-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: $text-color;
+    }
+  }
+
+  .measure-value {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    font-size: 16px;
+    font-weight: 600;
+    color: $primary-color;
+
+    .measure-unit {
+      font-size: 12px;
+      color: $text-secondary;
+      font-weight: 400;
+    }
+  }
+
+  // Estilo para campos de edição
+  mat-form-field {
+    width: 120px;
+
+    ::ng-deep {
+      .mat-mdc-form-field-wrapper {
+        margin-bottom: 0;
+      }
+
+      .mat-mdc-form-field-infix {
+        min-height: 36px;
+      }
+
+      .mat-mdc-text-field-wrapper {
+        border-radius: 8px;
+      }
+    }
+  }
+
+  input.measure-input {
+    width: 100px;
+    padding: $spacing-xs $spacing-sm;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: $text-color;
+    background: white;
+    text-align: center;
+    transition: all 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: $primary-color;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.1);
+    }
+
+    &::placeholder {
+      color: $text-muted;
+      font-weight: 400;
     }
   }
 }
 
+/* === ANÁLISE IMC (CARD ESPECIAL) === */
+.analysis-card {
+  .bmi-analysis {
+    text-align: center;
+    padding: $spacing-lg 0;
+
+    .bmi-value {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: $spacing-xs;
+      margin-bottom: $spacing-md;
+
+      .bmi-number {
+        font-size: 48px;
+        font-weight: 700;
+        color: $text-color;
+        line-height: 1;
+      }
+
+      .bmi-unit {
+        font-size: 16px;
+        color: $text-secondary;
+        font-weight: 500;
+      }
+    }
+
+    .bmi-category {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: $spacing-xs;
+      padding: $spacing-sm $spacing-md;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      margin: 0 auto $spacing-lg auto;
+      max-width: 200px;
+      animation: bmiFadeIn 0.6s ease-out;
+
+      .bmi-status-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        animation: bmiIconPulse 2s ease-in-out infinite;
+      }
+
+      .bmi-category-text {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+
+    .bmi-description {
+      p {
+        font-size: 12px;
+        color: $text-muted;
+        margin: 0;
+        font-style: italic;
+      }
+    }
+  }
+}
+
+/* === ANIMAÇÕES === */
+@keyframes bmiFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes bmiIconPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
 /* === RESPONSIVIDADE === */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .measures-container {
-    padding: $spacing-sm;
+    padding: $spacing-md;
+  }
+
+  .page-header {
+    padding: $spacing-lg;
+
+    .client-info {
+      .client-details {
+        .page-title {
+          font-size: 24px;
+        }
+      }
+    }
   }
 
   .stats-grid {
     grid-template-columns: 1fr;
+    gap: $spacing-sm;
+  }
+
+  .stat-card {
+    padding: $spacing-md;
+
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    .stat-info {
+      .stat-number {
+        font-size: 20px;
+      }
+    }
   }
 
   .measures-grid {
@@ -506,23 +671,48 @@
   }
 
   .measure-group-card {
-    .mat-mdc-card-header,
+    .mat-mdc-card-header {
+      padding: $spacing-md;
+    }
+
     .mat-mdc-card-content {
       padding: $spacing-md;
     }
   }
+
+  .analysis-card {
+    .bmi-analysis {
+      .bmi-value {
+        .bmi-number {
+          font-size: 36px;
+        }
+      }
+    }
+  }
 }
 
-/* === ACESSIBILIDADE === */
-.measure-group-card:focus-visible,
-.stat-card:focus-visible {
-  outline: 2px solid $primary-color;
-  outline-offset: 2px;
-}
+@media (max-width: 480px) {
+  .measures-container {
+    padding: $spacing-sm;
+  }
 
-@media (prefers-reduced-motion: reduce) {
-  .measure-group-card,
-  .stat-card {
-    transition: none;
+  .page-header {
+    padding: $spacing-md;
+  }
+
+  .measure-item {
+    flex-direction: column;
+    gap: $spacing-sm;
+    align-items: flex-start;
+
+    .measure-info {
+      width: 100%;
+    }
+
+    .measure-value,
+    mat-form-field,
+    input.measure-input {
+      width: 100%;
+    }
   }
 }

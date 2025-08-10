@@ -12,28 +12,8 @@
   }
 }
 
-/* === LOADING STATE === */
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-  gap: $spacing-lg;
-
-  p {
-    color: $text-secondary;
-    font-size: 16px;
-    text-align: center;
-    margin: 0;
-  }
-
-  mat-spinner ::ng-deep .mat-spinner circle {
-    stroke: $primary-color;
-  }
-}
-
-/* === ERROR STATE === */
+/* === ESTADOS DE CARREGAMENTO E ERRO === */
+.loading-container,
 .error-container {
   display: flex;
   flex-direction: column;
@@ -50,31 +30,37 @@
     color: $error-color;
   }
 
-  h2 {
-    color: $text-color;
-    font-size: 24px;
-    font-weight: 600;
-    margin: 0;
-  }
-
   p {
     color: $text-secondary;
     font-size: 16px;
     margin: 0;
     max-width: 400px;
   }
+
+  h2 {
+    color: $text-color;
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0;
+  }
+}
+
+.loading-container {
+  mat-spinner ::ng-deep .mat-spinner circle {
+    stroke: $primary-color;
+  }
 }
 
 /* === CABEÇALHO DO CLIENTE === */
 .client-header {
-  background: white;
+  background: $surface-color;
   border-radius: 18px;
   padding: $spacing-xl;
   margin-bottom: $spacing-xl;
   box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.08),
     0 2px 8px rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  border: 1px solid $border-light;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -160,7 +146,7 @@
   max-width: 1400px;
   margin: 0 auto;
 
-  /* === SEÇÃO HERO (MÉTRICAS PRINCIPAIS) === */
+  /* Seções */
   .hero-section {
     margin-bottom: $spacing-xl;
 
@@ -210,7 +196,6 @@
     }
   }
 
-  /* === SEÇÕES SECUNDÁRIAS === */
   .secondary-section,
   .tertiary-section,
   .quaternary-section {
@@ -272,14 +257,14 @@
   }
 }
 
-/* === CARDS FITNESS - DESIGN PREMIUM === */
+/* === SISTEMA DE CARDS FITNESS === */
 
-/* CARDS PRIMÁRIOS (HERO/PRINCIPAIS) */
+/* Cards Primários - Hero */
 .fitness-card-primary {
   min-height: 200px;
   padding: 0;
-  background: white;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: $surface-color;
+  border: 1px solid $border-light;
   border-radius: 18px;
   box-shadow:
     0 12px 32px rgba(0, 0, 0, 0.08),
@@ -289,9 +274,7 @@
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  backdrop-filter: blur(10px);
 
-  /* Barra superior colorida */
   &::before {
     content: '';
     position: absolute;
@@ -299,7 +282,7 @@
     left: 0;
     right: 0;
     height: 5px;
-    background: var(--card-color);
+    background: var(--card-color, $primary-color);
     transition: all 0.4s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
@@ -325,7 +308,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: var(--card-bg-color, rgba(0, 168, 107, 0.1));
+        background: var(--card-bg-color, rgba($primary-color, 0.1));
         flex-shrink: 0;
         transition: all 0.3s ease;
 
@@ -355,6 +338,30 @@
           color: $text-color;
           margin: 0;
           line-height: 1;
+        }
+
+        .bmi-category {
+          margin-top: $spacing-sm;
+          display: flex;
+          align-items: center;
+          gap: $spacing-xs;
+          padding: $spacing-xs $spacing-sm;
+          background: rgba($surface-color, 0.9);
+          border-radius: 20px;
+          border: 1px solid $border-light;
+
+          .bmi-status-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+          }
+
+          .bmi-category-text {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          }
         }
       }
     }
@@ -390,13 +397,12 @@
     }
   }
 
-  /* Hover com animação elevada */
   &:hover {
     transform: translateY(-12px) scale(1.02);
     box-shadow:
       0 20px 40px rgba(0, 0, 0, 0.12),
       0 8px 24px rgba(0, 0, 0, 0.08);
-    border-color: rgba(0, 0, 0, 0.12);
+    border-color: $border-color;
 
     &::before {
       height: 8px;
@@ -412,48 +418,52 @@
     }
   }
 
-  /* Cores específicas para cada card */
-  &.card-clients {
-    --card-color: #00A86B;
-    --card-bg-color: rgba(0, 168, 107, 0.1);
-  }
-
-  &.card-active {
-    --card-color: #4CAF50;
-    --card-bg-color: rgba(76, 175, 80, 0.1);
-  }
-
-  &.card-new {
-    --card-color: #2196F3;
-    --card-bg-color: rgba(33, 150, 243, 0.1);
-  }
-
+  /* Variações de cores por tipo */
   &.card-height {
-    --card-color: #9C27B0;
-    --card-bg-color: rgba(156, 39, 176, 0.1);
+    --card-color: #{$premium-color};
+    --card-bg-color: #{rgba($premium-color, 0.1)};
   }
 
   &.card-weight {
-    --card-color: #FF5722;
-    --card-bg-color: rgba(255, 87, 34, 0.1);
+    --card-color: #{$accent-color};
+    --card-bg-color: #{rgba($accent-color, 0.1)};
   }
 
   &.card-bmi {
-    --card-color: #607D8B;
-    --card-bg-color: rgba(96, 125, 139, 0.1);
+    --card-color: #{$secondary-color};
+    --card-bg-color: #{rgba($secondary-color, 0.1)};
+
+    &[data-bmi-category="Abaixo do peso"] {
+      --card-color: #{$warning-color};
+      --card-bg-color: #{rgba($warning-color, 0.1)};
+    }
+
+    &[data-bmi-category="Peso normal"] {
+      --card-color: #{$success-color};
+      --card-bg-color: #{rgba($success-color, 0.1)};
+    }
+
+    &[data-bmi-category="Sobrepeso"] {
+      --card-color: #{$warning-color};
+      --card-bg-color: #{rgba($warning-color, 0.1)};
+    }
+
+    &[data-bmi-category="Obesidade"] {
+      --card-color: #{$error-color};
+      --card-bg-color: #{rgba($error-color, 0.1)};
+    }
   }
 }
 
-/* CARDS SECUNDÁRIOS */
+/* Cards Secundários */
 .fitness-card-secondary {
   min-height: 160px;
-  background: rgba(255,255,255,0.8);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: rgba($surface-color, 0.8);
+  border: 1px solid $border-light;
   border-radius: 16px;
   box-shadow:
-    0 8px 24px rgba(0,0,0,0.05),
-    0 2px 8px rgba(0,0,0,0.03);
-  backdrop-filter: blur(8px);
+    0 8px 24px rgba(0, 0, 0, 0.05),
+    0 2px 8px rgba(0, 0, 0, 0.03);
   transition: all 0.3s ease;
   cursor: pointer;
   position: relative;
@@ -511,11 +521,11 @@
 
   &:hover {
     transform: translateY(-6px);
-    background: rgba(255,255,255,0.95);
+    background: rgba($surface-color, 0.95);
     border-color: rgba($primary-color, 0.12);
     box-shadow:
-      0 12px 32px rgba(0,0,0,0.08),
-      0 4px 16px rgba(0,0,0,0.05);
+      0 12px 32px rgba(0, 0, 0, 0.08),
+      0 4px 16px rgba(0, 0, 0, 0.05);
 
     .card-icon {
       transform: scale(1.1);
@@ -528,16 +538,15 @@
   }
 }
 
-/* CARDS TERCIÁRIOS (AÇÕES RÁPIDAS) */
+/* Cards Terciários - Ações Rápidas */
 .fitness-card-tertiary {
   min-height: 120px;
-  background: rgba(255,255,255,0.6);
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  background: rgba($surface-color, 0.6);
+  border: 1px solid $border-light;
   border-radius: 12px;
   box-shadow:
-    0 4px 16px rgba(0,0,0,0.03),
-    0 1px 4px rgba(0,0,0,0.02);
-  backdrop-filter: blur(6px);
+    0 4px 16px rgba(0, 0, 0, 0.03),
+    0 1px 4px rgba(0, 0, 0, 0.02);
   transition: all 0.3s ease;
   cursor: pointer;
   position: relative;
@@ -588,11 +597,11 @@
 
   &:hover {
     transform: translateY(-3px);
-    background: rgba(255,255,255,0.85);
+    background: rgba($surface-color, 0.85);
     border-color: rgba($accent-color, 0.08);
     box-shadow:
-      0 8px 24px rgba(0,0,0,0.06),
-      0 2px 8px rgba(0,0,0,0.04);
+      0 8px 24px rgba(0, 0, 0, 0.06),
+      0 2px 8px rgba(0, 0, 0, 0.04);
 
     .card-icon {
       transform: scale(1.1);
@@ -601,8 +610,61 @@
   }
 }
 
+/* === PROFISSIONAIS ASSOCIADOS === */
+.professionals-metrics {
+  .fitness-card-secondary {
+    /* Médicos */
+    &:has(.card-icon mat-icon:contains("local_hospital")) {
+      .card-icon {
+        background: rgba($error-color, 0.1);
+
+        mat-icon {
+          color: $error-color;
+        }
+      }
+
+      &:hover .card-icon {
+        background: rgba($error-color, 0.15);
+        box-shadow: 0 4px 12px rgba($error-color, 0.2);
+      }
+    }
+
+    /* Personal Trainers */
+    &:has(.card-icon mat-icon:contains("fitness_center")) {
+      .card-icon {
+        background: rgba($success-color, 0.1);
+
+        mat-icon {
+          color: $success-color;
+        }
+      }
+
+      &:hover .card-icon {
+        background: rgba($success-color, 0.15);
+        box-shadow: 0 4px 12px rgba($success-color, 0.2);
+      }
+    }
+
+    /* Nutricionistas */
+    &:has(.card-icon mat-icon:contains("restaurant")) {
+      .card-icon {
+        background: rgba($warning-color, 0.1);
+
+        mat-icon {
+          color: $warning-color;
+        }
+      }
+
+      &:hover .card-icon {
+        background: rgba($warning-color, 0.15);
+        box-shadow: 0 4px 12px rgba($warning-color, 0.2);
+      }
+    }
+  }
+}
+
 /* === ANIMAÇÕES === */
-@keyframes cardFadeInElevated {
+@keyframes cardFadeIn {
   from {
     opacity: 0;
     transform: translateY(30px) scale(0.95);
@@ -618,7 +680,7 @@
 }
 
 .fitness-card-primary {
-  animation: cardFadeInElevated 0.8s ease-out;
+  animation: cardFadeIn 0.8s ease-out;
 
   &:nth-child(1) { animation-delay: 0.1s; }
   &:nth-child(2) { animation-delay: 0.25s; }
@@ -717,268 +779,5 @@
   .fitness-card-tertiary {
     animation: none;
     transition: none;
-  }
-}
-
-/* === ACCORDION E PAINÉIS === */
-.dashboard-accordion {
-  margin-top: $spacing-xl * 1.5;
-
-  .dashboard-panel {
-    margin-bottom: $spacing-lg;
-    border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-    border: none;
-    overflow: hidden;
-
-    .mat-expansion-panel-header {
-      padding: $spacing-lg;
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 16px 16px 0 0;
-
-      .mat-panel-title {
-        display: flex;
-        align-items: center;
-        gap: $spacing-sm;
-        font-weight: 600;
-        color: $text-color;
-
-        mat-icon {
-          color: $primary-color;
-        }
-      }
-
-      .mat-panel-description {
-        color: $text-secondary;
-        font-size: 14px;
-      }
-    }
-
-    .mat-expansion-panel-content {
-      .mat-expansion-panel-body {
-        padding: $spacing-lg;
-        background: white;
-      }
-    }
-  }
-}
-
-/* === MEDIDAS CONTAINER === */
-.measures-container {
-  .measure-group {
-    background: rgba($primary-color, 0.05);
-    border-radius: 12px;
-    padding: $spacing-lg;
-    border: 1px solid rgba($primary-color, 0.1);
-
-    h3 {
-      color: $text-color;
-      font-size: 18px;
-      font-weight: 600;
-      margin: 0 0 $spacing-lg 0;
-      display: flex;
-      align-items: center;
-      gap: $spacing-sm;
-
-      &::before {
-        content: '';
-        width: 4px;
-        height: 20px;
-        background: $primary-color;
-        border-radius: 2px;
-      }
-    }
-
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: $spacing-md;
-
-      .info-item {
-        background: white;
-        padding: $spacing-md;
-        border-radius: 8px;
-        border: 1px solid rgba(0, 0, 0, 0.06);
-        transition: all 0.2s ease;
-
-        &:hover {
-          border-color: rgba($primary-color, 0.2);
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        .label {
-          font-size: 12px;
-          font-weight: 600;
-          color: $text-secondary;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          display: block;
-          margin-bottom: $spacing-xs;
-        }
-
-        .value {
-          font-size: 16px;
-          font-weight: 600;
-          color: $text-color;
-          display: block;
-        }
-      }
-    }
-  }
-}
-
-/* === PROFISSIONAIS === */
-.professionals-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: $spacing-lg;
-  margin: $spacing-md 0;
-
-  .professional-card {
-    background: white;
-    border-radius: 12px;
-    padding: $spacing-lg;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    transition: all 0.3s ease;
-
-    &:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-      border-color: rgba($primary-color, 0.2);
-    }
-
-    .professional-header {
-      display: flex;
-      align-items: center;
-      gap: $spacing-md;
-      margin-bottom: $spacing-lg;
-
-      .professional-avatar {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-
-        mat-icon {
-          font-size: 28px;
-          width: 28px;
-          height: 28px;
-          color: white;
-        }
-
-        &.doctor-avatar {
-          background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-        }
-
-        &.personal-avatar {
-          background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
-        }
-
-        &.nutritionist-avatar {
-          background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-        }
-      }
-
-      .professional-info {
-        flex-grow: 1;
-
-        h3 {
-          font-size: 18px;
-          font-weight: 600;
-          color: $text-color;
-          margin: 0 0 $spacing-xs 0;
-        }
-
-        .professional-specialty {
-          font-size: 14px;
-          color: $text-secondary;
-          margin: 0;
-          font-weight: 500;
-        }
-      }
-    }
-
-    .professional-details {
-      .detail-row {
-        display: flex;
-        align-items: center;
-        gap: $spacing-sm;
-        margin-bottom: $spacing-sm;
-
-        &:last-child {
-          margin-bottom: 0;
-        }
-
-        .detail-icon {
-          font-size: 18px;
-          width: 18px;
-          height: 18px;
-          color: $text-secondary;
-          flex-shrink: 0;
-        }
-
-        .detail-text {
-          font-size: 14px;
-          color: $text-color;
-          font-weight: 500;
-        }
-      }
-    }
-  }
-}
-
-/* === NO DATA CONTAINER === */
-.no-data-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: $spacing-xl;
-  text-align: center;
-  background: rgba($background-color, 0.5);
-  border-radius: 12px;
-  border: 2px dashed rgba($text-secondary, 0.3);
-
-  mat-icon {
-    font-size: 48px;
-    width: 48px;
-    height: 48px;
-    color: $text-secondary;
-    margin-bottom: $spacing-md;
-  }
-
-  p {
-    color: $text-secondary;
-    font-size: 16px;
-    margin: 0 0 $spacing-lg 0;
-    font-weight: 500;
-  }
-
-  button {
-    background: $primary-color;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: $spacing-sm $spacing-lg;
-    font-weight: 600;
-    transition: all 0.2s ease;
-
-    &:hover {
-      background: darken($primary-color, 10%);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba($primary-color, 0.3);
-    }
-
-    mat-icon {
-      font-size: 18px;
-      width: 18px;
-      height: 18px;
-      margin-right: $spacing-xs;
-      margin-bottom: 0;
-    }
   }
 }

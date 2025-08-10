@@ -29,8 +29,8 @@
           </div>
           <div class="client-details">
             <h1 class="client-name">{{ dashboardData.client.name }}</h1>
-            @if (dashboardData.client.dateOfBirth && calculateAge(dashboardData.client.dateOfBirth)) {
-              <p class="client-age">{{ calculateAge(dashboardData.client.dateOfBirth) }} anos</p>
+            @if (clientAge !== null) {
+              <p class="client-age">{{ clientAge }} anos</p>
             }
             <p class="client-email">{{ dashboardData.client.email }}</p>
           </div>
@@ -102,7 +102,7 @@
           </div>
 
           <!-- IMC -->
-          <div class="fitness-card-primary card-bmi">
+          <div class="fitness-card-primary card-bmi" [attr.data-bmi-category]="getBMICategoryForDisplay()">
             <div class="card-content">
               <div class="metric-header">
                 <div class="card-icon">
@@ -111,6 +111,12 @@
                 <div class="metric-info">
                   <p class="metric-label">IMC</p>
                   <p class="metric-value">{{ getBMI() || '-' }}</p>
+                  @if (getBMI()) {
+                    <div class="bmi-category" [style.color]="getBMIColor()">
+                      <mat-icon class="bmi-status-icon">{{ getBMIStatusIcon() }}</mat-icon>
+                      <span class="bmi-category-text">{{ getBMICategoryForDisplay() }}</span>
+                    </div>
+                  }
                 </div>
               </div>
               <div class="metric-footer">
@@ -234,13 +240,13 @@
               </div>
             }
           } @else {
-            <div class="fitness-card-secondary" (click)="navigateToAssociatedDoctors()">
+            <div class="fitness-card-secondary" (click)="openAssociateDoctorDialog()">
               <div class="card-content">
                 <div class="card-icon">
                   <mat-icon>local_hospital</mat-icon>
                 </div>
                 <p class="action-title">Médicos</p>
-                <p class="action-description">Nenhum médico associado</p>
+                <p class="action-description">Clique para associar médico</p>
               </div>
             </div>
           }
@@ -260,13 +266,13 @@
               </div>
             }
           } @else {
-            <div class="fitness-card-secondary" (click)="navigateToAssociatedPersonals()">
+            <div class="fitness-card-secondary" (click)="openAssociatePersonalDialog()">
               <div class="card-content">
                 <div class="card-icon">
                   <mat-icon>fitness_center</mat-icon>
                 </div>
                 <p class="action-title">Personal Trainers</p>
-                <p class="action-description">Nenhum personal associado</p>
+                <p class="action-description">Clique para associar personal</p>
               </div>
             </div>
           }
@@ -286,13 +292,13 @@
               </div>
             }
           } @else {
-            <div class="fitness-card-secondary" (click)="navigateToAssociatedNutritionists()">
+            <div class="fitness-card-secondary" (click)="openAssociateNutritionistDialog()">
               <div class="card-content">
                 <div class="card-icon">
                   <mat-icon>restaurant</mat-icon>
                 </div>
                 <p class="action-title">Nutricionistas</p>
-                <p class="action-description">Nenhum nutricionista associado</p>
+                <p class="action-description">Clique para associar nutricionista</p>
               </div>
             </div>
           }

@@ -19,16 +19,19 @@ export class MeasureService {
    * @returns Um Observable com o objeto Measure ou null.
    */
   getMeasureByClientId(userId: number): Observable<Measure | null> {
-    console.log(`🔍 Buscando medidas para cliente ID: ${userId}`);
-    console.log(`🔍 URL completa: ${this.baseUrl}/getMeasureByClientId/${userId}`);
-    
-    return this.http.get<any>(`${this.baseUrl}/getMeasureByClientId/${userId}`)
+    const cleanUserId = Number(userId);
+    const url = `${this.baseUrl}/getMeasureByClientId/${cleanUserId}`;
+
+
+
+
+    return this.http.get<any>(url)
       .pipe(
         map(response => {
-          console.log('✅ Resposta do backend (medidas):', response);
-          
+
+
           if (!response || !response.measure) {
-            console.log('ℹ️ Nenhuma medida encontrada para o cliente');
+
             return null;
           }
 
@@ -40,8 +43,8 @@ export class MeasureService {
             quadril: response.measure.quadril,
             panturrilha_direita: response.measure.panturrilha_direita,
             panturrilha_esquerda: response.measure.panturrilha_esquerda,
-            braco_direito: response.measure.braço_direito,
-            braco_esquerdo: response.measure.braço_esquerdo,
+            braco_direito: response.measure.braco_direito,
+            braco_esquerdo: response.measure.braco_esquerdo,
             coxa_direita: response.measure.coxa_direita,
             coxa_esquerda: response.measure.coxa_esquerda,
             peitoral: response.measure.peitoral,
@@ -55,40 +58,31 @@ export class MeasureService {
             data: new Date() // Se a data não estiver disponível, use a data atual
           };
 
-          console.log('✅ Medidas processadas:', measureData);
+
           return measureData;
         }),
         catchError(error => {
-          console.error('❌ Erro ao buscar medidas do cliente:', error);
-          console.error('❌ Status:', error.status);
-          console.error('❌ StatusText:', error.statusText);
-          console.error('❌ Error body:', error.error);
-          
+
           // Se for erro 404, significa que o cliente não tem medidas
           if (error.status === 404) {
-            console.log('ℹ️ Cliente não possui medidas cadastradas (404)');
+
             return of(null); // Retorna null em caso de 404
           }
-          
+
           // Se for erro 400, pode ser problema de validação
           if (error.status === 400) {
-            console.error('❌ Erro 400 - Bad Request. Possíveis causas:');
-            
+
+
             // Verifica se é o erro específico "source cannot be null"
             if (error.error?.mensagem === 'source cannot be null') {
-              console.error('❌ ERRO ESPECÍFICO: Backend com problema "source cannot be null"');
-              console.error('❌ Este é um problema do BACKEND que precisa ser corrigido');
-              console.error('❌ Sugestão: Verificar o controller/service de medidas no Spring Boot');
-              
+
               // Retorna null para não quebrar a interface
               return of(null);
             }
-            
-            console.error('   - ID do cliente inválido');
-            console.error('   - Endpoint não encontrado no backend');
-            console.error('   - Parâmetro em formato incorreto');
+
+
           }
-          
+
           // Para outros erros, propaga o erro
           throw error;
         })
@@ -102,20 +96,49 @@ export class MeasureService {
    * @returns Um Observable com o objeto Measure criado.
    */
   createMeasure(clientId: number, measure: Measure): Observable<Measure> {
-    return this.http.post<Measure>(`${this.baseUrl}/ceateMeasureToClient/${clientId}/`, measure);
-  }
-
-
-  updateMeasure(clientId: number, measure: Measure): Observable<any> {
-    const url = `${this.baseUrl}/createMeasureToClient/${clientId}/`;
+    const cleanClientId = Number(clientId);
+    const url = `${this.baseUrl}/createMeasureToClient/${cleanClientId}`;
 
     // Remove o campo 'data' que não existe no backend
     const { data, ...backendMeasure } = measure;
 
-    // Garante que estamos enviando os nomes de campos no formato esperado pelo backend
-    // Não precisamos fazer mapeamentos adicionais pois já estamos usando os nomes corretos do backend
+    return this.http.post<Measure>(url, backendMeasure);
+  }
 
-    return this.http.post<any>(url, backendMeasure);
+  /**
+   * Atualiza um registro de medida existente pelo ID do cliente.
+   * @param clientId O ID do cliente.
+   * @param measure O objeto Measure com os novos dados.
+   * @returns Um Observable com o objeto Measure atualizado.
+   */
+  updateMeasure(clientId: number, measure: Measure): Observable<Measure> {
+    const cleanClientId = Number(clientId);
+    const url = `${this.baseUrl}/updateMeasureByClient/${cleanClientId}`;
+
+    // Remove o campo 'data' que não existe no backend
+    const { data, ...backendMeasure } = measure;
+
+    return this.http.put<Measure>(url, backendMeasure);
+  }
+
+  /**
+   * Criar ou atualizar medidas (fallback para compatibilidade)
+   * @param clientId O ID do cliente.
+   * @param measure O objeto Measure.
+   * @returns Um Observable com o resultado.
+   */
+  createOrUpdateMeasure(clientId: number, measure: Measure): Observable<any> {
+    // Garantir que clientId seja um número limpo
+    const cleanClientId = Number(clientId);
+
+
+
+    // Se a medida tem ID, usar endpoint de atualização
+    if (measure.id) {
+      return this.updateMeasure(measure.id, measure);
+    } else {
+      return this.createMeasure(cleanClientId, measure);
+    }
   }
 
   /**

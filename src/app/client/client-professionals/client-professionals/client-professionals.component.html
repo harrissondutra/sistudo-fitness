@@ -51,6 +51,10 @@
             Médicos
             <span class="section-count">({{ professionalsData.doctors.length }})</span>
           </h2>
+          <button mat-raised-button color="primary" (click)="openAssociateDoctorDialog()">
+            <mat-icon>add</mat-icon>
+            Associar Médico
+          </button>
         </div>
 
         @if (professionalsData.doctors.length > 0) {
@@ -110,6 +114,10 @@
             Personal Trainers
             <span class="section-count">({{ professionalsData.personals.length }})</span>
           </h2>
+          <button mat-raised-button color="accent" (click)="openAssociatePersonalDialog()">
+            <mat-icon>add</mat-icon>
+            Associar Personal
+          </button>
         </div>
 
         @if (professionalsData.personals.length > 0) {
@@ -169,6 +177,10 @@
             Nutricionistas
             <span class="section-count">({{ professionalsData.nutritionists.length }})</span>
           </h2>
+          <button mat-raised-button color="warn" (click)="openAssociateNutritionistDialog()">
+            <mat-icon>add</mat-icon>
+            Associar Nutricionista
+          </button>
         </div>
 
         @if (professionalsData.nutritionists.length > 0) {

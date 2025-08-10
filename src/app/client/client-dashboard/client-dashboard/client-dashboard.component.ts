@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ClientService } from '../../../services/client/client.service';
 import { TrainningService } from '../../../services/trainning/trainning.service';
@@ -57,6 +58,7 @@ interface PanelState {
     MatProgressSpinnerModule,
     MatExpansionModule,
     MatTooltipModule,
+    MatDialogModule,
     RouterModule
   ],
   templateUrl: './client-dashboard.component.html',
@@ -71,6 +73,7 @@ export class ClientDashboardComponent implements OnInit {
   private nutritionistService = inject(NutritionistService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private dialog = inject(MatDialog);
 
   clientId: number | null = null;
   dashboardData: ClientDashboardData = {
@@ -98,6 +101,12 @@ export class ClientDashboardComponent implements OnInit {
 
   loading = true;
   error = false;
+
+  // Getter para a idade do cliente
+  get clientAge(): number | null {
+    const age = this.calculateAge(this.dashboardData.client?.dateOfBirth);
+    return age;
+  }
 
   ngOnInit() {
     this.route.params.pipe(
@@ -171,33 +180,112 @@ export class ClientDashboardComponent implements OnInit {
   }
 
   calculateAge(dateOfBirth: string | Date | number[] | undefined): number | null {
-    if (!dateOfBirth) return null;
+    if (!dateOfBirth) {
+      return null;
+    }
 
     let birth: Date;
-    if (Array.isArray(dateOfBirth)) {
-      // Se for array [year, month, day], converter para Date
-      birth = new Date(dateOfBirth[0], dateOfBirth[1] - 1, dateOfBirth[2]);
-    } else {
-      birth = new Date(dateOfBirth);
+    try {
+      if (Array.isArray(dateOfBirth)) {
+        // Se for array [year, month, day], converter para Date
+        birth = new Date(dateOfBirth[0], dateOfBirth[1] - 1, dateOfBirth[2]);
+      } else {
+        birth = new Date(dateOfBirth);
+      }
+
+      // Verificar se a data é válida
+      if (isNaN(birth.getTime())) {
+        return null;
+      }
+
+      const today = new Date();
+      let age = today.getFullYear() - birth.getFullYear();
+      const monthDiff = today.getMonth() - birth.getMonth();
+
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+        age--;
+      }
+
+      return age;
+    } catch (error) {
+      console.error('❌ calculateAge: Erro ao calcular idade:', error);
+      return null;
     }
-
-    const today = new Date();
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-      age--;
-    }
-
-    return age;
   }
 
   getBMI(): number | null {
     const client = this.dashboardData.client;
     if (!client?.height || !client?.weight) return null;
 
-    const heightInMeters = client.height / 100;
-    return Number((client.weight / (heightInMeters * heightInMeters)).toFixed(1));
+    // Validar se os valores são números válidos
+    const height = Number(client.height);
+    const weight = Number(client.weight);
+
+    if (isNaN(height) || isNaN(weight) || height <= 0 || weight <= 0) {
+      return null;
+    }
+
+    // Auto-detectar se altura está em metros ou centímetros
+    let heightInMeters: number;
+
+    if (height < 10) {
+      // Provavelmente está em metros (ex: 1.75m)
+      heightInMeters = height;
+    } else {
+      // Provavelmente está em centímetros (ex: 175cm)
+      heightInMeters = height / 100;
+    }
+
+    // Validação final da altura em metros (deve estar entre 0.5m e 2.5m)
+    if (heightInMeters < 0.5 || heightInMeters > 2.5) {
+      return null;
+    }
+
+    // Validação do peso (deve estar entre 1kg e 500kg)
+    if (weight < 1 || weight > 500) {
+      return null;
+    }
+
+    // Calcular BMI
+    const bmi = weight / (heightInMeters * heightInMeters);
+
+    return Number(bmi.toFixed(1));
+  }
+
+  // Método auxiliar para categorizar BMI
+  private getBMICategory(bmi: number): string {
+    if (bmi < 18.5) return 'Abaixo do peso';
+    if (bmi < 25) return 'Peso normal';
+    if (bmi < 30) return 'Sobrepeso';
+    return 'Obesidade';
+  }
+
+  // Método público para obter categoria do BMI atual
+  getBMICategoryForDisplay(): string {
+    const bmi = this.getBMI();
+    return bmi ? this.getBMICategory(bmi) : 'N/A';
+  }
+
+  // Método para obter cor baseada no BMI
+  getBMIColor(): string {
+    const bmi = this.getBMI();
+    if (!bmi) return '#757575'; // Gray
+
+    if (bmi < 18.5) return '#FF9800'; // Orange - Abaixo do peso
+    if (bmi < 25) return '#4CAF50';   // Green - Normal
+    if (bmi < 30) return '#FF9800';   // Orange - Sobrepeso
+    return '#F44336';                 // Red - Obesidade
+  }
+
+  // Método para obter ícone de status do BMI
+  getBMIStatusIcon(): string {
+    const bmi = this.getBMI();
+    if (!bmi) return 'help_outline';
+
+    if (bmi < 18.5) return 'keyboard_arrow_down'; // Seta para baixo - Abaixo do peso
+    if (bmi < 25) return 'check_circle';          // Check verde - Normal
+    if (bmi < 30) return 'warning';               // Warning - Sobrepeso
+    return 'keyboard_arrow_up';                   // Seta para cima - Obesidade
   }
 
   onBack() {
@@ -336,5 +424,80 @@ export class ClientDashboardComponent implements OnInit {
 
   formatCRN(registry: string): string {
     return registry ? `CRN: ${registry}` : '';
+  }
+
+  // Methods for opening associate dialogs
+  openAssociateDoctorDialog() {
+    this.openAssociateProfessionalDialog('doctor');
+  }
+
+  openAssociatePersonalDialog() {
+    this.openAssociateProfessionalDialog('personal');
+  }
+
+  openAssociateNutritionistDialog() {
+    this.openAssociateProfessionalDialog('nutritionist');
+  }
+
+  private openAssociateProfessionalDialog(type: 'doctor' | 'personal' | 'nutritionist') {
+    if (!this.clientId) {
+      console.error('Client ID not found');
+      return;
+    }
+
+    // Get current associated IDs based on type
+    let currentAssociatedIds: number[] = [];
+    switch (type) {
+      case 'doctor':
+        currentAssociatedIds = this.dashboardData.associatedDoctors.map(d => d.id).filter(id => id !== undefined);
+        break;
+      case 'personal':
+        currentAssociatedIds = this.dashboardData.associatedPersonals.map(p => p.id).filter(id => id !== undefined);
+        break;
+      case 'nutritionist':
+        currentAssociatedIds = this.dashboardData.associatedNutritionists.map(n => n.id).filter(id => id !== undefined);
+        break;
+    }
+
+    // Import the dialog component dynamically
+    import('../associate-professional-dialog/associate-professional-dialog.component').then(
+      ({ AssociateProfessionalDialogComponent }) => {
+        const dialogRef = this.dialog.open(AssociateProfessionalDialogComponent, {
+          width: '600px',
+          maxWidth: '90vw',
+          data: {
+            clientId: this.clientId,
+            clientName: this.dashboardData.client?.name || 'Cliente',
+            professionalType: type,
+            currentAssociatedIds: currentAssociatedIds
+          }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          if (result?.success) {
+            // Reload dashboard data to reflect changes
+            this.reloadDashboardData();
+          }
+        });
+      }
+    ).catch(error => {
+      console.error('Error loading dialog component:', error);
+    });
+  }
+
+  private reloadDashboardData() {
+    if (this.clientId) {
+      this.loading = true;
+      this.loadClientDashboardData(this.clientId).subscribe({
+        next: (data) => {
+          this.dashboardData = data;
+          this.loading = false;
+        },
+        error: (error) => {
+          console.error('Error reloading dashboard data:', error);
+          this.loading = false;
+        }
+      });
+    }
   }
 }

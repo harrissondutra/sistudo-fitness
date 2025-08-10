@@ -29,9 +29,13 @@ export class ClientService {
 
   // No client.service.ts
   getClientById(id: number | string): Observable<Client> {
-    // Converter para number dentro do método
-    const numericId = typeof id === 'string' ? Number(id) : id;
-    return this.http.get<Client>(`${this.baseUrl}/getById/${numericId}`);
+    // Converter para number dentro do método e garantir limpeza
+    const numericId = typeof id === 'string' ? parseInt(id, 10) : Number(id);
+    const url = `${this.baseUrl}/getById/${numericId}`;
+
+
+
+    return this.http.get<Client>(url);
   }
 
   /**
@@ -67,10 +71,18 @@ export class ClientService {
     return this.http.get(`${this.baseUrl}/getDoctorByClientId/${id}`);
   }
   updateMeasure(clientId: number, measure: Measure): Observable<any> {
-    const url = `${this.baseUrl}/createMeasureToClient/${clientId}/`;
+    const cleanClientId = Number(clientId);
+    const url = `${this.baseUrl}/createMeasureToClient/${cleanClientId}`;
 
     // Remover o campo 'data' que não existe no backend
     const { data, ...backendMeasure } = measure;
+
+    console.log('🔄 ClientService.updateMeasure:', {
+      url,
+      clientId,
+      cleanClientId,
+      data: backendMeasure
+    });
 
     return this.http.post<any>(url, backendMeasure);
   }

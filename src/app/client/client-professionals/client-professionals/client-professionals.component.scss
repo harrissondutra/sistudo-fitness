@@ -126,6 +126,10 @@
 
       .section-header {
         margin-bottom: $spacing-lg;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: $spacing-md;
 
         .section-title {
           display: flex;
@@ -145,6 +149,44 @@
             color: $text-secondary;
             font-weight: 400;
             font-size: 1.1rem;
+          }
+        }
+
+        button[mat-raised-button] {
+          font-weight: 500;
+
+          mat-icon {
+            margin-right: 8px;
+          }
+
+          &[color="primary"] {
+            background-color: $primary-color;
+            color: white;
+          }
+
+          &[color="accent"] {
+            background-color: $accent-color;
+            color: white;
+          }
+
+          &[color="warn"] {
+            background-color: #ff5722;
+            color: white;
+          }
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          }
+        }
+
+        @media (max-width: 768px) {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: $spacing-sm;
+
+          button {
+            width: 100%;
           }
         }
       }
