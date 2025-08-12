@@ -26,6 +26,9 @@ import { Client } from '../models/client';
 import { TrainningService } from '../services/trainning/trainning.service';
 import { Trainning } from '../models/trainning';
 
+// Importe o serviço de teste de produção
+import { ProductionInterceptorTestService } from '../services/production-interceptor-test.service';
+
 
 @Component({
   selector: 'app-home',
@@ -65,7 +68,8 @@ export class HomeComponent implements OnInit {
     private breakpointObserver: BreakpointObserver,
     public router: Router,
     private clientService: ClientService, // Injetado ClientService
-    private trainningService: TrainningService // Injetado TrainingService
+    private trainningService: TrainningService, // Injetado TrainingService
+    private productionTest: ProductionInterceptorTestService // Teste de produção
   ) { }
 
    ngOnInit(): void {
@@ -159,5 +163,14 @@ loadTotalTrainingsInactiveCount(): void {
     if (this.sidenav) {
       this.sidenav.toggle();
     }
+  }
+
+  /**
+   * 🔍 TESTE DO INTERCEPTOR PARA PRODUÇÃO
+   * Chame este método no console para testar se o interceptor funciona
+   */
+  async testInterceptorProduction(): Promise<void> {
+    console.log('🔍 [TESTE] Iniciando teste do interceptor...');
+    await this.productionTest.runProductionDiagnostics();
   }
 }

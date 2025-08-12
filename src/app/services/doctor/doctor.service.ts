@@ -17,17 +17,11 @@ export class DoctorService {
   ) { }
 
   getAllDoctors() {
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [DoctorService] getAllDoctors com headers manuais');
-    return this.http.get<any[]>(`${this.baseUrl}/list`, { headers });
+    return this.http.get<any[]>(`${this.baseUrl}/list`);
   }
 
   getDoctorById(id: string) {
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [DoctorService] getDoctorById com headers manuais:', id);
-    return this.http.get<any>(`${this.baseUrl}/getDoctorById/${id}`, { headers });
+    return this.http.get<any>(`${this.baseUrl}/getDoctorById/${id}`);
   }
 
   createDoctor(doctor: any) {
@@ -41,16 +35,11 @@ export class DoctorService {
   }
 
   getDoctorByClientId(clientId: number) {
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [DoctorService] getDoctorByClientId com headers manuais:', clientId);
-    return this.http.get<any[]>(`${this.baseUrl}/getByClientId/${clientId}`, { headers });
+    return this.http.get<any[]>(`${this.baseUrl}/getByClientId/${clientId}`);
   }
 
   getClientsByDoctorId(doctorId: number | string): Observable<Client[]> {
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [DoctorService] getClientsByDoctorId com headers manuais:', doctorId);
-    return this.http.get<Client[]>(`${this.baseUrl}/getClientsByDoctorId/${doctorId}`, { headers });
+    return this.http.get<Client[]>(`${this.baseUrl}/getClientsByDoctorId/${doctorId}`);
   }
 
   associateDoctorToClient(clientId: number, doctorIds: number[]): Observable<Client> {

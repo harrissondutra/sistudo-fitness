@@ -14,30 +14,18 @@ export class ExerciseService {
   constructor(private http: HttpClient, private authService: AuthService) { }
 
   getAllExercises(): Observable<Exercise[]> {
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [ExerciseService] getAllExercises com headers manuais');
-    return this.http.get<Exercise[]>(`${this.apiUrl}/list`, { headers });
+    return this.http.get<Exercise[]>(`${this.apiUrl}/list`);
   }
 
   getExercises(): Observable<Exercise[]> {
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [ExerciseService] getExercises com headers manuais');
-    return this.http.get<Exercise[]>(this.apiUrl, { headers });
+    return this.http.get<Exercise[]>(this.apiUrl);
   }
 
   deleteExercise(id: string): Observable<void> {
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [ExerciseService] deleteExercise com headers manuais:', id);
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers });
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
   createExercise(exercise: Exercise): Observable<Exercise> {
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [ExerciseService] createExercise com headers manuais');
-    return this.http.post<Exercise>(`${this.apiUrl}/create`, exercise, { headers });
+    return this.http.post<Exercise>(`${this.apiUrl}/create`, exercise);
   }
 }

@@ -20,10 +20,7 @@ export class NutritionistService {
 
   getAllNutritionists(): Observable<Nutritionist[]> {
     console.log('Chamando endpoint:', `${this.baseUrl}/listAll`);
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [NutritionistService] getAllNutritionists com headers manuais');
-    return this.http.get<Nutritionist[]>(`${this.baseUrl}/listAll`, { headers }).pipe(
+    return this.http.get<Nutritionist[]>(`${this.baseUrl}/listAll`).pipe(
       tap(response => console.log('Resposta da API:', response)),
       catchError(error => {
         console.error('Erro na API:', error);
@@ -33,10 +30,7 @@ export class NutritionistService {
   }
 
   getNutritionistById(id: string): Observable<Nutritionist> {
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [NutritionistService] getNutritionistById com headers manuais:', id);
-    return this.http.get<Nutritionist>(`${this.baseUrl}/getNutritionistById/${id}`, { headers }).pipe(
+    return this.http.get<Nutritionist>(`${this.baseUrl}/getNutritionistById/${id}`).pipe(
       catchError(this.handleError)
     );
   }
@@ -45,11 +39,7 @@ export class NutritionistService {
     const url = `${this.baseUrl}/getClientsByNutritionistId/${nutritionistId}`;
     console.log('Chamando endpoint getClientsByNutritionistId:', url);
 
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [NutritionistService] getClientsByNutritionistId com headers manuais');
-
-    return this.http.get<Client[]>(url, { headers }).pipe(
+    return this.http.get<Client[]>(url).pipe(
       tap(response => {
         console.log('Resposta da API getClientsByNutritionistId:', response);
         console.log('Tipo da resposta:', typeof response);
@@ -64,32 +54,21 @@ export class NutritionistService {
   }
 
   createNutritionist(nutritionist: Nutritionist): Observable<Nutritionist> {
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [NutritionistService] createNutritionist com headers manuais');
-    return this.http.post<Nutritionist>(`${this.baseUrl}/create`, nutritionist, { headers }).pipe(
+    return this.http.post<Nutritionist>(`${this.baseUrl}/create`, nutritionist).pipe(
       catchError(this.handleError)
     );
   }
   updateNutritionist(nutritionist: Nutritionist): Observable<Nutritionist> {
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [NutritionistService] updateNutritionist com headers manuais');
-    return this.http.put<Nutritionist>(`${this.baseUrl}/update/${nutritionist.id}`, nutritionist, { headers }).pipe(
+    return this.http.put<Nutritionist>(`${this.baseUrl}/update/${nutritionist.id}`, nutritionist).pipe(
       catchError(this.handleError)
     );
   }
+
   deleteNutritionist(id: string) {
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [NutritionistService] deleteNutritionist com headers manuais');
-    return this.http.delete<any>(`${this.baseUrl}/delete/${id}`, { headers });
+    return this.http.delete<any>(`${this.baseUrl}/delete/${id}`);
   }
   getNutritionistByClientId(clientId: number) {
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [NutritionistService] getNutritionistByClientId com headers manuais:', clientId);
-    return this.http.get<any[]>(`${this.baseUrl}/getNutritionistByClientId/${clientId}`, { headers }).pipe(
+    return this.http.get<any[]>(`${this.baseUrl}/getNutritionistByClientId/${clientId}`).pipe(
       tap(response => console.log('Nutricionistas do cliente recebidos:', response)),
       catchError(error => {
         if (error.status === 404) {
@@ -111,11 +90,7 @@ export class NutritionistService {
       return throwError(() => new Error('Nenhum ID de nutricionista válido fornecido'));
     }
 
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [NutritionistService] associateNutritionistToClient com headers manuais');
-
-    return this.http.post<Client>(`${this.baseUrl}/associateNutritionist/${clientId}`, validIds, { headers }).pipe(
+    return this.http.post<Client>(`${this.baseUrl}/associateNutritionist/${clientId}`, validIds).pipe(
       tap(response => console.log('Nutricionistas associados com sucesso:', response)),
       catchError(error => {
         console.error('Erro ao associar nutricionistas:', error);
@@ -129,10 +104,7 @@ export class NutritionistService {
   }
 
   disassociateNutritionistsFromClient(clientId: number, nutritionistIds: number[]): Observable<Client> {
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [NutritionistService] disassociateNutritionistsFromClient com headers manuais');
-    return this.http.post<Client>(`${this.baseUrl}/disassociateNutritionist/${clientId}`, nutritionistIds, { headers }).pipe(
+    return this.http.post<Client>(`${this.baseUrl}/disassociateNutritionist/${clientId}`, nutritionistIds).pipe(
       catchError(this.handleError)
     );
   }

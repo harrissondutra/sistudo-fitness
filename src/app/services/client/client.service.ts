@@ -37,22 +37,15 @@ export class ClientService {
     const numericId = typeof id === 'string' ? parseInt(id, 10) : Number(id);
     const url = `${this.baseUrl}/getById/${numericId}`;
 
-    // 🚨 EMERGÊNCIA: Usando headers manuais (interceptors não funcionam)
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [ClientService] getClientById com headers manuais:', numericId);
-
-    return this.http.get<Client>(url, { headers });
+    return this.http.get<Client>(url);
   }
 
   /**
    * Retrieves all clients.
-   * 🚨 EMERGÊNCIA: Usando headers manuais (interceptors não funcionam)
    * @returns An Observable of an array of clients.
    */
   getAllClients(): Observable<Client[]> {
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [ClientService] getAllClients com headers manuais');
-    return this.http.get<Client[]>(`${this.baseUrl}/listAll`, { headers });
+    return this.http.get<Client[]>(`${this.baseUrl}/listAll`);
   }
 
   /**

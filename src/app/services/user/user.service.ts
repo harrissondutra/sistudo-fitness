@@ -16,41 +16,31 @@ export class UserService {
    * Retorna todos os usuários do sistema.
    */
   getAllUsers(): Observable<any[]> {
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [UserService] getAllUsers com headers manuais');
-    return this.http.get<any[]>(`${this.baseUrl}`, { headers });
+    return this.http.get<any[]>(`${this.baseUrl}`);
   }
 
   getUserById(id: number): Observable<any> {
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [UserService] getUserById com headers manuais:', id);
-    return this.http.get<any>(`${this.baseUrl}/getById/${id}`, { headers });
+    return this.http.get<any>(`${this.baseUrl}/getById/${id}`);
   }
 
   /**
    * Cria um novo usuário.
    */
   createUser(user: any): Observable<any> {
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [UserService] createUser com headers manuais');
-    return this.http.post<any>(`${this.baseUrl}`, user, { headers });
+    return this.http.post<any>(`${this.baseUrl}`, user);
   }
 
   /**
    * Atualiza um usuário existente.
    */
   updateUser(id: number, user: any): Observable<any> {
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [UserService] updateUser com headers manuais:', id);
-    return this.http.put<any>(`${this.baseUrl}/update/${id}`, user, { headers });
+    return this.http.put<any>(`${this.baseUrl}/update/${id}`, user);
   }
 
   /**
    * Exclui um usuário pelo ID.
    */
   deleteUser(id: number): Observable<void> {
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [UserService] deleteUser com headers manuais:', id);
-    return this.http.delete<void>(`${this.baseUrl}/${id}`, { headers });
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }

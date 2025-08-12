@@ -10,15 +10,8 @@ import { MAT_DATE_LOCALE, MAT_DATE_FORMATS, DateAdapter } from '@angular/materia
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 
 import { routes } from './app.routes';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
-import { DateFormatInterceptor } from './core/interceptors/date-format.interceptor/date-format.interceptor';
-import { jwtInterceptor } from './core/interceptors/jwt.interceptor';
-import { debugInterceptor } from './core/interceptors/debug.interceptor';
-import { cacheInterceptor } from './core/interceptors/cache-functional.interceptor';
-import { sessionActivityInterceptor } from './core/interceptors/session-activity.interceptor';
-import { corsInterceptor } from './core/interceptors/cors.interceptor';
-import { productionInterceptor } from './config/interceptor.config';
-import { environment } from '../environments/environment';
 
 // Formato de datas para exibição no formulário
 export const DATE_FORMATS = {
@@ -36,14 +29,10 @@ export const DATE_FORMATS = {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    // Interceptores ordenados por prioridade - TESTE COM DEBUG
+    // 🔥 INTERCEPTOR HÍBRIDO - Apenas o auth interceptor para headers automáticos
     provideHttpClient(withInterceptors([
-      // 1. Debug interceptor para testar se funciona
-      debugInterceptor,
-      // 2. JWT para autenticação
-      jwtInterceptor,
-      // 3. Error para tratamento
-      errorInterceptor
+      authInterceptor,      // Injeta headers Authorization automaticamente
+      errorInterceptor      // Trata erros HTTP
     ])),
     provideAnimations(),
     provideClientHydration(),

@@ -101,10 +101,7 @@ export class PersonalService {
   }
 
   getPersonalByClientId(clientId: number): Observable<Personal[]> {
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [PersonalService] getPersonalByClientId com headers manuais:', clientId);
-    return this.http.get<Personal[]>(`${this.baseUrl}/getPersonalByClientId/${clientId}`, { headers }).pipe(
+    return this.http.get<Personal[]>(`${this.baseUrl}/getPersonalByClientId/${clientId}`).pipe(
       catchError(this.handleError)
     );
   }

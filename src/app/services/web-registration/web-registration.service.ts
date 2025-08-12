@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { UserRole } from '../../models/user_role';
@@ -33,12 +33,6 @@ export class WebRegistrationService {
    * Registra um novo cliente via web (WordPress ou outros)
    */
   registerClient(request: WebRegistrationRequest): Observable<WebRegistrationResponse> {
-    // Define headers para CORS
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*'
-    });
-
     // Adiciona role automaticamente
     const userData = {
       ...request,
@@ -46,26 +40,20 @@ export class WebRegistrationService {
       source: request.source || 'web'
     };
 
-    return this.http.post<WebRegistrationResponse>(`${this.baseUrl}/register`, userData, { headers });
+    return this.http.post<WebRegistrationResponse>(`${this.baseUrl}/register`, userData);
   }
 
   /**
-   * Verifica se username está disponível
+   * Verifica se o username está disponível
    */
   checkUsernameAvailability(username: string): Observable<{ available: boolean }> {
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [WebRegistrationService] checkUsernameAvailability com headers manuais:', username);
-    return this.http.get<{ available: boolean }>(`${this.baseUrl}/check-username/${username}`, { headers });
+    return this.http.get<{ available: boolean }>(`${this.baseUrl}/check-username/${username}`);
   }
 
   /**
    * Verifica se email está disponível
    */
   checkEmailAvailability(email: string): Observable<{ available: boolean }> {
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [WebRegistrationService] checkEmailAvailability com headers manuais:', email);
-    return this.http.get<{ available: boolean }>(`${this.baseUrl}/check-email/${email}`, { headers });
+    return this.http.get<{ available: boolean }>(`${this.baseUrl}/check-email/${email}`);
   }
 }

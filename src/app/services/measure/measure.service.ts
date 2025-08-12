@@ -27,11 +27,7 @@ export class MeasureService {
     const cleanUserId = Number(userId);
     const url = `${this.baseUrl}/getMeasureByClientId/${cleanUserId}`;
 
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [MeasureService] getMeasureByClientId com headers manuais:', cleanUserId);
-
-    return this.http.get<any>(url, { headers })
+    return this.http.get<any>(url)
       .pipe(
         map(response => {
 
@@ -159,10 +155,7 @@ export class MeasureService {
    * @returns Um Observable vazio.
    */
   deleteMeasure(id: number): Observable<void> {
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [MeasureService] deleteMeasure com headers manuais:', id);
-    return this.http.delete<void>(`${this.baseUrl}/delete/${id}`, { headers });
+    return this.http.delete<void>(`${this.baseUrl}/delete/${id}`);
   }
 
   /**
@@ -171,9 +164,6 @@ export class MeasureService {
    * @returns Um Observable com uma lista de objetos Measure.
    */
   getMeasureHistoryByUserId(userId: number): Observable<Measure[]> {
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [MeasureService] getMeasureHistoryByUserId com headers manuais:', userId);
-    return this.http.get<Measure[]>(`${this.baseUrl}/history/${userId}`, { headers });
+    return this.http.get<Measure[]>(`${this.baseUrl}/history/${userId}`);
   }
 }

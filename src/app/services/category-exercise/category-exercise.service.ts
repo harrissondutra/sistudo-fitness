@@ -14,16 +14,10 @@ export class CategoryExerciseService {
   constructor( private http: HttpClient, private authService: AuthService ) { }
 
   getAllCategories(): Observable<ExerciseCategory[]> {
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [CategoryExerciseService] getAllCategories com headers manuais');
-    return this.http.get<ExerciseCategory[]>(`${this.apiUrl}/list`, { headers });
+    return this.http.get<ExerciseCategory[]>(`${this.apiUrl}/list`);
   }
 
   createCategory(category: ExerciseCategory): Observable<ExerciseCategory> {
-    // 🚨 EMERGÊNCIA: Headers manuais
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [CategoryExerciseService] createCategory com headers manuais');
-    return this.http.post<ExerciseCategory>(`${this.apiUrl}/create`, category, { headers });
+    return this.http.post<ExerciseCategory>(`${this.apiUrl}/create`, category);
   }
 }
