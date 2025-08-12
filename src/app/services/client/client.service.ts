@@ -5,6 +5,7 @@ import { Client } from '../../models/client';
 import { Measure } from '../../models/measure';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { AuthService } from '../auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,10 @@ export class ClientService {
   // Base URL for client-related API endpoints
   private baseUrl = `${environment.apiUrl}/clients`;
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) { }
 
   /**
    * Creates a new client.
@@ -33,17 +37,22 @@ export class ClientService {
     const numericId = typeof id === 'string' ? parseInt(id, 10) : Number(id);
     const url = `${this.baseUrl}/getById/${numericId}`;
 
+    // 🚨 EMERGÊNCIA: Usando headers manuais (interceptors não funcionam)
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [ClientService] getClientById com headers manuais:', numericId);
 
-
-    return this.http.get<Client>(url);
+    return this.http.get<Client>(url, { headers });
   }
 
   /**
    * Retrieves all clients.
+   * 🚨 EMERGÊNCIA: Usando headers manuais (interceptors não funcionam)
    * @returns An Observable of an array of clients.
    */
   getAllClients(): Observable<Client[]> {
-    return this.http.get<Client[]>(`${this.baseUrl}/listAll`);
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [ClientService] getAllClients com headers manuais');
+    return this.http.get<Client[]>(`${this.baseUrl}/listAll`, { headers });
   }
 
   /**

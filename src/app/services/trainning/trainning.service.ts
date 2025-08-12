@@ -5,6 +5,7 @@ import { Trainning } from '../../models/trainning';
 import { Exercise } from '../../models/exercise';
 import { environment } from '../../../environments/environment';
 import { DataCacheService } from '../cache/data-cache.service';
+import { AuthService } from '../auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -23,19 +24,20 @@ export class TrainningService {
 
   constructor(
     private http: HttpClient,
-    private cacheService: DataCacheService
+    private cacheService: DataCacheService,
+    private authService: AuthService
   ) { }
 
   // 1. getTrainningByClientId com cache
+  // 🚨 EMERGÊNCIA: Usando headers manuais (interceptors não funcionam)
   getTrainningByClientId(clientId: number, forceRefresh: boolean = false): Observable<Trainning[]> {
     const cacheKey = `trainning_by_client_${clientId}`;
-    
-    const fetchFn = () => this.http.get<Trainning[]>(`${this.baseUrl}/trainningByClientId/${clientId}`, {
-      headers: new HttpHeaders({
-        'X-Cache': 'true',
-        'X-Cache-Key': cacheKey
-      })
-    });
+
+    const fetchFn = () => {
+      const headers = this.authService.getAuthHeaders();
+      console.log('🚨 [TrainningService] getTrainningByClientId com headers manuais:', clientId);
+      return this.http.get<Trainning[]>(`${this.baseUrl}/trainningByClientId/${clientId}`, { headers });
+    };
 
     if (forceRefresh) {
       return this.cacheService.refresh(cacheKey, fetchFn, this.CACHE_CONFIG.TRAINNING_BY_CLIENT);
@@ -47,7 +49,7 @@ export class TrainningService {
   // 2. getTrainningById com cache e processamento de datas
   getTrainningById(id: number, forceRefresh: boolean = false): Observable<Trainning> {
     const cacheKey = `trainning_detail_${id}`;
-    
+
     const fetchFn = () => this.http.get<any>(`${this.baseUrl}/getById/${id}`, {
       headers: new HttpHeaders({
         'X-Cache': 'true',
@@ -81,7 +83,7 @@ export class TrainningService {
   // 3. getTrainningByName com cache
   getTrainningByName(name: string, forceRefresh: boolean = false): Observable<Trainning> {
     const cacheKey = `trainning_by_name_${name}`;
-    
+
     const fetchFn = () => this.http.get<Trainning>(`${this.baseUrl}/getByTrainningName/${name}`, {
       headers: new HttpHeaders({
         'X-Cache': 'true',
@@ -122,7 +124,7 @@ export class TrainningService {
   // 6. listAllTrainnings com cache otimizado
   listAllTrainnings(forceRefresh: boolean = false): Observable<Trainning[]> {
     const cacheKey = 'trainnings_all';
-    
+
     const fetchFn = () => this.http.get<Trainning[]>(`${this.baseUrl}/listAll`, {
       headers: new HttpHeaders({
         'X-Cache': 'true',
@@ -138,15 +140,15 @@ export class TrainningService {
   }
 
   // 7. listAllActiveTrainnings com cache otimizado
+  // 🚨 EMERGÊNCIA: Usando headers manuais (interceptors não funcionam)
   listAllActiveTrainnings(forceRefresh: boolean = false): Observable<Trainning[]> {
     const cacheKey = 'trainnings_active';
-    
-    const fetchFn = () => this.http.get<Trainning[]>(`${this.baseUrl}/listAllActive`, {
-      headers: new HttpHeaders({
-        'X-Cache': 'true',
-        'X-Cache-Key': cacheKey
-      })
-    });
+
+    const fetchFn = () => {
+      const headers = this.authService.getAuthHeaders();
+      console.log('🚨 [TrainningService] listAllActiveTrainnings com headers manuais');
+      return this.http.get<Trainning[]>(`${this.baseUrl}/listAllActive`, { headers });
+    };
 
     if (forceRefresh) {
       return this.cacheService.refresh(cacheKey, fetchFn, this.CACHE_CONFIG.TRAINNINGS_LIST);
@@ -158,7 +160,7 @@ export class TrainningService {
   // 8. listAllTrainningsInactive com cache
   listAllTrainningsInactive(forceRefresh: boolean = false): Observable<Trainning[]> {
     const cacheKey = 'trainnings_inactive';
-    
+
     const fetchFn = () => this.http.get<Trainning[]>(`${this.baseUrl}/listAllTrainningsInactive`, {
       headers: new HttpHeaders({
         'X-Cache': 'true',
@@ -175,7 +177,7 @@ export class TrainningService {
 
   listInactiveTrainningsByClientId(clientId: number, forceRefresh: boolean = false): Observable<Trainning[]> {
     const cacheKey = `trainning_inactive_by_client_${clientId}`;
-    
+
     const fetchFn = () => this.http.get<Trainning[]>(`${this.baseUrl}/listInactiveTrainningsByClientId/${clientId}`, {
       headers: new HttpHeaders({
         'X-Cache': 'true',
@@ -238,7 +240,7 @@ export class TrainningService {
 
   getTrainningExercises(trainningId: number): Observable<Exercise[]> {
     const cacheKey = `trainning_exercises_${trainningId}`;
-    
+
     const fetchFn = () => this.http.get<Exercise[]>(`${this.baseUrl}/trainnings/${trainningId}/exercises`, {
       headers: new HttpHeaders({
         'X-Cache': 'true',
