@@ -93,6 +93,14 @@ export class AuthService {
     const currentTime = Date.now();
     sessionStorage.setItem('lastActivity', currentTime.toString());
 
+    // Log detalhado para debug em produção
+    console.log('[AuthService] Token salvo:', {
+      tamanho: token.length,
+      primeiros20: token.substring(0, 20) + '...',
+      sessionStorage: !!sessionStorage.getItem('token'),
+      timestamp: currentTime
+    });
+
     // Extrai informações do token JWT incluindo o ID do usuário
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
@@ -317,7 +325,28 @@ export class AuthService {
    * Recupera o token JWT do sessionStorage.
    */
   getToken(): string | null {
-    return sessionStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
+
+    // Debug adicional para produção
+    if (token) {
+      const isExpired = this.isTokenExpired(token);
+      console.log('[AuthService] Token encontrado:', {
+        presente: !!token,
+        tamanho: token.length,
+        expirado: isExpired,
+        primeiros20: token.substring(0, 20) + '...'
+      });
+
+      if (isExpired) {
+        console.warn('[AuthService] Token expirado, fazendo logout automático');
+        this.logout();
+        return null;
+      }
+    } else {
+      console.log('[AuthService] Nenhum token encontrado no sessionStorage');
+    }
+
+    return token;
   }
 
   /**
@@ -388,6 +417,58 @@ export class AuthService {
    */
   isLoggedIn(): boolean {
     return this.isAuthenticated();
+  }
+
+  /**
+   * Método de diagnóstico para problemas de autenticação em produção
+   */
+  diagnoseAuthenticationIssues(): void {
+    console.log('=== DIAGNÓSTICO DE AUTENTICAÇÃO ===');
+
+    const token = sessionStorage.getItem('token');
+    const userInfo = sessionStorage.getItem('userInfo');
+    const lastActivity = sessionStorage.getItem('lastActivity');
+
+    console.log('1. Token no sessionStorage:', {
+      presente: !!token,
+      tamanho: token?.length || 0,
+      primeiros20: token ? token.substring(0, 20) + '...' : 'N/A'
+    });
+
+    console.log('2. UserInfo no sessionStorage:', {
+      presente: !!userInfo,
+      conteudo: userInfo ? JSON.parse(userInfo) : 'N/A'
+    });
+
+    console.log('3. Última atividade:', {
+      presente: !!lastActivity,
+      timestamp: lastActivity ? new Date(parseInt(lastActivity)).toISOString() : 'N/A'
+    });
+
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const now = Math.floor(Date.now() / 1000);
+        const isExpired = payload.exp && payload.exp < now;
+
+        console.log('4. Análise do token:', {
+          exp: payload.exp,
+          agora: now,
+          expirado: isExpired,
+          tempoRestante: payload.exp ? `${Math.floor((payload.exp - now) / 60)} minutos` : 'N/A',
+          payload: payload
+        });
+      } catch (error) {
+        console.error('4. Erro ao analisar token:', error);
+      }
+    }
+
+    console.log('5. Estado da autenticação:', {
+      isAuthenticated: this.isAuthenticated(),
+      isLoggedIn: this.isLoggedIn()
+    });
+
+    console.log('=== FIM DO DIAGNÓSTICO ===');
   }
 
   /**
