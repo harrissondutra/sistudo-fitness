@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { UserRole } from '../../models/user_role';
+import { AuthService } from '../auth.service';
 
 export interface WebRegistrationRequest {
   username: string;
@@ -26,7 +27,7 @@ export interface WebRegistrationResponse {
 export class WebRegistrationService {
   private baseUrl = `${environment.apiUrl}/web`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private authService: AuthService) { }
 
   /**
    * Registra um novo cliente via web (WordPress ou outros)

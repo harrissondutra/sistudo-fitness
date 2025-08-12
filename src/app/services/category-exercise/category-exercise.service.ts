@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ExerciseCategory } from '../../models/exercise-category'; // Certifique-se de que o caminho está correto
+import { AuthService } from '../auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ import { ExerciseCategory } from '../../models/exercise-category'; // Certifique
 export class CategoryExerciseService {
   private apiUrl = `${environment.apiUrl}/categoryExercise`;
 
-  constructor( private http: HttpClient ) { }
+  constructor( private http: HttpClient, private authService: AuthService ) { }
 
   getAllCategories(): Observable<ExerciseCategory[]> {
     return this.http.get<ExerciseCategory[]>(`${this.apiUrl}/list`);

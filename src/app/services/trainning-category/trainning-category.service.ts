@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TrainningCategory } from '../../models/trainning-category'; // Importe o modelo de categoria
 import { environment } from '../../../environments/environment'; // Importe o ambiente da sua aplicação
+import { AuthService } from '../auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class TrainningCategoryService { // Nome do serviço com 'Trainning' (nn)
   // Precisa ser "/trainning-category" (com 'nn') para casar com o backend
   private baseUrl = `${environment.apiUrl}/trainning-category`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private authService: AuthService) { }
 
   /**
    * Obtém todas as categorias de treino.

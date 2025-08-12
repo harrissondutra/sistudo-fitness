@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Measure } from '../../models/measure';
 import { environment } from '../../../environments/environment';
+import { AuthService } from '../auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,10 +12,14 @@ import { environment } from '../../../environments/environment';
 export class MeasureService {
   private baseUrl = `${environment.apiUrl}/client-measure`; // URL base correta
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) { }
 
   /**
    * Busca as medidas de um Cliente específico.
+   * 🚨 EMERGÊNCIA: Usando headers manuais (interceptors não funcionam)
    * @param userId O ID do Cliente.
    * @returns Um Observable com o objeto Measure ou null.
    */
@@ -22,10 +27,11 @@ export class MeasureService {
     const cleanUserId = Number(userId);
     const url = `${this.baseUrl}/getMeasureByClientId/${cleanUserId}`;
 
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [MeasureService] getMeasureByClientId com headers manuais:', cleanUserId);
 
-
-
-    return this.http.get<any>(url)
+    return this.http.get<any>(url, { headers })
       .pipe(
         map(response => {
 

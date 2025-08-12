@@ -3,6 +3,7 @@ import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Client } from '../../models/client';
 import { Observable } from 'rxjs';
+import { AuthService } from '../auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,10 @@ import { Observable } from 'rxjs';
 export class DoctorService {
   private baseUrl = `${environment.apiUrl}/doctors`;
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) { }
 
   getAllDoctors() {
     return this.http.get<any[]>(`${this.baseUrl}/list`);
@@ -31,7 +35,10 @@ export class DoctorService {
   }
 
   getDoctorByClientId(clientId: number) {
-    return this.http.get<any[]>(`${this.baseUrl}/getByClientId/${clientId}`);
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [DoctorService] getDoctorByClientId com headers manuais:', clientId);
+    return this.http.get<any[]>(`${this.baseUrl}/getByClientId/${clientId}`, { headers });
   }
 
   getClientsByDoctorId(doctorId: number | string): Observable<Client[]> {

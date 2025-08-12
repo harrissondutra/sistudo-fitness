@@ -158,15 +158,15 @@ export class TrainningService {
   }
 
   // 8. listAllTrainningsInactive com cache
+  // 🚨 EMERGÊNCIA: Usando headers manuais (interceptors não funcionam)
   listAllTrainningsInactive(forceRefresh: boolean = false): Observable<Trainning[]> {
     const cacheKey = 'trainnings_inactive';
 
-    const fetchFn = () => this.http.get<Trainning[]>(`${this.baseUrl}/listAllTrainningsInactive`, {
-      headers: new HttpHeaders({
-        'X-Cache': 'true',
-        'X-Cache-Key': cacheKey
-      })
-    });
+    const fetchFn = () => {
+      const headers = this.authService.getAuthHeaders();
+      console.log('🚨 [TrainningService] listAllTrainningsInactive com headers manuais');
+      return this.http.get<Trainning[]>(`${this.baseUrl}/listAllTrainningsInactive`, { headers });
+    };
 
     if (forceRefresh) {
       return this.cacheService.refresh(cacheKey, fetchFn, this.CACHE_CONFIG.TRAINNINGS_LIST);

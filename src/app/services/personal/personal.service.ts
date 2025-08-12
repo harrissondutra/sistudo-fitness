@@ -5,6 +5,7 @@ import { catchError } from 'rxjs/operators'; // Importe catchError de 'rxjs/oper
 import { Personal } from '../../models/personal'; // Ajuste o caminho para o seu modelo Personal
 import { environment } from '../../../environments/environment';
 import { Client } from '../../models/client';
+import { AuthService } from '../auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,10 @@ export class PersonalService {
   // **ATENÇÃO**: Substitua 'http://localhost:8080/api/personal' pela URL real da sua API de profissionais
   private baseUrl = `${environment.apiUrl}/personals`;
 
-  constructor(private http: HttpClient) { } // Injete o HttpClient no construtor
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) { } // Injete o HttpClient no construtor
 
   /**
    * Obtém todos os profissionais.
@@ -97,7 +101,10 @@ export class PersonalService {
   }
 
   getPersonalByClientId(clientId: number): Observable<Personal[]> {
-    return this.http.get<Personal[]>(`${this.baseUrl}/getPersonalByClientId/${clientId}`).pipe(
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [PersonalService] getPersonalByClientId com headers manuais:', clientId);
+    return this.http.get<Personal[]>(`${this.baseUrl}/getPersonalByClientId/${clientId}`, { headers }).pipe(
       catchError(this.handleError)
     );
   }

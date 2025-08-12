@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Exercise } from '../../models/exercise';
 import { environment } from '../../../environments/environment';
+import { AuthService } from '../auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,7 @@ import { environment } from '../../../environments/environment';
 export class ExerciseService {
   private apiUrl = `${environment.apiUrl}/exercises`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private authService: AuthService) { }
 
   getAllExercises(): Observable<Exercise[]> {
     return this.http.get<Exercise[]>(`${this.apiUrl}/list`);

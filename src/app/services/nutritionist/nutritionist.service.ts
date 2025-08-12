@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Client } from '../../models/client';
 import { catchError, Observable, of, tap, throwError } from 'rxjs';
 import { Nutritionist } from '../../models/nutritionist';
+import { AuthService } from '../auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,10 @@ export class NutritionistService {
 
   private baseUrl = `${environment.apiUrl}/nutritionists`;
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) { }
 
   getAllNutritionists(): Observable<Nutritionist[]> {
     console.log('Chamando endpoint:', `${this.baseUrl}/listAll`);
@@ -63,7 +67,10 @@ export class NutritionistService {
     return this.http.delete<any>(`${this.baseUrl}/delete/${id}`);
   }
   getNutritionistByClientId(clientId: number) {
-    return this.http.get<any[]>(`${this.baseUrl}/getNutritionistByClientId/${clientId}`).pipe(
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [NutritionistService] getNutritionistByClientId com headers manuais:', clientId);
+    return this.http.get<any[]>(`${this.baseUrl}/getNutritionistByClientId/${clientId}`, { headers }).pipe(
       tap(response => console.log('Nutricionistas do cliente recebidos:', response)),
       catchError(error => {
         if (error.status === 404) {
