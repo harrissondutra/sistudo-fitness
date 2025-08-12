@@ -398,15 +398,8 @@ export class MenuService {
       if (userData?.id && (typeof userData.id === 'number' || !isNaN(Number(userData.id)))) {
         this.currentUserId = Number(userData.id);
       } else {
-        // Fallback para administradores - usar ID 1 como padrão
-        const userRole = this.authService.getUserRole();
-        if (userRole === UserRole.ADMIN) {
-          console.warn('Usuário é administrador mas sem ID numérico - usando ID padrão 1');
-          this.currentUserId = 1;
-        } else {
-          console.warn('Usuário não logado ou ID não disponível - processando sem substituição dinâmica');
-          return menuItems; // Retorna sem processar se não há ID do usuário
-        }
+        console.error('❌ ID do usuário não disponível - não é possível processar menu dinâmico');
+        return menuItems; // Retorna menu sem processamento dinâmico
       }
     }
 

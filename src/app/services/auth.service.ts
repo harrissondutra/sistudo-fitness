@@ -85,7 +85,7 @@ export class AuthService {
   /**
    * Salva o token JWT e informações do usuário no sessionStorage (não persiste após fechar browser).
    */
-  setToken(token: string, userInfo?: { email?: string, username?: string, role?: string }) {
+  setToken(token: string, userInfo?: { id?: number, email?: string, username?: string, role?: string }) {
     // Usa sessionStorage em vez de localStorage para não persistir após fechar browser
     sessionStorage.setItem('token', token);
 
@@ -106,28 +106,35 @@ export class AuthService {
       const payload = JSON.parse(atob(token.split('.')[1]));
       console.log('Payload completo do token JWT:', payload);
 
-      // Busca por um ID numérico em vários campos possíveis
-      let userId = null;
+      // PRIORIDADE: Dados diretos da resposta > JWT payload
+      let userId = userInfo?.id; // ID direto da resposta tem prioridade
 
-      // Lista de campos que podem conter o ID do usuário
-      const possibleIdFields = ['id', 'userId', 'user_id', 'sub', 'jti', 'clientId', 'client_id'];
+      // Se não tiver ID direto, busca no JWT
+      if (!userId) {
+        const possibleIdFields = ['userId', 'id', 'user_id', 'sub', 'jti', 'clientId', 'client_id'];
 
-      for (const field of possibleIdFields) {
-        if (payload[field] !== undefined) {
-          const value = payload[field];
-          // Verifica se é um número ou uma string que pode ser convertida para número
-          if (typeof value === 'number' || (typeof value === 'string' && !isNaN(Number(value)))) {
-            userId = Number(value);
-            console.log(`ID do usuário encontrado no campo '${field}':`, userId);
-            break;
-          } else {
-            console.log(`Campo '${field}' não é numérico:`, value);
+        for (const field of possibleIdFields) {
+          if (payload[field] !== undefined) {
+            const value = payload[field];
+            if (typeof value === 'number' || (typeof value === 'string' && !isNaN(Number(value)))) {
+              userId = Number(value);
+              console.log(`ID do usuário encontrado no JWT campo '${field}':`, userId);
+              break;
+            }
           }
         }
+      } else {
+        console.log('ID do usuário obtido diretamente da resposta:', userId);
+      }
+
+      // FALLBACK: Se sub é "Admin", usar ID 1 (administrador principal)
+      if (!userId && payload.sub === 'Admin') {
+        userId = 1;
+        console.log('Usando ID 1 para usuário Admin (fallback)');
       }
 
       if (!userId) {
-        console.warn('Nenhum ID numérico encontrado no token JWT. Campos disponíveis:', Object.keys(payload));
+        console.warn('Nenhum ID numérico encontrado. Dados disponíveis:', {userInfo, payload: Object.keys(payload)});
       }
 
       // Combina as informações fornecidas com as do token

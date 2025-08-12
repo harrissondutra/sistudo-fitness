@@ -11,8 +11,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   selector: 'app-login',
   standalone: true,
   imports: [
-    FormsModule, 
-    CommonModule, 
+    FormsModule,
+    CommonModule,
     RouterModule,
     MatIconModule,
     MatProgressSpinnerModule
@@ -27,7 +27,7 @@ export class LoginComponent {
   error = '';
 
   constructor(
-    private authService: AuthService, 
+    private authService: AuthService,
     private router: Router,
     private menuService: MenuService
   ) {}
@@ -38,24 +38,25 @@ export class LoginComponent {
     this.authService.login(this.email, this.password).subscribe({
       next: (res) => {
         console.log('Resposta do login recebida:', res);
-        
+
         // Salva o token e dados do usuário
         this.authService.setToken(res.token, {
+          id: res.id,           // 🔥 IMPORTANTE: Incluir o ID!
           email: res.email,
           username: res.username,
           role: res.role
         });
-        
+
         // Debug para verificar dados salvos
         this.authService.debugUserData();
         this.authService.debugFullToken();
-        
+
         // Aguarda um pouco para garantir que o token foi processado
         setTimeout(() => {
           console.log('Login bem-sucedido, atualizando menus...');
           this.menuService.refreshMenus();
         }, 100);
-        
+
         this.loading = false;
         this.router.navigate(['/']);
       },
