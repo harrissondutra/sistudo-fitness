@@ -176,6 +176,9 @@ export class TrainningService {
   }
 
   listInactiveTrainningsByClientId(clientId: number, forceRefresh: boolean = false): Observable<Trainning[]> {
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [TrainningService] listAllTrainningsInactive com headers manuais:', clientId);
+
     const cacheKey = `trainning_inactive_by_client_${clientId}`;
 
     const fetchFn = () => this.http.get<Trainning[]>(`${this.baseUrl}/listInactiveTrainningsByClientId/${clientId}`, {
@@ -213,7 +216,9 @@ export class TrainningService {
 
   // 9. deleteTrainning - Invalida cache após deleção
   deleteTrainning(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/delete/${id}`).pipe(
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [TrainningService] deleteTrainning com headers manuais:', id);
+    return this.http.delete<void>(`${this.baseUrl}/delete/${id}`, { headers }).pipe(
       map(response => {
         // Invalida caches relacionados
         this.invalidateTrainningCaches();
@@ -225,7 +230,9 @@ export class TrainningService {
 
   // 10. updateTrainning - Invalida cache após atualização
   updateTrainning(id: number, trainning: Trainning): Observable<Trainning> {
-    return this.http.put<Trainning>(`${this.baseUrl}/update/${id}`, trainning).pipe(
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [TrainningService] updateTrainning com headers manuais:', id);
+    return this.http.put<Trainning>(`${this.baseUrl}/update/${id}`, trainning, { headers }).pipe(
       map(response => {
         // Invalida caches relacionados
         this.invalidateTrainningCaches();
