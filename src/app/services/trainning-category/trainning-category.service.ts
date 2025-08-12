@@ -22,7 +22,10 @@ export class TrainningCategoryService { // Nome do serviço com 'Trainning' (nn)
    * @returns Um Observable que emite uma lista de TrainningCategory.
    */
   getAllTrainningCategories(): Observable<TrainningCategory[]> { // Nome do método com 'Trainning' (nn)
-    return this.http.get<TrainningCategory[]>(`${this.baseUrl}/listAll`);
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [TrainningCategoryService] getAllTrainningCategories com headers manuais');
+    return this.http.get<TrainningCategory[]>(`${this.baseUrl}/listAll`, { headers });
   }
 
   /**
@@ -32,24 +35,39 @@ export class TrainningCategoryService { // Nome do serviço com 'Trainning' (nn)
    * @returns Um Observable que emite a categoria de treino criada.
    */
   createTrainningCategory(category: TrainningCategory): Observable<TrainningCategory> { // Nome do método com 'Trainning' (nn)
-    return this.http.post<TrainningCategory>(`${this.baseUrl}/createCategory`, category);
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [TrainningCategoryService] createTrainningCategory com headers manuais');
+    return this.http.post<TrainningCategory>(`${this.baseUrl}/createCategory`, category, { headers });
   }
 
   // Você pode adicionar outros métodos aqui conforme seu backend evolui (ex: getById, update, delete)
   // Exemplo:
    getTrainningCategoryById(id: number): Observable<TrainningCategory> {
-     return this.http.get<TrainningCategory>(`${this.baseUrl}/${id}`);
+     // 🚨 EMERGÊNCIA: Headers manuais
+     const headers = this.authService.getAuthHeaders();
+     console.log('🚨 [TrainningCategoryService] getTrainningCategoryById com headers manuais:', id);
+     return this.http.get<TrainningCategory>(`${this.baseUrl}/${id}`, { headers });
    }
 
    updateTrainningCategory(id: number, category: TrainningCategory): Observable<TrainningCategory> {
-     return this.http.put<TrainningCategory>(`${this.baseUrl}/${id}`, category);
+     // 🚨 EMERGÊNCIA: Headers manuais
+     const headers = this.authService.getAuthHeaders();
+     console.log('🚨 [TrainningCategoryService] updateTrainningCategory com headers manuais:', id);
+     return this.http.put<TrainningCategory>(`${this.baseUrl}/${id}`, category, { headers });
    }
 
    deleteTrainningCategory(id: number): Observable<void> {
-     return this.http.delete<void>(`${this.baseUrl}/${id}`);
+     // 🚨 EMERGÊNCIA: Headers manuais
+     const headers = this.authService.getAuthHeaders();
+     console.log('🚨 [TrainningCategoryService] deleteTrainningCategory com headers manuais:', id);
+     return this.http.delete<void>(`${this.baseUrl}/${id}`, { headers });
    }
 
    getCategoryNames(): Observable<string[]> {
-     return this.http.get<string[]>(`${this.baseUrl}/categoryNames`);
+     // 🚨 EMERGÊNCIA: Headers manuais
+     const headers = this.authService.getAuthHeaders();
+     console.log('🚨 [TrainningCategoryService] getCategoryNames com headers manuais');
+     return this.http.get<string[]>(`${this.baseUrl}/categoryNames`, { headers });
    }
 }

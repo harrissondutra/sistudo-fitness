@@ -53,13 +53,19 @@ export class WebRegistrationService {
    * Verifica se username está disponível
    */
   checkUsernameAvailability(username: string): Observable<{ available: boolean }> {
-    return this.http.get<{ available: boolean }>(`${this.baseUrl}/check-username/${username}`);
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [WebRegistrationService] checkUsernameAvailability com headers manuais:', username);
+    return this.http.get<{ available: boolean }>(`${this.baseUrl}/check-username/${username}`, { headers });
   }
 
   /**
    * Verifica se email está disponível
    */
   checkEmailAvailability(email: string): Observable<{ available: boolean }> {
-    return this.http.get<{ available: boolean }>(`${this.baseUrl}/check-email/${email}`);
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [WebRegistrationService] checkEmailAvailability com headers manuais:', email);
+    return this.http.get<{ available: boolean }>(`${this.baseUrl}/check-email/${email}`, { headers });
   }
 }

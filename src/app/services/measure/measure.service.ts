@@ -102,13 +102,16 @@ export class MeasureService {
    * @returns Um Observable com o objeto Measure criado.
    */
   createMeasure(clientId: number, measure: Measure): Observable<Measure> {
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [MeasureService] createMeasure com headers manuais:', clientId);
+
     const cleanClientId = Number(clientId);
     const url = `${this.baseUrl}/createMeasureToClient/${cleanClientId}`;
 
     // Remove o campo 'data' que não existe no backend
     const { data, ...backendMeasure } = measure;
 
-    return this.http.post<Measure>(url, backendMeasure);
+    return this.http.post<Measure>(url, backendMeasure, { headers });
   }
 
   /**
@@ -118,13 +121,16 @@ export class MeasureService {
    * @returns Um Observable com o objeto Measure atualizado.
    */
   updateMeasure(clientId: number, measure: Measure): Observable<Measure> {
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [MeasureService] updateMeasure com headers manuais:', clientId);
+
     const cleanClientId = Number(clientId);
     const url = `${this.baseUrl}/updateMeasureByClient/${cleanClientId}`;
 
     // Remove o campo 'data' que não existe no backend
     const { data, ...backendMeasure } = measure;
 
-    return this.http.put<Measure>(url, backendMeasure);
+    return this.http.put<Measure>(url, backendMeasure, { headers });
   }
 
   /**
@@ -153,7 +159,10 @@ export class MeasureService {
    * @returns Um Observable vazio.
    */
   deleteMeasure(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/delete/${id}`);
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [MeasureService] deleteMeasure com headers manuais:', id);
+    return this.http.delete<void>(`${this.baseUrl}/delete/${id}`, { headers });
   }
 
   /**
@@ -162,6 +171,9 @@ export class MeasureService {
    * @returns Um Observable com uma lista de objetos Measure.
    */
   getMeasureHistoryByUserId(userId: number): Observable<Measure[]> {
-    return this.http.get<Measure[]>(`${this.baseUrl}/history/${userId}`);
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [MeasureService] getMeasureHistoryByUserId com headers manuais:', userId);
+    return this.http.get<Measure[]>(`${this.baseUrl}/history/${userId}`, { headers });
   }
 }
