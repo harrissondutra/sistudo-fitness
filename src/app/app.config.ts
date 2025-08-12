@@ -15,6 +15,7 @@ import { DateFormatInterceptor } from './core/interceptors/date-format.intercept
 import { jwtInterceptor } from './core/interceptors/jwt.interceptor';
 import { cacheInterceptor } from './core/interceptors/cache-functional.interceptor';
 import { sessionActivityInterceptor } from './core/interceptors/session-activity.interceptor';
+import { corsInterceptor } from './core/interceptors/cors.interceptor';
 import { productionInterceptor } from './config/interceptor.config';
 import { environment } from '../environments/environment';
 
@@ -36,17 +37,19 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     // Interceptores ordenados por prioridade
     provideHttpClient(withInterceptors([
-      // 1. Production interceptor (apenas em produção)
+      // 1. CORS interceptor (apenas em produção)
+      corsInterceptor,
+      // 2. Production interceptor (apenas em produção)
       ...(environment.production ? [productionInterceptor] : []),
-      // 2. JWT Interceptor - Adiciona token de autorização
+      // 3. JWT Interceptor - Adiciona token de autorização
       jwtInterceptor,
-      // 3. Session Activity Interceptor - Monitora atividade
+      // 4. Session Activity Interceptor - Monitora atividade
       sessionActivityInterceptor,
-      // 4. Date Format Interceptor - Formata datas
+      // 5. Date Format Interceptor - Formata datas
       DateFormatInterceptor,
-      // 5. Cache Interceptor - Cache de requisições
+      // 6. Cache Interceptor - Cache de requisições
       cacheInterceptor,
-      // 6. Error Interceptor - Tratamento de erros (por último)
+      // 7. Error Interceptor - Tratamento de erros (por último)
       errorInterceptor
     ])),
     provideAnimations(),

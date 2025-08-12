@@ -28,29 +28,27 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   if (token) {
     const cloned = req.clone({
       setHeaders: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Authorization': `Bearer ${token}`
       }
     });
 
-    // Log para debug (especialmente importante em produção)
-    if (environment.production) {
-      console.log('[JWT Interceptor] [PROD] URL:', req.url);
-      console.log('[JWT Interceptor] [PROD] Token presente:', !!token);
-      console.log('[JWT Interceptor] [PROD] Headers:', {
-        'Authorization': `Bearer ${token.substring(0, 20)}...`,
-        'Content-Type': cloned.headers.get('Content-Type'),
-        'Accept': cloned.headers.get('Accept')
-      });
-    }
+    // Log detalhado para debug em produção
+    console.log('✅ [JWT Interceptor] Token adicionado:', {
+      url: req.url,
+      method: req.method,
+      tokenPresente: !!token,
+      tokenTamanho: token.length,
+      authHeaderAdicionado: !!cloned.headers.get('Authorization'),
+      allHeaders: Object.fromEntries(cloned.headers.keys().map(key => [key, cloned.headers.get(key)]))
+    });
 
     return next(cloned);
   }
 
   // Se não há token e não é URL pública, isso pode ser um problema
   if (!isPublicUrl) {
-    console.error('[JWT Interceptor] ERRO: Requisição para URL protegida sem token:', req.url);
+    console.error('❌ [JWT Interceptor] ERRO: Requisição para URL protegida sem token:', req.url);
+    console.error('❌ [JWT Interceptor] Headers originais:', Object.fromEntries(req.headers.keys().map(key => [key, req.headers.get(key)])));
   }
 
   return next(req);
