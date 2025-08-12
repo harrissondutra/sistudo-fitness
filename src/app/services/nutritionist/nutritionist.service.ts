@@ -33,7 +33,10 @@ export class NutritionistService {
   }
 
   getNutritionistById(id: string): Observable<Nutritionist> {
-    return this.http.get<Nutritionist>(`${this.baseUrl}/getNutritionistById/${id}`).pipe(
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [NutritionistService] getNutritionistById com headers manuais:', id);
+    return this.http.get<Nutritionist>(`${this.baseUrl}/getNutritionistById/${id}`, { headers }).pipe(
       catchError(this.handleError)
     );
   }
@@ -42,7 +45,11 @@ export class NutritionistService {
     const url = `${this.baseUrl}/getClientsByNutritionistId/${nutritionistId}`;
     console.log('Chamando endpoint getClientsByNutritionistId:', url);
 
-    return this.http.get<Client[]>(url).pipe(
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [NutritionistService] getClientsByNutritionistId com headers manuais');
+
+    return this.http.get<Client[]>(url, { headers }).pipe(
       tap(response => {
         console.log('Resposta da API getClientsByNutritionistId:', response);
         console.log('Tipo da resposta:', typeof response);
@@ -57,17 +64,26 @@ export class NutritionistService {
   }
 
   createNutritionist(nutritionist: Nutritionist): Observable<Nutritionist> {
-    return this.http.post<Nutritionist>(`${this.baseUrl}/create`, nutritionist).pipe(
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [NutritionistService] createNutritionist com headers manuais');
+    return this.http.post<Nutritionist>(`${this.baseUrl}/create`, nutritionist, { headers }).pipe(
       catchError(this.handleError)
     );
   }
   updateNutritionist(nutritionist: Nutritionist): Observable<Nutritionist> {
-    return this.http.put<Nutritionist>(`${this.baseUrl}/update/${nutritionist.id}`, nutritionist).pipe(
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [NutritionistService] updateNutritionist com headers manuais');
+    return this.http.put<Nutritionist>(`${this.baseUrl}/update/${nutritionist.id}`, nutritionist, { headers }).pipe(
       catchError(this.handleError)
     );
   }
   deleteNutritionist(id: string) {
-    return this.http.delete<any>(`${this.baseUrl}/delete/${id}`);
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [NutritionistService] deleteNutritionist com headers manuais');
+    return this.http.delete<any>(`${this.baseUrl}/delete/${id}`, { headers });
   }
   getNutritionistByClientId(clientId: number) {
     // 🚨 EMERGÊNCIA: Headers manuais
@@ -95,7 +111,11 @@ export class NutritionistService {
       return throwError(() => new Error('Nenhum ID de nutricionista válido fornecido'));
     }
 
-    return this.http.post<Client>(`${this.baseUrl}/associateNutritionist/${clientId}`, validIds).pipe(
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [NutritionistService] associateNutritionistToClient com headers manuais');
+
+    return this.http.post<Client>(`${this.baseUrl}/associateNutritionist/${clientId}`, validIds, { headers }).pipe(
       tap(response => console.log('Nutricionistas associados com sucesso:', response)),
       catchError(error => {
         console.error('Erro ao associar nutricionistas:', error);
@@ -109,7 +129,10 @@ export class NutritionistService {
   }
 
   disassociateNutritionistsFromClient(clientId: number, nutritionistIds: number[]): Observable<Client> {
-    return this.http.post<Client>(`${this.baseUrl}/disassociateNutritionist/${clientId}`, nutritionistIds).pipe(
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [NutritionistService] disassociateNutritionistsFromClient com headers manuais');
+    return this.http.post<Client>(`${this.baseUrl}/disassociateNutritionist/${clientId}`, nutritionistIds, { headers }).pipe(
       catchError(this.handleError)
     );
   }

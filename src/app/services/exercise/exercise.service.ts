@@ -33,7 +33,7 @@ export class ExerciseService {
     console.log('🚨 [ExerciseService] deleteExercise com headers manuais:', id);
     return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers });
   }
-  
+
   createExercise(exercise: Exercise): Observable<Exercise> {
     // 🚨 EMERGÊNCIA: Headers manuais
     const headers = this.authService.getAuthHeaders();
