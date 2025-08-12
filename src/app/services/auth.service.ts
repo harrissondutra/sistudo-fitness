@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
@@ -337,12 +337,7 @@ export class AuthService {
     // Debug adicional para produção
     if (token) {
       const isExpired = this.isTokenExpired(token);
-      console.log('[AuthService] Token encontrado:', {
-        presente: !!token,
-        tamanho: token.length,
-        expirado: isExpired,
-        primeiros20: token.substring(0, 20) + '...'
-      });
+
 
       if (isExpired) {
         console.warn('[AuthService] Token expirado, fazendo logout automático');
@@ -354,6 +349,29 @@ export class AuthService {
     }
 
     return token;
+  }
+
+  /**
+   * 🚨 MÉTODO DE EMERGÊNCIA: Cria headers com Authorization manual
+   * Usado quando interceptors não funcionam
+   */
+  getAuthHeaders(): HttpHeaders {
+    const token = this.getToken();
+    console.log('[AuthService] 🚨 CRIANDO HEADERS MANUAIS - Token presente:', !!token);
+
+    if (token) {
+      return new HttpHeaders({
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      });
+    }
+
+    console.warn('[AuthService] 🚨 SEM TOKEN - Headers sem autorização');
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    });
   }
 
   /**
