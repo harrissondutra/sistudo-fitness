@@ -20,7 +20,10 @@ export class NutritionistService {
 
   getAllNutritionists(): Observable<Nutritionist[]> {
     console.log('Chamando endpoint:', `${this.baseUrl}/listAll`);
-    return this.http.get<Nutritionist[]>(`${this.baseUrl}/listAll`).pipe(
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [NutritionistService] getAllNutritionists com headers manuais');
+    return this.http.get<Nutritionist[]>(`${this.baseUrl}/listAll`, { headers }).pipe(
       tap(response => console.log('Resposta da API:', response)),
       catchError(error => {
         console.error('Erro na API:', error);

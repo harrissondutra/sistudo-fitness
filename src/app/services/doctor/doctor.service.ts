@@ -17,11 +17,17 @@ export class DoctorService {
   ) { }
 
   getAllDoctors() {
-    return this.http.get<any[]>(`${this.baseUrl}/list`);
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [DoctorService] getAllDoctors com headers manuais');
+    return this.http.get<any[]>(`${this.baseUrl}/list`, { headers });
   }
 
   getDoctorById(id: string) {
-    return this.http.get<any>(`${this.baseUrl}/getDoctorById/${id}`);
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [DoctorService] getDoctorById com headers manuais:', id);
+    return this.http.get<any>(`${this.baseUrl}/getDoctorById/${id}`, { headers });
   }
 
   createDoctor(doctor: any) {
@@ -42,7 +48,9 @@ export class DoctorService {
   }
 
   getClientsByDoctorId(doctorId: number | string): Observable<Client[]> {
-    return this.http.get<Client[]>(`${this.baseUrl}/getClientsByDoctorId/${doctorId}`);
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [DoctorService] getClientsByDoctorId com headers manuais:', doctorId);
+    return this.http.get<Client[]>(`${this.baseUrl}/getClientsByDoctorId/${doctorId}`, { headers });
   }
 
   associateDoctorToClient(clientId: number, doctorIds: number[]): Observable<Client> {

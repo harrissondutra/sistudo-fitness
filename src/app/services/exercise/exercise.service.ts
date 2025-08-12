@@ -14,17 +14,30 @@ export class ExerciseService {
   constructor(private http: HttpClient, private authService: AuthService) { }
 
   getAllExercises(): Observable<Exercise[]> {
-    return this.http.get<Exercise[]>(`${this.apiUrl}/list`);
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [ExerciseService] getAllExercises com headers manuais');
+    return this.http.get<Exercise[]>(`${this.apiUrl}/list`, { headers });
   }
 
   getExercises(): Observable<Exercise[]> {
-    return this.http.get<Exercise[]>(this.apiUrl);
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [ExerciseService] getExercises com headers manuais');
+    return this.http.get<Exercise[]>(this.apiUrl, { headers });
   }
 
   deleteExercise(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [ExerciseService] deleteExercise com headers manuais:', id);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers });
   }
+  
   createExercise(exercise: Exercise): Observable<Exercise> {
-    return this.http.post<Exercise>(`${this.apiUrl}/create`, exercise);
+    // 🚨 EMERGÊNCIA: Headers manuais
+    const headers = this.authService.getAuthHeaders();
+    console.log('🚨 [ExerciseService] createExercise com headers manuais');
+    return this.http.post<Exercise>(`${this.apiUrl}/create`, exercise, { headers });
   }
 }
