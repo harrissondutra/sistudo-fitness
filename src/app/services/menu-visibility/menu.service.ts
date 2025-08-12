@@ -43,6 +43,7 @@ export class MenuService {
       icon: 'medical_services',
       visible: true,
       links: [
+        { id: 'doctor-patient-list', label: 'Seus pacientes', route: '/doctor-patient-list/:id', visible: true, isDynamic: true },
         { id: 'list-doctors', label: 'Listar Médicos', route: '/doctor-list', visible: true },
         { id: 'create-doctor', label: 'Criar Novo Médico', route: '/doctor-create', visible: true },
         { id: 'edit-doctor', label: 'Editar Médico', route: '/doctor-update/:id', visible: true }
