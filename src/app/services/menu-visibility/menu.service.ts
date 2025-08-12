@@ -394,11 +394,47 @@ export class MenuService {
     // Tenta obter o ID do usuário se não estiver disponível
     if (!this.currentUserId) {
       console.warn('currentUserId é null, tentando obter do AuthService...');
+
+      // Tentar múltiplas estratégias para obter o ID
+      let userId = null;
+
+      // Estratégia 1: getUserData()
       const userData = this.authService.getUserData();
       if (userData?.id && (typeof userData.id === 'number' || !isNaN(Number(userData.id)))) {
-        this.currentUserId = Number(userData.id);
+        userId = Number(userData.id);
+        console.log('✅ ID obtido via getUserData():', userId);
+      }
+
+      // Estratégia 2: Se não funcionou, tentar getUserInfoFromStorage()
+      if (!userId) {
+        const storageInfo = this.authService.getUserInfoFromStorage();
+        if (storageInfo?.id && (typeof storageInfo.id === 'number' || !isNaN(Number(storageInfo.id)))) {
+          userId = Number(storageInfo.id);
+          console.log('✅ ID obtido via getUserInfoFromStorage():', userId);
+        }
+      }
+
+      // Estratégia 3: Acesso direto ao sessionStorage
+      if (!userId) {
+        try {
+          const userInfoStr = sessionStorage.getItem('userInfo');
+          if (userInfoStr) {
+            const userInfo = JSON.parse(userInfoStr);
+            if (userInfo.id && (typeof userInfo.id === 'number' || !isNaN(Number(userInfo.id)))) {
+              userId = Number(userInfo.id);
+              console.log('✅ ID obtido via sessionStorage direto:', userId);
+            }
+          }
+        } catch (error) {
+          console.error('Erro ao acessar sessionStorage:', error);
+        }
+      }
+
+      if (userId) {
+        this.currentUserId = userId;
+        console.log('✅ currentUserId definido como:', this.currentUserId);
       } else {
-        console.error('❌ ID do usuário não disponível - não é possível processar menu dinâmico');
+        console.error('❌ ID do usuário não disponível em nenhuma estratégia - processando menu sem substituição dinâmica');
         return menuItems; // Retorna menu sem processamento dinâmico
       }
     }
