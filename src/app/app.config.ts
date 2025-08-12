@@ -35,21 +35,11 @@ export const DATE_FORMATS = {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    // Interceptores ordenados por prioridade
+    // Interceptores ordenados por prioridade - SIMPLIFICADO PARA DEBUG
     provideHttpClient(withInterceptors([
-      // 1. CORS interceptor (apenas em produção)
-      corsInterceptor,
-      // 2. Production interceptor (apenas em produção)
-      ...(environment.production ? [productionInterceptor] : []),
-      // 3. JWT Interceptor - Adiciona token de autorização
+      // APENAS JWT para teste
       jwtInterceptor,
-      // 4. Session Activity Interceptor - Monitora atividade
-      sessionActivityInterceptor,
-      // 5. Date Format Interceptor - Formata datas
-      DateFormatInterceptor,
-      // 6. Cache Interceptor - Cache de requisições
-      cacheInterceptor,
-      // 7. Error Interceptor - Tratamento de erros (por último)
+      // Mantém apenas o error interceptor
       errorInterceptor
     ])),
     provideAnimations(),

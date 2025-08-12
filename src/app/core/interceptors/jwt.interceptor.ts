@@ -19,7 +19,6 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   const isPublicUrl = publicUrls.some(url => req.url.includes(url));
 
   if (isPublicUrl) {
-    console.log('[JWT Interceptor] URL pública, sem autenticação:', req.url);
     return next(req);
   }
 
@@ -32,24 +31,9 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
       }
     });
 
-    // Log detalhado para debug em produção
-    console.log('✅ [JWT Interceptor] Token adicionado:', {
-      url: req.url,
-      method: req.method,
-      tokenPresente: !!token,
-      tokenTamanho: token.length,
-      authHeaderAdicionado: !!cloned.headers.get('Authorization'),
-      allHeaders: Object.fromEntries(cloned.headers.keys().map(key => [key, cloned.headers.get(key)]))
-    });
-
     return next(cloned);
   }
 
-  // Se não há token e não é URL pública, isso pode ser um problema
-  if (!isPublicUrl) {
-    console.error('❌ [JWT Interceptor] ERRO: Requisição para URL protegida sem token:', req.url);
-    console.error('❌ [JWT Interceptor] Headers originais:', Object.fromEntries(req.headers.keys().map(key => [key, req.headers.get(key)])));
-  }
-
+  // Se não há token e não é URL pública, pode ser um problema
   return next(req);
 };
