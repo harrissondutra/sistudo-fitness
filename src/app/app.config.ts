@@ -13,6 +13,7 @@ import { routes } from './app.routes';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { DateFormatInterceptor } from './core/interceptors/date-format.interceptor/date-format.interceptor';
 import { jwtInterceptor } from './core/interceptors/jwt.interceptor';
+import { debugInterceptor } from './core/interceptors/debug.interceptor';
 import { cacheInterceptor } from './core/interceptors/cache-functional.interceptor';
 import { sessionActivityInterceptor } from './core/interceptors/session-activity.interceptor';
 import { corsInterceptor } from './core/interceptors/cors.interceptor';
@@ -35,11 +36,13 @@ export const DATE_FORMATS = {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    // Interceptores ordenados por prioridade - SIMPLIFICADO PARA DEBUG
+    // Interceptores ordenados por prioridade - TESTE COM DEBUG
     provideHttpClient(withInterceptors([
-      // APENAS JWT para teste
+      // 1. Debug interceptor para testar se funciona
+      debugInterceptor,
+      // 2. JWT para autenticação
       jwtInterceptor,
-      // Mantém apenas o error interceptor
+      // 3. Error para tratamento
       errorInterceptor
     ])),
     provideAnimations(),
