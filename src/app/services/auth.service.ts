@@ -337,8 +337,6 @@ export class AuthService {
     // Debug adicional para produção
     if (token) {
       const isExpired = this.isTokenExpired(token);
-
-
       if (isExpired) {
         console.warn('[AuthService] Token expirado, fazendo logout automático');
         this.logout();
