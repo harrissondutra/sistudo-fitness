@@ -61,14 +61,20 @@ export class DoctorPatientListComponent implements OnInit {
     this.loading = true;
     this.error = '';
     
+    // 🔍 DEBUG: Verificar valor do doctorId
+    console.log('🔍 DEBUG doctorId:', this.doctorId, 'tipo:', typeof this.doctorId);
+    
     this.doctorService.getClientsByDoctorId(this.doctorId).subscribe({
       next: (clients) => {
+        console.log('✅ Clients recebidos:', clients);
         this.clients = clients;
         this.filteredClients = clients;
         this.loading = false;
       },
       error: (error) => {
-        console.error('Erro ao carregar clientes:', error);
+        console.error('❌ Erro ao carregar clientes:', error);
+        console.error('❌ Status:', error.status);
+        console.error('❌ Error detail:', error.error);
         this.error = 'Erro ao carregar lista de clientes';
         this.loading = false;
       }
