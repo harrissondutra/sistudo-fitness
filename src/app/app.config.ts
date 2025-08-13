@@ -5,6 +5,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideClientHydration } from '@angular/platform-browser';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { DatePipe } from '@angular/common';
+import { provideNgxMask } from 'ngx-mask';
 
 import { MAT_DATE_LOCALE, MAT_DATE_FORMATS, DateAdapter } from '@angular/material/core';
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
@@ -29,12 +30,13 @@ export const DATE_FORMATS = {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    // 🔥 TESTE: Apenas o auth interceptor para debug
+    // 🔥 INTERCEPTOR CONFIGURADO CORRETAMENTE
     provideHttpClient(withInterceptors([
-      authInterceptor      // APENAS o auth interceptor para testar
+      authInterceptor
     ])),
     provideAnimations(),
     provideClientHydration(),
+    provideNgxMask(), // Suporte para máscaras de input
 
     // Módulos do Material
     importProvidersFrom(
