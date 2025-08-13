@@ -98,16 +98,13 @@ export class MeasureService {
    * @returns Um Observable com o objeto Measure criado.
    */
   createMeasure(clientId: number, measure: Measure): Observable<Measure> {
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [MeasureService] createMeasure com headers manuais:', clientId);
-
     const cleanClientId = Number(clientId);
     const url = `${this.baseUrl}/createMeasureToClient/${cleanClientId}`;
 
     // Remove o campo 'data' que não existe no backend
     const { data, ...backendMeasure } = measure;
 
-    return this.http.post<Measure>(url, backendMeasure, { headers });
+    return this.http.post<Measure>(url, backendMeasure);
   }
 
   /**
@@ -117,16 +114,13 @@ export class MeasureService {
    * @returns Um Observable com o objeto Measure atualizado.
    */
   updateMeasure(clientId: number, measure: Measure): Observable<Measure> {
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [MeasureService] updateMeasure com headers manuais:', clientId);
-
     const cleanClientId = Number(clientId);
     const url = `${this.baseUrl}/updateMeasureByClient/${cleanClientId}`;
 
     // Remove o campo 'data' que não existe no backend
     const { data, ...backendMeasure } = measure;
 
-    return this.http.put<Measure>(url, backendMeasure, { headers });
+    return this.http.put<Measure>(url, backendMeasure);
   }
 
   /**

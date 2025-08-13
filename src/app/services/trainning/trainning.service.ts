@@ -29,14 +29,11 @@ export class TrainningService {
   ) { }
 
   // 1. getTrainningByClientId com cache
-  // 🚨 EMERGÊNCIA: Usando headers manuais (interceptors não funcionam)
   getTrainningByClientId(clientId: number, forceRefresh: boolean = false): Observable<Trainning[]> {
     const cacheKey = `trainning_by_client_${clientId}`;
 
     const fetchFn = () => {
-      const headers = this.authService.getAuthHeaders();
-      console.log('🚨 [TrainningService] getTrainningByClientId com headers manuais:', clientId);
-      return this.http.get<Trainning[]>(`${this.baseUrl}/trainningByClientId/${clientId}`, { headers });
+      return this.http.get<Trainning[]>(`${this.baseUrl}/trainningByClientId/${clientId}`);
     };
 
     if (forceRefresh) {
@@ -140,14 +137,11 @@ export class TrainningService {
   }
 
   // 7. listAllActiveTrainnings com cache otimizado
-  // 🚨 EMERGÊNCIA: Usando headers manuais (interceptors não funcionam)
   listAllActiveTrainnings(forceRefresh: boolean = false): Observable<Trainning[]> {
     const cacheKey = 'trainnings_active';
 
     const fetchFn = () => {
-      const headers = this.authService.getAuthHeaders();
-      console.log('🚨 [TrainningService] listAllActiveTrainnings com headers manuais');
-      return this.http.get<Trainning[]>(`${this.baseUrl}/listAllActive`, { headers });
+      return this.http.get<Trainning[]>(`${this.baseUrl}/listAllActive`);
     };
 
     if (forceRefresh) {
@@ -163,9 +157,7 @@ export class TrainningService {
     const cacheKey = 'trainnings_inactive';
 
     const fetchFn = () => {
-      const headers = this.authService.getAuthHeaders();
-      console.log('🚨 [TrainningService] listAllTrainningsInactive com headers manuais');
-      return this.http.get<Trainning[]>(`${this.baseUrl}/listAllTrainningsInactive`, { headers });
+      return this.http.get<Trainning[]>(`${this.baseUrl}/listAllTrainningsInactive`);
     };
 
     if (forceRefresh) {
@@ -176,17 +168,9 @@ export class TrainningService {
   }
 
   listInactiveTrainningsByClientId(clientId: number, forceRefresh: boolean = false): Observable<Trainning[]> {
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [TrainningService] listAllTrainningsInactive com headers manuais:', clientId);
-
     const cacheKey = `trainning_inactive_by_client_${clientId}`;
 
-    const fetchFn = () => this.http.get<Trainning[]>(`${this.baseUrl}/listInactiveTrainningsByClientId/${clientId}`, {
-      headers: new HttpHeaders({
-        'X-Cache': 'true',
-        'X-Cache-Key': cacheKey
-      })
-    }).pipe(
+    const fetchFn = () => this.http.get<Trainning[]>(`${this.baseUrl}/listInactiveTrainningsByClientId/${clientId}`).pipe(
       map(trainnings => {
         // Processa as datas de cada treino na lista
         return trainnings.map(trainning => {
@@ -216,9 +200,7 @@ export class TrainningService {
 
   // 9. deleteTrainning - Invalida cache após deleção
   deleteTrainning(id: number): Observable<void> {
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [TrainningService] deleteTrainning com headers manuais:', id);
-    return this.http.delete<void>(`${this.baseUrl}/delete/${id}`, { headers }).pipe(
+    return this.http.delete<void>(`${this.baseUrl}/delete/${id}`).pipe(
       map(response => {
         // Invalida caches relacionados
         this.invalidateTrainningCaches();
@@ -230,9 +212,7 @@ export class TrainningService {
 
   // 10. updateTrainning - Invalida cache após atualização
   updateTrainning(id: number, trainning: Trainning): Observable<Trainning> {
-    const headers = this.authService.getAuthHeaders();
-    console.log('🚨 [TrainningService] updateTrainning com headers manuais:', id);
-    return this.http.put<Trainning>(`${this.baseUrl}/update/${id}`, trainning, { headers }).pipe(
+    return this.http.put<Trainning>(`${this.baseUrl}/update/${id}`, trainning).pipe(
       map(response => {
         // Invalida caches relacionados
         this.invalidateTrainningCaches();
@@ -248,12 +228,7 @@ export class TrainningService {
   getTrainningExercises(trainningId: number): Observable<Exercise[]> {
     const cacheKey = `trainning_exercises_${trainningId}`;
 
-    const fetchFn = () => this.http.get<Exercise[]>(`${this.baseUrl}/trainnings/${trainningId}/exercises`, {
-      headers: new HttpHeaders({
-        'X-Cache': 'true',
-        'X-Cache-Key': cacheKey
-      })
-    });
+    const fetchFn = () => this.http.get<Exercise[]>(`${this.baseUrl}/trainnings/${trainningId}/exercises`);
 
     return this.cacheService.get(cacheKey, fetchFn, this.CACHE_CONFIG.EXERCISES);
   }

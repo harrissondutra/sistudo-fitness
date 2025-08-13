@@ -12,10 +12,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const token = authService.getToken();
 
-  // Log apenas em desenvolvimento
-  if (!environment.production) {
-    console.log('🔥 [AUTH-INTERCEPTOR] Interceptando requisição:', req.url);
-  }
+  // Log sempre para debug (remover após confirmação)
+  console.log('🔥 [AUTH-INTERCEPTOR] Interceptando requisição:', req.url);
 
   if (token && token.trim() !== '') {
     // Clona a requisição e adiciona o header Authorization
@@ -27,14 +25,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       }
     });
 
-    if (!environment.production) {
-      console.log('🔥 [AUTH-INTERCEPTOR] Token encontrado - Headers adicionados automaticamente');
-    }
+    console.log('🔥 [AUTH-INTERCEPTOR] Token encontrado - Headers adicionados automaticamente');
+    console.log('🔥 [AUTH-INTERCEPTOR] URL:', req.url);
+    console.log('🔥 [AUTH-INTERCEPTOR] Token (início):', token.substring(0, 20) + '...');
     return next(authReq);
   }
 
-  if (!environment.production) {
-    console.log('🔥 [AUTH-INTERCEPTOR] Sem token - Requisição original mantida');
-  }
+  console.log('🔥 [AUTH-INTERCEPTOR] Sem token - Requisição original mantida');
   return next(req);
 };
