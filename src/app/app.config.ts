@@ -11,7 +11,7 @@ import { MAT_DATE_LOCALE, MAT_DATE_FORMATS, DateAdapter } from '@angular/materia
 import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 
 import { routes } from './app.routes';
-import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { jwtInterceptor } from './core/interceptors/jwt.interceptor';
 // import { errorInterceptor } from './core/interceptors/error.interceptor';
 
 // Formato de datas para exibição no formulário
@@ -32,7 +32,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     // 🔥 INTERCEPTOR CONFIGURADO CORRETAMENTE
     provideHttpClient(withInterceptors([
-      authInterceptor
+      jwtInterceptor
     ])),
     provideAnimations(),
     provideClientHydration(),
