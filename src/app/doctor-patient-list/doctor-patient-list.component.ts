@@ -13,6 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule } from '@angular/forms';
 
 import { DoctorService } from '../services/doctor/doctor.service';
+import { ClientService } from '../services/client/client.service';
 import { Client } from '../models/client';
 
 @Component({
@@ -47,7 +48,8 @@ export class DoctorPatientListComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private doctorService: DoctorService
+    private doctorService: DoctorService,
+    private clientService: ClientService
   ) {}
 
   ngOnInit(): void {
@@ -64,18 +66,56 @@ export class DoctorPatientListComponent implements OnInit {
     // 🔍 DEBUG: Verificar valor do doctorId
     console.log('🔍 DEBUG doctorId:', this.doctorId, 'tipo:', typeof this.doctorId);
 
+    // 🔧 SOLUÇÃO ALTERNATIVA: Usar endpoint funcional enquanto cache não é corrigido
+    console.log('🔧 Tentando endpoint original primeiro...');
+
     this.doctorService.getClientsByDoctorId(this.doctorId).subscribe({
       next: (clients) => {
-        console.log('✅ Clients recebidos:', clients);
+        console.log('✅ Clients recebidos pelo endpoint original:', clients);
         this.clients = clients;
         this.filteredClients = clients;
         this.loading = false;
       },
       error: (error) => {
-        console.error('❌ Erro ao carregar clientes:', error);
+        console.error('❌ Erro no endpoint original:', error);
         console.error('❌ Status:', error.status);
         console.error('❌ Error detail:', error.error);
-        this.error = 'Erro ao carregar lista de clientes';
+
+        // 🔧 FALLBACK: Se der erro de cache, usar método alternativo
+        if (error.status === 400 && error.error?.mensagem?.includes('cache')) {
+          console.log('🔧 Erro de cache detectado, usando método alternativo...');
+          this.loadClientsAlternative();
+        } else {
+          this.error = 'Erro ao carregar lista de clientes';
+          this.loading = false;
+        }
+      }
+    });
+  }
+
+  /**
+   * 🔧 MÉTODO ALTERNATIVO: Busca todos os clientes e filtra pelo doctor
+   * Solução temporária para o problema de cache da API
+   */
+  loadClientsAlternative(): void {
+    console.log('🔧 Carregando clientes via método alternativo...');
+
+    this.clientService.getAllClients().subscribe({
+      next: (allClients) => {
+        console.log('📊 Total de clientes recebidos:', allClients.length);
+
+        // TODO: Implementar lógica de filtro por doctor
+        // Por enquanto, mostra todos os clientes como fallback
+        this.clients = allClients;
+        this.filteredClients = allClients;
+        this.loading = false;
+
+        console.log('⚠️ ATENÇÃO: Mostrando todos os clientes (fallback temporário)');
+        console.log('🔧 Necessário implementar filtro por doctor ou corrigir cache na API');
+      },
+      error: (error) => {
+        console.error('❌ Erro no método alternativo:', error);
+        this.error = 'Erro ao carregar lista de clientes (métodos primário e alternativo falharam)';
         this.loading = false;
       }
     });
@@ -91,11 +131,15 @@ export class DoctorPatientListComponent implements OnInit {
   }
 
   viewClient(clientId: number): void {
-    this.router.navigate(['/client', clientId]);
+    this.router.navigate(['/client-dashboard', clientId]);
   }
 
   editClient(clientId: number): void {
     this.router.navigate(['/clients-edit', clientId]);
+  }
+
+  goToClientMeasure(clientId: number): void {
+    this.router.navigate(['/client-measure', clientId]);
   }
 
   calculateAge(dateOfBirth: Date | string | number[] | undefined): number | null {

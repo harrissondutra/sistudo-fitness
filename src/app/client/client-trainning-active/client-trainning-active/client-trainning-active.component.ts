@@ -193,4 +193,53 @@ export class ClientTrainningActiveComponent implements OnInit {
 
     return Math.round(totalProgress / this.activeTrainings.length);
   }
+
+  getStatusClass(training: any): string {
+    const daysRemaining = this.calculateDaysRemaining(training.endDate);
+
+    if (daysRemaining <= 3) return 'status-urgent';
+    if (daysRemaining <= 7) return 'status-warning';
+    return 'status-active';
+  }
+
+  getStatusIcon(training: any): string {
+    const daysRemaining = this.calculateDaysRemaining(training.endDate);
+
+    if (daysRemaining <= 3) return 'warning';
+    if (daysRemaining <= 7) return 'schedule';
+    return 'check_circle';
+  }
+
+  executeTraining(trainingId: number): void {
+    this.router.navigate(['/training-execution', trainingId]);
+  }
+
+  getEstimatedDuration(training: any): number {
+    const exerciseCount = training.exercises?.length || 0;
+    const avgTimePerExercise = 3; // 3 minutos por exercício em média
+    const restTime = Math.max(0, exerciseCount - 1) * 1; // 1 minuto de descanso entre exercícios
+
+    return exerciseCount * avgTimePerExercise + restTime;
+  }
+
+  getDifficultyLevel(training: any): string {
+    const exerciseCount = training.exercises?.length || 0;
+
+    if (exerciseCount <= 5) return 'Iniciante';
+    if (exerciseCount <= 10) return 'Intermediário';
+    return 'Avançado';
+  }
+
+  getTrainingProgress(training: any): number {
+    if (!training.startDate || !training.endDate) return 0;
+
+    const startDate = new Date(training.startDate);
+    const endDate = new Date(training.endDate);
+    const today = new Date();
+
+    const totalDays = Math.max(1, Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
+    const elapsedDays = Math.max(0, Math.ceil((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
+
+    return Math.min(100, Math.max(0, Math.round((elapsedDays / totalDays) * 100)));
+  }
 }

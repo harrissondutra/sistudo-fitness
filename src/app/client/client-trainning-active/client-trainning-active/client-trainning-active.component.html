@@ -6,181 +6,198 @@
     </div>
   } @else if (error || !client) {
     <div class="error-container">
-      <mat-icon>error_outline</mat-icon>
-      <h2>Erro ao carregar treinos</h2>
-      <p>Cliente não encontrado ou ocorreu um erro ao carregar os dados.</p>
-      <button mat-raised-button color="primary" (click)="onBack()">
-        <mat-icon>arrow_back</mat-icon>
-        Voltar
-      </button>
+      <mat-card class="error-card">
+        <mat-icon class="error-icon">error_outline</mat-icon>
+        <h2>Erro ao carregar treinos</h2>
+        <p>Cliente não encontrado ou ocorreu um erro ao carregar os dados.</p>
+        <button mat-raised-button color="primary" (click)="onBack()">
+          <mat-icon>arrow_back</mat-icon>
+          Voltar
+        </button>
+      </mat-card>
     </div>
   } @else {
-    <!-- CABEÇALHO -->
+    <!-- CABEÇALHO MODERNO -->
     <div class="page-header">
       <div class="header-content">
-        <div class="client-info">
-          <div class="client-avatar">
-            @if (client.evolutionPhotos?.length) {
-              <img [src]="client.evolutionPhotos?.[0]" [alt]="client.name + ' - Foto'">
-            } @else {
-              <mat-icon>person</mat-icon>
-            }
-          </div>
-          <div class="client-details">
-            <h1 class="page-title">Treinos Ativos</h1>
-            <p class="client-name">{{ client.name }}</p>
-            <p class="trainings-count">{{ activeTrainings.length }} treino(s) ativo(s)</p>
-          </div>
-        </div>
-        <div class="header-actions">
-          <button mat-raised-button color="accent" (click)="createNewTraining()">
-            <mat-icon>add</mat-icon>
-            Novo Treino
-          </button>
-          <button mat-icon-button (click)="onBack()" matTooltip="Voltar ao Dashboard">
-            <mat-icon>arrow_back</mat-icon>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ESTATÍSTICAS RÁPIDAS -->
-    <div class="stats-grid">
-      <div class="stat-card active">
-        <div class="stat-icon">
-          <mat-icon>fitness_center</mat-icon>
-        </div>
-        <div class="stat-info">
-          <span class="stat-number">{{ activeTrainings.length }}</span>
-          <span class="stat-label">Ativos</span>
-        </div>
-      </div>
-
-      <div class="stat-card total">
-        <div class="stat-icon">
-          <mat-icon>timeline</mat-icon>
-        </div>
-        <div class="stat-info">
-          <span class="stat-number">{{ getTotalExercises() }}</span>
-          <span class="stat-label">Exercícios</span>
-        </div>
-      </div>
-
-      <div class="stat-card progress">
-        <div class="stat-icon">
-          <mat-icon>trending_up</mat-icon>
-        </div>
-        <div class="stat-info">
-          <span class="stat-number">{{ getAverageProgress() }}%</span>
-          <span class="stat-label">Progresso</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- TREINOS ATIVOS -->
-    @if (activeTrainings.length > 0) {
-      <div class="training-section">
-        <div class="section-header">
-          <h2>
-            <mat-icon>fitness_center</mat-icon>
+        <button mat-icon-button class="back-button" (click)="onBack()" matTooltip="Voltar">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="title-section">
+          <h1 class="page-title">
+            <mat-icon class="title-icon">fitness_center</mat-icon>
             Treinos Ativos
-          </h2>
-          <p>Treinos em andamento e disponíveis para execução</p>
+          </h1>
+          <p class="page-subtitle">{{ client.name }} • {{ activeTrainings.length }} treino(s) ativo(s)</p>
+        </div>
+        <button mat-raised-button color="primary" class="new-training-btn" (click)="createNewTraining()">
+          <mat-icon>add</mat-icon>
+          <span>Novo Treino</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ESTATÍSTICAS CARDS -->
+    <div class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-card active">
+          <div class="stat-icon">
+            <mat-icon>fitness_center</mat-icon>
+          </div>
+          <div class="stat-content">
+            <span class="stat-number">{{ activeTrainings.length }}</span>
+            <span class="stat-label">Treinos Ativos</span>
+          </div>
         </div>
 
-        <div class="trainings-grid">
-          @for (training of activeTrainings; track training.id) {
-            <mat-card class="training-card active-card">
-              <mat-card-header>
-                <div class="training-avatar active">
-                  <mat-icon>fitness_center</mat-icon>
-                </div>
-                <mat-card-title>{{ training.name || 'Treino sem nome' }}</mat-card-title>
-                <mat-card-subtitle>
-                  <mat-chip [color]="getStatusColor(training)" selected>
-                    {{ getTrainingStatus(training) }}
-                  </mat-chip>
-                </mat-card-subtitle>
-              </mat-card-header>
+        <div class="stat-card exercises">
+          <div class="stat-icon">
+            <mat-icon>assignment</mat-icon>
+          </div>
+          <div class="stat-content">
+            <span class="stat-number">{{ getTotalExercises() }}</span>
+            <span class="stat-label">Total de Exercícios</span>
+          </div>
+        </div>
 
-              <mat-card-content>
-                <div class="training-info">
-                  <div class="info-row">
-                    <mat-icon>date_range</mat-icon>
-                    <span>{{ formatDateRange(training.startDate, training.endDate) }}</span>
+        <div class="stat-card progress">
+          <div class="stat-icon">
+            <mat-icon>trending_up</mat-icon>
+          </div>
+          <div class="stat-content">
+            <span class="stat-number">{{ getAverageProgress() }}%</span>
+            <span class="stat-label">Progresso Médio</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LISTA DE TREINOS -->
+    @if (activeTrainings.length > 0) {
+      <div class="trainings-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <mat-icon>list</mat-icon>
+            Lista de Treinos
+          </h2>
+          <p class="section-subtitle">Gerencie e execute os treinos ativos</p>
+        </div>
+
+        <div class="trainings-list">
+          @for (training of activeTrainings; track training.id) {
+            <div class="training-item">
+              <div class="training-card">
+                <!-- Header do Card -->
+                <div class="card-header">
+                  <div class="training-info">
+                    <div class="training-avatar">
+                      <mat-icon>fitness_center</mat-icon>
+                    </div>
+                    <div class="training-details">
+                      <h3 class="training-name">{{ training.name || 'Treino sem nome' }}</h3>
+                      <div class="training-meta">
+                        <mat-chip class="status-chip" [class]="getStatusClass(training)">
+                          <mat-icon matChipAvatar>{{ getStatusIcon(training) }}</mat-icon>
+                          {{ getTrainingStatus(training) }}
+                        </mat-chip>
+                        <span class="date-range">{{ formatDateRange(training.startDate, training.endDate) }}</span>
+                      </div>
+                    </div>
                   </div>
+                  <div class="training-actions">
+                    <button mat-icon-button (click)="navigateToTrainingView(training.id!)" matTooltip="Ver detalhes">
+                      <mat-icon>visibility</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="navigateToTrainingEdit(training.id!)" matTooltip="Editar treino">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="executeTraining(training.id!)" matTooltip="Executar treino" class="execute-btn">
+                      <mat-icon>play_arrow</mat-icon>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Conteúdo do Card -->
+                <div class="card-content">
                   @if (training.description) {
-                    <div class="info-row">
+                    <div class="training-description">
                       <mat-icon>description</mat-icon>
                       <span>{{ training.description }}</span>
                     </div>
                   }
-                  <div class="info-row">
-                    <mat-icon>fitness_center</mat-icon>
-                    <span>{{ training.exercises.length || 0 }} exercício(s)</span>
-                  </div>
-                </div>
 
-                <!-- EXERCÍCIOS -->
-                @if (training.exercises && training.exercises.length > 0) {
-                  <mat-expansion-panel class="exercises-panel">
-                    <mat-expansion-panel-header>
-                      <mat-panel-title>
+                  <div class="training-stats">
+                    <div class="stat-item">
+                      <mat-icon>fitness_center</mat-icon>
+                      <span>{{ training.exercises.length || 0 }} exercícios</span>
+                    </div>
+                    <div class="stat-item">
+                      <mat-icon>schedule</mat-icon>
+                      <span>~{{ getEstimatedDuration(training) }} min</span>
+                    </div>
+                    <div class="stat-item">
+                      <mat-icon>local_fire_department</mat-icon>
+                      <span>{{ getDifficultyLevel(training) }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Lista de Exercícios Compacta -->
+                  @if (training.exercises && training.exercises.length > 0) {
+                    <div class="exercises-preview">
+                      <h4 class="exercises-title">
                         <mat-icon>list</mat-icon>
                         Exercícios ({{ training.exercises.length }})
-                      </mat-panel-title>
-                    </mat-expansion-panel-header>
-
-                    <div class="exercises-list">
-                      @for (exercise of training.exercises; track exercise.id) {
-                        <div class="exercise-item">
-                          <div class="exercise-header">
+                      </h4>
+                      <div class="exercises-compact">
+                        @for (exercise of training.exercises.slice(0, 3); track exercise.id) {
+                          <div class="exercise-chip">
                             <mat-icon>fitness_center</mat-icon>
-                            <span class="exercise-name">{{ exercise.name || 'Exercício' }}</span>
+                            <span>{{ exercise.name || 'Exercício' }}</span>
+                            @if (exercise.sets || exercise.repetitions) {
+                              <small>{{ exercise.sets }}x{{ exercise.repetitions }}</small>
+                            }
                           </div>
-                          @if (exercise.sets || exercise.repetitions || exercise.weight) {
-                            <div class="exercise-details">
-                              @if (exercise.sets) {
-                                <span class="detail-chip">{{ exercise.sets }} séries</span>
-                              }
-                              @if (exercise.repetitions) {
-                                <span class="detail-chip">{{ exercise.repetitions }} reps</span>
-                              }
-                              @if (exercise.weight) {
-                                <span class="detail-chip">{{ exercise.weight }}kg</span>
-                              }
-                            </div>
-                          }
-                        </div>
-                      }
+                        }
+                        @if (training.exercises.length > 3) {
+                          <div class="more-exercises">
+                            +{{ training.exercises.length - 3 }} mais
+                          </div>
+                        }
+                      </div>
                     </div>
-                  </mat-expansion-panel>
-                }
-              </mat-card-content>
+                  }
+                </div>
 
-              <mat-card-actions align="end">
-                <button mat-button (click)="navigateToTrainingView(training.id!)">
-                  <mat-icon>visibility</mat-icon>
-                  Ver Detalhes
-                </button>
-                <button mat-button color="primary" (click)="navigateToTrainingEdit(training.id!)">
-                  <mat-icon>edit</mat-icon>
-                  Editar
-                </button>
-              </mat-card-actions>
-            </mat-card>
+                <!-- Footer do Card -->
+                <div class="card-footer">
+                  <div class="progress-section">
+                    <span class="progress-label">Progresso do treino</span>
+                    <div class="progress-bar">
+                      <div class="progress-fill" [style.width.%]="getTrainingProgress(training)"></div>
+                    </div>
+                    <span class="progress-percentage">{{ getTrainingProgress(training) }}%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           }
         </div>
       </div>
     } @else {
-      <div class="no-trainings-container">
-        <mat-icon>fitness_center</mat-icon>
-        <h2>Nenhum treino ativo</h2>
-        <p>Este cliente não possui treinos ativos no momento. Que tal criar o primeiro treino?</p>
-        <button mat-raised-button color="primary" (click)="createNewTraining()">
-          <mat-icon>add</mat-icon>
-          Criar Primeiro Treino
-        </button>
+      <div class="empty-state">
+        <mat-card class="empty-card">
+          <div class="empty-content">
+            <div class="empty-icon">
+              <mat-icon>fitness_center</mat-icon>
+            </div>
+            <h2>Nenhum treino ativo</h2>
+            <p>Este cliente não possui treinos ativos no momento.<br>Que tal criar o primeiro treino?</p>
+            <button mat-raised-button color="primary" (click)="createNewTraining()">
+              <mat-icon>add</mat-icon>
+              Criar Primeiro Treino
+            </button>
+          </div>
+        </mat-card>
       </div>
     }
   }

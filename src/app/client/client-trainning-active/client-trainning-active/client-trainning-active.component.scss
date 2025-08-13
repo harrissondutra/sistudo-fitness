@@ -1,143 +1,246 @@
-/* === SISTUDO FITNESS - TREINOS ATIVOS === */
+@use 'sass:math';
 @import '../../../../styles/variables';
 
-/* === CONTAINER PRINCIPAL === */
+// === MÓDULO TREINOS ATIVOS - CORES E ESPAÇAMENTOS ===
+$training-primary: $primary-color;
+$training-primary-light: $primary-light;
+$training-surface: $surface-color;
+$training-surface-elevated: $surface-elevated;
+$training-text: $text-color;
+$training-text-secondary: $text-secondary;
+$training-text-muted: $text-muted;
+$training-border: $border-color;
+$training-error: $error-color;
+$training-success: $success-color;
+$training-warning: $warning-color;
+
+// === MIXINS ===
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin card-elevation {
+  box-shadow:
+    0 4px 24px rgba($training-primary, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+@mixin card-elevation-hover {
+  box-shadow:
+    0 8px 32px rgba($training-primary, 0.12),
+    0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+@mixin smooth-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@mixin glass-effect {
+  background: rgba(white, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(white, 0.2);
+}
+
+// === CONTAINER PRINCIPAL ===
 .active-trainings-container {
-  min-height: 100vh;
-  background: $background-color;
+  max-width: 1400px;
+  margin: 0 auto;
   padding: $spacing-lg;
+  min-height: 100vh;
+  background: linear-gradient(135deg, rgba($training-primary, 0.02) 0%, rgba($training-primary-light, 0.05) 100%);
 
   @media (max-width: 768px) {
     padding: $spacing-md;
   }
 }
 
-/* === LOADING & ERROR STATES === */
-.loading-container,
-.error-container {
-  display: flex;
+// === ESTADOS DE CARREGAMENTO E ERRO ===
+.loading-container {
+  @include flex-center;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
+  min-height: 60vh;
   gap: $spacing-lg;
-  text-align: center;
+
+  mat-spinner {
+    ::ng-deep circle {
+      stroke: $training-primary;
+    }
+  }
 
   p {
-    color: $text-secondary;
+    color: $training-text-secondary;
     font-size: 16px;
-    margin: 0;
-  }
-
-  mat-spinner ::ng-deep .mat-spinner circle {
-    stroke: $primary-color;
+    font-weight: 500;
   }
 }
 
 .error-container {
-  mat-icon {
-    font-size: 64px;
-    width: 64px;
-    height: 64px;
-    color: $error-color;
-    margin-bottom: $spacing-md;
-  }
+  @include flex-center;
+  min-height: 60vh;
+  padding: $spacing-xl;
 
-  h2 {
-    color: $text-color;
-    font-size: 24px;
-    font-weight: 600;
-    margin: 0 0 $spacing-sm 0;
+  .error-card {
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    padding: $spacing-xl;
+    border-radius: 20px;
+    @include card-elevation;
+
+    .error-icon {
+      font-size: 64px;
+      width: 64px;
+      height: 64px;
+      color: $training-error;
+      margin-bottom: $spacing-lg;
+    }
+
+    h2 {
+      color: $training-text;
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0 0 $spacing-sm 0;
+    }
+
+    p {
+      color: $training-text-secondary;
+      font-size: 16px;
+      margin: 0 0 $spacing-xl 0;
+      line-height: 1.5;
+    }
+
+    button {
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 500;
+    }
   }
 }
 
-/* === CABEÇALHO DA PÁGINA === */
+// === CABEÇALHO DA PÁGINA ===
 .page-header {
-  background: white;
-  border-radius: 18px;
+  background: $training-surface;
+  border-radius: 20px;
   padding: $spacing-xl;
   margin-bottom: $spacing-xl;
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.08),
-    0 2px 8px rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(0, 0, 0, 0.06);
+  @include card-elevation;
+  @include smooth-transition;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, $training-primary, $training-primary-light);
+    border-radius: 20px 20px 0 0;
+  }
 
   .header-content {
-    display: flex;
-    justify-content: space-between;
+    @include flex-between;
     align-items: center;
 
-    .client-info {
-      display: flex;
-      align-items: center;
-      gap: $spacing-lg;
+    .back-button {
+      background: rgba($training-primary, 0.1);
+      color: $training-primary;
+      border: 1px solid rgba($training-primary, 0.2);
+      border-radius: 12px;
+      width: 48px;
+      height: 48px;
+      @include smooth-transition;
 
-      .client-avatar {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        overflow: hidden;
-        background: rgba($primary-color, 0.1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 3px solid rgba($primary-color, 0.2);
-
-        img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        mat-icon {
-          font-size: 40px;
-          width: 40px;
-          height: 40px;
-          color: $primary-color;
-        }
+      &:hover {
+        background: rgba($training-primary, 0.15);
+        transform: translateX(-2px);
+        @include card-elevation;
       }
 
-      .client-details {
-        .page-title {
-          font-size: 28px;
-          font-weight: 700;
-          color: $text-color;
-          margin: 0 0 $spacing-xs 0;
-        }
-
-        .client-name {
-          font-size: 18px;
-          color: $text-secondary;
-          margin: 0 0 $spacing-xs 0;
-          font-weight: 500;
-        }
-
-        .trainings-count {
-          font-size: 14px;
-          color: $text-muted;
-          margin: 0;
-          font-weight: 500;
-        }
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
       }
     }
 
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: $spacing-md;
+    .title-section {
+      flex: 1;
+      text-align: center;
+
+      .page-title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: $spacing-md;
+        margin: 0;
+        color: $training-text;
+        font-size: 32px;
+        font-weight: 700;
+        line-height: 1.2;
+
+        .title-icon {
+          font-size: 36px;
+          width: 36px;
+          height: 36px;
+          color: $training-primary;
+        }
+      }
+
+      .page-subtitle {
+        margin: $spacing-sm 0 0;
+        color: $training-text-secondary;
+        font-size: 16px;
+        font-weight: 500;
+      }
+    }
+
+    .new-training-btn {
+      padding: 12px 24px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, $training-primary, $training-primary-light);
+      color: white;
+      border: none;
+      box-shadow: 0 4px 16px rgba($training-primary, 0.3);
+      @include smooth-transition;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 24px rgba($training-primary, 0.4);
+      }
+
+      mat-icon {
+        margin-right: 8px;
+      }
     }
 
     @media (max-width: 768px) {
       flex-direction: column;
       gap: $spacing-lg;
-      text-align: center;
 
-      .client-info {
-        flex-direction: column;
-        text-align: center;
+      .title-section {
+        order: 1;
+
+        .page-title {
+          font-size: 28px;
+        }
       }
 
-      .header-actions {
+      .back-button {
+        order: 0;
+        align-self: flex-start;
+      }
+
+      .new-training-btn {
+        order: 2;
         width: 100%;
         justify-content: center;
       }
@@ -145,416 +248,631 @@
   }
 }
 
-/* === ESTATÍSTICAS RÁPIDAS === */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: $spacing-lg;
+// === SEÇÃO DE ESTATÍSTICAS ===
+.stats-section {
   margin-bottom: $spacing-xl;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
 
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(3, 1fr);
-    gap: $spacing-md;
-  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: $spacing-lg;
+    max-width: 900px;
+    margin: 0 auto;
 
-  .stat-card {
-    background: white;
-    border-radius: 12px;
-    padding: $spacing-lg;
-    display: flex;
-    align-items: center;
-    gap: $spacing-md;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    transition: all 0.3s ease;
-
-    &:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: $spacing-md;
     }
 
-    .stat-icon {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+    .stat-card {
+      background: $training-surface;
+      border-radius: 16px;
+      padding: $spacing-lg;
+      @include card-elevation;
+      @include smooth-transition;
+      position: relative;
+      overflow: hidden;
 
-      mat-icon {
-        font-size: 24px;
-        width: 24px;
-        height: 24px;
-        color: white;
-      }
-    }
-
-    .stat-info {
-      display: flex;
-      flex-direction: column;
-
-      .stat-number {
-        font-size: 24px;
-        font-weight: 700;
-        color: $text-color;
-        line-height: 1;
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        @include smooth-transition;
       }
 
-      .stat-label {
-        font-size: 12px;
-        color: $text-secondary;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+      &:hover {
+        transform: translateY(-4px);
+        @include card-elevation-hover;
       }
-    }
 
-    &.active {
       .stat-icon {
-        background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
-      }
-    }
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        @include flex-center;
+        margin-bottom: $spacing-md;
+        @include smooth-transition;
 
-    &.total {
-      .stat-icon {
-        background: linear-gradient(135deg, #2196F3 0%, #1565C0 100%);
+        mat-icon {
+          font-size: 24px;
+          width: 24px;
+          height: 24px;
+          color: white;
+        }
       }
-    }
 
-    &.progress {
-      .stat-icon {
-        background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+      .stat-content {
+        .stat-number {
+          display: block;
+          font-size: 32px;
+          font-weight: 700;
+          color: $training-text;
+          line-height: 1;
+          margin-bottom: $spacing-xs;
+        }
+
+        .stat-label {
+          font-size: 14px;
+          color: $training-text-secondary;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+      }
+
+      &.active {
+        &::before {
+          background: $training-success;
+        }
+
+        .stat-icon {
+          background: linear-gradient(135deg, $training-success 0%, darken($training-success, 10%) 100%);
+        }
+      }
+
+      &.exercises {
+        &::before {
+          background: $training-primary;
+        }
+
+        .stat-icon {
+          background: linear-gradient(135deg, $training-primary 0%, $training-primary-light 100%);
+        }
+      }
+
+      &.progress {
+        &::before {
+          background: $training-warning;
+        }
+
+        .stat-icon {
+          background: linear-gradient(135deg, $training-warning 0%, darken($training-warning, 10%) 100%);
+        }
       }
     }
   }
 }
 
-/* === SEÇÕES DE TREINOS === */
-.training-section {
-  margin-bottom: $spacing-xl * 1.5;
-
+// === SEÇÃO DE TREINOS ===
+.trainings-section {
   .section-header {
     text-align: center;
     margin-bottom: $spacing-xl;
 
-    h2 {
+    .section-title {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: $spacing-sm;
-      font-size: 24px;
+      font-size: 28px;
       font-weight: 700;
-      color: $text-color;
+      color: $training-text;
       margin: 0 0 $spacing-sm 0;
 
       mat-icon {
-        font-size: 28px;
-        width: 28px;
-        height: 28px;
-        color: $primary-color;
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
+        color: $training-primary;
       }
     }
 
-    p {
+    .section-subtitle {
       font-size: 16px;
-      color: $text-secondary;
+      color: $training-text-secondary;
       margin: 0;
+      font-weight: 500;
     }
   }
-}
 
-/* === GRID DE TREINOS === */
-.trainings-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: $spacing-xl;
-  max-width: 1400px;
-  margin: 0 auto;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+  .trainings-list {
+    display: flex;
+    flex-direction: column;
     gap: $spacing-lg;
+    max-width: 1000px;
+    margin: 0 auto;
+
+    .training-item {
+      .training-card {
+        background: $training-surface;
+        border-radius: 20px;
+        @include card-elevation;
+        @include smooth-transition;
+        overflow: hidden;
+        border: 1px solid rgba($training-border, 0.1);
+
+        &:hover {
+          transform: translateY(-4px);
+          @include card-elevation-hover;
+        }
+
+        // === HEADER DO CARD ===
+        .card-header {
+          @include flex-between;
+          padding: $spacing-lg;
+          background: rgba($training-primary, 0.02);
+          border-bottom: 1px solid rgba($training-border, 0.1);
+
+          .training-info {
+            display: flex;
+            align-items: center;
+            gap: $spacing-md;
+            flex: 1;
+
+            .training-avatar {
+              width: 56px;
+              height: 56px;
+              border-radius: 16px;
+              background: linear-gradient(135deg, $training-primary, $training-primary-light);
+              @include flex-center;
+              color: white;
+              @include smooth-transition;
+
+              mat-icon {
+                font-size: 24px;
+                width: 24px;
+                height: 24px;
+              }
+            }
+
+            .training-details {
+              flex: 1;
+
+              .training-name {
+                font-size: 20px;
+                font-weight: 600;
+                color: $training-text;
+                margin: 0 0 $spacing-xs 0;
+                line-height: 1.2;
+              }
+
+              .training-meta {
+                display: flex;
+                align-items: center;
+                gap: $spacing-md;
+                flex-wrap: wrap;
+
+                .status-chip {
+                  font-size: 12px;
+                  font-weight: 500;
+                  border-radius: 12px;
+                  padding: 4px 12px;
+
+                  &.status-active {
+                    background: rgba($training-success, 0.1);
+                    color: $training-success;
+                    border: 1px solid rgba($training-success, 0.2);
+                  }
+
+                  &.status-warning {
+                    background: rgba($training-warning, 0.1);
+                    color: $training-warning;
+                    border: 1px solid rgba($training-warning, 0.2);
+                  }
+
+                  &.status-urgent {
+                    background: rgba($training-error, 0.1);
+                    color: $training-error;
+                    border: 1px solid rgba($training-error, 0.2);
+                  }
+
+                  mat-icon {
+                    font-size: 14px;
+                    width: 14px;
+                    height: 14px;
+                  }
+                }
+
+                .date-range {
+                  font-size: 14px;
+                  color: $training-text-secondary;
+                  font-weight: 500;
+                }
+              }
+            }
+          }
+
+          .training-actions {
+            display: flex;
+            gap: $spacing-xs;
+
+            .mat-icon-button {
+              width: 44px;
+              height: 44px;
+              border-radius: 12px;
+              background: rgba($training-surface, 0.8);
+              border: 1px solid rgba($training-border, 0.2);
+              @include smooth-transition;
+
+              &:hover {
+                transform: translateY(-1px);
+                @include card-elevation;
+                background: $training-surface;
+              }
+
+              mat-icon {
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+                color: $training-text-secondary;
+              }
+
+              &.execute-btn {
+                background: rgba($training-success, 0.1);
+                border-color: rgba($training-success, 0.2);
+
+                &:hover {
+                  background: rgba($training-success, 0.15);
+                }
+
+                mat-icon {
+                  color: $training-success;
+                }
+              }
+            }
+          }
+        }
+
+        // === CONTEÚDO DO CARD ===
+        .card-content {
+          padding: $spacing-lg;
+
+          .training-description {
+            display: flex;
+            align-items: center;
+            gap: $spacing-sm;
+            margin-bottom: $spacing-lg;
+            padding: $spacing-md;
+            background: rgba($training-primary, 0.04);
+            border-radius: 12px;
+            border-left: 4px solid $training-primary;
+
+            mat-icon {
+              font-size: 18px;
+              width: 18px;
+              height: 18px;
+              color: $training-primary;
+              flex-shrink: 0;
+            }
+
+            span {
+              font-size: 14px;
+              color: $training-text;
+              line-height: 1.4;
+            }
+          }
+
+          .training-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: $spacing-md;
+            margin-bottom: $spacing-lg;
+
+            .stat-item {
+              display: flex;
+              align-items: center;
+              gap: $spacing-sm;
+              padding: $spacing-sm;
+              background: rgba($training-surface-elevated, 0.5);
+              border-radius: 8px;
+              border: 1px solid rgba($training-border, 0.1);
+
+              mat-icon {
+                font-size: 16px;
+                width: 16px;
+                height: 16px;
+                color: $training-primary;
+                flex-shrink: 0;
+              }
+
+              span {
+                font-size: 13px;
+                color: $training-text;
+                font-weight: 500;
+              }
+            }
+          }
+
+          .exercises-preview {
+            .exercises-title {
+              display: flex;
+              align-items: center;
+              gap: $spacing-sm;
+              font-size: 16px;
+              font-weight: 600;
+              color: $training-text;
+              margin: 0 0 $spacing-md 0;
+
+              mat-icon {
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+                color: $training-primary;
+              }
+            }
+
+            .exercises-compact {
+              display: flex;
+              flex-wrap: wrap;
+              gap: $spacing-sm;
+
+              .exercise-chip {
+                display: flex;
+                align-items: center;
+                gap: $spacing-xs;
+                padding: $spacing-xs $spacing-sm;
+                background: rgba($training-primary, 0.08);
+                border: 1px solid rgba($training-primary, 0.15);
+                border-radius: 8px;
+                font-size: 12px;
+                color: $training-text;
+                @include smooth-transition;
+
+                &:hover {
+                  background: rgba($training-primary, 0.12);
+                  border-color: rgba($training-primary, 0.25);
+                }
+
+                mat-icon {
+                  font-size: 14px;
+                  width: 14px;
+                  height: 14px;
+                  color: $training-primary;
+                }
+
+                small {
+                  font-size: 10px;
+                  color: $training-text-secondary;
+                  font-weight: 500;
+                }
+              }
+
+              .more-exercises {
+                display: flex;
+                align-items: center;
+                padding: $spacing-xs $spacing-sm;
+                background: rgba($training-text-muted, 0.1);
+                border: 1px solid rgba($training-text-muted, 0.2);
+                border-radius: 8px;
+                font-size: 12px;
+                color: $training-text-muted;
+                font-weight: 500;
+              }
+            }
+          }
+        }
+
+        // === FOOTER DO CARD ===
+        .card-footer {
+          padding: $spacing-lg;
+          background: rgba($training-surface-elevated, 0.3);
+          border-top: 1px solid rgba($training-border, 0.1);
+
+          .progress-section {
+            .progress-label {
+              display: block;
+              font-size: 12px;
+              color: $training-text-secondary;
+              font-weight: 500;
+              margin-bottom: $spacing-xs;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+
+            .progress-bar {
+              width: 100%;
+              height: 8px;
+              background: rgba($training-border, 0.2);
+              border-radius: 4px;
+              overflow: hidden;
+              margin-bottom: $spacing-xs;
+              position: relative;
+
+              .progress-fill {
+                height: 100%;
+                background: linear-gradient(90deg, $training-primary, $training-primary-light);
+                border-radius: 4px;
+                @include smooth-transition;
+                position: relative;
+
+                &::after {
+                  content: '';
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  right: 0;
+                  bottom: 0;
+                  background: linear-gradient(90deg, transparent, rgba(white, 0.2), transparent);
+                  animation: shimmer 2s infinite;
+                }
+              }
+            }
+
+            .progress-percentage {
+              font-size: 12px;
+              color: $training-text;
+              font-weight: 600;
+            }
+          }
+        }
+      }
+    }
   }
 }
 
-/* === CARDS DE TREINO === */
-.training-card {
-  background: white;
-  border-radius: 16px;
-  border: none;
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.08),
-    0 2px 8px rgba(0, 0, 0, 0.04);
-  transition: all 0.3s ease;
-  overflow: hidden;
-
-  &:hover {
-    transform: translateY(-6px);
-    box-shadow:
-      0 16px 32px rgba(0, 0, 0, 0.12),
-      0 4px 16px rgba(0, 0, 0, 0.08);
-  }
-
-  .mat-mdc-card-header {
-    padding: $spacing-lg;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-
-    .training-avatar {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      mat-icon {
-        color: white;
-        font-size: 24px;
-        width: 24px;
-        height: 24px;
-      }
-
-      &.active {
-        background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
-      }
-    }
-
-    .mat-mdc-card-title {
-      font-size: 18px;
-      font-weight: 600;
-      color: $text-color;
-      margin: 0;
-    }
-
-    .mat-mdc-card-subtitle {
-      margin-top: $spacing-sm;
-
-      mat-chip {
-        font-size: 12px;
-        font-weight: 500;
-      }
-    }
-  }
-
-  .mat-mdc-card-content {
-    padding: $spacing-lg;
-
-    .training-info {
-      margin-bottom: $spacing-lg;
-
-      .info-row {
-        display: flex;
-        align-items: center;
-        gap: $spacing-sm;
-        margin-bottom: $spacing-sm;
-
-        &:last-child {
-          margin-bottom: 0;
-        }
-
-        mat-icon {
-          font-size: 18px;
-          width: 18px;
-          height: 18px;
-          color: $text-secondary;
-        }
-
-        span {
-          font-size: 14px;
-          color: $text-color;
-          font-weight: 500;
-        }
-      }
-    }
-  }
-
-  .mat-mdc-card-actions {
-    padding: $spacing-md $spacing-lg;
-    border-top: 1px solid rgba(0, 0, 0, 0.06);
-    background: rgba($background-color, 0.5);
-
-    button {
-      margin-right: $spacing-sm;
-
-      &:last-child {
-        margin-right: 0;
-      }
-    }
-  }
-
-  // Variação para cards ativos
-  &.active-card {
-    .mat-mdc-card-header {
-      background: rgba(76, 175, 80, 0.05);
-    }
-  }
-}
-
-/* === PAINEL DE EXERCÍCIOS === */
-.exercises-panel {
-  margin-top: $spacing-md;
-  border-radius: 8px;
-  box-shadow: none;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-
-  .mat-expansion-panel-header {
-    padding: $spacing-md;
-
-    .mat-panel-title {
-      display: flex;
-      align-items: center;
-      gap: $spacing-sm;
-      font-size: 14px;
-      font-weight: 600;
-      color: $text-color;
-
-      mat-icon {
-        font-size: 18px;
-        width: 18px;
-        height: 18px;
-        color: $primary-color;
-      }
-    }
-  }
-
-  .exercises-list {
-    padding: $spacing-sm 0;
-
-    .exercise-item {
-      padding: $spacing-sm $spacing-md;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-
-      &:last-child {
-        border-bottom: none;
-      }
-
-      .exercise-header {
-        display: flex;
-        align-items: center;
-        gap: $spacing-sm;
-        margin-bottom: $spacing-xs;
-
-        mat-icon {
-          font-size: 16px;
-          width: 16px;
-          height: 16px;
-          color: $accent-color;
-        }
-
-        .exercise-name {
-          font-size: 14px;
-          font-weight: 600;
-          color: $text-color;
-        }
-      }
-
-      .exercise-details {
-        display: flex;
-        gap: $spacing-xs;
-        flex-wrap: wrap;
-
-        .detail-chip {
-          background: rgba($primary-color, 0.1);
-          color: $primary-color;
-          padding: 2px 8px;
-          border-radius: 12px;
-          font-size: 11px;
-          font-weight: 500;
-        }
-      }
-    }
-  }
-}
-
-/* === NO TRAININGS STATE === */
-.no-trainings-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-  text-align: center;
-  background: white;
-  border-radius: 16px;
+// === ESTADO VAZIO ===
+.empty-state {
+  @include flex-center;
+  min-height: 50vh;
   padding: $spacing-xl;
-  box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.08),
-    0 2px 8px rgba(0, 0, 0, 0.04);
-  margin: 0 auto;
-  max-width: 500px;
 
-  mat-icon {
-    font-size: 80px;
-    width: 80px;
-    height: 80px;
-    color: $text-secondary;
-    margin-bottom: $spacing-lg;
-  }
+  .empty-card {
+    max-width: 500px;
+    width: 100%;
+    border-radius: 20px;
+    @include card-elevation;
 
-  h2 {
-    font-size: 24px;
-    font-weight: 600;
-    color: $text-color;
-    margin: 0 0 $spacing-md 0;
-  }
+    .empty-content {
+      text-align: center;
+      padding: $spacing-xl;
 
-  p {
-    font-size: 16px;
-    color: $text-secondary;
-    margin: 0 0 $spacing-xl 0;
-    max-width: 300px;
-  }
+      .empty-icon {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: rgba($training-primary, 0.1);
+        @include flex-center;
+        margin: 0 auto $spacing-lg;
 
-  button {
-    padding: $spacing-sm $spacing-xl;
+        mat-icon {
+          font-size: 64px;
+          width: 64px;
+          height: 64px;
+          color: $training-primary;
+        }
+      }
 
-    mat-icon {
-      font-size: 18px;
-      width: 18px;
-      height: 18px;
-      margin-right: $spacing-sm;
-      margin-bottom: 0;
+      h2 {
+        font-size: 24px;
+        font-weight: 600;
+        color: $training-text;
+        margin: 0 0 $spacing-md 0;
+      }
+
+      p {
+        font-size: 16px;
+        color: $training-text-secondary;
+        margin: 0 0 $spacing-xl 0;
+        line-height: 1.5;
+      }
+
+      button {
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-weight: 500;
+
+        mat-icon {
+          margin-right: 8px;
+        }
+      }
     }
   }
 }
 
-/* === RESPONSIVIDADE === */
+// === ANIMAÇÕES ===
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+// === RESPONSIVIDADE ===
+@media (max-width: 768px) {
+  .active-trainings-container {
+    padding: $spacing-md;
+  }
+
+  .trainings-section .trainings-list .training-item .training-card {
+    .card-header {
+      flex-direction: column;
+      gap: $spacing-md;
+
+      .training-info {
+        width: 100%;
+
+        .training-details .training-meta {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: $spacing-sm;
+        }
+      }
+
+      .training-actions {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    .card-content {
+      .training-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .exercises-preview .exercises-compact {
+        flex-direction: column;
+
+        .exercise-chip {
+          width: 100%;
+          justify-content: flex-start;
+        }
+      }
+    }
+  }
+}
+
 @media (max-width: 480px) {
   .active-trainings-container {
     padding: $spacing-sm;
   }
 
-  .stats-grid {
-    grid-template-columns: 1fr;
+  .page-header {
+    padding: $spacing-lg;
+
+    .header-content .title-section .page-title {
+      font-size: 24px;
+    }
   }
 
-  .trainings-grid {
-    grid-template-columns: 1fr;
-  }
+  .stats-section .stats-grid .stat-card {
+    padding: $spacing-md;
 
-  .training-card {
-    .mat-mdc-card-header,
-    .mat-mdc-card-content,
-    .mat-mdc-card-actions {
-      padding: $spacing-md;
+    .stat-content .stat-number {
+      font-size: 28px;
     }
   }
 }
 
-/* === ACESSIBILIDADE === */
-.training-card:focus-visible,
-.stat-card:focus-visible {
-  outline: 2px solid $primary-color;
-  outline-offset: 2px;
-}
-
+// === ACESSIBILIDADE ===
 @media (prefers-reduced-motion: reduce) {
   .training-card,
-  .stat-card {
+  .stat-card,
+  .progress-fill {
     transition: none;
   }
+
+  .progress-fill::after {
+    animation: none;
+  }
+}
+
+.training-card:focus-visible,
+.stat-card:focus-visible {
+  outline: 2px solid $training-primary;
+  outline-offset: 2px;
 }

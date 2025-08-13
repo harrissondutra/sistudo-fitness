@@ -1,27 +1,87 @@
+@use 'sass:math';
 @import '../../styles/variables';
 
-.doctor-patient-list-container {
-  padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  min-height: 100vh;
+// === MÓDULO PACIENTES DO MÉDICO - CORES E ESPAÇAMENTOS ===
+$doctor-patient-primary: $secondary-color; // Azul médico profissional
+$doctor-patient-primary-light: $secondary-light;
+$doctor-patient-surface: $surface-color;
+$doctor-patient-text: $text-color;
+$doctor-patient-text-secondary: $text-secondary;
+$doctor-patient-text-muted: $text-muted;
+$doctor-patient-border: $border-color;
+$doctor-patient-error: $error-color;
 
+// === MIXINS ===
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin card-elevation {
+  box-shadow:
+    0 4px 24px rgba($doctor-patient-primary, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+@mixin card-elevation-hover {
+  box-shadow:
+    0 8px 32px rgba($doctor-patient-primary, 0.12),
+    0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+@mixin smooth-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// === CONTAINER PRINCIPAL ===
+.doctor-patient-list-container {
+  max-width: 1200px;
+  margin: $spacing-lg auto;
+  padding: $spacing-lg;
+  background: $doctor-patient-surface;
+  border-radius: 20px;
+  @include card-elevation;
+  @include smooth-transition;
+
+  // === CABEÇALHO ===
   .header {
-    margin-bottom: 24px;
+    @include flex-between;
+    margin-bottom: $spacing-xl;
+    padding-bottom: $spacing-lg;
+    border-bottom: 2px solid $doctor-patient-border;
 
     .header-content {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: $spacing-md;
+      flex: 1;
 
       .back-button {
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: rgba($doctor-patient-primary, 0.1);
+        color: $doctor-patient-primary;
+        border: 1px solid rgba($doctor-patient-primary, 0.2);
+        border-radius: 12px;
+        width: 44px;
+        height: 44px;
+        @include smooth-transition;
 
         &:hover {
-          background: rgba(255, 255, 255, 0.3);
+          background: rgba($doctor-patient-primary, 0.15);
           transform: translateX(-2px);
+          @include card-elevation;
+        }
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
         }
       }
 
@@ -29,48 +89,81 @@
         .page-title {
           display: flex;
           align-items: center;
-          gap: 12px;
+          gap: $spacing-md;
           margin: 0;
-          color: white;
+          color: $doctor-patient-text;
           font-size: 28px;
           font-weight: 600;
+          line-height: 1.2;
 
           .title-icon {
             font-size: 32px;
             width: 32px;
             height: 32px;
+            color: $doctor-patient-primary;
           }
         }
 
         .page-subtitle {
-          margin: 4px 0 0 44px;
-          color: rgba(255, 255, 255, 0.8);
+          margin: $spacing-sm 0 0 44px;
+          color: $doctor-patient-text-secondary;
           font-size: 14px;
+          font-weight: 400;
         }
       }
     }
   }
 
+  // === SEÇÃO DE BUSCA ===
   .search-section {
-    margin-bottom: 24px;
+    margin-bottom: $spacing-xl;
 
     .search-card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(15px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-      padding: 20px;
+      background: $surface-elevated;
+      border: 1px solid $doctor-patient-border;
+      border-radius: 16px;
+      padding: $spacing-lg;
+      @include card-elevation;
+      @include smooth-transition;
+
+      &:hover {
+        @include card-elevation-hover;
+      }
 
       .search-field {
         width: 100%;
-        margin-bottom: 16px;
+        margin-bottom: $spacing-md;
 
-        ::ng-deep .mat-mdc-form-field-outline {
-          color: rgba(102, 126, 234, 0.4);
-        }
+        ::ng-deep {
+          .mat-mdc-form-field-outline {
+            color: $doctor-patient-border;
+          }
 
-        ::ng-deep .mat-mdc-form-field-focus-overlay {
-          background-color: rgba(102, 126, 234, 0.1);
+          .mat-mdc-form-field-focus-overlay {
+            background-color: rgba($doctor-patient-primary, 0.04);
+          }
+
+          .mdc-notched-outline__leading,
+          .mdc-notched-outline__notch,
+          .mdc-notched-outline__trailing {
+            border-color: $doctor-patient-border;
+          }
+
+          .mdc-notched-outline--focused {
+            .mdc-notched-outline__leading,
+            .mdc-notched-outline__notch,
+            .mdc-notched-outline__trailing {
+              border-color: $doctor-patient-primary;
+            }
+          }
+
+          .mat-mdc-form-field-label {
+            color: $doctor-patient-text-secondary;
+          }
+
+          .mat-mdc-input-element {
+            color: $doctor-patient-text;
+          }
         }
       }
 
@@ -79,126 +172,158 @@
         justify-content: flex-end;
 
         mat-chip {
-          background: #667eea;
-          color: white;
+          background: rgba($doctor-patient-primary, 0.1);
+          color: $doctor-patient-primary;
+          border: 1px solid rgba($doctor-patient-primary, 0.2);
+          font-weight: 500;
         }
       }
     }
   }
 
+  // === ESTADOS DE CARREGAMENTO E ERRO ===
   .loading-container {
-    display: flex;
+    @include flex-center;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 20px;
+    padding: $spacing-xl * 2;
     text-align: center;
-    color: white;
 
     mat-spinner {
-      margin-bottom: 16px;
+      margin-bottom: $spacing-lg;
 
       ::ng-deep circle {
-        stroke: white;
+        stroke: $doctor-patient-primary;
       }
     }
 
     p {
       font-size: 16px;
-      opacity: 0.9;
+      color: $doctor-patient-text-secondary;
+      margin: 0;
     }
   }
 
-  .error-container, .empty-container {
-    display: flex;
-    justify-content: center;
-    padding: 40px 20px;
+  .error-container,
+  .empty-container {
+    @include flex-center;
+    padding: $spacing-xl * 2;
 
-    .error-card, .empty-card {
+    .error-card,
+    .empty-card {
       max-width: 400px;
       width: 100%;
       text-align: center;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(15px);
+      background: $doctor-patient-surface;
+      border: 1px solid $doctor-patient-border;
+      border-radius: 16px;
+      padding: $spacing-xl;
+      @include card-elevation;
 
-      .error-icon, .empty-icon {
+      .error-icon,
+      .empty-icon {
         font-size: 48px;
         width: 48px;
         height: 48px;
-        color: #f44336;
-        margin-bottom: 16px;
+        margin-bottom: $spacing-lg;
+      }
+
+      .error-icon {
+        color: $doctor-patient-error;
       }
 
       .empty-icon {
-        color: #9e9e9e;
+        color: $doctor-patient-text-muted;
       }
 
       h3 {
-        margin: 0 0 12px 0;
-        color: #333;
+        margin: 0 0 $spacing-md 0;
+        color: $doctor-patient-text;
+        font-size: 20px;
+        font-weight: 600;
       }
 
       p {
-        color: #666;
-        margin-bottom: 20px;
+        color: $doctor-patient-text-secondary;
+        margin-bottom: $spacing-lg;
         line-height: 1.5;
+        font-size: 14px;
       }
 
       button {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: $spacing-sm;
         margin: 0 auto;
+        border-radius: 12px;
+        font-weight: 500;
       }
     }
   }
 
+  // === CONTAINER DA TABELA ===
   .table-container {
     .table-card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(15px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      background: $doctor-patient-surface;
+      border: 1px solid $doctor-patient-border;
+      border-radius: 16px;
       overflow: hidden;
+      @include card-elevation;
+      @include smooth-transition;
+
+      &:hover {
+        @include card-elevation-hover;
+      }
 
       .table-wrapper {
         overflow-x: auto;
 
         .clients-table {
           width: 100%;
-          
+
           .mat-mdc-header-cell {
-            background: rgba(102, 126, 234, 0.1);
-            color: #667eea;
+            background: rgba($doctor-patient-primary, 0.04);
+            color: $doctor-patient-primary;
             font-weight: 600;
             font-size: 14px;
-            border-bottom: 2px solid #667eea;
+            border-bottom: 2px solid rgba($doctor-patient-primary, 0.1);
+            padding: $spacing-md;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
           }
 
-          .client-row {
-            transition: all 0.3s ease;
-            
+          .mat-mdc-row {
+            border-bottom: 1px solid $doctor-patient-border;
+            @include smooth-transition;
+
             &:hover {
-              background: rgba(102, 126, 234, 0.05);
+              background: rgba($doctor-patient-primary, 0.02);
               transform: translateY(-1px);
-              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+              @include card-elevation;
             }
+
+            &:last-child {
+              border-bottom: none;
+            }
+          }
+
+          .mat-mdc-cell {
+            padding: $spacing-md;
+            border-bottom: none;
           }
 
           .client-info {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: $spacing-md;
 
             .client-avatar {
               width: 40px;
               height: 40px;
               border-radius: 50%;
-              background: linear-gradient(45deg, #667eea, #764ba2);
-              display: flex;
-              align-items: center;
-              justify-content: center;
+              background: linear-gradient(135deg, $doctor-patient-primary, $doctor-patient-primary-light);
+              @include flex-center;
               color: white;
+              @include smooth-transition;
 
               mat-icon {
                 font-size: 20px;
@@ -210,16 +335,19 @@
             .client-details {
               display: flex;
               flex-direction: column;
+              gap: 2px;
 
               .client-name {
                 font-weight: 500;
-                color: #333;
+                color: $doctor-patient-text;
                 font-size: 14px;
+                line-height: 1.2;
               }
 
               .client-id {
                 font-size: 12px;
-                color: #666;
+                color: $doctor-patient-text-muted;
+                font-weight: 400;
               }
             }
           }
@@ -227,60 +355,57 @@
           .contact-info {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: $spacing-sm;
 
             .contact-icon {
               font-size: 18px;
               width: 18px;
               height: 18px;
-              color: #667eea;
+              color: $doctor-patient-primary;
             }
 
             span {
               font-size: 14px;
-              color: #333;
+              color: $doctor-patient-text;
             }
           }
 
           .age-info {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: $spacing-sm;
 
             .age-icon {
               font-size: 18px;
               width: 18px;
               height: 18px;
-              color: #ff9800;
+              color: $accent-color;
             }
 
             .age-details {
               display: flex;
               flex-direction: column;
+              gap: 2px;
 
               .age {
                 font-weight: 500;
-                color: #333;
+                color: $doctor-patient-text;
                 font-size: 14px;
+                line-height: 1.2;
               }
 
               .birthdate {
                 font-size: 12px;
-                color: #666;
+                color: $doctor-patient-text-muted;
               }
             }
           }
 
           mat-chip {
-            &.has-measure {
-              background: rgba(76, 175, 80, 0.1);
-              color: #4caf50;
-            }
-
-            &.no-measure {
-              background: rgba(158, 158, 158, 0.1);
-              color: #9e9e9e;
-            }
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+            @include smooth-transition;
 
             mat-icon {
               font-size: 16px;
@@ -289,22 +414,95 @@
             }
           }
 
+          .measure-button {
+            padding: 0;
+            min-width: auto;
+            border-radius: 16px;
+            @include smooth-transition;
+
+            &:hover {
+              background: rgba($doctor-patient-primary, 0.04);
+              transform: scale(1.02);
+            }
+
+            mat-chip-set {
+              margin: 0;
+            }
+
+            mat-chip {
+              cursor: pointer;
+              background: rgba($doctor-patient-primary, 0.1);
+              color: $doctor-patient-primary;
+              border: 1px solid rgba($doctor-patient-primary, 0.2);
+              @include smooth-transition;
+
+              &:hover {
+                transform: scale(1.05);
+                background: rgba($doctor-patient-primary, 0.15);
+              }
+            }
+          }
+
           .actions-container {
             display: flex;
-            gap: 8px;
+            gap: 6px;
 
-            button {
+            .mat-icon-button {
               width: 36px;
               height: 36px;
-              
+              border-radius: 10px;
+              background: rgba($doctor-patient-surface, 0.95);
+              border: 1px solid rgba($doctor-patient-border, 0.2);
+              @include smooth-transition;
+
+              &:hover {
+                transform: translateY(-1px);
+                background: $doctor-patient-surface;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+              }
+
+              // Cores dos botões - usando cor padrão do módulo
               mat-icon {
-                font-size: 18px;
-                width: 18px;
-                height: 18px;
+                font-size: 16px;
+                width: 16px;
+                height: 16px;
+                color: rgba($doctor-patient-primary, 0.7) !important;
               }
 
               &:hover {
-                transform: scale(1.1);
+                background: rgba($doctor-patient-primary, 0.08);
+                border-color: rgba($doctor-patient-primary, 0.25);
+
+                mat-icon {
+                  color: $doctor-patient-primary !important;
+                }
+              }
+
+              // Variações específicas por função
+              &[color="primary"] mat-icon {
+                color: rgba($doctor-patient-primary, 0.8) !important;
+              }
+
+              &[color="primary"]:hover {
+                background: rgba($doctor-patient-primary, 0.12);
+                border-color: rgba($doctor-patient-primary, 0.3);
+
+                mat-icon {
+                  color: $doctor-patient-primary !important;
+                }
+              }
+
+              &[color="accent"] mat-icon {
+                color: rgba($doctor-patient-primary, 0.6) !important;
+              }
+
+              &[color="accent"]:hover {
+                background: rgba($doctor-patient-primary, 0.08);
+                border-color: rgba($doctor-patient-primary, 0.25);
+
+                mat-icon {
+                  color: rgba($doctor-patient-primary, 0.9) !important;
+                }
               }
             }
           }
@@ -314,10 +512,11 @@
   }
 }
 
-// Responsive Design
+// === DESIGN RESPONSIVO ===
 @media (max-width: 1024px) {
   .doctor-patient-list-container {
-    padding: 16px;
+    margin: $spacing-md;
+    padding: $spacing-md;
 
     .header .header-content .title-section .page-title {
       font-size: 24px;
@@ -326,7 +525,7 @@
     .table-container .table-card .table-wrapper {
       .clients-table {
         .client-info {
-          gap: 8px;
+          gap: $spacing-sm;
 
           .client-avatar {
             width: 32px;
@@ -346,27 +545,40 @@
 
 @media (max-width: 768px) {
   .doctor-patient-list-container {
-    padding: 12px;
+    margin: $spacing-sm;
+    padding: $spacing-sm;
 
-    .header .header-content {
+    .header {
       flex-direction: column;
       align-items: flex-start;
-      gap: 12px;
+      gap: $spacing-md;
 
-      .title-section .page-subtitle {
-        margin-left: 0;
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+
+        .title-section .page-subtitle {
+          margin-left: 0;
+        }
       }
     }
 
     .search-section .search-card {
-      padding: 16px;
+      padding: $spacing-md;
     }
 
     .table-container .table-card .table-wrapper {
       .clients-table {
         font-size: 12px;
 
-        .contact-info, .age-info {
+        .mat-mdc-header-cell,
+        .mat-mdc-cell {
+          padding: $spacing-sm;
+        }
+
+        .contact-info,
+        .age-info {
           flex-direction: column;
           align-items: flex-start;
           gap: 4px;
@@ -380,9 +592,15 @@
           flex-direction: column;
           gap: 4px;
 
-          button {
+          .mat-icon-button {
             width: 32px;
             height: 32px;
+
+            mat-icon {
+              font-size: 14px;
+              width: 14px;
+              height: 14px;
+            }
           }
         }
       }
@@ -392,18 +610,35 @@
 
 @media (max-width: 480px) {
   .doctor-patient-list-container {
-    padding: 8px;
+    margin: 0;
+    padding: $spacing-sm;
+    border-radius: 0;
 
-    .table-container .table-card .table-wrapper {
-      .clients-table {
-        .client-info {
-          .client-details {
-            .client-name {
-              font-size: 12px;
+    .table-container .table-card {
+      border-radius: 12px;
+
+      .table-wrapper {
+        .clients-table {
+          .client-info {
+            .client-details {
+              .client-name {
+                font-size: 12px;
+              }
+
+              .client-id {
+                font-size: 10px;
+              }
             }
+          }
 
-            .client-id {
-              font-size: 10px;
+          .actions-container .mat-icon-button {
+            width: 28px;
+            height: 28px;
+
+            mat-icon {
+              font-size: 12px;
+              width: 12px;
+              height: 12px;
             }
           }
         }

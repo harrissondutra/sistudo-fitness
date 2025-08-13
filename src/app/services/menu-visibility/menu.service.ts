@@ -43,10 +43,7 @@ export class MenuService {
       icon: 'medical_services',
       visible: true,
       links: [
-        { id: 'doctor-patient-list', label: 'Seus pacientes', route: '/doctor-patient-list/:id', visible: true, isDynamic: true },
-        { id: 'list-doctors', label: 'Listar Médicos', route: '/doctor-list', visible: true },
-        { id: 'create-doctor', label: 'Criar Novo Médico', route: '/doctor-create', visible: true },
-        { id: 'edit-doctor', label: 'Editar Médico', route: '/doctor-update/:id', visible: true }
+        { id: 'doctor-patient-list', label: 'Seus pacientes', route: '/doctor-patient-list/:id', visible: true, isDynamic: true }
       ]
     },
     {
@@ -119,6 +116,18 @@ export class MenuService {
             { id: 'list-users', label: 'Listar Usuários', route: '/user-list', visible: true },
             { id: 'create-user', label: 'Criar Novo Usuário', route: '/user-create', visible: true }
           ]
+        },
+        {
+          id: 'doctors',
+          label: 'Médicos',
+          route: '',
+          visible: true,
+          sublinks: [
+            { id: 'list-doctors', label: 'Listar Médicos', route: '/doctor-list', visible: true },
+            { id: 'create-doctor', label: 'Criar Novo Médico', route: '/doctor-create', visible: true },
+            { id: 'edit-doctor', label: 'Editar Médico', route: '/doctor-update/:id', visible: true }
+          ]
+
         },
         {
           id: 'admin-clients',
