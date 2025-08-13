@@ -11,7 +11,7 @@ import { MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/mat
 
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
-import { errorInterceptor } from './core/interceptors/error.interceptor';
+// import { errorInterceptor } from './core/interceptors/error.interceptor';
 
 // Formato de datas para exibição no formulário
 export const DATE_FORMATS = {
