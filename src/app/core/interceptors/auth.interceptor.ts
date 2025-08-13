@@ -9,11 +9,17 @@ import { environment } from '../../../environments/environment';
  * Otimizado para desenvolvimento e produção
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  console.log('🚨 [AUTH-INTERCEPTOR] ================================');
+  console.log('🚨 [AUTH-INTERCEPTOR] INTERCEPTOR EXECUTADO!');
+  console.log('🚨 [AUTH-INTERCEPTOR] URL:', req.url);
+  console.log('🚨 [AUTH-INTERCEPTOR] Method:', req.method);
+  console.log('🚨 [AUTH-INTERCEPTOR] Headers originais:', req.headers.keys());
+  
   const authService = inject(AuthService);
   const token = authService.getToken();
 
-  // Log sempre para debug (remover após confirmação)
-  console.log('🔥 [AUTH-INTERCEPTOR] Interceptando requisição:', req.url);
+  console.log('🚨 [AUTH-INTERCEPTOR] Token presente:', !!token);
+  console.log('� [AUTH-INTERCEPTOR] Token length:', token ? token.length : 0);
 
   if (token && token.trim() !== '') {
     // Clona a requisição e adiciona o header Authorization
@@ -25,12 +31,14 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       }
     });
 
-    console.log('🔥 [AUTH-INTERCEPTOR] Token encontrado - Headers adicionados automaticamente');
-    console.log('🔥 [AUTH-INTERCEPTOR] URL:', req.url);
-    console.log('🔥 [AUTH-INTERCEPTOR] Token (início):', token.substring(0, 20) + '...');
+    console.log('✅ [AUTH-INTERCEPTOR] HEADERS ADICIONADOS!');
+    console.log('✅ [AUTH-INTERCEPTOR] Authorization header:', `Bearer ${token.substring(0, 20)}...`);
+    console.log('✅ [AUTH-INTERCEPTOR] Headers finais:', authReq.headers.keys());
+    console.log('� [AUTH-INTERCEPTOR] ================================');
     return next(authReq);
   }
 
-  console.log('🔥 [AUTH-INTERCEPTOR] Sem token - Requisição original mantida');
+  console.log('❌ [AUTH-INTERCEPTOR] SEM TOKEN - Requisição sem headers');
+  console.log('🚨 [AUTH-INTERCEPTOR] ================================');
   return next(req);
 };

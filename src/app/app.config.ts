@@ -29,10 +29,9 @@ export const DATE_FORMATS = {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    // 🔥 INTERCEPTOR HÍBRIDO - Apenas o auth interceptor para headers automáticos
+    // 🔥 TESTE: Apenas o auth interceptor para debug
     provideHttpClient(withInterceptors([
-      authInterceptor,      // Injeta headers Authorization automaticamente
-      errorInterceptor      // Trata erros HTTP
+      authInterceptor      // APENAS o auth interceptor para testar
     ])),
     provideAnimations(),
     provideClientHydration(),
