@@ -8,10 +8,10 @@ import { AuthService } from '../../services/auth.service';
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   // LOGS IMEDIATOS - DEVEM APARECER SE O INTERCEPTOR EXECUTAR
-  console.log('�🔥🔥 [AUTH-INTERCEPTOR] EXECUTANDO AGORA! 🔥🔥🔥');
-  console.log('�🔥🔥 [AUTH-INTERCEPTOR] URL:', req.url);
-  console.log('�🔥🔥 [AUTH-INTERCEPTOR] METHOD:', req.method);
-  console.log('�🔥🔥 [AUTH-INTERCEPTOR] TIMESTAMP:', new Date().toISOString());
+  console.log('🔥🔥🔥 [AUTH-INTERCEPTOR] EXECUTANDO AGORA! 🔥🔥🔥');
+  console.log('🔥🔥🔥 [AUTH-INTERCEPTOR] URL:', req.url);
+  console.log('🔥🔥🔥 [AUTH-INTERCEPTOR] METHOD:', req.method);
+  console.log('🔥🔥🔥 [AUTH-INTERCEPTOR] TIMESTAMP:', new Date().toISOString());
 
   // Logs no window para garantir visibilidade
   (window as any).INTERCEPTOR_LOG = `INTERCEPTOR EXECUTOU EM ${new Date().toISOString()}`;
