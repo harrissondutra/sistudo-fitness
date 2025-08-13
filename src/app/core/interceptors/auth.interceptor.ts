@@ -1,44 +1,84 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
-import { environment } from '../../../environments/environment';
 
 /**
- * 🔥 INTERCEPTOR HÍBRIDO - Angular 17 Standalone
- * Injeta automaticamente headers de autorização em requisições HTTP
- * Otimizado para desenvolvimento e produção
+ * Interceptor para adicionar headers de autorização automaticamente
+ * Angular 17 - Functional Interceptor Pattern
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   console.log('🚨 [AUTH-INTERCEPTOR] ================================');
   console.log('🚨 [AUTH-INTERCEPTOR] INTERCEPTOR EXECUTADO!');
   console.log('🚨 [AUTH-INTERCEPTOR] URL:', req.url);
   console.log('🚨 [AUTH-INTERCEPTOR] Method:', req.method);
-  console.log('🚨 [AUTH-INTERCEPTOR] Headers originais:', req.headers.keys());
 
-  const authService = inject(AuthService);
-  const token = authService.getToken();
+  try {
+    const authService = inject(AuthService);
+    console.log('✅ [AUTH-INTERCEPTOR] AuthService injetado com sucesso');
 
-  console.log('🚨 [AUTH-INTERCEPTOR] Token presente:', !!token);
-  console.log('� [AUTH-INTERCEPTOR] Token length:', token ? token.length : 0);
+    const token = authService.getToken();
+    console.log('🚨 [AUTH-INTERCEPTOR] Token do AuthService:', token ? 'PRESENTE' : 'AUSENTE');
 
-  if (token && token.trim() !== '') {
-    // Clona a requisição e adiciona o header Authorization
-    const authReq = req.clone({
-      setHeaders: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
+    if (token) {
+      console.log('🚨 [AUTH-INTERCEPTOR] Token length:', token.length);
+      console.log('🚨 [AUTH-INTERCEPTOR] Token preview:', token.substring(0, 30) + '...');
+    }
+
+    // Também tentar pegar diretamente do sessionStorage como fallback
+    const directToken = sessionStorage.getItem('token');
+    console.log('🚨 [AUTH-INTERCEPTOR] Token direto do sessionStorage:', directToken ? 'PRESENTE' : 'AUSENTE');
+
+    if (token && token.trim() !== '') {
+      console.log('✅ [AUTH-INTERCEPTOR] Token válido encontrado via AuthService');
+
+      const authReq = req.clone({
+        setHeaders: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      });
+
+      console.log('✅ [AUTH-INTERCEPTOR] HEADERS ADICIONADOS COM SUCESSO!');
+      console.log('🚨 [AUTH-INTERCEPTOR] ================================');
+      return next(authReq);
+    } else if (directToken && directToken.trim() !== '') {
+      console.log('🔄 [AUTH-INTERCEPTOR] Usando token direto do sessionStorage');
+
+      const authReq = req.clone({
+        setHeaders: {
+          'Authorization': `Bearer ${directToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      });
+
+      console.log('✅ [AUTH-INTERCEPTOR] HEADERS ADICIONADOS COM TOKEN DIRETO!');
+      console.log('🚨 [AUTH-INTERCEPTOR] ================================');
+      return next(authReq);
+    }
+  } catch (error) {
+    console.error('💥 [AUTH-INTERCEPTOR] ERRO NO INTERCEPTOR:', error);
+
+    try {
+      const directToken = sessionStorage.getItem('token');
+      if (directToken) {
+        console.log('🔄 [AUTH-INTERCEPTOR] FALLBACK: Tentando token direto');
+        const authReq = req.clone({
+          setHeaders: {
+            'Authorization': `Bearer ${directToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        });
+        return next(authReq);
       }
-    });
-
-    console.log('✅ [AUTH-INTERCEPTOR] HEADERS ADICIONADOS!');
-    console.log('✅ [AUTH-INTERCEPTOR] Authorization header:', `Bearer ${token.substring(0, 20)}...`);
-    console.log('✅ [AUTH-INTERCEPTOR] Headers finais:', authReq.headers.keys());
-    console.log('� [AUTH-INTERCEPTOR] ================================');
-    return next(authReq);
+    } catch (fallbackError) {
+      console.error('💥 [AUTH-INTERCEPTOR] ERRO NO FALLBACK:', fallbackError);
+    }
   }
 
-  console.log('❌ [AUTH-INTERCEPTOR] SEM TOKEN - Requisição sem headers');
+  console.log('❌ [AUTH-INTERCEPTOR] SEM TOKEN - Enviando requisição sem headers');
   console.log('🚨 [AUTH-INTERCEPTOR] ================================');
   return next(req);
 };
