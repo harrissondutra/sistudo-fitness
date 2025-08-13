@@ -14,7 +14,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   console.log('🚨 [AUTH-INTERCEPTOR] URL:', req.url);
   console.log('🚨 [AUTH-INTERCEPTOR] Method:', req.method);
   console.log('🚨 [AUTH-INTERCEPTOR] Headers originais:', req.headers.keys());
-  
+
   const authService = inject(AuthService);
   const token = authService.getToken();
 
