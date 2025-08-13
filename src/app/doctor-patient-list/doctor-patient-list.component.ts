@@ -60,10 +60,10 @@ export class DoctorPatientListComponent implements OnInit {
   loadClients(): void {
     this.loading = true;
     this.error = '';
-    
+
     // 🔍 DEBUG: Verificar valor do doctorId
     console.log('🔍 DEBUG doctorId:', this.doctorId, 'tipo:', typeof this.doctorId);
-    
+
     this.doctorService.getClientsByDoctorId(this.doctorId).subscribe({
       next: (clients) => {
         console.log('✅ Clients recebidos:', clients);
@@ -100,9 +100,9 @@ export class DoctorPatientListComponent implements OnInit {
 
   calculateAge(dateOfBirth: Date | string | number[] | undefined): number | null {
     if (!dateOfBirth) return null;
-    
+
     let birthDate: Date;
-    
+
     if (Array.isArray(dateOfBirth)) {
       // Array format: [year, month, day, ...]
       birthDate = new Date(dateOfBirth[0], dateOfBirth[1] - 1, dateOfBirth[2]);
@@ -111,23 +111,23 @@ export class DoctorPatientListComponent implements OnInit {
     } else {
       birthDate = dateOfBirth;
     }
-    
+
     const today = new Date();
     const age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       return age - 1;
     }
-    
+
     return age;
   }
 
   formatDateOfBirth(dateOfBirth: Date | string | number[] | undefined): string {
     if (!dateOfBirth) return '-';
-    
+
     let birthDate: Date;
-    
+
     if (Array.isArray(dateOfBirth)) {
       birthDate = new Date(dateOfBirth[0], dateOfBirth[1] - 1, dateOfBirth[2]);
     } else if (typeof dateOfBirth === 'string') {
@@ -135,7 +135,7 @@ export class DoctorPatientListComponent implements OnInit {
     } else {
       birthDate = dateOfBirth;
     }
-    
+
     return birthDate.toLocaleDateString('pt-BR');
   }
 
