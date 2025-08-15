@@ -35,8 +35,10 @@ export class ClientService {
   getClientById(id: number | string): Observable<Client> {
     // Converter para number dentro do método e garantir limpeza
     const numericId = typeof id === 'string' ? parseInt(id, 10) : Number(id);
+    if (isNaN(numericId) || numericId <= 0) {
+      throw new Error('ID do cliente inválido.');
+    }
     const url = `${this.baseUrl}/getById/${numericId}`;
-
     return this.http.get<Client>(url);
   }
 

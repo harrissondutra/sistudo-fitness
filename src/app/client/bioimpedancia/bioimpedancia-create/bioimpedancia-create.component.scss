@@ -1,0 +1,140 @@
+@import '../../../../styles/_variables.scss';
+@import '../../../../styles/_fitness-theme.scss';
+@import '../../../../styles/_fitness-utilities.scss';
+
+.bioimpedancia-create-container {
+  padding: $spacing-xl;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+// O MatCard já terá o estilo do .fitness-card se o tema for aplicado globalmente.
+// Removendo estilos duplicados e focando em layout.
+.header-card {
+  margin-bottom: 0;
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $spacing-md;
+
+    .title-section {
+      h1 {
+        font-size: $font-size-lg;
+        font-weight: $font-weight-bold;
+        color: $text-color;
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+
+        mat-icon {
+          font-size: $font-size-lg * 1.2;
+          height: $font-size-lg * 1.2;
+          width: $font-size-lg * 1.2;
+        }
+      }
+
+      p {
+        font-size: $font-size-sm;
+        color: $text-muted;
+        margin-top: $spacing-xs;
+      }
+    }
+
+    // Botões no cabeçalho
+    .action-buttons-header {
+      display: flex;
+      gap: $spacing-sm;
+
+      .mat-flat-button {
+        @extend .fitness-btn !optional;
+        @extend .btn-primary !optional;
+      }
+
+      .mat-button {
+        font-weight: $font-weight-normal;
+      }
+    }
+  }
+}
+
+.action-buttons-footer {
+  display: flex;
+  gap: $spacing-sm;
+  justify-content: flex-end; // Alinha os botões à direita
+  margin-top: auto;
+  align-self: stretch;
+
+  .mat-flat-button {
+    @extend .fitness-btn !optional;
+    @extend .btn-primary !optional;
+  }
+
+  .mat-button {
+    font-weight: $font-weight-normal;
+  }
+}
+
+.bioimpedancia-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+// Mat-expansion-panel para seguir o estilo de card
+.form-section-panel {
+  @extend .fitness-card !optional; // Utiliza o estilo de card do tema
+
+  mat-panel-title {
+    font-weight: $font-weight-bold;
+    color: $text-color;
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $spacing-md;
+  padding: $spacing-md 0;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba($surface-color, 0.8);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+
+  p {
+    margin-top: $spacing-md;
+    color: $text-color;
+  }
+}
+
+// Responsive design usando o mixin do tema
+@include respond-to(sm) {
+  .header-card {
+    .header-content {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .action-buttons-header {
+        width: 100%;
+        justify-content: space-around;
+      }
+    }
+  }
+
+  .action-buttons-footer {
+    justify-content: space-around;
+  }
+}

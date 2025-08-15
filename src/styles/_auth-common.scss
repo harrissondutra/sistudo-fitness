@@ -8,9 +8,9 @@
 }
 
 // Variáveis
-$primary-color: #e53935;
-$primary-dark: #d32f2f;
-$primary-light: #ef5350;
+$primary-color: #27ae60;
+$primary-dark: #219150;
+$primary-light: #43c97a;
 $secondary-color: #667eea;
 $secondary-dark: #5a6fd8;
 $text-dark: #2c3e50;
@@ -45,12 +45,12 @@ $transition-slow: 0.5s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, $secondary-color 0%, #764ba2 50%, $primary-color 100%);
+  background: linear-gradient(135deg, $secondary-color 0%, #27ae60 50%, $primary-color 100%);
   background-size: 400% 400%;
   animation: gradientShift 8s ease infinite;
   padding: 20px;
   position: relative;
-  
+
   // Overlay decorativo
   &::before {
     content: '';
@@ -59,7 +59,7 @@ $transition-slow: 0.5s ease;
     left: 0;
     right: 0;
     bottom: 0;
-    background: 
+    background:
       radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
       radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
     pointer-events: none;
@@ -79,7 +79,7 @@ $transition-slow: 0.5s ease;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-sizing: border-box;
-  
+
   // Efeito glassmorphism sutil
   &::before {
     content: '';
@@ -112,7 +112,7 @@ $transition-slow: 0.5s ease;
   box-shadow: $shadow-medium;
   transition: transform $transition-medium;
   object-fit: cover;
-  
+
   &:hover {
     transform: scale(1.05);
   }
@@ -190,27 +190,27 @@ $transition-slow: 0.5s ease;
   transition: all $transition-fast;
   color: $text-dark;
   box-sizing: border-box;
-  
+
   &::placeholder {
     color: $text-light;
   }
-  
+
   &:focus {
     outline: none;
     border-color: $primary-color;
     box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
     transform: translateY(-1px);
   }
-  
+
   &:disabled {
     background-color: #f8f9fa;
     cursor: not-allowed;
     opacity: 0.7;
   }
-  
+
   &.error {
     border-color: $error-color;
-    
+
     &:focus {
       border-color: $error-color;
       box-shadow: 0 0 0 3px rgba($error-color, 0.1);
@@ -224,29 +224,29 @@ $transition-slow: 0.5s ease;
   max-width: 100%;
   margin-bottom: 16px;
   box-sizing: border-box;
-  
+
   ::ng-deep {
     .mat-mdc-form-field-flex {
       background-color: transparent;
       width: 100%;
       box-sizing: border-box;
     }
-    
+
     .mat-mdc-form-field-outline {
       color: #e9ecef;
     }
-    
+
     .mat-mdc-form-field-focus-overlay {
       background-color: transparent;
     }
-    
+
     .mdc-notched-outline__leading,
     .mdc-notched-outline__notch,
     .mdc-notched-outline__trailing {
       border-color: #e9ecef;
       border-width: 2px;
     }
-    
+
     .mat-mdc-form-field.mat-focused {
       .mdc-notched-outline__leading,
       .mdc-notched-outline__notch,
@@ -254,7 +254,7 @@ $transition-slow: 0.5s ease;
         border-color: $primary-color;
       }
     }
-    
+
     .mat-mdc-form-field-error {
       .mdc-notched-outline__leading,
       .mdc-notched-outline__notch,
@@ -262,17 +262,17 @@ $transition-slow: 0.5s ease;
         border-color: $error-color;
       }
     }
-    
+
     .mdc-text-field--outlined .mdc-text-field__input {
       padding: 14px 16px;
       box-sizing: border-box;
       width: 100%;
     }
-    
+
     .mat-mdc-form-field-subscript-wrapper {
       margin-top: 4px;
     }
-    
+
     // Correções específicas para mobile
     @media (max-width: 480px) {
       .mdc-text-field--outlined .mdc-text-field__input {
@@ -299,7 +299,7 @@ $transition-slow: 0.5s ease;
   width: 100%;
   max-width: 100%;
   height: 48px;
-  background: linear-gradient(135deg, $primary-color 0%, $primary-light 100%);
+  background: linear-gradient(135deg, #27ae60 0%, #43c97a 100%);
   color: white;
   font-size: 16px;
   font-weight: 600;
@@ -314,17 +314,17 @@ $transition-slow: 0.5s ease;
   gap: 8px;
   letter-spacing: 0.25px;
   box-sizing: border-box;
-  
+
   &:hover:not(:disabled) {
-    background: linear-gradient(135deg, $primary-dark 0%, $primary-color 100%);
+    background: linear-gradient(135deg, #219150 0%, #27ae60 100%);
     transform: translateY(-2px);
     box-shadow: $shadow-medium;
   }
-  
+
   &:active:not(:disabled) {
     transform: translateY(0);
   }
-  
+
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -350,13 +350,13 @@ $transition-slow: 0.5s ease;
   justify-content: center;
   gap: 8px;
   box-sizing: border-box;
-  
+
   &:hover:not(:disabled) {
     background-color: #f8f9fa;
     border-color: #dee2e6;
     color: $text-dark;
   }
-  
+
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -372,7 +372,7 @@ $transition-slow: 0.5s ease;
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  
+
   &:hover {
     color: $primary-dark;
     text-decoration: underline;
@@ -385,10 +385,10 @@ $transition-slow: 0.5s ease;
 
 .auth-success-content {
   text-align: center;
-  
+
   .success-icon {
     margin-bottom: 24px;
-    
+
     mat-icon {
       font-size: 64px;
       width: 64px;
@@ -396,26 +396,26 @@ $transition-slow: 0.5s ease;
       color: $success-color;
     }
   }
-  
+
   h2 {
     color: $text-dark;
     font-size: 24px;
     font-weight: 600;
     margin: 0 0 16px 0;
   }
-  
+
   .success-description {
     color: $text-dark;
     font-size: 16px;
     line-height: 1.6;
     margin-bottom: 12px;
-    
+
     strong {
       color: $primary-color;
       font-weight: 600;
     }
   }
-  
+
   .instruction {
     color: $text-medium;
     font-size: 14px;
@@ -430,10 +430,10 @@ $transition-slow: 0.5s ease;
 
 .auth-error-content {
   text-align: center;
-  
+
   .error-icon {
     margin-bottom: 24px;
-    
+
     mat-icon {
       font-size: 64px;
       width: 64px;
@@ -441,14 +441,14 @@ $transition-slow: 0.5s ease;
       color: $error-color;
     }
   }
-  
+
   h2 {
     color: $text-dark;
     font-size: 24px;
     font-weight: 600;
     margin: 0 0 16px 0;
   }
-  
+
   .error-description {
     color: $text-medium;
     font-size: 16px;
@@ -460,13 +460,13 @@ $transition-slow: 0.5s ease;
 .auth-loading-content {
   text-align: center;
   padding: 40px 20px;
-  
+
   .loading-section {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
-    
+
     p {
       color: $text-medium;
       font-size: 16px;
@@ -499,20 +499,20 @@ $transition-slow: 0.5s ease;
   border-radius: $border-radius;
   padding: 16px;
   margin-bottom: 20px;
-  
+
   h4 {
     color: $text-dark;
     font-size: 14px;
     font-weight: 600;
     margin: 0 0 12px 0;
   }
-  
+
   ul {
     list-style: none;
     padding: 0;
     margin: 0;
   }
-  
+
   li {
     display: flex;
     align-items: center;
@@ -520,20 +520,20 @@ $transition-slow: 0.5s ease;
     font-size: 14px;
     color: $text-medium;
     margin-bottom: 4px;
-    
+
     &.valid {
       color: $success-color;
     }
-    
+
     mat-icon {
       font-size: 18px;
       width: 18px;
       height: 18px;
-      
+
       &.valid {
         color: $success-color;
       }
-      
+
       &:not(.valid) {
         color: #ccc;
       }
@@ -586,22 +586,22 @@ $transition-slow: 0.5s ease;
   .auth-container {
     padding: 16px;
   }
-  
+
   .auth-card {
     padding: 32px 24px;
     max-width: calc(100vw - 32px);
     width: 100%;
     box-sizing: border-box;
   }
-  
+
   .auth-title {
     font-size: 24px;
   }
-  
+
   .auth-subtitle {
     font-size: 15px;
   }
-  
+
   .auth-logo {
     width: 70px;
     height: 70px;
@@ -614,7 +614,7 @@ $transition-slow: 0.5s ease;
     padding: 12px;
     box-sizing: border-box;
   }
-  
+
   .auth-card {
     padding: 24px 20px;
     border-radius: $border-radius;
@@ -623,51 +623,51 @@ $transition-slow: 0.5s ease;
     margin: 0 auto;
     box-sizing: border-box;
   }
-  
+
   .auth-title {
     font-size: 22px;
   }
-  
+
   .auth-subtitle {
     font-size: 14px;
   }
-  
+
   .auth-description {
     font-size: 14px;
   }
-  
+
   .auth-logo {
     width: 60px;
     height: 60px;
     margin-bottom: 16px;
   }
-  
+
   .auth-header {
     margin-bottom: 24px;
   }
-  
+
   .auth-form {
     width: 100%;
     box-sizing: border-box;
   }
-  
+
   .auth-input-group {
     width: 100%;
     box-sizing: border-box;
   }
-  
+
   .auth-input {
     width: 100%;
     max-width: 100%;
     padding: 12px 14px;
     font-size: 16px; // Evita zoom no iOS
     box-sizing: border-box;
-    
+
     &:focus {
       transform: none; // Remove transform em mobile para evitar problemas de layout
     }
   }
-  
+
   .auth-button-primary {
     height: 44px;
     font-size: 15px;
@@ -675,7 +675,7 @@ $transition-slow: 0.5s ease;
     max-width: 100%;
     box-sizing: border-box;
   }
-  
+
   .auth-button-secondary {
     height: 40px;
     font-size: 14px;
@@ -683,27 +683,27 @@ $transition-slow: 0.5s ease;
     max-width: 100%;
     box-sizing: border-box;
   }
-  
+
   .auth-button-group {
     gap: 10px;
     margin-top: 20px;
     width: 100%;
     box-sizing: border-box;
   }
-  
+
   // Material Form Fields em mobile
   .auth-mat-form-field {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
-    
+
     ::ng-deep {
       .mat-mdc-form-field-flex {
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
       }
-      
+
       .mdc-text-field--outlined .mdc-text-field__input {
         padding: 12px 14px;
         font-size: 16px; // Evita zoom no iOS
@@ -718,22 +718,22 @@ $transition-slow: 0.5s ease;
   .auth-container {
     padding: 8px;
   }
-  
+
   .auth-card {
     padding: 20px 16px;
     max-width: calc(100vw - 16px);
     border-radius: 12px;
   }
-  
+
   .auth-title {
     font-size: 20px;
   }
-  
+
   .auth-input {
     padding: 10px 12px;
     font-size: 16px;
   }
-  
+
   .auth-mat-form-field {
     ::ng-deep {
       .mdc-text-field--outlined .mdc-text-field__input {
@@ -799,12 +799,12 @@ $transition-slow: 0.5s ease;
     background-color: $error-color !important;
     color: white !important;
   }
-  
+
   .warning-snackbar {
     background-color: $warning-color !important;
     color: white !important;
   }
-  
+
   .info-snackbar {
     background-color: $info-color !important;
     color: white !important;

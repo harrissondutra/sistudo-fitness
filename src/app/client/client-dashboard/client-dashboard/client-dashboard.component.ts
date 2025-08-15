@@ -342,6 +342,12 @@ export class ClientDashboardComponent implements OnInit {
     }
   }
 
+  navigateToBioimpedancia() {
+    if (this.clientId) {
+      this.router.navigate(['/bioimpedancia', this.clientId]);
+    }
+  }
+
   navigateToAssociatedDoctors() {
     if (this.clientId) {
       this.router.navigate(['/doctor-list'], {

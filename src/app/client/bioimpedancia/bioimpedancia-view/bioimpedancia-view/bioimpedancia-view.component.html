@@ -1,0 +1,54 @@
+<div class="bioimpedancia-table">
+	<table>
+		<thead>
+			<tr>
+				<th>Data Medição</th>
+				<th>Peso Atual</th>
+				<th>Peso Ideal</th>
+				<th>IMC</th>
+				<th>PGC</th>
+				<th>Pontuação Inbody</th>
+				<th>Ações</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let b of bioimpedancias; let i = index">
+				<ng-container *ngIf="editingIndex !== i; else editRow">
+					<td>{{ b.dataMedicaoStr }}</td>
+					<td>{{ b.pesoAtual }}</td>
+					<td>{{ b.pesoIdeal }}</td>
+					<td>{{ b.imc }}</td>
+					<td>{{ b.pgc }}</td>
+					<td>{{ b.pontuacaoInbody }}</td>
+					<td>
+						<button (click)="startEdit(i)">Editar</button>
+					</td>
+				</ng-container>
+				<ng-template #editRow>
+					<td>
+						<input [(ngModel)]="edited.dataMedicaoStr" />
+					</td>
+					<td>
+						<input type="number" [(ngModel)]="edited.pesoAtual" />
+					</td>
+					<td>
+						<input type="number" [(ngModel)]="edited.pesoIdeal" />
+					</td>
+					<td>
+						<input type="number" [(ngModel)]="edited.imc" />
+					</td>
+					<td>
+						<input type="number" [(ngModel)]="edited.pgc" />
+					</td>
+					<td>
+						<input type="number" [(ngModel)]="edited.pontuacaoInbody" />
+					</td>
+					<td>
+						<button (click)="saveEdit(i)">Salvar</button>
+						<button (click)="cancelEdit()">Cancelar</button>
+					</td>
+				</ng-template>
+			</tr>
+		</tbody>
+	</table>
+</div>

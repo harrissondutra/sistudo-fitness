@@ -26,6 +26,28 @@ export class MenuService {
   // Adiciona a propriedade defaultMenuItems
   private readonly defaultMenuItems: MenuItem[] = [
     {
+      id: 'fit-agenda',
+      title: 'FitAgenda',
+      icon: 'event', // ícone de calendário
+      visible: true,
+      links: [
+        { id: 'agenda-today', label: 'Atendimentos de Hoje', route: '/fit-agenda/today', visible: true },
+        { id: 'agenda-future', label: 'Agendamentos Futuros', route: '/fit-agenda/future', visible: true },
+        { id: 'agenda-history', label: 'Histórico de Atendimentos', route: '/fit-agenda/history', visible: true },
+        { id: 'agenda-create', label: 'Novo Agendamento', route: '/fit-agenda/create', visible: true }
+      ]
+    },
+    {
+      id: 'bioimpedancia',
+      title: 'Bioimpedância',
+      icon: 'science', // ícone de bioimpedância
+      visible: true,
+      links: [
+        { id: 'bioimpedancia-history-select', label: 'Histórico de Bioimpedância', route: '/bioimpedancia/history/:id', visible: true, isDynamic: true },
+        { id: 'bioimpedancias', label: 'Analisar Bioimpedância', route: '/bioimpedancia/select-client', visible: true }
+      ]
+    },
+    {
       id: 'clients',
       title: 'Clientes',
       icon: 'group',
@@ -461,13 +483,10 @@ export class MenuService {
         const processedLink = { ...link };
 
 
-        // Verifique EXPLICITAMENTE se isDynamic é true e se a rota contém :id
+        // Só processa rotas dinâmicas se isDynamic === true E a rota contém :id
         if (processedLink.isDynamic === true && processedLink.route && processedLink.route.includes(':id')) {
-          const originalRoute = processedLink.route;
-          // Usar uma verificação para garantir que currentUserId não é null
           const userId = this.currentUserId !== null ? this.currentUserId.toString() : '0';
           processedLink.route = processedLink.route.replace(/:id/g, userId);
-        } else {
         }
 
         // Processar sublinks

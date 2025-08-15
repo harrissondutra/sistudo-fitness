@@ -1,0 +1,210 @@
+<div class="bioimpedancia-create-container">
+  <!-- Cabeçalho da Página -->
+  <mat-card class="header-card">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">
+          <mat-icon color="primary">{{ isEditMode ? 'edit' : 'add_circle_outline' }}</mat-icon>
+          {{ isEditMode ? 'Editar' : 'Nova' }} Bioimpedância
+        </h1>
+        <p class="page-subtitle" *ngIf="client">Cliente: {{ client.name }}</p>
+      </div>
+      <div class="action-buttons-header">
+        <button mat-button (click)="onCancel()">
+          <mat-icon>close</mat-icon> Cancelar
+        </button>
+        <button mat-flat-button color="primary" [disabled]="!bioimpedanciaForm.valid || isSubmitting" (click)="onSubmit()">
+          <mat-icon>save</mat-icon> Salvar
+        </button>
+      </div>
+    </div>
+  </mat-card>
+
+  <!-- Indicador de Carregamento -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Carregando dados...</p>
+  </div>
+
+  <div *ngIf="!isLoading && client">
+    <!-- Formulário Principal -->
+    <form [formGroup]="bioimpedanciaForm" class="bioimpedancia-form">
+      <!-- Seção: Dados Principais da Medição -->
+      <mat-expansion-panel [expanded]="true" class="form-section-panel">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Dados Principais da Medição
+          </mat-panel-title>
+          <mat-panel-description>
+            Informações gerais sobre a medição.
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Data da Medição</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="dataMedicao" required>
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Peso Atual (kg)</mat-label>
+            <input matInput type="number" formControlName="pesoAtual">
+            <mat-icon matSuffix>fitness_center</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Pontuação Inbody</mat-label>
+            <input matInput type="number" formControlName="pontuacaoInbody">
+            <mat-icon matSuffix>star</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>IMC</mat-label>
+            <input matInput type="number" formControlName="imc">
+            <mat-icon matSuffix>line_weight</mat-icon>
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- Seção: Composição Corporal -->
+      <mat-expansion-panel class="form-section-panel">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Composição Corporal
+          </mat-panel-title>
+          <mat-panel-description>
+            Detalhes sobre água, proteína, minerais e massa de gordura.
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div formGroupName="composicaoCorporal" class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Água Corporal (kg)</mat-label>
+            <input matInput type="number" formControlName="aguaCorporal">
+            <mat-icon matSuffix>water_drop</mat-icon>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Proteína (kg)</mat-label>
+            <input matInput type="number" formControlName="proteina">
+            <mat-icon matSuffix>egg_alt</mat-icon>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Minerais (kg)</mat-label>
+            <input matInput type="number" formControlName="minerais">
+            <mat-icon matSuffix>science</mat-icon>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Massa de Gordura (kg)</mat-label>
+            <input matInput type="number" formControlName="massaGordura">
+            <mat-icon matSuffix>cake</mat-icon>
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- Seção: Análise Músculo-Gordura -->
+      <mat-expansion-panel class="form-section-panel">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Análise Músculo-Gordura
+          </mat-panel-title>
+          <mat-panel-description>
+            Valores de massa muscular esquelética e massa de gordura total.
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div formGroupName="analiseMusculoGordura" class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Massa Muscular Esquelética (kg)</mat-label>
+            <input matInput type="number" formControlName="massaMuscularEsqueletica">
+            <mat-icon matSuffix>nordic_walking</mat-icon>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Massa de Gordura Total (kg)</mat-label>
+            <input matInput type="number" formControlName="massaGorduraTotal">
+            <mat-icon matSuffix>straighten</mat-icon>
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- Seção: Massa Magra Segmentar -->
+      <mat-expansion-panel class="form-section-panel">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Massa Magra Segmentar
+          </mat-panel-title>
+          <mat-panel-description>
+            Detalhes da massa magra por segmento corporal.
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div formGroupName="massaMagraSegmentar" class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Braço Esquerdo (kg)</mat-label>
+            <input matInput type="number" formControlName="bracoEsquerdo">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Braço Direito (kg)</mat-label>
+            <input matInput type="number" formControlName="bracoDireito">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Tronco (kg)</mat-label>
+            <input matInput type="number" formControlName="tronco">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Perna Esquerda (kg)</mat-label>
+            <input matInput type="number" formControlName="pernaEsquerda">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Perna Direita (kg)</mat-label>
+            <input matInput type="number" formControlName="pernaDireita">
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+
+      <!-- Seção: Gordura Segmentar -->
+      <mat-expansion-panel class="form-section-panel">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Gordura Segmentar
+          </mat-panel-title>
+          <mat-panel-description>
+            Detalhes da gordura por segmento corporal.
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div formGroupName="gorduraSegmentar" class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Braço Esquerdo (kg)</mat-label>
+            <input matInput type="number" formControlName="bracoEsquerdo">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Braço Direito (kg)</mat-label>
+            <input matInput type="number" formControlName="bracoDireito">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Tronco (kg)</mat-label>
+            <input matInput type="number" formControlName="tronco">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Perna Esquerda (kg)</mat-label>
+            <input matInput type="number" formControlName="pernaEsquerda">
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Perna Direita (kg)</mat-label>
+            <input matInput type="number" formControlName="pernaDireita">
+          </mat-form-field>
+        </div>
+      </mat-expansion-panel>
+    </form>
+  </div>
+
+  <!-- Ações do Formulário Finais -->
+  <div class="action-buttons-footer" *ngIf="!isLoading && client">
+    <button mat-button (click)="onCancel()">
+      <mat-icon>close</mat-icon> Cancelar
+    </button>
+    <button mat-flat-button color="primary" [disabled]="!bioimpedanciaForm.valid || isSubmitting" (click)="onSubmit()">
+      <mat-icon>save</mat-icon> Salvar
+    </button>
+  </div>
+</div>

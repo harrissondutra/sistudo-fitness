@@ -49,6 +49,9 @@ import { ClientProfessionalsComponent } from './client/client-professionals/clie
 import { ClientWebRegisterComponent } from './client/client-web-register/client-web-register/client-web-register.component';
 import { DietListComponent } from './nutritionist/diet-list/diet-list/diet-list.component';
 import { DoctorPatientListComponent } from './doctor-patient-list/doctor-patient-list.component';
+import { BioimpedanciaClientSelectComponent } from './client/bioimpedancia/bioimpedancia-client-select/bioimpedancia-client-select.component';
+import { BioimpedanciaHistoryComponent } from './client/bioimpedancia/bioimpedancia-history/bioimpedancia-history/bioimpedancia-history.component';
+import { BioimpedanciaCreateComponent } from './client/bioimpedancia/bioimpedancia-create/bioimpedancia-create.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -74,6 +77,10 @@ export const routes: Routes = [
       { path: 'client-measure/:id', component: ClientMeasureComponent },
       { path: 'client-measure-history/:id', component: ClientMeasureHistoryComponent },
       { path: 'client-professionals/:id', component: ClientProfessionalsComponent },
+      { path: 'bioimpedancia/history/:clientId', component: BioimpedanciaHistoryComponent },
+      { path: 'bioimpedancia/:clientId/:id', component: BioimpedanciaCreateComponent },
+      { path: 'bioimpedancia/:clientId', component: BioimpedanciaCreateComponent },
+      { path: 'bioimpedancia/select-client', component: BioimpedanciaClientSelectComponent },
       { path: 'clients-list', component: ClientListComponent },
       { path: 'clients-edit/:id', component: ClientEditComponent },
       { path: 'edit-measures/:id', component: EditMeasuresComponent },

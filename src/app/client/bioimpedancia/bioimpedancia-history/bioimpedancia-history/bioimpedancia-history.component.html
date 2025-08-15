@@ -1,0 +1,136 @@
+<div class="bioimpedancia-history-container">
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Carregando dados...</p>
+  </div>
+
+  <div *ngIf="!isLoading && client">
+    <mat-card class="header">
+      <div class="header-content">
+        <div class="title-group">
+          <h1 class="page-title">
+            <mat-icon color="primary">timeline</mat-icon>
+            Histórico de Bioimpedância
+          </h1>
+          <p class="page-subtitle">Cliente: {{ client.name }}</p>
+        </div>
+        <div class="header-actions">
+          <button mat-flat-button color="primary" (click)="onCreateNewBioimpedancia()">
+            <mat-icon>add</mat-icon> Nova Bioimpedância
+          </button>
+          <button mat-button (click)="onViewClient()">
+            <mat-icon>visibility</mat-icon> Ver Cliente
+          </button>
+          <button mat-button (click)="onBack()">
+            <mat-icon>arrow_back</mat-icon> Voltar
+          </button>
+        </div>
+      </div>
+    </mat-card>
+
+    <ng-container *ngIf="hasData">
+      <!-- Seção de Filtros -->
+      <mat-card class="controls-section controls-card">
+        <div class="controls-header">
+          <h3>
+            <mat-icon>filter_list</mat-icon> Filtros e Configurações
+          </h3>
+        </div>
+        <form [formGroup]="filterForm" class="controls-form">
+          <div class="filter-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Data de Início</mat-label>
+              <input matInput [matDatepicker]="startDatePicker" formControlName="dateStart">
+              <mat-datepicker-toggle matIconSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #startDatePicker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Data de Fim</mat-label>
+              <input matInput [matDatepicker]="endDatePicker" formControlName="dateEnd">
+              <mat-datepicker-toggle matIconSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #endDatePicker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Categoria de Gráfico</mat-label>
+              <mat-select formControlName="chartCategory">
+                <mat-option value="all">Todas as Categorias</mat-option>
+                <mat-option *ngFor="let category of chartCategories" [value]="category.id">
+                  {{ category.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="filter-actions">
+            <button mat-button (click)="clearFilters()">
+              <mat-icon>clear</mat-icon> Limpar Filtros
+            </button>
+          </div>
+        </form>
+      </mat-card>
+
+      <!-- Seção de Gráficos Visíveis -->
+      <div class="charts-section">
+        <h2 class="section-title">Gráficos Ativos</h2>
+        <div class="charts-grid">
+          <mat-card class="chart-card" *ngFor="let chart of getVisibleCharts()">
+            <div class="chart-header">
+              <div class="chart-info">
+                <h4>{{ chart.title }}</h4>
+                <p>{{ chart.description }}</p>
+              </div>
+              <button mat-icon-button (click)="toggleChartVisibility(chart.id)" matTooltip="Remover do Dashboard">
+                <mat-icon>visibility_off</mat-icon>
+              </button>
+            </div>
+            <div class="chart-container">
+              <canvas baseChart [data]="chart.data!" [type]="chart.type" [options]="chart.options"></canvas>
+            </div>
+          </mat-card>
+        </div>
+      </div>
+
+  <!-- Seção de Gráficos Disponíveis -->
+  <mat-expansion-panel class="available-charts-section available-charts-card" [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <h3><mat-icon>add_chart</mat-icon> Adicionar Gráficos</h3>
+          </mat-panel-title>
+          <mat-panel-description>
+            {{ getAvailableCharts().length }} gráficos disponíveis
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <div class="available-charts-grid">
+          <mat-card class="available-chart-item" *ngFor="let chart of getAvailableCharts()" (click)="toggleChartVisibility(chart.id)">
+            <mat-icon [color]="'primary'" class="chart-preview">{{ getChartCategoryIcon(chart.category) }}</mat-icon>
+            <div class="chart-details">
+              <h4>{{ chart.title }}</h4>
+              <p>{{ chart.description }}</p>
+              <span class="chart-category">
+                <mat-icon style="font-size: 1rem; height: 1rem; width: 1rem;">category</mat-icon>
+                {{ getChartCategoryName(chart.category) }}
+              </span>
+            </div>
+            <button mat-icon-button class="ml-auto" matTooltip="Adicionar ao Dashboard">
+              <mat-icon>add_circle_outline</mat-icon>
+            </button>
+          </mat-card>
+        </div>
+      </mat-expansion-panel>
+    </ng-container>
+
+    <div *ngIf="!isLoading && !hasData" class="no-data-container">
+      <mat-card class="no-data-card">
+        <div class="no-data-content">
+          <mat-icon>bar_chart</mat-icon>
+          <h3>Nenhuma bioimpedância encontrada</h3>
+          <p>Adicione a primeira medição para visualizar o histórico.</p>
+          <button mat-flat-button color="primary" (click)="onCreateNewBioimpedancia()">
+            <mat-icon>add</mat-icon> Adicionar Agora
+          </button>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>
