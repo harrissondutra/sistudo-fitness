@@ -12,6 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { FitAgendaService } from '../../services/fit-agenda-service/fit-agenda.service';
 import { Appointment } from '../../models/appointment';
 import { ServiceType, SERVICE_TYPE_OPTIONS } from '../../models/service-type.enum';
+import { AppointmentStatus, APPOINTMENT_STATUS_COLORS } from '../../models/appointment-status.enum';
 import { Subscription } from 'rxjs';
 
 // Adicionado para usar o tipo de dado correto nos eventos do FullCalendar
@@ -37,12 +38,17 @@ export class FitAgendaProximosComponent implements OnInit {
   showModal = false;
   isEditing = false;
   // Tipo auxiliar para o modal, incluindo campos extras para edição
-  modalData: (Appointment & { startString?: string | null; endString?: string | null }) | null = null;
+  modalData: (Appointment & { startString?: string | null; endString?: string | null; status?: AppointmentStatus }) | null = null;
+  statusEdit: AppointmentStatus = AppointmentStatus.Agendado;
   today = new Date();
   totalAppointments = 0;
   upcomingAppointments = 0;
 
+
   serviceTypeOptions = SERVICE_TYPE_OPTIONS;
+  appointmentStatus = AppointmentStatus;
+  statusColors = APPOINTMENT_STATUS_COLORS;
+  legendStatus: AppointmentStatus[] = Object.values(AppointmentStatus);
 
   // Propriedade para controlar o carregamento de eventos
   eventsLoaded = false;
@@ -96,17 +102,28 @@ export class FitAgendaProximosComponent implements OnInit {
           }
           return val;
         };
-        const events = appointments.map(app => ({
-          id: app.id !== undefined ? String(app.id) : undefined,
-          title: app.name,
-          start: toIso(app.dateTime),
-          end: app.endDate ? toIso(app.endDate) : undefined,
-          extendedProps: {
-            service: app.service,
-            description: app.description,
-            clientId: app.clientId
+        const events = appointments.map(app => {
+          // status pode vir como string do backend, garantir que seja um valor válido do enum
+          let status: AppointmentStatus = AppointmentStatus.Agendado;
+          if (typeof app.status === 'string' && Object.values(AppointmentStatus).includes(app.status as AppointmentStatus)) {
+            status = app.status as AppointmentStatus;
           }
-        }));
+          return {
+            id: app.id !== undefined ? String(app.id) : undefined,
+            title: app.name,
+            start: toIso(app.dateTime),
+            end: app.endDate ? toIso(app.endDate) : undefined,
+            backgroundColor: APPOINTMENT_STATUS_COLORS[status] || APPOINTMENT_STATUS_COLORS[AppointmentStatus.Agendado],
+            borderColor: APPOINTMENT_STATUS_COLORS[status] || APPOINTMENT_STATUS_COLORS[AppointmentStatus.Agendado],
+            classNames: [status],
+            extendedProps: {
+              service: app.service,
+              description: app.description,
+              clientId: app.clientId,
+              status: status
+            }
+          };
+        });
         // Atribui os eventos ao calendário
         this.calendarOptions.events = events;
         this.eventsLoaded = true;
@@ -155,7 +172,11 @@ export class FitAgendaProximosComponent implements OnInit {
       startString: clickedEvent.start ? formatLocal(clickedEvent.start) : null,
       endString: clickedEvent.end ? formatLocal(clickedEvent.end) : null
     };
-
+    // status pode vir como string, garantir que seja um valor válido do enum
+    const statusRaw = clickedEvent.extendedProps['status'];
+    this.statusEdit = (typeof statusRaw === 'string' && Object.values(AppointmentStatus).includes(statusRaw as AppointmentStatus))
+      ? (statusRaw as AppointmentStatus)
+      : AppointmentStatus.Agendado;
     this.showModal = true;
   }
 
@@ -186,21 +207,25 @@ export class FitAgendaProximosComponent implements OnInit {
       };
       const dateTime = this.modalData.startString ? formatLocal(this.modalData.startString) : this.modalData.dateTime;
       const endDate = this.modalData.endString ? formatLocal(this.modalData.endString) : this.modalData.endDate;
-      const payload: Appointment = {
+      // Atualiza o status também no modalData para refletir imediatamente na UI
+      this.modalData.status = this.statusEdit;
+      const payload: any = {
         id: this.modalData.id,
         name: this.modalData.name,
         service: this.modalData.service as ServiceType,
         description: this.modalData.description,
         clientId: this.modalData.clientId,
         dateTime,
-        endDate
+        endDate,
+        status: (this.statusEdit as string) || AppointmentStatus.Agendado
       };
 
       this.fitAgendaService.update(this.modalData.id, payload).subscribe({
         next: () => {
           this.showModal = false;
           this.isEditing = false;
-          this.loadEvents();
+          // Aguarda o recarregamento dos eventos para garantir que o status atualizado seja refletido
+          setTimeout(() => this.loadEvents(), 100);
           this.snackBar.open('Agendamento alterado com sucesso!', 'Fechar', { duration: 3000 });
         },
         error: (err) => {

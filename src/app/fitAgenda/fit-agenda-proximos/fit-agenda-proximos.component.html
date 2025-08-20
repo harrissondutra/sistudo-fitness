@@ -5,9 +5,12 @@
     <div class="agenda-header-content">
       <h1 class="agenda-title">
         <span class="agenda-emoji">📅</span>
-        <span>Agenda de Agendamentos</span>
+        <span>Agendamentos</span>
       </h1>
-      <p id="current-date" class="agenda-date">{{ today | date:'longDate' | titlecase }}</p>
+      <div class="agenda-month" style="font-size:1.15rem;font-weight:600;color:#1976d2;margin-bottom:0.15rem;">
+        {{ today | date:'LLLL':'':'pt-BR' | titlecase }}
+      </div>
+      <p id="current-date" class="agenda-date">{{ today | date:'longDate':'':'pt-BR' }}</p>
     </div>
     <div class="agenda-stats">
       <div class="stat-item">
@@ -32,14 +35,9 @@
   <div class="calendar-legend">
     <h4>Legenda</h4>
     <div class="legend-items">
-      <div class="legend-item">
-        <span class="legend-color atendido"></span><span>Atendido</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-color agendado"></span><span>Agendado</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-color cancelado"></span><span>Cancelado</span>
+      <div class="legend-item" *ngFor="let status of legendStatus">
+        <span class="legend-color" [ngStyle]="{ 'background-color': statusColors[status] }"></span>
+        <span>{{ status | titlecase }}</span>
       </div>
     </div>
   </div>
@@ -70,6 +68,13 @@
             <span *ngIf="!isEditing && modalData">{{ modalData.service }}</span>
             <select *ngIf="isEditing && modalData" class="input-field" [(ngModel)]="modalData.service">
               <option *ngFor="let s of serviceTypeOptions" [value]="s">{{ s }}</option>
+            </select>
+          </div>
+          <div class="info-row">
+            <strong>Status:</strong>
+            <span *ngIf="!isEditing && modalData">{{ statusEdit | titlecase }}</span>
+            <select *ngIf="isEditing && modalData" class="input-field" [(ngModel)]="statusEdit">
+              <option *ngFor="let s of legendStatus" [value]="s">{{ s | titlecase }}</option>
             </select>
           </div>
           <div class="info-row">
