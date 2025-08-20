@@ -27,7 +27,35 @@
   <!-- Calendário -->
   <div class="agenda-proximos-calendar">
     <ng-container *ngIf="eventsLoaded">
-  <full-calendar #calendar [options]="calendarOptions"></full-calendar>
+      <full-calendar #calendar [options]="calendarOptions"></full-calendar>
+      <!-- Força o CSS para quebra de linha e tooltip nos eventos -->
+      <style>
+        .fc-event-title {
+          white-space: normal !important;
+          word-break: normal !important;
+          overflow-wrap: break-word !important;
+          line-break: normal !important;
+          hyphens: none !important;
+        }
+        .fc-event {
+          cursor: pointer;
+        }
+        .custom-tooltip-event {
+          position: absolute;
+          z-index: 9999;
+          background: #222;
+          color: #fff;
+          padding: 0.7em 1.1em;
+          border-radius: 8px;
+          font-size: 1rem;
+          font-family: 'Montserrat', 'Roboto', sans-serif;
+          box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+          pointer-events: none;
+          min-width: 180px;
+          max-width: 320px;
+          white-space: pre-line;
+        }
+      </style>
     </ng-container>
   </div>
 
@@ -36,7 +64,7 @@
     <h4>Legenda</h4>
     <div class="legend-items">
       <div class="legend-item" *ngFor="let status of legendStatus">
-        <span class="legend-color" [ngStyle]="{ 'background-color': statusColors[status] }"></span>
+        <span class="legend-color" [ngStyle]="{ 'background-color': getStatusColor(status) }"></span>
         <span>{{ status | titlecase }}</span>
       </div>
     </div>

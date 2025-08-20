@@ -30,6 +30,9 @@ import { Subscription } from 'rxjs';
   encapsulation: ViewEncapsulation.None
 })
 export class FitAgendaProximosComponent implements OnInit {
+  getStatusColor(status: string): string {
+    return this.statusColors[status as AppointmentStatus] || '#1976d2';
+  }
   // Component properties
   @ViewChild('calendar') calendarComponent?: ElementRef;
   private appointmentSubscription?: Subscription;
@@ -63,10 +66,10 @@ export class FitAgendaProximosComponent implements OnInit {
       center: 'title',
       right: 'dayGridMonth,timeGridWeek,timeGridDay'
     },
-    // Definindo o tipo para os eventos para resolver o erro
     events: [] as EventInput[],
     eventClick: this.handleEventClick.bind(this),
     datesSet: (arg: any) => this.updateAppointmentStats(),
+    eventDidMount: this.handleEventMouse.bind(this),
     buttonText: {
       today: 'Hoje',
       month: 'Mês',
@@ -74,6 +77,48 @@ export class FitAgendaProximosComponent implements OnInit {
       day: 'Dia'
     }
   };
+
+  // Evento para mouse hover customizado
+  handleEventMouse(info: any) {
+    // Remove tooltip antiga se existir
+    if (info.el._customTooltip) {
+      info.el._customTooltip.remove();
+      info.el._customTooltip = null;
+    }
+    // Cria tooltip customizada
+    info.el.addEventListener('mouseenter', () => {
+      const event = info.event;
+      const nome = event.title;
+      let hora = '';
+      if (event.start) {
+        const d = new Date(event.start);
+        hora = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      }
+      const servico = event.extendedProps['service'] || '';
+      const tooltip = document.createElement('div');
+      tooltip.className = 'custom-tooltip-event';
+      tooltip.innerHTML = `<strong>Cliente:</strong> ${nome}<br><strong>Hora:</strong> ${hora}<br><strong>Serviço:</strong> ${servico}`;
+      document.body.appendChild(tooltip);
+      // Posição do mouse
+      const mouseMove = (e: MouseEvent) => {
+        tooltip.style.left = e.pageX + 15 + 'px';
+        tooltip.style.top = e.pageY + 10 + 'px';
+      };
+      info.el.addEventListener('mousemove', mouseMove);
+      info.el._customTooltip = tooltip;
+      info.el._customTooltipMouseMove = mouseMove;
+    });
+    info.el.addEventListener('mouseleave', () => {
+      if (info.el._customTooltip) {
+        info.el._customTooltip.remove();
+        info.el._customTooltip = null;
+      }
+      if (info.el._customTooltipMouseMove) {
+        info.el.removeEventListener('mousemove', info.el._customTooltipMouseMove);
+        info.el._customTooltipMouseMove = null;
+      }
+    });
+  }
 
   constructor(
     private fitAgendaService: FitAgendaService,
@@ -108,6 +153,14 @@ export class FitAgendaProximosComponent implements OnInit {
           if (typeof app.status === 'string' && Object.values(AppointmentStatus).includes(app.status as AppointmentStatus)) {
             status = app.status as AppointmentStatus;
           }
+          // Tooltip: nome + hora
+          let hora = '';
+          if (app.dateTime) {
+            const d = Array.isArray(app.dateTime)
+              ? new Date(app.dateTime[0], app.dateTime[1] - 1, app.dateTime[2], app.dateTime[3] || 0, app.dateTime[4] || 0)
+              : new Date(app.dateTime);
+            hora = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+          }
           return {
             id: app.id !== undefined ? String(app.id) : undefined,
             title: app.name,
@@ -121,7 +174,8 @@ export class FitAgendaProximosComponent implements OnInit {
               description: app.description,
               clientId: app.clientId,
               status: status
-            }
+            },
+            titleAttr: `${app.name} - ${hora}`
           };
         });
         // Atribui os eventos ao calendário
