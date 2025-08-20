@@ -3,7 +3,7 @@ export enum ServiceType {
   Bioimpedancia = 'Bioimpedância',
   ConsultaNutricional = 'Consulta Nutricional',
   Treino = 'Treino',
-  MMedico = 'Médico'
+  Medico = 'Médico'
 }
 
 export const SERVICE_TYPE_OPTIONS = [
@@ -11,5 +11,5 @@ export const SERVICE_TYPE_OPTIONS = [
   ServiceType.Bioimpedancia,
   ServiceType.ConsultaNutricional,
   ServiceType.Treino,
-  ServiceType.MMedico
+  ServiceType.Medico
 ];
