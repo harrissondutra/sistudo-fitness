@@ -3,23 +3,30 @@
   <!-- Cabeçalho -->
   <header class="agenda-header">
     <div class="agenda-header-content">
-      <h1 class="agenda-title">
-        <span class="agenda-emoji">📅</span>
-        <span>Agendamentos</span>
-      </h1>
-      <div class="agenda-month" style="font-size:1.15rem;font-weight:600;color:#1976d2;margin-bottom:0.15rem;">
-        {{ today | date:'LLLL':'':'pt-BR' | titlecase }}
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <h1 class="agenda-title" style="margin-bottom: 0;">
+          <span class="agenda-emoji">📅</span>
+          <span>Agendamentos</span>
+        </h1>
+        <a [routerLink]="['/fit-agenda/create']" class="btn-new-appointment" title="Novo agendamento" style="margin-left:0.7rem;">
+          <span class="material-icons">add</span>
+          <span class="btn-new-label">Novo</span>
+        </a>
       </div>
-      <p id="current-date" class="agenda-date">{{ today | date:'longDate':'':'pt-BR' }}</p>
+
+
+
     </div>
-    <div class="agenda-stats">
-      <div class="stat-item">
-        <span class="stat-number">{{ totalAppointments }}</span>
-        <span class="stat-label">Total</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">{{ upcomingAppointments }}</span>
-        <span class="stat-label">Próximos</span>
+    <div class="agenda-stats-and-btn">
+      <div class="agenda-stats">
+        <div class="stat-item">
+          <span class="stat-number">{{ totalAppointments }}</span>
+          <span class="stat-label">Total</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">{{ availableSlotsToday }}</span>
+          <span class="stat-label">Disponíveis hoje</span>
+        </div>
       </div>
     </div>
   </header>
@@ -56,7 +63,9 @@
           white-space: pre-line;
         }
       </style>
+
     </ng-container>
+
   </div>
 
   <!-- Legenda -->
