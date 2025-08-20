@@ -1,0 +1,91 @@
+
+	<h2>Novo Agendamento</h2>
+	<form [formGroup]="agendaForm" (ngSubmit)="onSubmit()" autocomplete="off">
+		<div class="full-width" style="margin-bottom: 16px; display: flex; gap: 24px; align-items: center;">
+			<label style="display: flex; align-items: center; cursor: pointer;">
+				<mat-checkbox [checked]="isRegisteredClient" (change)="setRegisteredClient(true)" color="primary"></mat-checkbox>
+				<span style="margin-left: 8px;">Já cadastrado</span>
+			</label>
+			<label style="display: flex; align-items: center; cursor: pointer;">
+				<mat-checkbox [checked]="!isRegisteredClient" (change)="setRegisteredClient(false)" color="primary"></mat-checkbox>
+				<span style="margin-left: 8px;">Não cadastrado</span>
+			</label>
+		</div>
+
+		<ng-container *ngIf="showRegisteredClientField; else unregisteredBlock">
+			<mat-form-field appearance="outline" class="full-width">
+				<mat-label>Cliente</mat-label>
+				<input matInput formControlName="client" placeholder="Pesquisar cliente" [matAutocomplete]="auto">
+				<mat-autocomplete #auto="matAutocomplete" (optionSelected)="onClientSelected($event)">
+					<mat-option *ngFor="let client of filteredClients$ | async" [value]="client.name">
+						{{ client.name }}
+					</mat-option>
+				</mat-autocomplete>
+			</mat-form-field>
+		</ng-container>
+		<ng-template #unregisteredBlock>
+			<mat-form-field appearance="outline" class="full-width">
+				<mat-label>Nome do cliente</mat-label>
+				<input matInput formControlName="unregisteredClient" placeholder="Cliente não cadastrado">
+			</mat-form-field>
+			<div class="ddi-phone-row">
+				<mat-form-field appearance="outline" class="ddi-field">
+					<mat-label>DDI</mat-label>
+					<mat-select formControlName="ddi">
+						<mat-option *ngFor="let c of countryDDIs" [value]="c.code">
+							<span class="ddi-flag-code">
+								<img [src]="c.flagUrl" alt="{{c.name}}" class="flag-icon" />
+								{{c.code}}
+							</span>
+						</mat-option>
+					</mat-select>
+				</mat-form-field>
+				<mat-form-field appearance="outline" class="phone-field">
+					<mat-label>Telefone</mat-label>
+					<input matInput formControlName="phone" placeholder="Telefone do cliente" mask="(00) 00000-0000" required />
+					<mat-error *ngIf="agendaForm.get('phone')?.invalid && agendaForm.get('phone')?.touched">
+						Informe o telefone
+					</mat-error>
+				</mat-form-field>
+			</div>
+		</ng-template>
+
+			<mat-form-field appearance="outline" class="full-width">
+				<mat-label>Serviço</mat-label>
+				<mat-select formControlName="service">
+					<mat-option *ngFor="let s of serviceTypeOptions" [value]="s">{{ s }}</mat-option>
+				</mat-select>
+				<mat-error *ngIf="agendaForm.get('service')?.invalid && agendaForm.get('service')?.touched">
+					Selecione o serviço
+				</mat-error>
+			</mat-form-field>
+
+		<div class="row">
+			<mat-form-field appearance="outline" class="half-width">
+				<mat-label>Data</mat-label>
+				<input matInput [matDatepicker]="picker" formControlName="date" placeholder="Selecione a data">
+				<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+				<mat-datepicker #picker></mat-datepicker>
+				<mat-error *ngIf="agendaForm.get('date')?.invalid && agendaForm.get('date')?.touched">
+					Informe a data
+				</mat-error>
+			</mat-form-field>
+			<mat-form-field appearance="outline" class="half-width">
+				<mat-label>Hora</mat-label>
+				<input matInput type="time" formControlName="time" placeholder="Horário">
+				<mat-error *ngIf="agendaForm.get('time')?.invalid && agendaForm.get('time')?.touched">
+					Informe o horário
+				</mat-error>
+			</mat-form-field>
+		</div>
+
+		<mat-form-field appearance="outline" class="full-width">
+			<mat-label>Descrição</mat-label>
+			<textarea matInput formControlName="notes" rows="2" placeholder="Descrição (opcional)"></textarea>
+		</mat-form-field>
+
+		<button mat-raised-button color="primary" type="submit" [disabled]="isLoading || !agendaForm.valid">
+			<mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+			<span *ngIf="!isLoading">Salvar Agendamento</span>
+		</button>
+	</form>

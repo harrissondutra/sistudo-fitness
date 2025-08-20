@@ -1,0 +1,79 @@
+<div class="historico-container">
+  <!-- Cabeçalho da página -->
+  <div class="header">
+    <h2 class="title">Histórico de Atendimentos</h2>
+  </div>
+
+  <!-- Contêiner de filtros -->
+  <div class="filter-section">
+    <div class="filter-row">
+      <mat-form-field appearance="outline" class="search-input">
+        <mat-label>Buscar Cliente</mat-label>
+        <input matInput id="client-autocomplete" type="text" placeholder="Digite o nome do cliente"
+          [formControl]="clientControl" [matAutocomplete]="auto">
+        <mat-icon matSuffix>search</mat-icon>
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onClientSelected($event)">
+          <mat-option *ngFor="let client of filteredClients$ | async" [value]="client.name">
+            {{ client.name }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="service-input">
+        <mat-label>Serviço</mat-label>
+        <input matInput placeholder="Filtrar por serviço" [formControl]="serviceControl"
+          [matAutocomplete]="serviceAuto">
+        <mat-icon matSuffix>assignment</mat-icon>
+        <mat-autocomplete #serviceAuto="matAutocomplete">
+          <mat-option *ngFor="let s of filteredServices" [value]="s">
+            {{ s }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="date-input">
+        <mat-label>Data</mat-label>
+        <input matInput placeholder="dd/mm/yyyy, mm/yyyy ou yyyy" [formControl]="dateControl"
+          (input)="onDateInput($event)" [mask]="dateMask" [dropSpecialCharacters]="false">
+        <mat-icon matSuffix>event</mat-icon>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Cards de histórico de atendimentos -->
+  <div class="historico-cards-list">
+    <ng-container *ngIf="filteredAppointments.length > 0; else noData">
+      <div class="historico-card" *ngFor="let appt of filteredAppointments">
+
+        <!-- Cabeçalho do card -->
+        <div class="card-header">
+          <div class="card-title">
+            {{ appt.service || appt.name || 'Serviço não informado' }}
+          </div>
+          <div class="card-date">
+            <mat-icon>event</mat-icon>
+            <span>{{ getDateFromAppointment(appt) | date:'dd/MM/yyyy' }}</span>
+          </div>
+        </div>
+
+        <!-- Corpo do card -->
+        <div class="card-info-grid">
+          <!-- Descrição -->
+          <div class="card-info" *ngIf="appt.description">
+            <mat-icon>assignment</mat-icon>
+            <span class="info-label">Descrição:</span>
+            <span class="info-value">{{ appt.description }}</span>
+          </div>
+
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Caso não haja dados -->
+    <ng-template #noData>
+      <div class="no-data-content">
+        <mat-icon>history</mat-icon>
+        <p>Nenhum atendimento encontrado.</p>
+      </div>
+    </ng-template>
+  </div>

@@ -1,0 +1,234 @@
+
+
+@import '../../../styles/variables';
+
+.historico-container {
+  max-width: 1200px;
+  margin: $spacing-lg auto;
+  padding: $spacing-lg;
+  background: $surface-color;
+  border-radius: 20px;
+  box-shadow:
+    0 4px 24px rgba($primary-color, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, $primary-color, $primary-light);
+    border-radius: 20px 20px 0 0;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  padding: $spacing-md $spacing-lg;
+  background: rgba($primary-color, 0.04);
+  border-radius: 16px;
+  border: 1px solid rgba($primary-color, 0.1);
+}
+.title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  color: $text-color;
+  background: linear-gradient(135deg, $primary-color, $primary-light);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+
+.filter-section {
+  margin-bottom: $spacing-lg;
+  background: $surface-color;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba($primary-color, 0.08);
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+}
+
+.filter-row {
+  display: flex;
+  gap: 18px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+.search-input {
+  flex: 2 1 240px;
+  min-width: 200px;
+}
+.service-input {
+  flex: 1 1 180px;
+  min-width: 140px;
+}
+.date-input {
+  flex: 1 1 160px;
+  min-width: 120px;
+}
+
+
+// === CARDS DE HISTÓRICO ===
+.historico-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+}
+.historico-card {
+  background: $surface-color;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba($primary-color, 0.10);
+  padding: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  position: relative;
+  transition: box-shadow 0.2s;
+  border-left: 5px solid $primary-color;
+  &:hover {
+    box-shadow: 0 6px 24px rgba($primary-color, 0.16);
+    border-left: 5px solid $primary-light;
+  }
+}
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $spacing-md;
+  margin-bottom: 2px;
+}
+.card-title {
+  font-size: 1.22rem;
+  font-weight: 700;
+  color: $primary-color;
+  flex: 1;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.01em;
+}
+.card-date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1.08rem;
+  color: $text-color;
+  font-weight: 500;
+  mat-icon {
+    font-size: 20px;
+    color: $primary-color;
+  }
+}
+.card-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: $spacing-sm $spacing-lg;
+}
+.card-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.04rem;
+  color: $text-color;
+  background: rgba($primary-light, 0.04);
+  border-radius: 8px;
+  padding: 8px 14px;
+  mat-icon {
+    font-size: 18px;
+    color: $primary-color;
+    opacity: 0.8;
+  }
+  .info-label {
+    font-weight: 600;
+    color: $primary-color;
+    margin-right: 2px;
+  }
+  .info-value {
+    font-weight: 500;
+    color: $text-color;
+  }
+}
+.no-data-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: $spacing-md;
+  padding: $spacing-xl * 2 0;
+  color: $text-secondary;
+  background: rgba($primary-color, 0.02);
+  border-radius: 16px;
+  border: 1px dashed rgba($primary-color, 0.2);
+  mat-icon {
+    font-size: 48px;
+    color: rgba($primary-color, 0.4);
+    background: rgba($primary-color, 0.08);
+    border-radius: 20px;
+    padding: $spacing-md;
+  }
+  p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: center;
+  }
+}
+
+@media (max-width: 1023px) {
+  .historico-container {
+    padding: $spacing-md;
+    border-radius: 14px;
+  }
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $spacing-md;
+    padding: $spacing-md;
+  }
+  .title {
+    font-size: 22px;
+  }
+  .filter-section {
+    padding: $spacing-md;
+  }
+  .table-container {
+    border-radius: 8px;
+  }
+  .historico-table th, .historico-table td {
+    padding: 0.7rem 0.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .historico-container {
+    padding: $spacing-sm;
+    border-radius: 8px;
+  }
+  .header {
+    padding: $spacing-sm;
+  }
+  .title {
+    font-size: 18px;
+  }
+  .filter-section {
+    padding: $spacing-sm;
+    border-radius: 6px;
+  }
+  .table-container {
+    border-radius: 4px;
+  }
+}

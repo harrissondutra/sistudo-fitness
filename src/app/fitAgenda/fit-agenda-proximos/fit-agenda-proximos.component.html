@@ -1,0 +1,106 @@
+<!-- Container principal do calendário -->
+<div class="calendar-container">
+  <!-- Cabeçalho -->
+  <header class="agenda-header">
+    <div class="agenda-header-content">
+      <h1 class="agenda-title">
+        <span class="agenda-emoji">📅</span>
+        <span>Agenda de Agendamentos</span>
+      </h1>
+      <p id="current-date" class="agenda-date">{{ today | date:'longDate' | titlecase }}</p>
+    </div>
+    <div class="agenda-stats">
+      <div class="stat-item">
+        <span class="stat-number">{{ totalAppointments }}</span>
+        <span class="stat-label">Total</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">{{ upcomingAppointments }}</span>
+        <span class="stat-label">Próximos</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Calendário -->
+  <div class="agenda-proximos-calendar">
+    <ng-container *ngIf="eventsLoaded">
+  <full-calendar #calendar [options]="calendarOptions"></full-calendar>
+    </ng-container>
+  </div>
+
+  <!-- Legenda -->
+  <div class="calendar-legend">
+    <h4>Legenda</h4>
+    <div class="legend-items">
+      <div class="legend-item">
+        <span class="legend-color atendido"></span><span>Atendido</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color agendado"></span><span>Agendado</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color cancelado"></span><span>Cancelado</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Detalhes do Evento -->
+  <div class="modal-overlay" [ngClass]="{'visible': showModal}" (click)="closeModal($event)">
+    <div class="event-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <i class="icon-calendar-check"></i>
+          <!-- Use modalData.name diretamente no título -->
+          <h3 *ngIf="!isEditing && modalData">{{ modalData.name }}</h3>
+          <input *ngIf="isEditing && modalData" type="text" class="input-field" [(ngModel)]="modalData.name" placeholder="Nome do agendamento" />
+        </div>
+        <button class="close-button" (click)="closeModal(null)">
+          <i class="icon-x"></i>
+        </button>
+      </div>
+      <div class="modal-content">
+        <div class="modal-info">
+          <!-- Detalhes do agendamento -->
+          <div class="info-row">
+            <strong>Nome:</strong>
+            <span>{{ modalData?.name }}</span>
+          </div>
+          <div class="info-row">
+            <strong>Serviço:</strong>
+            <span *ngIf="!isEditing && modalData">{{ modalData.service }}</span>
+            <select *ngIf="isEditing && modalData" class="input-field" [(ngModel)]="modalData.service">
+              <option *ngFor="let s of serviceTypeOptions" [value]="s">{{ s }}</option>
+            </select>
+          </div>
+          <div class="info-row">
+            <strong>Descrição:</strong>
+            <span *ngIf="!isEditing && modalData">{{ modalData.description }}</span>
+            <textarea *ngIf="isEditing && modalData" class="input-field" [(ngModel)]="modalData.description" placeholder="Descrição"></textarea>
+          </div>
+          <div class="info-row">
+            <strong>Início:</strong>
+            <span *ngIf="!isEditing && modalData">{{ modalData.dateTime | date:'dd/MM/yyyy, HH:mm' }}</span>
+            <input *ngIf="isEditing && modalData" type="datetime-local" class="input-field" [(ngModel)]="modalData.startString" />
+          </div>
+          <div class="info-row">
+            <strong>Fim:</strong>
+            <span *ngIf="!isEditing && modalData">{{ modalData.endDate | date:'dd/MM/yyyy, HH:mm' }}</span>
+            <input *ngIf="isEditing && modalData" type="datetime-local" class="input-field" [(ngModel)]="modalData.endString" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Ações -->
+      <div class="modal-actions">
+        <ng-container *ngIf="!isEditing">
+          <button class="btn btn-primary" (click)="toggleEdit()"><i class="icon-edit"></i> Editar</button>
+          <button class="btn btn-danger" (click)="handleDeleteAppointment()"><i class="icon-trash"></i> Excluir</button>
+        </ng-container>
+        <ng-container *ngIf="isEditing">
+          <button class="btn btn-secondary" (click)="toggleEdit()"><i class="icon-x-circle"></i> Cancelar</button>
+          <button class="btn btn-success" (click)="saveChanges()"><i class="icon-save"></i> Salvar</button>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

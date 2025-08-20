@@ -12,12 +12,12 @@ import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+// import { MatNativeDateModule } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatGridListModule } from '@angular/material/grid-list';
-import { BaseChartDirective } from 'ng2-charts';
+import { NgChartsModule } from 'ng2-charts';
 import { Chart, ChartConfiguration, ChartData, ChartEvent, ChartType, registerables } from 'chart.js';
 import { firstValueFrom } from 'rxjs';
 
@@ -62,15 +62,15 @@ interface ChartConfig {
     MatSelectModule,
     MatCheckboxModule,
     MatDatepickerModule,
-    MatNativeDateModule,
+    // MatNativeDateModule, // Removido: não é standalone
     MatTooltipModule,
     MatDividerModule,
     MatExpansionModule,
     MatGridListModule,
-    BaseChartDirective
+    NgChartsModule
   ],
   templateUrl: './bioimpedancia-history.component.html',
-  styleUrl: './bioimpedancia-history.component.scss'
+  styleUrls: ['./bioimpedancia-history.component.scss']
 })
 export class BioimpedanciaHistoryComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -402,7 +402,7 @@ export class BioimpedanciaHistoryComponent implements OnInit {
     };
   }
 
-   onSearchClient(searchValue: string): void {
+  onSearchClient(searchValue: string): void {
     // TODO: Implement search logic here, e.g., call a service to fetch client by name
     console.log('Searching for client:', searchValue);
     // Example: this.clientService.searchClientByName(searchValue).subscribe(...)

@@ -6,7 +6,7 @@ import { Measure } from './measure';
 import { Trainning } from './trainning'; // Corrected import name to 'Training' (capital T)
 
 export interface User {
-  id: number;
+  id?: number;
   username: string;
   email: string;
   password?: string;

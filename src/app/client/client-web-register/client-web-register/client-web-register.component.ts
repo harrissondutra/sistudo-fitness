@@ -114,13 +114,12 @@ export class ClientWebRegisterComponent {
 
       const formValue = this.registrationForm.value;
 
-      // Criando o objeto User
+      // Criando o objeto User (sem o campo id)
       const user: User = {
-        id: 0,
         username: formValue.username,
         email: formValue.email,
         password: formValue.password,
-        role: UserRole.CLIENT
+        role: UserRole.CLIENT // sempre envia CLIENT
       };
 
       // Primeiro cria o usuário

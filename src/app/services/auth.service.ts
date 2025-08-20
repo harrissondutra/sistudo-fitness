@@ -66,11 +66,9 @@ export class AuthService {
    * Backend espera @RequestParam, então enviamos como query parameters
    */
   resetPassword(token: string, newPassword: string): Observable<any> {
-    const params = new HttpParams()
-      .set('token', token)
-      .set('newPassword', newPassword);
-
-    return this.http.post<any>(`${this.baseUrl}/reset-password`, null, { params });
+  // Envia como JSON no corpo, conforme o backend espera
+  const body = { token, newPassword };
+  return this.http.post<any>(`${this.baseUrl}/reset-password`, body);
   }
 
   /**

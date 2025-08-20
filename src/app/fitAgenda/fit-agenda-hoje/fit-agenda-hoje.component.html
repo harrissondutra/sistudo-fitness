@@ -1,0 +1,116 @@
+<!-- Container principal do calendário -->
+<div class="calendar-container">
+  <!-- Loading overlay -->
+  <div class="loading-overlay" [class.visible]="isLoading">
+    <div class="loading-spinner"></div>
+    <p>Carregando agenda...</p>
+  </div>
+
+  <!-- Header da agenda com informações do dia -->
+  <div class="agenda-header">
+    <div class="agenda-header-content">
+      <h2 class="agenda-title">
+        <i class="icon-calendar"></i>
+        Agenda de Hoje
+      </h2>
+      <div class="agenda-date">
+  {{ today | date:'dd/MM/yyyy, EEEE' : '' : 'pt-BR' }}
+      </div>
+    </div>
+    <div class="agenda-stats">
+      <div class="stat-item">
+        <span class="stat-number">{{ eventCount }}</span>
+        <span class="stat-label">Agendamentos</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">{{ freeSlots }}</span>
+        <span class="stat-label">Disponível</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calendário -->
+  <div class="agenda-proximos-calendar">
+    <full-calendar
+      #calendar
+      [options]="calendarOptions"
+      class="fc-custom"
+    ></full-calendar>
+  </div>
+
+  <!-- Legenda de cores -->
+  <div class="calendar-legend">
+    <h4>Tipos de Serviço</h4>
+    <div class="legend-items">
+      <div class="legend-item">
+        <span class="legend-color" style="background: #1976d2;"></span>
+        <span>Consulta</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color" style="background: #388e3c;"></span>
+        <span>Avaliação</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color" style="background: #f57c00;"></span>
+        <span>Treino</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color" style="background: #7b1fa2;"></span>
+        <span>Nutrição</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de detalhes do evento -->
+<div class="modal-overlay" [class.visible]="showModal" (click)="closeModal()">
+  <div class="event-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>Detalhes do Agendamento</h3>
+      <button class="close-button" (click)="closeModal()">
+        <i class="icon-close">×</i>
+      </button>
+    </div>
+
+    <div class="modal-content" *ngIf="selectedEvent">
+      <div class="event-info">
+        <div class="info-row">
+          <strong>Cliente:</strong>
+          <span>{{ selectedEvent.title }}</span>
+        </div>
+
+        <div class="info-row">
+          <strong>Serviço:</strong>
+          <span class="service-badge">{{ selectedEvent.service || 'Não informado' }}</span>
+        </div>
+
+        <div class="info-row">
+          <strong>Descrição:</strong>
+          <span>{{ selectedEvent.description || 'Não informado' }}</span>
+        </div>
+
+        <div class="info-row">
+          <strong>Horário:</strong>
+          <span>{{ formatDateTime(selectedEvent.start) }} - {{ formatDateTime(selectedEvent.end) }}</span>
+        </div>
+
+        <div class="info-row" *ngIf="selectedEvent.notes">
+          <strong>Observações:</strong>
+          <span>{{ selectedEvent.notes }}</span>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="closeModal()">
+          Fechar
+        </button>
+        <button class="btn-primary">
+          Editar
+        </button>
+        <button class="btn-danger" (click)="deleteAppointment(+selectedEvent.id)">
+          Excluir
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

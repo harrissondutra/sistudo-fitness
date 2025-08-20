@@ -1,0 +1,158 @@
+@import '../../../styles/variables';
+
+.fit-agenda-novo-container {
+  max-width: 800px;
+  margin: $spacing-lg auto;
+  padding: $spacing-lg;
+  background: $surface-color;
+  border-radius: 20px;
+  box-shadow:
+    0 4px 24px rgba($primary-color, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, $primary-color, $primary-light);
+    border-radius: 20px 20px 0 0;
+  }
+}
+
+h2 {
+  text-align: center;
+  color: $primary-color;
+  margin-bottom: 24px;
+  font-size: 28px;
+  font-weight: 600;
+  background: linear-gradient(135deg, $primary-color, $primary-light);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.full-width {
+  width: 100%;
+  margin-bottom: 18px;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
+}
+
+.half-width {
+  flex: 1;
+}
+
+button[type="submit"] {
+  width: 100%;
+  margin-top: 18px;
+  font-size: 1rem;
+  padding: 12px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, $primary-color, $primary-light);
+  color: white;
+  box-shadow: 0 4px 16px rgba($primary-color, 0.3);
+  border: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba($primary-color, 0.4);
+  }
+
+  &:disabled {
+    background: rgba($text-muted, 0.3);
+    color: rgba($text-muted, 0.7);
+    box-shadow: none;
+    transform: none;
+  }
+}
+
+.ddi-phone-row {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+  margin-bottom: 18px;
+}
+.ddi-field {
+  width: 120px;
+  min-width: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.phone-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.ddi-flag-code {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1rem;
+}
+.flag-icon {
+  width: 22px;
+  height: 16px;
+  vertical-align: middle;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+}
+
+@media (max-width: 768px) {
+  .fit-agenda-novo-container {
+    margin: $spacing-md;
+    padding: $spacing-md;
+    border-radius: 14px;
+  }
+  h2 {
+    font-size: 22px;
+  }
+  .row {
+    gap: 10px;
+  }
+  button[type="submit"] {
+    font-size: 1rem;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .fit-agenda-novo-container {
+    margin: $spacing-sm;
+    padding: $spacing-sm;
+    border-radius: 8px;
+  }
+  h2 {
+    font-size: 18px;
+  }
+  button[type="submit"] {
+    font-size: 14px;
+    padding: 8px;
+    border-radius: 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .ddi-phone-row {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+  .ddi-field, .phone-field {
+    width: 100%;
+    min-width: 0;
+  }
+}

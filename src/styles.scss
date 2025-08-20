@@ -1,10 +1,9 @@
 /* SISTUDO FITNESS - SISTEMA DE CORES GESTALT */
 @use '@angular/material' as mat;
-@import 'styles/variables';
-@import 'styles/fitness-theme';
-@import 'styles/fitness-utilities';
-@import 'styles/auth-common';
-
+@import 'styles/_variables';
+@import 'styles/_auth-common';
+@import 'styles/_fitness-theme';
+@import 'styles/_fitness-utilities';
 :root {
   /* === Cores Principais - Verde Vitalidade === */
   --primary-color: #00A86B;

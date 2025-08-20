@@ -52,6 +52,10 @@ import { DoctorPatientListComponent } from './doctor-patient-list/doctor-patient
 import { BioimpedanciaClientSelectComponent } from './client/bioimpedancia/bioimpedancia-client-select/bioimpedancia-client-select.component';
 import { BioimpedanciaHistoryComponent } from './client/bioimpedancia/bioimpedancia-history/bioimpedancia-history/bioimpedancia-history.component';
 import { BioimpedanciaCreateComponent } from './client/bioimpedancia/bioimpedancia-create/bioimpedancia-create.component';
+import { FitAgendaHojeComponent } from './fitAgenda/fit-agenda-hoje/fit-agenda-hoje.component';
+import { FitAgendaProximosComponent } from './fitAgenda/fit-agenda-proximos/fit-agenda-proximos.component';
+import { FitAgendaNovoComponent } from './fitAgenda/fit-agenda-novo/fit-agenda-novo.component';
+import { FitAgendaHistoricoClientComponent } from './fitAgenda/fit-agenda-historico-client/fit-agenda-historico-client.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -113,6 +117,10 @@ export const routes: Routes = [
       { path: 'gym-edit', component: GymEditComponent },
       { path: 'views', component: ViewComponent },
       { path: 'admin-register', component: AdminRegisterComponent },
+      { path: 'fit-agenda/today', component: FitAgendaHojeComponent },
+      { path: 'fit-agenda/future', component: FitAgendaProximosComponent },
+      { path: 'fit-agenda/history', component: FitAgendaHistoricoClientComponent },
+      { path: 'fit-agenda/create', component: FitAgendaNovoComponent},
       {
         path: 'trainning',
         loadChildren: () => import('./trainning/trainning.module').then(m => m.TrainningModule)
