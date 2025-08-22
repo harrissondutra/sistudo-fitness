@@ -52,8 +52,7 @@
       align-items: center;
       gap: 12px;
 
-      .icon-calendar::before {
-        content: '📅';
+      .agenda-emoji {
         font-size: 24px;
       }
     }
@@ -64,6 +63,12 @@
       font-weight: 500;
       text-transform: capitalize;
     }
+  }
+
+  .agenda-stats-and-btn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-lg;
   }
 
   .agenda-stats {
@@ -357,11 +362,17 @@
     align-items: center;
     background: linear-gradient(135deg, rgba($primary-color, 0.05), rgba($primary-light, 0.08));
 
-    h3 {
-      margin: 0;
-      font-size: 20px;
-      font-weight: 600;
-      color: $text-color;
+    .modal-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      h3 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 600;
+        color: $text-color;
+      }
     }
 
     .close-button {
@@ -417,6 +428,54 @@
           font-size: 12px;
           font-weight: 500;
           text-transform: uppercase;
+        }
+
+        // Estilos para campos de edição
+        .edit-input, .edit-select, .edit-textarea, .edit-datetime {
+          flex: 1;
+          padding: 8px 12px;
+          border: 1.5px solid rgba($primary-color, 0.2);
+          border-radius: 6px;
+          font-size: 14px;
+          color: $text-color;
+          background: #fff;
+          transition: border-color 0.2s ease;
+
+          &:focus {
+            outline: none;
+            border-color: $primary-color;
+            box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+          }
+        }
+
+        .edit-textarea {
+          resize: vertical;
+          min-height: 60px;
+        }
+
+        .edit-time-group {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          flex: 1;
+
+          .time-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            label {
+              color: $text-secondary;
+              font-size: 13px;
+              font-weight: 500;
+              min-width: 60px;
+            }
+
+            .edit-datetime {
+              flex: 1;
+              font-size: 13px;
+            }
+          }
         }
       }
     }
@@ -481,6 +540,11 @@
     flex-direction: column;
     gap: $spacing-md;
     text-align: center;
+
+    .agenda-stats-and-btn {
+      flex-direction: column;
+      gap: $spacing-md;
+    }
 
     .agenda-stats {
       justify-content: center;

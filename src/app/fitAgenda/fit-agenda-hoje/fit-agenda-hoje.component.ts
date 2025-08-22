@@ -5,6 +5,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { CommonModule } from '@angular/common';
 import { FullCalendarModule } from '@fullcalendar/angular';
+import { FormsModule } from '@angular/forms';
 import { CalendarOptions, EventInput, EventApi, DateSelectArg, EventClickArg, EventDropArg } from '@fullcalendar/core';
 import { FitAgendaService } from '../../../app/services/fit-agenda-service/fit-agenda.service';
 import { Appointment } from '../../models/appointment';
@@ -24,7 +25,7 @@ interface SelectedEventData {
 @Component({
   selector: 'app-fit-agenda-hoje',
   standalone: true,
-  imports: [CommonModule, FullCalendarModule],
+  imports: [CommonModule, FullCalendarModule, FormsModule],
   templateUrl: './fit-agenda-hoje.component.html',
   styleUrl: './fit-agenda-hoje.component.scss',
 })
@@ -39,6 +40,8 @@ export class FitAgendaHojeComponent implements OnInit, OnDestroy {
   // Estado do modal
   showModal = false;
   selectedEvent: SelectedEventData | null = null;
+  isEditing = false;
+  editingEvent: SelectedEventData | null = null;
 
   // Loading state
   isLoading = true;
@@ -271,6 +274,64 @@ export class FitAgendaHojeComponent implements OnInit, OnDestroy {
   closeModal(): void {
     this.showModal = false;
     this.selectedEvent = null;
+    this.isEditing = false;
+    this.editingEvent = null;
+  }
+
+  // Método para entrar no modo de edição
+  startEditing(): void {
+    if (this.selectedEvent) {
+      this.isEditing = true;
+      this.editingEvent = { ...this.selectedEvent };
+    }
+  }
+
+  // Método para cancelar edição
+  cancelEditing(): void {
+    this.isEditing = false;
+    this.editingEvent = null;
+  }
+
+  // Método para salvar edição
+  saveEditing(): void {
+    if (!this.editingEvent) return;
+
+    // Converte as datas para o formato correto
+    const startDate = new Date(this.editingEvent.start);
+    const endDate = new Date(this.editingEvent.end);
+
+    const appointmentId = parseInt(this.editingEvent.id);
+    const updatedAppointment: Appointment = {
+      id: appointmentId,
+      name: this.editingEvent.title,
+      service: this.editingEvent.service || '',
+      description: this.editingEvent.description || '',
+      dateTime: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+      clientId: this.editingEvent.clientId || 0
+    };
+
+    this.fitAgendaService.update(appointmentId, updatedAppointment)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          console.log('Agendamento atualizado com sucesso');
+          // Atualiza o evento selecionado com os novos dados
+          this.selectedEvent = {
+            ...this.editingEvent!,
+            start: startDate,
+            end: endDate
+          };
+          this.isEditing = false;
+          this.editingEvent = null;
+          // Recarrega o calendário para refletir as mudanças
+          window.location.reload();
+        },
+        error: (error: unknown) => {
+          console.error('Erro ao atualizar agendamento:', error);
+          alert('Erro ao salvar as alterações. Tente novamente.');
+        }
+      });
   }
 
   private updateAppointment(info: any): void {
@@ -325,5 +386,39 @@ export class FitAgendaHojeComponent implements OnInit, OnDestroy {
       hour: '2-digit',
       minute: '2-digit'
     }).format(date);
+  }
+
+  // Converte Date para string datetime-local para input HTML
+  dateToDatetimeLocal(date: Date): string {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+
+  // Getter para start datetime-local
+  get editingStartDatetime(): string {
+    return this.editingEvent ? this.dateToDatetimeLocal(this.editingEvent.start) : '';
+  }
+
+  // Setter para start datetime-local
+  set editingStartDatetime(value: string) {
+    if (this.editingEvent && value) {
+      this.editingEvent.start = new Date(value);
+    }
+  }
+
+  // Getter para end datetime-local
+  get editingEndDatetime(): string {
+    return this.editingEvent ? this.dateToDatetimeLocal(this.editingEvent.end) : '';
+  }
+
+  // Setter para end datetime-local
+  set editingEndDatetime(value: string) {
+    if (this.editingEvent && value) {
+      this.editingEvent.end = new Date(value);
+    }
   }
 }

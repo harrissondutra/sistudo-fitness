@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, OnInit } from '@angular/core';
+import { Component, ViewEncapsulation, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FullCalendarModule } from '@fullcalendar/angular';
@@ -126,7 +126,8 @@ export class FitAgendaProximosComponent implements OnInit {
 
   constructor(
     private fitAgendaService: FitAgendaService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -254,6 +255,9 @@ export class FitAgendaProximosComponent implements OnInit {
     this.statusEdit = (typeof statusRaw === 'string' && Object.values(AppointmentStatus).includes(statusRaw as AppointmentStatus))
       ? (statusRaw as AppointmentStatus)
       : AppointmentStatus.Agendado;
+
+    // Garantir que sempre inicia em modo visualização
+    this.isEditing = false;
     this.showModal = true;
   }
 
@@ -324,13 +328,42 @@ export class FitAgendaProximosComponent implements OnInit {
   }
 
   closeModal(event: MouseEvent | null): void {
-    if (!event || (event.target as HTMLElement).classList.contains('modal-overlay') || (event.target as HTMLElement).classList.contains('close-button-icon')) {
+    // Só fecha o modal se for clique no overlay ou no botão X
+    if (!event || (event.target as HTMLElement).classList.contains('modal-overlay') || (event.target as HTMLElement).classList.contains('close-button') || (event.target as HTMLElement).classList.contains('icon-close')) {
       this.showModal = false;
-      this.isEditing = false;
+      this.isEditing = false; // Reset apenas quando fechar realmente
     }
+  }
+
+  closeModalButton(): void {
+    this.showModal = false;
+    this.isEditing = false;
   }
 
   toggleEdit(): void {
     this.isEditing = !this.isEditing;
+    // Força a detecção de mudanças
+    this.cdr.detectChanges();
+  }
+
+  startEditing(): void {
+    console.log('startEditing() called - isEditing before:', this.isEditing);
+    this.isEditing = true;
+    console.log('startEditing() called - isEditing after:', this.isEditing);
+    this.cdr.detectChanges();
+  }
+
+  cancelEditing(): void {
+    console.log('cancelEditing() called - isEditing before:', this.isEditing);
+    this.isEditing = false;
+    console.log('cancelEditing() called - isEditing after:', this.isEditing);
+    this.cdr.detectChanges();
+  }
+
+  saveEditing(): void {
+    console.log('saveEditing() called - isEditing before:', this.isEditing);
+    this.saveChanges();
+    this.isEditing = false;
+    console.log('saveEditing() called - isEditing after:', this.isEditing);
   }
 }

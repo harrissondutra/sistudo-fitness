@@ -95,6 +95,10 @@
       display: flex;
       align-items: center;
       gap: 12px;
+
+      .agenda-emoji {
+        font-size: 24px;
+      }
     }
     .agenda-date {
       font-size: 16px;
@@ -143,7 +147,7 @@
 }
 
 // Container do calendário
-.agenda-proximos-calendar {
+.agenda-calendar {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -421,6 +425,54 @@
           font-weight: 500;
           text-transform: uppercase;
         }
+
+        // Estilos para campos de edição
+        .edit-input, .edit-select, .edit-textarea, .edit-datetime {
+          flex: 1;
+          padding: 8px 12px;
+          border: 1.5px solid rgba($primary-color, 0.2);
+          border-radius: 6px;
+          font-size: 14px;
+          color: $text-color;
+          background: #fff;
+          transition: border-color 0.2s ease;
+
+          &:focus {
+            outline: none;
+            border-color: $primary-color;
+            box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+          }
+        }
+
+        .edit-textarea {
+          resize: vertical;
+          min-height: 60px;
+        }
+
+        .edit-time-group {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          flex: 1;
+
+          .time-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            label {
+              color: $text-secondary;
+              font-size: 13px;
+              font-weight: 500;
+              min-width: 60px;
+            }
+
+            .edit-datetime {
+              flex: 1;
+              font-size: 13px;
+            }
+          }
+        }
       }
     }
 
@@ -494,7 +546,7 @@
     }
   }
 
-  .agenda-proximos-calendar {
+  .agenda-calendar {
     padding: $spacing-md;
   }
 
@@ -531,7 +583,7 @@
     padding: 8px 12px !important;
   }
 
-  .fc-custom .fc-toolbar-title {
+  .fc-toolbar-title {
     font-size: 18px !important;
   }
 

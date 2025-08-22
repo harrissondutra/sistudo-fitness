@@ -34,11 +34,10 @@
   </header>
 
   <!-- Calendário -->
-  <div class="agenda-proximos-calendar">
+  <div class="agenda-calendar">
     <full-calendar
       #calendar
       [options]="calendarOptions"
-      class="fc-custom"
     ></full-calendar>
   </div>
 
@@ -82,19 +81,59 @@
         <div class="event-info">
           <div class="info-row">
             <strong>Cliente:</strong>
-            <span>{{ selectedEvent.title }}</span>
+            <span *ngIf="!isEditing">{{ selectedEvent.title }}</span>
+            <input
+              *ngIf="isEditing"
+              type="text"
+              [(ngModel)]="editingEvent!.title"
+              class="edit-input"
+              placeholder="Nome do cliente">
           </div>
           <div class="info-row">
             <strong>Serviço:</strong>
-            <span class="service-badge">{{ selectedEvent.service || 'Não informado' }}</span>
+            <span *ngIf="!isEditing" class="service-badge">{{ selectedEvent.service || 'Não informado' }}</span>
+            <select
+              *ngIf="isEditing"
+              [(ngModel)]="editingEvent!.service"
+              class="edit-select">
+              <option value="">Selecione um serviço</option>
+              <option value="consulta">Consulta</option>
+              <option value="avaliacao">Avaliação</option>
+              <option value="treino">Treino</option>
+              <option value="nutricao">Nutrição</option>
+            </select>
           </div>
           <div class="info-row">
             <strong>Descrição:</strong>
-            <span>{{ selectedEvent.description || 'Não informado' }}</span>
+            <span *ngIf="!isEditing">{{ selectedEvent.description || 'Não informado' }}</span>
+            <textarea
+              *ngIf="isEditing"
+              [(ngModel)]="editingEvent!.description"
+              class="edit-textarea"
+              placeholder="Descrição do agendamento"
+              rows="3"></textarea>
           </div>
           <div class="info-row">
             <strong>Horário:</strong>
-            <span>{{ formatDateTime(selectedEvent.start) }} - {{ formatDateTime(selectedEvent.end) }}</span>
+            <span *ngIf="!isEditing">{{ formatDateTime(selectedEvent.start) }} - {{ formatDateTime(selectedEvent.end) }}</span>
+            <div *ngIf="isEditing" class="edit-time-group">
+              <div class="time-row">
+                <label>Início:</label>
+                <input
+                  type="datetime-local"
+                  [ngModel]="editingStartDatetime"
+                  (ngModelChange)="editingStartDatetime = $event"
+                  class="edit-datetime">
+              </div>
+              <div class="time-row">
+                <label>Fim:</label>
+                <input
+                  type="datetime-local"
+                  [ngModel]="editingEndDatetime"
+                  (ngModelChange)="editingEndDatetime = $event"
+                  class="edit-datetime">
+              </div>
+            </div>
           </div>
           <div class="info-row" *ngIf="selectedEvent.notes">
             <strong>Observações:</strong>
@@ -103,15 +142,28 @@
         </div>
 
         <div class="modal-actions">
-          <button class="btn-secondary" (click)="closeModal()">
-            Fechar
-          </button>
-          <button class="btn-primary">
-            Editar
-          </button>
-          <button class="btn-danger" (click)="deleteAppointment(+selectedEvent.id)">
-            Excluir
-          </button>
+          <!-- Botões no modo visualização -->
+          <ng-container *ngIf="!isEditing">
+            <button class="btn-secondary" (click)="closeModal()">
+              Fechar
+            </button>
+            <button class="btn-primary" (click)="startEditing()">
+              Editar
+            </button>
+            <button class="btn-danger" (click)="deleteAppointment(+selectedEvent.id)">
+              Excluir
+            </button>
+          </ng-container>
+
+          <!-- Botões no modo edição -->
+          <ng-container *ngIf="isEditing">
+            <button class="btn-secondary" (click)="cancelEditing()">
+              Cancelar
+            </button>
+            <button class="btn-primary" (click)="saveEditing()">
+              Salvar
+            </button>
+          </ng-container>
         </div>
       </div>
     </div>
