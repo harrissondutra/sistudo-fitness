@@ -1,45 +1,24 @@
-
 @import '../../../styles/variables';
 @import '../../../styles/auth-common';
 @import '../../../styles/fitness-theme';
 @import '../../../styles/fitness-utilities';
 
-// Container principal
 .calendar-container {
-  max-width: 1400px;
-  margin: $spacing-lg auto;
-  padding: 0;
-  background: $surface-color;
-  border-radius: 24px;
-  box-shadow:
-    0 8px 32px rgba($primary-color, 0.12),
-    0 4px 16px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem;
+  border-radius: 16px;
+  margin: 1rem;
   position: relative;
-  min-height: 85vh;
-  display: flex;
-  flex-direction: column;
   overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 6px;
-    background: linear-gradient(90deg, $primary-color, $primary-light, #4CAF50, #FF9800);
-    border-radius: 24px 24px 0 0;
-  }
+  background: $background-color;
 }
 
-// Loading overlay
 .loading-overlay {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba($surface-color, 0.95);
+  background: rgba(255, 255, 255, 0.9);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -54,558 +33,209 @@
     visibility: visible;
   }
 
-  .loading-spinner {
-    width: 48px;
-    height: 48px;
-    border: 4px solid rgba($primary-color, 0.1);
-    border-top: 4px solid $primary-color;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: $spacing-md;
-  }
-
   p {
+    margin-top: 1rem;
     color: $text-secondary;
-    font-size: 16px;
-    margin: 0;
+    font-weight: 500;
   }
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.agenda-header {
+  margin-bottom: 2rem;
 }
 
-// Header da agenda (padrão do sistema)
-.agenda-header {
-  padding: $spacing-xl $spacing-xl $spacing-lg;
-  background: linear-gradient(135deg, rgba($primary-color, 0.05), rgba($primary-light, 0.08));
-  border-bottom: 1px solid rgba($primary-color, 0.1);
+.agenda-header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: $spacing-lg;
-
-  .agenda-header-content {
-    .agenda-title {
-      font-size: 28px;
-      font-weight: 700;
-      color: $text-color;
-      margin: 0 0 8px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-
-      .agenda-emoji {
-        font-size: 24px;
-      }
-    }
-    .agenda-date {
-      font-size: 16px;
-      color: $text-secondary;
-      font-weight: 500;
-      text-transform: capitalize;
-    }
-  }
-
-  .agenda-stats-and-btn {
-    display: flex;
-    align-items: center;
-    gap: $spacing-lg;
-  }
-
-  .agenda-stats {
-    display: flex;
-    gap: $spacing-lg;
-
-    .stat-item {
-      text-align: center;
-      padding: 16px 20px;
-      background: rgba(white, 0.8);
-      border-radius: 16px;
-      border: 1px solid rgba($primary-color, 0.1);
-      min-width: 80px;
-
-      .stat-number {
-        display: block;
-        font-size: 24px;
-        font-weight: 700;
-        color: $primary-color;
-        line-height: 1;
-      }
-
-      .stat-label {
-        display: block;
-        font-size: 12px;
-        color: $text-secondary;
-        text-transform: uppercase;
-        font-weight: 500;
-        margin-top: 4px;
-      }
-    }
-  }
+  margin-bottom: 1rem;
 }
 
-// Container do calendário
-.agenda-calendar {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: $spacing-lg;
-  padding-top: $spacing-md;
-}
-
-// Customizações do FullCalendar (padrão do sistema)
-:host ::ng-deep {
-  .fc-header-toolbar {
-    margin-bottom: $spacing-lg;
-    padding: $spacing-md 0;
-  }
-
-  .fc-toolbar-title {
-    font-size: 24px !important;
-    font-weight: 600 !important;
-    color: $text-color !important;
-  }
-
-  .fc-col-header {
-    background: linear-gradient(135deg, rgba($primary-color, 0.05), rgba($primary-light, 0.08)) !important;
-    border: none !important;
-
-    .fc-col-header-cell {
-      border: none !important;
-      padding: 12px 8px !important;
-    }
-
-    .fc-col-header-cell-cushion {
-      color: $text-color !important;
-      font-weight: 600 !important;
-      font-size: 14px !important;
-    }
-  }
-
-  .fc-timegrid-slot {
-    height: 48px !important;
-    border-color: rgba($primary-color, 0.08) !important;
-
-    &:nth-child(odd) {
-      background: rgba($primary-color, 0.02) !important;
-    }
-  }
-
-  .fc-timegrid-slot-label {
-    font-weight: 500 !important;
-    color: $text-secondary !important;
-    font-size: 13px !important;
-  }
-
-  .fc-event {
-    border-radius: 8px !important;
-    border: none !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
-    transition: all 0.2s ease !important;
-    cursor: pointer !important;
-    margin: 2px !important;
-
-    &:hover {
-      transform: translateY(-2px) !important;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
-    }
-
-    .fc-event-title {
-      font-weight: 500 !important;
-      font-size: 13px !important;
-      padding: 2px 4px !important;
-    }
-
-    .fc-event-time {
-      font-size: 12px !important;
-      opacity: 0.9 !important;
-    }
-  }
-
-  .fc-now-indicator {
-    border-color: #e53e3e !important;
-    border-width: 2px !important;
-  }
-
-  .fc-now-indicator-arrow {
-    border-top-color: #e53e3e !important;
-    border-bottom-color: #e53e3e !important;
-  }
-}
-
-// Botões do FullCalendar (clean, discretos, espaçados)
-.fc .fc-button {
-  background: #f5f5f5 !important;
-  color: $primary-color !important;
-  border: 1.5px solid $primary-color !important;
-  font-weight: 500 !important;
-  border-radius: 8px !important;
-  padding: 7px 16px !important;
-  font-size: 14px !important;
-  box-shadow: none !important;
-  margin-right: 0.5rem !important;
-  margin-left: 0 !important;
-  transition: background 0.15s, color 0.15s, border-color 0.15s !important;
-
-  &:hover, &:focus {
-    background: $primary-color !important;
-    color: #fff !important;
-    border-color: $primary-dark !important;
-    outline: none !important;
-    box-shadow: none !important;
-  }
-
-  &.fc-button-active {
-    background: $primary-dark !important;
-    color: #fff !important;
-    border-color: $primary-dark !important;
-    box-shadow: none !important;
-  }
-
-  &:disabled {
-    background: #e0e0e0 !important;
-    color: #bdbdbd !important;
-    border-color: #e0e0e0 !important;
-    opacity: 0.7 !important;
-    cursor: not-allowed !important;
-    box-shadow: none !important;
-  }
-}
-
-.fc .fc-button:last-child {
-  margin-right: 0 !important;
-}
-
-// Legenda de cores
-.calendar-legend {
-  padding: $spacing-lg $spacing-xl;
-  border-top: 1px solid rgba($primary-color, 0.1);
-  background: linear-gradient(135deg, rgba($primary-color, 0.02), rgba($primary-light, 0.05));
-
-  h4 {
-    margin: 0 0 $spacing-md;
-    font-size: 16px;
-    font-weight: 600;
-    color: $text-color;
-  }
-
-  .legend-items {
-    display: flex;
-    gap: $spacing-lg;
-    flex-wrap: wrap;
-  }
-
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    color: $text-secondary;
-
-    .legend-color {
-      width: 16px;
-      height: 16px;
-      border-radius: 4px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-  }
-}
-
-// Modal de eventos (padrão do sistema)
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+.agenda-title {
   display: flex;
   align-items: center;
-  justify-content: center;
-  z-index: 10000;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(4px);
+  gap: 0.5rem;
+  margin: 0;
+  color: $primary-color;
+  font-size: 1.8rem;
+  font-weight: 600;
 
-  &.visible {
-    opacity: 1;
-    visibility: visible;
+  mat-icon {
+    font-size: 2rem;
+    width: 2rem;
+    height: 2rem;
   }
 }
 
-.event-modal {
-  background: $surface-color;
-  border-radius: 20px;
-  width: 90%;
-  max-width: 500px;
-  max-height: 80vh;
-  overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  transform: translateY(20px);
-  transition: transform 0.3s ease;
+.agenda-date {
+  color: $text-secondary;
+  font-size: 1.1rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
 
-  .modal-overlay.visible & {
-    transform: translateY(0);
+.agenda-stats {
+  display: flex;
+  gap: 1rem;
+}
+
+.stat-card {
+  flex: 1;
+  text-align: center;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid $border-color;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+
+  .mat-mdc-card-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: $primary-color;
+    margin: 0;
+    line-height: 1;
   }
 
-  .modal-header {
-    padding: $spacing-lg $spacing-xl;
-    border-bottom: 1px solid rgba($primary-color, 0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: linear-gradient(135deg, rgba($primary-color, 0.05), rgba($primary-light, 0.08));
+  .mat-mdc-card-subtitle {
+    font-size: 0.9rem;
+    color: $text-secondary;
+    margin: 0.25rem 0 0 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
 
-    .modal-title-group {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      h3 {
-        margin: 0;
-        font-size: 20px;
-        font-weight: 600;
-        color: $text-color;
-      }
+.agenda-calendar {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  ::ng-deep {
+    .fc {
+      font-family: inherit;
     }
 
-    .close-button {
-      background: none;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
+    .fc-toolbar {
+      margin-bottom: 1rem;
+    }
+
+    .fc-toolbar-title {
       color: $text-secondary;
-      padding: 4px;
-      border-radius: 50%;
+      font-weight: 600;
+    }
+
+    .fc-button-primary {
+      background-color: $primary-color;
+      border-color: $primary-color;
+      color: white;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-weight: 500;
       transition: all 0.2s ease;
 
       &:hover {
-        background: rgba($primary-color, 0.1);
-        color: $primary-color;
+        background-color: darken($primary-color, 10%);
+        border-color: darken($primary-color, 10%);
       }
-    }
-  }
 
-  .modal-content {
-    padding: $spacing-xl;
-
-    .event-info {
-      .info-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        padding: 12px 0;
-        border-bottom: 1px solid rgba($primary-color, 0.05);
-        gap: $spacing-md;
-
-        &:last-child {
-          border-bottom: none;
-        }
-
-        strong {
-          color: $text-color;
-          font-weight: 600;
-          min-width: 100px;
-        }
-
-        span {
-          color: $text-secondary;
-          flex: 1;
-          text-align: right;
-        }
-
-        .service-badge {
-          background: linear-gradient(135deg, $primary-color, $primary-light);
-          color: white;
-          padding: 4px 12px;
-          border-radius: 20px;
-          font-size: 12px;
-          font-weight: 500;
-          text-transform: uppercase;
-        }
-
-        // Estilos para campos de edição
-        .edit-input, .edit-select, .edit-textarea, .edit-datetime {
-          flex: 1;
-          padding: 8px 12px;
-          border: 1.5px solid rgba($primary-color, 0.2);
-          border-radius: 6px;
-          font-size: 14px;
-          color: $text-color;
-          background: #fff;
-          transition: border-color 0.2s ease;
-
-          &:focus {
-            outline: none;
-            border-color: $primary-color;
-            box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
-          }
-        }
-
-        .edit-textarea {
-          resize: vertical;
-          min-height: 60px;
-        }
-
-        .edit-time-group {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-          flex: 1;
-
-          .time-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-
-            label {
-              color: $text-secondary;
-              font-size: 13px;
-              font-weight: 500;
-              min-width: 60px;
-            }
-
-            .edit-datetime {
-              flex: 1;
-              font-size: 13px;
-            }
-          }
-        }
+      &:not(:disabled):active,
+      &:not(:disabled).fc-button-active {
+        background-color: darken($primary-color, 15%);
+        border-color: darken($primary-color, 15%);
       }
     }
 
-    .modal-actions {
-      display: flex;
-      gap: $spacing-md;
-      margin-top: $spacing-xl;
-      justify-content: flex-end;
+    .fc-event {
+      border-radius: 6px;
+      border: none;
+      font-weight: 500;
+      font-size: 0.85rem;
+      padding: 2px 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
 
-      .btn-secondary, .btn-primary, .btn-danger {
-        padding: 10px 20px;
-        border: none;
-        border-radius: 8px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        font-size: 14px;
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
       }
+    }
 
-      .btn-secondary {
-        background: rgba($text-secondary, 0.1);
+    .fc-timegrid-event .fc-event-main {
+      padding: 4px 6px;
+    }
+
+    .fc-event-title {
+      font-weight: 600;
+    }
+
+    .fc-timegrid-slot {
+      height: 3rem;
+    }
+
+    .fc-timegrid-slot-label {
+      color: $text-secondary;
+      font-weight: 500;
+    }
+
+    .fc-col-header-cell {
+      background: rgba($text-secondary, 0.05);
+      border-color: $border-color;
+      
+      .fc-col-header-cell-cushion {
         color: $text-secondary;
-
-        &:hover {
-          background: rgba($text-secondary, 0.2);
-        }
+        font-weight: 600;
+        padding: 0.75rem 0;
       }
+    }
 
-      .btn-primary {
-        background: linear-gradient(135deg, $primary-color, $primary-light);
-        color: white;
+    .fc-timegrid-divider {
+      background: $border-color;
+    }
 
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba($primary-color, 0.3);
-        }
-      }
+    .fc-timegrid-slot-lane {
+      border-color: rgba($border-color, 0.3);
+    }
 
-      .btn-danger {
-        background: linear-gradient(135deg, #e53e3e, #c53030);
-        color: white;
+    .fc-now-indicator-line {
+      border-color: $accent-color;
+      border-width: 2px;
+    }
 
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(#e53e3e, 0.3);
-        }
-      }
+    .fc-now-indicator-arrow {
+      border-top-color: $accent-color;
+      border-bottom-color: $accent-color;
+    }
+
+    .fc-select-helper {
+      background: rgba($primary-color, 0.1);
+      border: 2px dashed $primary-color;
     }
   }
 }
 
-// Responsividade (padrão do sistema)
-@media (max-width: 1023px) {
+// Responsive design
+@media (max-width: 768px) {
   .calendar-container {
-    margin: $spacing-md;
-    border-radius: 16px;
+    margin: 0.5rem;
+    padding: 1rem;
   }
 
-  .agenda-header {
-    padding: $spacing-lg;
+  .agenda-header-content {
     flex-direction: column;
-    gap: $spacing-md;
+    gap: 0.5rem;
     text-align: center;
+  }
 
-    .agenda-stats-and-btn {
-      flex-direction: column;
-      gap: $spacing-md;
-    }
-    .agenda-stats {
-      justify-content: center;
-    }
+  .agenda-stats {
+    flex-direction: column;
+  }
+
+  .agenda-title {
+    font-size: 1.5rem;
   }
 
   .agenda-calendar {
-    padding: $spacing-md;
-  }
-
-  .calendar-legend {
-    padding: $spacing-md $spacing-lg;
-  }
-}
-
-@media (max-width: 600px) {
-  .calendar-container {
-    margin: $spacing-sm;
-    border-radius: 12px;
-  }
-
-  .agenda-header {
-    padding: $spacing-md;
-
-    .agenda-title {
-      font-size: 22px;
-    }
-
-    .agenda-stats {
-      gap: $spacing-md;
-
-      .stat-item {
-        padding: 12px 16px;
-        min-width: 70px;
-      }
-    }
-  }
-
-  .fc .fc-button {
-    font-size: 12px !important;
-    padding: 8px 12px !important;
-  }
-
-  .fc-toolbar-title {
-    font-size: 18px !important;
-  }
-
-  .event-modal {
-    width: 95%;
-    margin: $spacing-sm;
-
-    .modal-content {
-      padding: $spacing-lg;
-
-      .modal-actions {
-        flex-direction: column;
-
-        .btn-secondary, .btn-primary, .btn-danger {
-          width: 100%;
-        }
-      }
-    }
-  }
-
-  .legend-items {
-    flex-direction: column;
-    gap: $spacing-sm !important;
+    padding: 0.5rem;
   }
 }

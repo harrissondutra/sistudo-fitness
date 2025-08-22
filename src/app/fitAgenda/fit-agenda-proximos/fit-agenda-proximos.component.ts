@@ -1,5 +1,5 @@
 import { Component, ViewEncapsulation, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -8,13 +8,24 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { EventClickArg, EventInput } from '@fullcalendar/core';
 import ptBrLocale from '@fullcalendar/core/locales/pt-br';
 import { ViewChild, ElementRef } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatTimepickerModule } from '@angular/material/timepicker';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { TextFieldModule } from '@angular/cdk/text-field';
 import { FitAgendaService } from '../../services/fit-agenda-service/fit-agenda.service';
 import { Appointment } from '../../models/appointment';
 import { ServiceType, SERVICE_TYPE_OPTIONS } from '../../models/service-type.enum';
 import { AppointmentStatus, APPOINTMENT_STATUS_COLORS } from '../../models/appointment-status.enum';
 import { Subscription } from 'rxjs';
+import { AppointmentDialogComponent, AppointmentDialogData } from '../appointment-dialog/appointment-dialog.component';
 
 // Adicionado para usar o tipo de dado correto nos eventos do FullCalendar
 @Component({
@@ -22,10 +33,20 @@ import { Subscription } from 'rxjs';
   standalone: true,
   imports: [
     CommonModule,
-    DatePipe,
     FullCalendarModule,
     FormsModule,
-    RouterModule
+    ReactiveFormsModule,
+    RouterModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatTimepickerModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDialogModule,
+    TextFieldModule
   ],
   templateUrl: './fit-agenda-proximos.component.html',
   styleUrls: ['./fit-agenda-proximos.component.scss'],
@@ -39,10 +60,6 @@ export class FitAgendaProximosComponent implements OnInit {
   @ViewChild('calendar') calendarComponent?: ElementRef;
   private appointmentSubscription?: Subscription;
 
-  showModal = false;
-  isEditing = false;
-  modalData: (Appointment & { startString?: string | null; endString?: string | null; status?: AppointmentStatus }) | null = null;
-  statusEdit: AppointmentStatus = AppointmentStatus.Agendado;
   today = new Date();
   totalAppointments = 0;
   upcomingAppointments = 0;
@@ -127,7 +144,8 @@ export class FitAgendaProximosComponent implements OnInit {
   constructor(
     private fitAgendaService: FitAgendaService,
     private snackBar: MatSnackBar,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -232,138 +250,88 @@ export class FitAgendaProximosComponent implements OnInit {
 
   handleEventClick(clickInfo: EventClickArg): void {
     const clickedEvent = clickInfo.event;
-    // Helper para formatar para 'YYYY-MM-DDTHH:mm' local
-    const pad = (n: number) => n.toString().padStart(2, '0');
-    const formatLocal = (d: Date | string | null | undefined) => {
-      if (!d) return null;
-      const date = typeof d === 'string' ? new Date(d) : d;
-      return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-    };
-    this.modalData = {
+    
+    // Construir objeto appointment a partir do evento
+    const appointment: Appointment = {
       id: clickedEvent.id ? +clickedEvent.id : undefined,
       name: clickedEvent.title,
-      dateTime: clickedEvent.start ? formatLocal(clickedEvent.start) || '' : '',
-      endDate: clickedEvent.end ? formatLocal(clickedEvent.end) || undefined : undefined,
+      dateTime: clickedEvent.start ? clickedEvent.start.toISOString() : new Date().toISOString(),
+      endDate: clickedEvent.end ? clickedEvent.end.toISOString() : undefined,
       description: clickedEvent.extendedProps['description'],
-      service: clickedEvent.extendedProps['service'],
-      clientId: clickedEvent.extendedProps['clientId'],
-      startString: clickedEvent.start ? formatLocal(clickedEvent.start) : null,
-      endString: clickedEvent.end ? formatLocal(clickedEvent.end) : null
+      service: clickedEvent.extendedProps['service'] as ServiceType,
+      status: clickedEvent.extendedProps['status'] as AppointmentStatus || AppointmentStatus.Agendado,
+      clientId: clickedEvent.extendedProps['clientId']
     };
-    // status pode vir como string, garantir que seja um valor válido do enum
-    const statusRaw = clickedEvent.extendedProps['status'];
-    this.statusEdit = (typeof statusRaw === 'string' && Object.values(AppointmentStatus).includes(statusRaw as AppointmentStatus))
-      ? (statusRaw as AppointmentStatus)
-      : AppointmentStatus.Agendado;
 
-    // Garantir que sempre inicia em modo visualização
-    this.isEditing = false;
-    this.showModal = true;
+    // Preparar dados para o dialog
+    const dialogData: AppointmentDialogData = {
+      appointment: appointment,
+      isNew: false,
+      selectedDate: clickedEvent.start || new Date(),
+      selectedEndDate: clickedEvent.end || undefined
+    };
+
+    // Abrir dialog
+    const dialogRef = this.dialog.open(AppointmentDialogComponent, {
+      width: '600px',
+      maxWidth: '95vw',
+      data: dialogData,
+      disableClose: false,
+      autoFocus: false
+    });
+
+    // Tratar resultado do dialog
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (result.action === 'save') {
+          this.saveAppointment(result.appointment);
+        } else if (result.action === 'delete') {
+          this.deleteAppointment(result.appointment);
+        }
+      }
+    });
   }
 
-  handleDeleteAppointment(): void {
-    if (this.modalData?.id) {
-      this.fitAgendaService.delete(this.modalData.id).subscribe({
+  saveAppointment(appointment: Appointment): void {
+    if (appointment.id) {
+      // Editar agendamento existente
+      this.fitAgendaService.update(appointment.id, appointment).subscribe({
+        next: (updatedAppointment) => {
+          this.snackBar.open('Agendamento atualizado com sucesso!', 'Fechar', { duration: 3000 });
+          this.loadEvents();
+        },
+        error: (err) => {
+          console.error('Erro ao atualizar agendamento:', err);
+          this.snackBar.open('Erro ao atualizar agendamento', 'Fechar', { duration: 3000 });
+        }
+      });
+    } else {
+      // Criar novo agendamento
+      this.fitAgendaService.create(appointment).subscribe({
+        next: (newAppointment) => {
+          this.snackBar.open('Agendamento criado com sucesso!', 'Fechar', { duration: 3000 });
+          this.loadEvents();
+        },
+        error: (err) => {
+          console.error('Erro ao criar agendamento:', err);
+          this.snackBar.open('Erro ao criar agendamento', 'Fechar', { duration: 3000 });
+        }
+      });
+    }
+  }
+
+  deleteAppointment(appointment: Appointment): void {
+    if (appointment.id) {
+      this.fitAgendaService.delete(appointment.id).subscribe({
         next: () => {
-          this.showModal = false;
           this.snackBar.open('Agendamento excluído com sucesso!', 'Fechar', { duration: 3000 });
           this.loadEvents();
         },
         error: (err) => {
           console.error('Erro ao excluir agendamento:', err);
+          this.snackBar.open('Erro ao excluir agendamento', 'Fechar', { duration: 3000 });
         }
       });
     }
-  }
-
-
-  saveChanges(): void {
-    // Formata para 'YYYY-MM-DDTHH:mm' (local time, sem Z/UTC)
-    const pad = (n: number) => n.toString().padStart(2, '0');
-    const formatLocal = (d: Date | string | null | undefined) => {
-      if (!d) return '';
-      const date = typeof d === 'string' ? new Date(d) : d;
-      return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
-    };
-    const dateTime = this.modalData?.startString ? formatLocal(this.modalData.startString) : this.modalData?.dateTime;
-    const endDate = this.modalData?.endString ? formatLocal(this.modalData.endString) : this.modalData?.endDate;
-    // Atualiza o status também no modalData para refletir imediatamente na UI
-    if (!this.modalData) return;
-    this.modalData.status = this.statusEdit;
-    const payload: any = {
-      name: this.modalData.name,
-      service: this.modalData.service as ServiceType,
-      description: this.modalData.description,
-      clientId: this.modalData.clientId,
-      dateTime,
-      endDate,
-      status: (this.statusEdit as string) || AppointmentStatus.Agendado
-    };
-    if (this.modalData.id) {
-      payload.id = this.modalData.id;
-      this.fitAgendaService.update(this.modalData.id, payload).subscribe({
-        next: () => {
-          this.showModal = false;
-          this.isEditing = false;
-          setTimeout(() => this.loadEvents(), 100);
-          this.snackBar.open('Agendamento alterado com sucesso!', 'Fechar', { duration: 3000 });
-        },
-        error: (err) => {
-          console.error('Erro ao salvar agendamento:', err);
-        }
-      });
-    } else {
-      this.fitAgendaService.create(payload).subscribe({
-        next: () => {
-          this.showModal = false;
-          this.isEditing = false;
-          setTimeout(() => this.loadEvents(), 100);
-          this.snackBar.open('Agendamento criado com sucesso!', 'Fechar', { duration: 3000 });
-        },
-        error: (err) => {
-          console.error('Erro ao criar agendamento:', err);
-        }
-      });
-    }
-  }
-
-  closeModal(event: MouseEvent | null): void {
-    // Só fecha o modal se for clique no overlay ou no botão X
-    if (!event || (event.target as HTMLElement).classList.contains('modal-overlay') || (event.target as HTMLElement).classList.contains('close-button') || (event.target as HTMLElement).classList.contains('icon-close')) {
-      this.showModal = false;
-      this.isEditing = false; // Reset apenas quando fechar realmente
-    }
-  }
-
-  closeModalButton(): void {
-    this.showModal = false;
-    this.isEditing = false;
-  }
-
-  toggleEdit(): void {
-    this.isEditing = !this.isEditing;
-    // Força a detecção de mudanças
-    this.cdr.detectChanges();
-  }
-
-  startEditing(): void {
-    console.log('startEditing() called - isEditing before:', this.isEditing);
-    this.isEditing = true;
-    console.log('startEditing() called - isEditing after:', this.isEditing);
-    this.cdr.detectChanges();
-  }
-
-  cancelEditing(): void {
-    console.log('cancelEditing() called - isEditing before:', this.isEditing);
-    this.isEditing = false;
-    console.log('cancelEditing() called - isEditing after:', this.isEditing);
-    this.cdr.detectChanges();
-  }
-
-  saveEditing(): void {
-    console.log('saveEditing() called - isEditing before:', this.isEditing);
-    this.saveChanges();
-    this.isEditing = false;
-    console.log('saveEditing() called - isEditing after:', this.isEditing);
   }
 }

@@ -325,13 +325,15 @@
   bottom: 0;
   background: rgba(0, 0, 0, 0.6);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   z-index: 10000;
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s ease;
   backdrop-filter: blur(4px);
+  padding: 20px;
+  overflow-y: auto;
 
   &.visible {
     opacity: 1;
@@ -342,13 +344,15 @@
 .event-modal {
   background: $surface-color;
   border-radius: 20px;
-  width: 90%;
-  max-width: 500px;
-  max-height: 80vh;
-  overflow: hidden;
+  width: 100%;
+  max-width: 600px;
+  max-height: none;
+  min-height: auto;
+  overflow: visible;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   transform: translateY(20px);
   transition: transform 0.3s ease;
+  margin: auto;
 
   .modal-overlay.visible & {
     transform: translateY(0);
@@ -394,15 +398,16 @@
 
   .modal-content {
     padding: $spacing-xl;
+    overflow: visible;
 
     .event-info {
       .info-row {
         display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        padding: 12px 0;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 16px 0;
         border-bottom: 1px solid rgba($primary-color, 0.05);
-        gap: $spacing-md;
+        gap: 8px;
 
         &:last-child {
           border-bottom: none;
@@ -411,35 +416,38 @@
         strong {
           color: $text-color;
           font-weight: 600;
-          min-width: 100px;
+          font-size: 14px;
+          margin-bottom: 4px;
         }
 
         span {
           color: $text-secondary;
-          flex: 1;
-          text-align: right;
+          font-size: 14px;
         }
 
         .service-badge {
           background: linear-gradient(135deg, $primary-color, $primary-light);
           color: white;
-          padding: 4px 12px;
+          padding: 6px 16px;
           border-radius: 20px;
           font-size: 12px;
           font-weight: 500;
           text-transform: uppercase;
+          align-self: flex-start;
+          margin-top: 4px;
         }
 
         // Estilos para campos de edição
         .edit-input, .edit-select, .edit-textarea, .edit-datetime {
-          flex: 1;
-          padding: 8px 12px;
+          width: 100%;
+          padding: 12px 16px;
           border: 1.5px solid rgba($primary-color, 0.2);
-          border-radius: 6px;
+          border-radius: 8px;
           font-size: 14px;
           color: $text-color;
           background: #fff;
           transition: border-color 0.2s ease;
+          box-sizing: border-box;
 
           &:focus {
             outline: none;
@@ -450,30 +458,29 @@
 
         .edit-textarea {
           resize: vertical;
-          min-height: 60px;
+          min-height: 80px;
         }
 
         .edit-time-group {
           display: flex;
           flex-direction: column;
-          gap: 12px;
-          flex: 1;
+          gap: 16px;
+          width: 100%;
 
           .time-row {
             display: flex;
-            align-items: center;
+            flex-direction: column;
             gap: 8px;
 
             label {
               color: $text-secondary;
               font-size: 13px;
               font-weight: 500;
-              min-width: 60px;
             }
 
             .edit-datetime {
-              flex: 1;
-              font-size: 13px;
+              width: 100%;
+              font-size: 14px;
             }
           }
         }
@@ -594,16 +601,20 @@
 
   .event-modal {
     width: 95%;
-    margin: $spacing-sm;
+    margin: $spacing-sm auto;
+    max-width: 400px;
+    border-radius: 12px;
 
     .modal-content {
       padding: $spacing-lg;
 
       .modal-actions {
         flex-direction: column;
+        gap: 8px;
 
         .btn-secondary, .btn-primary, .btn-danger {
           width: 100%;
+          min-height: 44px;
         }
       }
     }
@@ -612,5 +623,516 @@
   .legend-items {
     flex-direction: column;
     gap: $spacing-sm !important;
+  }
+}
+
+// Estilos específicos para componentes Material Design com cores do template
+.modal-content {
+  padding: $spacing-xl !important;
+  background: $surface-color;
+  
+  // Informações do evento com espaçamento adequado
+  .event-info {
+    .info-row {
+      margin-bottom: $spacing-lg;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      
+      strong {
+        color: $text-color;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+      }
+      
+      span:not(.service-badge) {
+        color: $text-secondary;
+        font-size: 15px;
+        line-height: 1.5;
+        padding: 8px 0;
+      }
+      
+      .service-badge {
+        display: inline-flex;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        background: linear-gradient(135deg, $primary-color, $primary-light);
+        color: white;
+        width: fit-content;
+        box-shadow: 0 2px 8px rgba($primary-color, 0.25);
+      }
+    }
+  }
+  
+  // Campos de formulário Material com cores do template
+  .edit-field {
+    width: 100%;
+    margin-bottom: $spacing-lg;
+    
+    ::ng-deep .mat-mdc-form-field {
+      width: 100% !important;
+      
+      .mat-mdc-form-field-wrapper {
+        margin-bottom: 0;
+        width: 100%;
+      }
+      
+      .mat-mdc-text-field-wrapper {
+        width: 100%;
+        background: linear-gradient(135deg, rgba($primary-color, 0.02), rgba($primary-light, 0.04));
+        border: 2px solid rgba($primary-color, 0.15);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+      }
+      
+      .mat-mdc-form-field-infix {
+        width: 100%;
+        min-height: 56px;
+        padding: 16px 14px 8px;
+      }
+      
+      .mat-mdc-form-field-outline {
+        display: none; // Usar border customizado ao invés do outline
+      }
+      
+      &.mat-focused .mat-mdc-text-field-wrapper {
+        background: linear-gradient(135deg, rgba($primary-color, 0.05), rgba($primary-light, 0.08));
+        border-color: $primary-color;
+        box-shadow: 0 0 0 3px rgba($primary-color, 0.15);
+      }
+      
+      .mat-mdc-form-field-label {
+        color: $text-secondary !important;
+        font-weight: 500;
+        font-size: 14px;
+      }
+      
+      &.mat-focused .mat-mdc-form-field-label {
+        color: $primary-color !important;
+        font-weight: 600;
+      }
+      
+      .mat-mdc-input-element {
+        color: $text-color !important;
+        font-weight: 500;
+        font-size: 15px;
+        
+        &::placeholder {
+          color: $text-secondary !important;
+          font-weight: 400;
+        }
+      }
+      
+      .mat-mdc-select-value {
+        color: $text-color !important;
+        font-weight: 500;
+        font-size: 15px;
+      }
+    }
+  }
+
+  // Container para data e hora com melhor layout
+  .edit-time-group {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-lg;
+    margin-top: $spacing-md;
+    width: 100%;
+    padding: $spacing-lg;
+    background: linear-gradient(135deg, rgba($primary-color, 0.02), rgba($primary-light, 0.04));
+    border: 1px solid rgba($primary-color, 0.1);
+    border-radius: 16px;
+  }
+
+  .date-time-row {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+    width: 100%;
+    
+    .date-field {
+      width: 100%;
+      
+      ::ng-deep .mat-mdc-form-field {
+        .mat-mdc-text-field-wrapper {
+          background: white;
+          border: 2px solid rgba($secondary-color, 0.2);
+          border-radius: 12px;
+          transition: all 0.3s ease;
+        }
+        
+        &.mat-focused .mat-mdc-text-field-wrapper {
+          background: linear-gradient(135deg, rgba($secondary-color, 0.03), rgba($secondary-light, 0.05));
+          border-color: $secondary-color;
+          box-shadow: 0 0 0 3px rgba($secondary-color, 0.15);
+        }
+        
+        .mat-datepicker-toggle {
+          color: $secondary-color !important;
+          
+          &:hover {
+            color: $secondary-dark !important;
+          }
+        }
+        
+        .mat-mdc-form-field-label {
+          color: $text-secondary !important;
+          
+          &.mat-focused {
+            color: $secondary-color !important;
+          }
+        }
+      }
+    }
+  }
+
+  // Customização específica dos campos de seleção e data/hora
+  ::ng-deep {
+    .mat-mdc-select {
+      .mat-mdc-select-value {
+        color: $text-color !important;
+        font-weight: 500;
+      }
+      
+      .mat-mdc-select-arrow-wrapper {
+        .mat-mdc-select-arrow {
+          color: $primary-color !important;
+        }
+      }
+    }
+    
+    .mat-mdc-select-panel {
+      background: white;
+      border: 1px solid rgba($primary-color, 0.2);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+      
+      .mat-mdc-option {
+        &:hover {
+          background: rgba($primary-color, 0.08) !important;
+        }
+        
+        &.mat-mdc-option-active {
+          background: rgba($primary-color, 0.12) !important;
+          color: $primary-dark !important;
+        }
+      }
+    }
+    
+    .mat-datepicker-content {
+      background: white;
+      border: 1px solid rgba($secondary-color, 0.2);
+      border-radius: 16px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      
+      .mat-calendar-header {
+        background: linear-gradient(135deg, $secondary-color, $secondary-light);
+        color: white;
+        border-radius: 16px 16px 0 0;
+      }
+      
+      .mat-calendar-body-selected {
+        background-color: $secondary-color !important;
+        color: white !important;
+      }
+      
+      .mat-calendar-body-today:not(.mat-calendar-body-selected) {
+        border-color: $accent-color !important;
+        color: $accent-color !important;
+      }
+    }
+    
+    .mat-timepicker-content {
+      background: white;
+      border: 1px solid rgba($accent-color, 0.2);
+      border-radius: 16px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      
+      .mat-timepicker-input {
+        background: linear-gradient(135deg, rgba($accent-color, 0.05), rgba($accent-light, 0.08));
+        border: 1px solid rgba($accent-color, 0.2);
+        border-radius: 8px;
+        color: $text-color;
+        
+        &:focus {
+          border-color: $accent-color;
+          box-shadow: 0 0 0 2px rgba($accent-color, 0.15);
+        }
+      }
+    }
+  }
+}
+
+// Botões Material personalizados com cores do template
+.modal-actions {
+  display: flex;
+  gap: $spacing-md;
+  margin-top: $spacing-xl;
+  justify-content: flex-end;
+  padding-top: $spacing-lg;
+  border-top: 1px solid rgba($primary-color, 0.1);
+  
+  ::ng-deep {
+    .mat-mdc-button {
+      border-radius: 12px !important;
+      font-weight: 600 !important;
+      text-transform: none !important;
+      letter-spacing: 0.5px !important;
+      min-height: 44px !important;
+      padding: 12px 24px !important;
+      transition: all 0.3s ease !important;
+      font-size: 14px !important;
+      
+      .mat-icon {
+        margin-right: 8px !important;
+        margin-left: -4px !important;
+        font-size: 18px !important;
+        width: 18px !important;
+        height: 18px !important;
+      }
+    }
+    
+    // Botão primário (verde do template)
+    .mat-mdc-raised-button.mat-primary {
+      background: linear-gradient(135deg, $primary-color, $primary-light) !important;
+      color: white !important;
+      box-shadow: 0 4px 16px rgba($primary-color, 0.25) !important;
+      border: none !important;
+      
+      &:hover:not(:disabled) {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 24px rgba($primary-color, 0.35) !important;
+        background: linear-gradient(135deg, $primary-dark, $primary-color) !important;
+      }
+      
+      &:active {
+        transform: translateY(0) !important;
+      }
+    }
+    
+    // Botão de perigo (vermelho)
+    .mat-mdc-raised-button.mat-warn {
+      background: linear-gradient(135deg, #e53e3e, #c53030) !important;
+      color: white !important;
+      box-shadow: 0 4px 16px rgba(#e53e3e, 0.25) !important;
+      border: none !important;
+      
+      &:hover:not(:disabled) {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 24px rgba(#e53e3e, 0.35) !important;
+        background: linear-gradient(135deg, #c53030, #9c2626) !important;
+      }
+      
+      &:active {
+        transform: translateY(0) !important;
+      }
+    }
+    
+    // Botão secundário (outline)
+    .mat-mdc-outlined-button,
+    .mat-mdc-stroked-button {
+      border: 2px solid rgba($text-secondary, 0.3) !important;
+      color: $text-secondary !important;
+      background: transparent !important;
+      
+      &:hover:not(:disabled) {
+        background: rgba($text-secondary, 0.08) !important;
+        border-color: rgba($text-secondary, 0.5) !important;
+        color: $text-color !important;
+        transform: translateY(-1px) !important;
+      }
+      
+      &:active {
+        transform: translateY(0) !important;
+      }
+    }
+    
+    // Estados desabilitados
+    .mat-mdc-button:disabled {
+      opacity: 0.6 !important;
+      cursor: not-allowed !important;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+  }
+}
+
+// Header do modal com Material Icons e cores do template
+.modal-header {
+  background: linear-gradient(135deg, rgba($primary-color, 0.08), rgba($primary-light, 0.12)) !important;
+  border-bottom: 2px solid rgba($primary-color, 0.15) !important;
+  padding: $spacing-xl $spacing-xl $spacing-lg !important;
+  border-radius: 20px 20px 0 0;
+  
+  .modal-title-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    
+    ::ng-deep .mat-icon {
+      color: $primary-color !important;
+      font-size: 28px !important;
+      width: 28px !important;
+      height: 28px !important;
+    }
+    
+    h3 {
+      color: $text-color !important;
+      font-weight: 700 !important;
+      font-size: 22px !important;
+      margin: 0 !important;
+      font-family: 'Montserrat', 'Roboto', sans-serif !important;
+    }
+  }
+  
+  ::ng-deep .mat-mdc-icon-button {
+    color: $text-secondary !important;
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50% !important;
+    transition: all 0.3s ease !important;
+    
+    .mat-icon {
+      font-size: 24px !important;
+      width: 24px !important;
+      height: 24px !important;
+    }
+    
+    &:hover {
+      background: rgba($text-secondary, 0.1) !important;
+      color: $primary-color !important;
+      transform: scale(1.05) !important;
+    }
+  }
+}
+
+// Responsividade para campos Material
+@media (max-width: 1023px) {
+  .modal-overlay {
+    padding: $spacing-md;
+    align-items: flex-start;
+    padding-top: 40px;
+  }
+  
+  .event-modal {
+    width: 100%;
+    max-width: 600px;
+    margin: 0;
+    
+    .modal-content {
+      padding: $spacing-lg !important;
+      
+      .edit-time-group {
+        padding: $spacing-md;
+      }
+      
+      .modal-actions {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: $spacing-sm;
+        
+        ::ng-deep .mat-mdc-button {
+          flex: 1;
+          min-width: 120px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .modal-overlay {
+    padding: $spacing-sm;
+    padding-top: 20px;
+  }
+  
+  .event-modal {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    border-radius: 16px;
+    
+    .modal-header {
+      padding: $spacing-lg !important;
+      
+      .modal-title-group {
+        h3 {
+          font-size: 18px !important;
+        }
+        
+        ::ng-deep .mat-icon {
+          font-size: 24px !important;
+          width: 24px !important;
+          height: 24px !important;
+        }
+      }
+    }
+    
+    .modal-content {
+      padding: $spacing-md !important;
+      
+      .event-info .info-row {
+        margin-bottom: $spacing-md;
+        
+        strong {
+          font-size: 13px;
+        }
+        
+        span:not(.service-badge) {
+          font-size: 14px;
+        }
+      }
+      
+      .edit-field {
+        margin-bottom: $spacing-md;
+        
+        ::ng-deep .mat-mdc-form-field {
+          .mat-mdc-form-field-infix {
+            min-height: 48px;
+            padding: 12px 12px 6px;
+          }
+        }
+      }
+      
+      .edit-time-group {
+        padding: $spacing-sm;
+        gap: $spacing-md;
+      }
+      
+      .date-time-row {
+        gap: $spacing-sm;
+        
+        .date-field {
+          ::ng-deep .mat-mdc-form-field {
+            .mat-mdc-form-field-infix {
+              min-height: 48px;
+            }
+          }
+        }
+      }
+      
+      .modal-actions {
+        flex-direction: column;
+        gap: $spacing-sm;
+        margin-top: $spacing-lg;
+        
+        ::ng-deep .mat-mdc-button {
+          width: 100%;
+          min-height: 44px;
+          
+          .mat-icon {
+            margin-right: 6px !important;
+            font-size: 16px !important;
+            width: 16px !important;
+            height: 16px !important;
+          }
+        }
+      }
+    }
   }
 }

@@ -133,7 +133,7 @@ export class FitAgendaNovoComponent implements OnInit, DoCheck {
     const name = event.option.value;
     const selected = this.clients.find((c: Client) => c.name === name);
     if (selected) {
-      this.agendaForm.get('client')!.setValue(selected.id);
+
       this.agendaForm.get('name')!.setValue(selected.name); // preenche o nome do atendimento
     }
   }
@@ -154,23 +154,23 @@ export class FitAgendaNovoComponent implements OnInit, DoCheck {
   const service = form.service;
       const description = form.notes || '';
       // Monta data/hora ISO
-      const date: Date = form.date instanceof Date ? form.date : new Date(form.date);
+      const selectedDate: Date = form.date instanceof Date ? form.date : new Date(form.date);
       const [hour, minute] = (form.time || '').split(':');
-      date.setHours(Number(hour), Number(minute), 0, 0);
+      
+      // Cria uma nova data para evitar mutação da data original
+      const date = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+      date.setHours(Number(hour) || 0, Number(minute) || 0, 0, 0);
+      
       // Formata para 'YYYY-MM-DDTHH:mm' (local time, sem Z/UTC)
       const pad = (n: number) => n.toString().padStart(2, '0');
       const formatLocal = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
       const dateTime = formatLocal(date);
-      // Supondo duração padrão de 1h
-      const endDateObj = new Date(date);
-      endDateObj.setHours(endDateObj.getHours() + 1);
-      const endDate = formatLocal(endDateObj);
+      
       const appointment: Appointment = {
         name,
         service,
         description,
-        dateTime,
-        endDate
+        dateTime
       };
       if (clientId !== undefined) {
         appointment.clientId = clientId;

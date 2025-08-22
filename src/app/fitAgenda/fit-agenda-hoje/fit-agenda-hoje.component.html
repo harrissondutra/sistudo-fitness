@@ -1,171 +1,39 @@
-<!-- Container principal do calendário -->
-<div class="calendar-container">
+<!-- Container principal -->
+<div class="calendar-container mat-elevation-z2">
+
   <!-- Loading overlay -->
   <div class="loading-overlay" [class.visible]="isLoading">
-    <div class="loading-spinner"></div>
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
     <p>Carregando agenda...</p>
   </div>
 
-  <!-- Header padrão do sistema -->
+  <!-- Cabeçalho -->
   <header class="agenda-header">
     <div class="agenda-header-content">
-      <div style="display: flex; align-items: center; gap: 1rem;">
-        <h1 class="agenda-title" style="margin-bottom: 0;">
-          <span class="agenda-emoji">📅</span>
-          <span>Agenda de Hoje</span>
-        </h1>
-      </div>
-      <div class="agenda-date">
+      <h1 class="agenda-title">
+        <mat-icon>event</mat-icon>
+        Agenda de Hoje
+      </h1>
+      <span class="agenda-date">
         {{ today | date:'dd/MM/yyyy, EEEE' : '' : 'pt-BR' }}
-      </div>
+      </span>
     </div>
-    <div class="agenda-stats-and-btn">
-      <div class="agenda-stats">
-        <div class="stat-item">
-          <span class="stat-number">{{ eventCount }}</span>
-          <span class="stat-label">Agendamentos</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number">{{ freeSlots }}</span>
-          <span class="stat-label">Disponível</span>
-        </div>
-      </div>
+
+    <!-- Estatísticas -->
+    <div class="agenda-stats">
+      <mat-card class="stat-card">
+        <mat-card-title>{{ eventCount }}</mat-card-title>
+        <mat-card-subtitle>Agendamentos</mat-card-subtitle>
+      </mat-card>
+      <mat-card class="stat-card">
+        <mat-card-title>{{ freeSlots }}</mat-card-title>
+        <mat-card-subtitle>Disponível</mat-card-subtitle>
+      </mat-card>
     </div>
   </header>
 
   <!-- Calendário -->
   <div class="agenda-calendar">
-    <full-calendar
-      #calendar
-      [options]="calendarOptions"
-    ></full-calendar>
-  </div>
-
-  <!-- Legenda de cores -->
-  <div class="calendar-legend">
-    <h4>Tipos de Serviço</h4>
-    <div class="legend-items">
-      <div class="legend-item">
-        <span class="legend-color" style="background: #1976d2;"></span>
-        <span>Consulta</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-color" style="background: #388e3c;"></span>
-        <span>Avaliação</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-color" style="background: #f57c00;"></span>
-        <span>Treino</span>
-      </div>
-      <div class="legend-item">
-        <span class="legend-color" style="background: #7b1fa2;"></span>
-        <span>Nutrição</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal de detalhes do evento -->
-  <div class="modal-overlay" [class.visible]="showModal" (click)="closeModal()">
-    <div class="event-modal" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <div class="modal-title-group">
-          <i class="icon-calendar-check"></i>
-          <h3>Detalhes do Agendamento</h3>
-        </div>
-        <button class="close-button" (click)="closeModal()">
-          <i class="icon-close">×</i>
-        </button>
-      </div>
-
-      <div class="modal-content" *ngIf="selectedEvent">
-        <div class="event-info">
-          <div class="info-row">
-            <strong>Cliente:</strong>
-            <span *ngIf="!isEditing">{{ selectedEvent.title }}</span>
-            <input
-              *ngIf="isEditing"
-              type="text"
-              [(ngModel)]="editingEvent!.title"
-              class="edit-input"
-              placeholder="Nome do cliente">
-          </div>
-          <div class="info-row">
-            <strong>Serviço:</strong>
-            <span *ngIf="!isEditing" class="service-badge">{{ selectedEvent.service || 'Não informado' }}</span>
-            <select
-              *ngIf="isEditing"
-              [(ngModel)]="editingEvent!.service"
-              class="edit-select">
-              <option value="">Selecione um serviço</option>
-              <option value="consulta">Consulta</option>
-              <option value="avaliacao">Avaliação</option>
-              <option value="treino">Treino</option>
-              <option value="nutricao">Nutrição</option>
-            </select>
-          </div>
-          <div class="info-row">
-            <strong>Descrição:</strong>
-            <span *ngIf="!isEditing">{{ selectedEvent.description || 'Não informado' }}</span>
-            <textarea
-              *ngIf="isEditing"
-              [(ngModel)]="editingEvent!.description"
-              class="edit-textarea"
-              placeholder="Descrição do agendamento"
-              rows="3"></textarea>
-          </div>
-          <div class="info-row">
-            <strong>Horário:</strong>
-            <span *ngIf="!isEditing">{{ formatDateTime(selectedEvent.start) }} - {{ formatDateTime(selectedEvent.end) }}</span>
-            <div *ngIf="isEditing" class="edit-time-group">
-              <div class="time-row">
-                <label>Início:</label>
-                <input
-                  type="datetime-local"
-                  [ngModel]="editingStartDatetime"
-                  (ngModelChange)="editingStartDatetime = $event"
-                  class="edit-datetime">
-              </div>
-              <div class="time-row">
-                <label>Fim:</label>
-                <input
-                  type="datetime-local"
-                  [ngModel]="editingEndDatetime"
-                  (ngModelChange)="editingEndDatetime = $event"
-                  class="edit-datetime">
-              </div>
-            </div>
-          </div>
-          <div class="info-row" *ngIf="selectedEvent.notes">
-            <strong>Observações:</strong>
-            <span>{{ selectedEvent.notes }}</span>
-          </div>
-        </div>
-
-        <div class="modal-actions">
-          <!-- Botões no modo visualização -->
-          <ng-container *ngIf="!isEditing">
-            <button class="btn-secondary" (click)="closeModal()">
-              Fechar
-            </button>
-            <button class="btn-primary" (click)="startEditing()">
-              Editar
-            </button>
-            <button class="btn-danger" (click)="deleteAppointment(+selectedEvent.id)">
-              Excluir
-            </button>
-          </ng-container>
-
-          <!-- Botões no modo edição -->
-          <ng-container *ngIf="isEditing">
-            <button class="btn-secondary" (click)="cancelEditing()">
-              Cancelar
-            </button>
-            <button class="btn-primary" (click)="saveEditing()">
-              Salvar
-            </button>
-          </ng-container>
-        </div>
-      </div>
-    </div>
+    <full-calendar [options]="calendarOptions"></full-calendar>
   </div>
 </div>

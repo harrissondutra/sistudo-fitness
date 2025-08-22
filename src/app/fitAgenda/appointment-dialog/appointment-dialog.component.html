@@ -1,0 +1,162 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2 mat-dialog-title class="dialog-title">
+      <div class="title-content">
+        <mat-icon class="title-icon">{{ data.isNew ? 'add_circle' : 'edit' }}</mat-icon>
+        <span>{{ data.isNew ? 'Novo Agendamento' : 'Editar Agendamento' }}</span>
+      </div>
+    </h2>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <form class="appointment-form">
+      
+      <!-- Cliente -->
+      <div >
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Nome do Cliente</mat-label>
+          <input matInput [(ngModel)]="appointment.name" name="name" required 
+                 placeholder="Digite o nome do cliente">
+          <mat-icon matPrefix>person</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <!-- Serviço -->
+      <div >
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Tipo de Serviço</mat-label>
+          <mat-select [(ngModel)]="appointment.service" name="service" required>
+            <mat-option 
+              *ngFor="let serviceType of serviceTypes" 
+              [value]="serviceType">
+              <div class="service-option">
+                
+                {{ serviceType }}
+              </div>
+            </mat-option>
+          </mat-select>
+          <mat-icon matPrefix>medical_services</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <!-- Data e Horários -->
+      <div class="form-section">
+        <!-- Data e Hora de Início -->
+        <div class="date-time-group">
+          <h4>Início do Agendamento</h4>
+          <div class="date-time-row">
+            <mat-form-field appearance="outline" class="date-field">
+              <mat-label>Data de Início</mat-label>
+              <input matInput 
+                     [matDatepicker]="startDatePicker" 
+                     [(ngModel)]="startDate" 
+                     name="startDate"
+                     readonly>
+              <mat-datepicker-toggle matIconSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #startDatePicker></mat-datepicker>
+              <mat-icon matPrefix>event</mat-icon>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline" class="time-field">
+              <mat-label>Hora de Início</mat-label>
+              <input matInput 
+                     [matTimepicker]="startTimePicker" 
+                     [(ngModel)]="startTime" 
+                     name="startTime"
+                     (ngModelChange)="onTimeChange()"
+                     readonly>
+              <mat-timepicker #startTimePicker></mat-timepicker>
+              <mat-icon matPrefix>schedule</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+        
+        <!-- Data e Hora de Fim -->
+        <div class="date-time-group">
+          <h4>Fim do Agendamento</h4>
+          <div class="date-time-row">
+            <mat-form-field appearance="outline" class="date-field">
+              <mat-label>Data de Fim</mat-label>
+              <input matInput 
+                     [matDatepicker]="endDatePicker" 
+                     [(ngModel)]="endDate" 
+                     name="endDate"
+                     readonly>
+              <mat-datepicker-toggle matIconSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #endDatePicker></mat-datepicker>
+              <mat-icon matPrefix>event</mat-icon>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline" class="time-field">
+              <mat-label>Hora de Fim</mat-label>
+              <input matInput 
+                     [matTimepicker]="endTimePicker" 
+                     [(ngModel)]="endTime" 
+                     name="endTime"
+                     (ngModelChange)="onTimeChange()"
+                     readonly>
+              <mat-timepicker #endTimePicker></mat-timepicker>
+              <mat-icon matPrefix>schedule</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div>
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Status do Agendamento</mat-label>
+          <mat-select [(ngModel)]="appointment.status" name="status" required>
+            <mat-option 
+              *ngFor="let status of appointmentStatuses" 
+              [value]="status"
+              [style.color]="getStatusColor(status)">
+              <div class="status-option">
+                <div class="status-indicator" [style.background-color]="getStatusColor(status)"></div>
+                {{ getStatusLabel(status) }}
+              </div>
+            </mat-option>
+          </mat-select>
+          <mat-icon matPrefix>flag</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <!-- Descrição -->
+      <div>
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Observações</mat-label>
+          <textarea matInput 
+                    cdkTextareaAutosize 
+                    cdkAutosizeMinRows="3" 
+                    cdkAutosizeMaxRows="5"
+                    [(ngModel)]="appointment.description" 
+                    name="description"
+                    placeholder="Adicione informações relevantes sobre o agendamento..."></textarea>
+          <mat-icon matPrefix>note</mat-icon>
+        </mat-form-field>
+      </div>
+
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="dialog-actions">
+    <div class="action-buttons">
+      <button mat-stroked-button class="cancel-btn" (click)="onCancel()">
+        <mat-icon>close</mat-icon>
+        <span>Cancelar</span>
+      </button>
+      
+      <button mat-stroked-button color="warn" class="delete-btn" 
+              *ngIf="!data.isNew" (click)="onDelete()">
+        <mat-icon>delete_outline</mat-icon>
+        <span>Excluir</span>
+      </button>
+      
+      <button mat-flat-button color="primary" class="save-btn" 
+              (click)="onSave()" [disabled]="!isFormValid()">
+        <mat-icon>{{ data.isNew ? 'add' : 'save' }}</mat-icon>
+        <span>{{ data.isNew ? 'Criar Agendamento' : 'Salvar Alterações' }}</span>
+      </button>
+    </div>
+  </mat-dialog-actions>
+</div>
