@@ -1,4 +1,8 @@
+
 @import '../../../styles/variables';
+@import '../../../styles/auth-common';
+@import '../../../styles/fitness-theme';
+@import '../../../styles/fitness-utilities';
 
 // Container principal
 .calendar-container {
@@ -72,7 +76,7 @@
   100% { transform: rotate(360deg); }
 }
 
-// Header da agenda
+// Header da agenda (padrão do sistema)
 .agenda-header {
   padding: $spacing-xl $spacing-xl $spacing-lg;
   background: linear-gradient(135deg, rgba($primary-color, 0.05), rgba($primary-light, 0.08));
@@ -86,24 +90,24 @@
     .agenda-title {
       font-size: 28px;
       font-weight: 700;
-  color: $text-color;
+      color: $text-color;
       margin: 0 0 8px;
       display: flex;
       align-items: center;
       gap: 12px;
-
-      .icon-calendar::before {
-        content: '📅';
-        font-size: 24px;
-      }
     }
-
     .agenda-date {
       font-size: 16px;
       color: $text-secondary;
       font-weight: 500;
       text-transform: capitalize;
     }
+  }
+
+  .agenda-stats-and-btn {
+    display: flex;
+    align-items: center;
+    gap: $spacing-lg;
   }
 
   .agenda-stats {
@@ -147,8 +151,8 @@
   padding-top: $spacing-md;
 }
 
-// Customizações do FullCalendar
-.fc-custom {
+// Customizações do FullCalendar (padrão do sistema)
+:host ::ng-deep {
   .fc-header-toolbar {
     margin-bottom: $spacing-lg;
     padding: $spacing-md 0;
@@ -157,7 +161,7 @@
   .fc-toolbar-title {
     font-size: 24px !important;
     font-weight: 600 !important;
-  color: $text-color !important;
+    color: $text-color !important;
   }
 
   .fc-col-header {
@@ -170,7 +174,7 @@
     }
 
     .fc-col-header-cell-cushion {
-  color: $text-color !important;
+      color: $text-color !important;
       font-weight: 600 !important;
       font-size: 14px !important;
     }
@@ -227,41 +231,47 @@
   }
 }
 
-// Botões melhorados do FullCalendar
+// Botões do FullCalendar (clean, discretos, espaçados)
 .fc .fc-button {
-  background: linear-gradient(135deg, $primary-color, $primary-light) !important;
-  border: none !important;
-  color: white !important;
+  background: #f5f5f5 !important;
+  color: $primary-color !important;
+  border: 1.5px solid $primary-color !important;
   font-weight: 500 !important;
-  border-radius: 12px !important;
-  padding: 10px 20px !important;
+  border-radius: 8px !important;
+  padding: 7px 16px !important;
   font-size: 14px !important;
-  transition: all 0.2s ease !important;
-  box-shadow: 0 4px 12px rgba($primary-color, 0.25) !important;
+  box-shadow: none !important;
+  margin-right: 0.5rem !important;
+  margin-left: 0 !important;
+  transition: background 0.15s, color 0.15s, border-color 0.15s !important;
 
-  &:hover {
-    background: linear-gradient(135deg, $primary-light, $primary-color) !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 6px 20px rgba($primary-color, 0.35) !important;
-  }
-
-  &:focus {
-    box-shadow: 0 0 0 3px rgba($primary-color, 0.3) !important;
+  &:hover, &:focus {
+    background: $primary-color !important;
+    color: #fff !important;
+    border-color: $primary-dark !important;
     outline: none !important;
+    box-shadow: none !important;
   }
 
   &.fc-button-active {
-    background: linear-gradient(135deg, darken($primary-color, 10%), $primary-color) !important;
-    transform: translateY(0) !important;
-    box-shadow: 0 2px 8px rgba($primary-color, 0.3) !important;
+    background: $primary-dark !important;
+    color: #fff !important;
+    border-color: $primary-dark !important;
+    box-shadow: none !important;
   }
 
   &:disabled {
-    background: rgba($primary-color, 0.2) !important;
-    opacity: 0.6 !important;
+    background: #e0e0e0 !important;
+    color: #bdbdbd !important;
+    border-color: #e0e0e0 !important;
+    opacity: 0.7 !important;
     cursor: not-allowed !important;
-    transform: none !important;
+    box-shadow: none !important;
   }
+}
+
+.fc .fc-button:last-child {
+  margin-right: 0 !important;
 }
 
 // Legenda de cores
@@ -274,7 +284,7 @@
     margin: 0 0 $spacing-md;
     font-size: 16px;
     font-weight: 600;
-  color: $text-color;
+    color: $text-color;
   }
 
   .legend-items {
@@ -299,7 +309,7 @@
   }
 }
 
-// Modal de eventos
+// Modal de eventos (padrão do sistema)
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -345,11 +355,16 @@
     align-items: center;
     background: linear-gradient(135deg, rgba($primary-color, 0.05), rgba($primary-light, 0.08));
 
-    h3 {
-      margin: 0;
-      font-size: 20px;
-      font-weight: 600;
-  color: $text-color;
+    .modal-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      h3 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 600;
+        color: $text-color;
+      }
     }
 
     .close-button {
@@ -457,7 +472,7 @@
   }
 }
 
-// Responsividade
+// Responsividade (padrão do sistema)
 @media (max-width: 1023px) {
   .calendar-container {
     margin: $spacing-md;
@@ -470,6 +485,10 @@
     gap: $spacing-md;
     text-align: center;
 
+    .agenda-stats-and-btn {
+      flex-direction: column;
+      gap: $spacing-md;
+    }
     .agenda-stats {
       justify-content: center;
     }

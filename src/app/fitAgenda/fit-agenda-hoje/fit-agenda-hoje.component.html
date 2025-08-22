@@ -6,28 +6,32 @@
     <p>Carregando agenda...</p>
   </div>
 
-  <!-- Header da agenda com informações do dia -->
-  <div class="agenda-header">
+  <!-- Header padrão do sistema -->
+  <header class="agenda-header">
     <div class="agenda-header-content">
-      <h2 class="agenda-title">
-        <i class="icon-calendar"></i>
-        Agenda de Hoje
-      </h2>
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <h1 class="agenda-title" style="margin-bottom: 0;">
+          <span class="agenda-emoji">📅</span>
+          <span>Agenda de Hoje</span>
+        </h1>
+      </div>
       <div class="agenda-date">
-  {{ today | date:'dd/MM/yyyy, EEEE' : '' : 'pt-BR' }}
+        {{ today | date:'dd/MM/yyyy, EEEE' : '' : 'pt-BR' }}
       </div>
     </div>
-    <div class="agenda-stats">
-      <div class="stat-item">
-        <span class="stat-number">{{ eventCount }}</span>
-        <span class="stat-label">Agendamentos</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-number">{{ freeSlots }}</span>
-        <span class="stat-label">Disponível</span>
+    <div class="agenda-stats-and-btn">
+      <div class="agenda-stats">
+        <div class="stat-item">
+          <span class="stat-number">{{ eventCount }}</span>
+          <span class="stat-label">Agendamentos</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">{{ freeSlots }}</span>
+          <span class="stat-label">Disponível</span>
+        </div>
       </div>
     </div>
-  </div>
+  </header>
 
   <!-- Calendário -->
   <div class="agenda-proximos-calendar">
@@ -60,56 +64,55 @@
       </div>
     </div>
   </div>
-</div>
 
-<!-- Modal de detalhes do evento -->
-<div class="modal-overlay" [class.visible]="showModal" (click)="closeModal()">
-  <div class="event-modal" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <h3>Detalhes do Agendamento</h3>
-      <button class="close-button" (click)="closeModal()">
-        <i class="icon-close">×</i>
-      </button>
-    </div>
-
-    <div class="modal-content" *ngIf="selectedEvent">
-      <div class="event-info">
-        <div class="info-row">
-          <strong>Cliente:</strong>
-          <span>{{ selectedEvent.title }}</span>
+  <!-- Modal de detalhes do evento -->
+  <div class="modal-overlay" [class.visible]="showModal" (click)="closeModal()">
+    <div class="event-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <i class="icon-calendar-check"></i>
+          <h3>Detalhes do Agendamento</h3>
         </div>
-
-        <div class="info-row">
-          <strong>Serviço:</strong>
-          <span class="service-badge">{{ selectedEvent.service || 'Não informado' }}</span>
-        </div>
-
-        <div class="info-row">
-          <strong>Descrição:</strong>
-          <span>{{ selectedEvent.description || 'Não informado' }}</span>
-        </div>
-
-        <div class="info-row">
-          <strong>Horário:</strong>
-          <span>{{ formatDateTime(selectedEvent.start) }} - {{ formatDateTime(selectedEvent.end) }}</span>
-        </div>
-
-        <div class="info-row" *ngIf="selectedEvent.notes">
-          <strong>Observações:</strong>
-          <span>{{ selectedEvent.notes }}</span>
-        </div>
+        <button class="close-button" (click)="closeModal()">
+          <i class="icon-close">×</i>
+        </button>
       </div>
 
-      <div class="modal-actions">
-        <button class="btn-secondary" (click)="closeModal()">
-          Fechar
-        </button>
-        <button class="btn-primary">
-          Editar
-        </button>
-        <button class="btn-danger" (click)="deleteAppointment(+selectedEvent.id)">
-          Excluir
-        </button>
+      <div class="modal-content" *ngIf="selectedEvent">
+        <div class="event-info">
+          <div class="info-row">
+            <strong>Cliente:</strong>
+            <span>{{ selectedEvent.title }}</span>
+          </div>
+          <div class="info-row">
+            <strong>Serviço:</strong>
+            <span class="service-badge">{{ selectedEvent.service || 'Não informado' }}</span>
+          </div>
+          <div class="info-row">
+            <strong>Descrição:</strong>
+            <span>{{ selectedEvent.description || 'Não informado' }}</span>
+          </div>
+          <div class="info-row">
+            <strong>Horário:</strong>
+            <span>{{ formatDateTime(selectedEvent.start) }} - {{ formatDateTime(selectedEvent.end) }}</span>
+          </div>
+          <div class="info-row" *ngIf="selectedEvent.notes">
+            <strong>Observações:</strong>
+            <span>{{ selectedEvent.notes }}</span>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-secondary" (click)="closeModal()">
+            Fechar
+          </button>
+          <button class="btn-primary">
+            Editar
+          </button>
+          <button class="btn-danger" (click)="deleteAppointment(+selectedEvent.id)">
+            Excluir
+          </button>
+        </div>
       </div>
     </div>
   </div>
